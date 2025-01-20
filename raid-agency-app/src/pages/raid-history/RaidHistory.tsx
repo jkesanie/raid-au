@@ -123,6 +123,7 @@ export const RaidHistory = () => {
                                   <Typography
                                     color="text.secondary"
                                     variant="body1"
+                                    data-testid="start-date-value"
                                   >
                                     {el.op}
                                   </Typography>
@@ -134,6 +135,7 @@ export const RaidHistory = () => {
                                   <Typography
                                     color="text.secondary"
                                     variant="body1"
+                                    data-testid="start-date-value"
                                   >
                                     {el.path}
                                   </Typography>
@@ -142,7 +144,6 @@ export const RaidHistory = () => {
                               <Grid item xs={12} sm={6} md={9}>
                                 <Box sx={{ overflow: "auto" }}>
                                   <Typography variant="body2">Value</Typography>
-                                  <pre>{JSON.stringify(el.value, null, 2)}</pre>
                                 </Box>
                               </Grid>
                             </Grid>

@@ -1,11 +1,10 @@
-import { ServicePointSwitcher } from "@/components/service-point-switcher";
 import { useAuthHelper } from "@/keycloak";
 import { GroupSelector } from "@/pages/home/components/GroupSelector";
 import { RaidTable } from "@/pages/raid-table";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import { Add as AddIcon } from "@mui/icons-material";
-import { Alert, Container, Fab, Paper, Stack } from "@mui/material";
+import { Alert, Container, Fab, Stack, Typography } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -60,12 +59,7 @@ export const Home = () => {
           </Alert>
         )}
         {!hasServicePointGroup && <GroupSelector />}
-        {hasServicePointGroup && isServicePointUser && (
-          <Stack gap={2}>
-            <Paper sx={{}}>{activeGroup && <ServicePointSwitcher />}</Paper>
-            <RaidTable />
-          </Stack>
-        )}
+        {hasServicePointGroup && isServicePointUser && <RaidTable />}
       </Stack>
     </Container>
   );

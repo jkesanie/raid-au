@@ -105,7 +105,7 @@ export const FlatFormComponent = memo(
     DetailsFormComponent: React.ComponentType<{}>;
     labelPlural: string;
   }) => (
-    <Card>
+    <Card data-testid={`dynamic-form-${labelPlural.toLowerCase()}`}>
       <CardHeader title={labelPlural} />
       <CardContent>
         <DetailsFormComponent />
@@ -162,24 +162,6 @@ export const RaidForm = memo(
           generator: descriptionGenerator,
         },
         {
-          id: "organisation",
-          label: "Organisation",
-          labelPlural: "Organisations",
-          entityKey: "organisation" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: OrganisationForm,
-          generator: organisationGenerator,
-          childConfigs: [
-            {
-              fieldKey: "role",
-              label: "Role",
-              labelPlural: "Roles",
-              DetailsComponent: OrganisationRoleForm,
-              generator: organisationRoleGenerator,
-            },
-          ],
-        },
-        {
           id: "contributor",
           label: "Contributor",
           labelPlural: "Contributors",
@@ -201,6 +183,24 @@ export const RaidForm = memo(
               labelPlural: "Positions",
               DetailsComponent: ContributorPositionForm,
               generator: contributorPositionGenerator,
+            },
+          ],
+        },
+        {
+          id: "organisation",
+          label: "Organisation",
+          labelPlural: "Organisations",
+          entityKey: "organisation" as keyof RaidDto,
+          component: DynamicForm,
+          DetailsFormComponent: OrganisationForm,
+          generator: organisationGenerator,
+          childConfigs: [
+            {
+              fieldKey: "role",
+              label: "Role",
+              labelPlural: "Roles",
+              DetailsComponent: OrganisationRoleForm,
+              generator: organisationRoleGenerator,
             },
           ],
         },
