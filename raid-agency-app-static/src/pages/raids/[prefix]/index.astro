@@ -30,8 +30,7 @@ export async function getStaticPaths() {
   });
 }
 
-const hostname = Astro.url.hostname;
-const raidAppUrl = getRaidAppUrl(hostname);
+const raidAppUrl = getRaidAppUrl();
 ---
 
 <Layout title="main">
