@@ -5,8 +5,7 @@ import Layout from "@/layouts/main.astro";
 import { getRaidAppUrl } from "@/utils/data-utils";
 import { raids } from "@/store/raids";
 
-const hostname = Astro.url.hostname;
-const raidAppUrl = getRaidAppUrl(hostname);
+const raidAppUrl = getRaidAppUrl();
 ---
 
 <Layout title="main">
