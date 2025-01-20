@@ -14,10 +14,9 @@ import Subjects from "@/components/raid-components/subjects.astro";
 import Titles from "@/components/raid-components/titles.astro";
 import type { ModelDate, RaidDto } from "@/generated/raid";
 import Layout from "@/layouts/main.astro";
-import { fetchRaids } from "@/services/raids";
+import { raids } from "@/store/raids";
 
 export async function getStaticPaths() {
-  const raids = await fetchRaids();
   return raids.map((el: RaidDto) => {
     const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
     return {

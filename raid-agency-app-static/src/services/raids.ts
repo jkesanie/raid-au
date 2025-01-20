@@ -1,24 +1,12 @@
 /// <reference types="astro/client" />
 
-import type { RaidDto } from "@/generated/raid";
+import type { RaidDto, ServicePoint } from "@/generated/raid";
 
 const apiEndpoint = import.meta.env.API_ENDPOINT;
 const iamEndpoint = import.meta.env.IAM_ENDPOINT;
 
 const iamClientId = import.meta.env.IAM_CLIENT_ID;
 const iamClientSecret = import.meta.env.IAM_CLIENT_SECRET;
-
-let cachedData: RaidDto[] | null = null;
-
-interface ServicePoint {
-  id: number;
-  name: string;
-  identifierOwner: string;
-  techEmail: string;
-  adminEmail: string;
-  enabled: boolean;
-  appWritesEnabled: boolean;
-}
 
 async function getAuthToken(): Promise<string> {
   const TOKEN_PARAMS = {
@@ -61,7 +49,6 @@ async function getAuthToken(): Promise<string> {
 }
 
 export async function fetchRaids(): Promise<RaidDto[]> {
-  if (cachedData) return cachedData;
   try {
     const token = await getAuthToken();
 
@@ -71,6 +58,9 @@ export async function fetchRaids(): Promise<RaidDto[]> {
     const raidsFromAllSps: RaidDto[] = [];
 
     for (const id of ids) {
+      console.log(
+        `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
+      );
       const response = await fetch(
         `${apiEndpoint}/raid/?servicePointId=${id}`,
         {
