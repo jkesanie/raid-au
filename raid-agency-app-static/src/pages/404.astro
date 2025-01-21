@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/main.astro";
+---
+
+<Layout title="404 - Page Not Found">
+  <div
+    class="min-h-[calc(100vh-200px)] flex items-center justify-center px-6 py-12"
+  >
+    <div class="text-center">
+      <div class="space-y-2">
+        <div class="h-1 w-20 bg-indigo-500 mx-auto rounded-full"></div>
+      </div>
+
+      <div class="mt-8 space-y-6">
+        <h2 class="text-3xl font-medium text-gray-700">Page not found</h2>
+        <p class="text-gray-500 max-w-lg mx-auto">
+          This RAiD does not exist. Please check the URL and try again.
+        </p>
+      </div>
+
+      <div class="mt-8 space-y-6">
+        <div class="flex justify-center gap-4">
+          <a
+            href="/raids"
+            class="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          >
+            Return to RAiDs
+          </a>
+        </div>
+        <br />
+        <div class="flex justify-center gap-4">
+          <a
+            href="/"
+            class="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          >
+            Return Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -48,6 +48,12 @@
     "schema_id": 2
   },
   {
+    "id": 10263,
+    "code": "hau",
+    "name": "Hausa",
+    "schema_id": 2
+  },
+  {
     "id": 10303,
     "code": "hin",
     "name": "Hindi",
@@ -63,6 +69,12 @@
     "id": 10579,
     "code": "ita",
     "name": "Italian",
+    "schema_id": 2
+  },
+  {
+    "id": 10629,
+    "code": "jav",
+    "name": "Javanese",
     "schema_id": 2
   },
   {
@@ -99,6 +111,12 @@
     "id": 12612,
     "code": "nld",
     "name": "Dutch",
+    "schema_id": 2
+  },
+  {
+    "id": 13054,
+    "code": "pan",
+    "name": "Panjabi",
     "schema_id": 2
   },
   {
@@ -171,6 +189,18 @@
     "id": 14806,
     "code": "vie",
     "name": "Vietnamese",
+    "schema_id": 2
+  },
+  {
+    "id": 15079,
+    "code": "wuu",
+    "name": "Wu Chinese",
+    "schema_id": 2
+  },
+  {
+    "id": 15610,
+    "code": "yue",
+    "name": "Yue Chinese",
     "schema_id": 2
   },
   {

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if we're running the script from the correct directory
+if [[ $(basename $(pwd)) != "scripts" ]]; then
+    echo "Error: Please run this script from the 'scripts' directory"
+    exit 1
+fi
+
 # Define unqiue key
 uuid=$(uuidgen)
 key=${uuid%%-*}
