@@ -4,8 +4,15 @@ INPUT_FILE="$WORK_DIR/input_vocabulary.json"
 OUTPUT_FILE="$WORK_DIR/mapping.json"
 FINAL_OUTPUT="/tmp/mapping.json"
 DESTINATION_DIR_01="../raid-agency-app/src"
-DESTINATION_DIR_02="../static-generator/src"
+DESTINATION_DIR_02="../raid-agency-app-static/src"
 INPUT_URL="https://vocabs.ardc.edu.au/registry/api/resource/downloads/4809/raid_research-activity-identifier-raid-controlled-lists_raid-cl-v1-1.json"
+
+
+# Check if we're running the script from the correct directory
+if [[ $(basename $(pwd)) != "scripts" ]]; then
+    echo "Error: Please run this script from the 'scripts' directory"
+    exit 1
+fi
 
 # Create working directory
 echo "Creating temporary working directory..."
