@@ -11,6 +11,7 @@ import Organisations from "@/components/raid-components/organisations.astro";
 import RelatedObjects from "@/components/raid-components/related-objects.astro";
 import RelatedRaids from "@/components/raid-components/related-raids.astro";
 import Subjects from "@/components/raid-components/subjects.astro";
+import Raw from "@/components/raid-components/raw.astro";
 import Titles from "@/components/raid-components/titles.astro";
 import type { ModelDate, RaidDto } from "@/generated/raid";
 import Layout from "@/layouts/main.astro";
@@ -64,6 +65,7 @@ const { raid }: { raid: RaidDto } = Astro.props;
       <RelatedRaids relatedRaids={raid?.relatedRaid || []} />
       <Access access={raid?.access} />
       <Subjects subjects={raid?.subject || []} />
+      <Raw raid={raid} />
     </div>
   </div>
 </Layout>

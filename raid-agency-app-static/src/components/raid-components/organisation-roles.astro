@@ -1,7 +1,7 @@
 ---
+import InfoField from "@/components/info-field.astro";
 import type { OrganisationRole } from "@/generated/raid";
-import InfoField from "../info-field.astro";
-import mapping from "@/mapping.json";
+import mapping from "@/mapping/data/general-mapping.json";
 
 interface Props {
   organisationRoles: OrganisationRole[];

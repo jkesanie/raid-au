@@ -1,7 +1,7 @@
 ---
+import InfoField from "@/components/info-field.astro";
 import type { Subject } from "@/generated/raid";
-import InfoField from "../info-field.astro";
-import subjectMapping from "@/subject-mapping.json";
+import subjectMapping from "@/mapping/data/subject-mapping.json";
 
 interface Props {
   subjects: Subject[];

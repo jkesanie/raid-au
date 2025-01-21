@@ -1,7 +1,7 @@
 ---
+import InfoField from "@/components/info-field.astro";
 import type { Access } from "@/generated/raid";
-import InfoField from "../info-field.astro";
-import mapping from "@/mapping.json";
+import mapping from "@/mapping/data/general-mapping.json";
 
 interface Props {
   access: Access;
@@ -21,8 +21,8 @@ const mappedAccess = mapping.find((mapEl) => mapEl.key === access.type.id);
         <div class="grid grid-cols-4 gap-5 text-sm">
           <InfoField
             label="Type"
-            value={mappedAccess?.value}
-            tooltip={mappedAccess?.definition}
+            value={mappedAccess?.value ?? ""}
+            tooltip={mappedAccess?.definition ?? undefined}
           />
           <InfoField label="Language" value={access.statement?.language?.id} />
           <InfoField label="Text" value={access.statement?.text} />
