@@ -36,7 +36,7 @@ const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
 const { raid }: { raid: RaidDto } = Astro.props;
 ---
 
-<Layout title="main">
+<Layout title={`RAiD ${prefix}/${suffix}`}>
   <div class="overflow-hidden rounded-md border border-gray-300">
     <Breadcrumbs
       elements={[
