@@ -145,4 +145,8 @@ public class ValidationService {
 
         return failures;
     }
+
+    public List<ValidationFailure> validateForPatch(final RaidPatchRequest request) {
+        return new ArrayList<>(contributorValidator.validateForPatch(request.getContributor()));
+    }
 }

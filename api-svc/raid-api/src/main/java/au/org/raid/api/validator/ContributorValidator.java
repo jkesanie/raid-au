@@ -1,5 +1,6 @@
 package au.org.raid.api.validator;
 
+import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.DateUtil;
 import au.org.raid.idl.raidv2.model.Contributor;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static au.org.raid.api.endpoint.message.ValidationMessage.*;
@@ -76,8 +79,6 @@ public class ContributorValidator {
                                             .message("email or uuid is required"));
                         }
                     } else {
-                        //TODO: if uuid or pid exists add failure
-
                         if (contributor.getUuid() != null) {
                             failures.add(
                                     new ValidationFailure()
@@ -111,14 +112,109 @@ public class ContributorValidator {
                         );
                     }
 
-                    if (contributor.getPosition().isEmpty()) {
+                    IntStream.range(0, contributor.getRole().size())
+                            .forEach(roleIndex -> {
+                                final var role = contributor.getRole().get(roleIndex);
+                                failures.addAll(roleValidationService.validate(role, index, roleIndex));
+                            });
+
+                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d]".formatted(index))
                                 .errorType(NOT_SET_TYPE)
                                 .message("A contributor must have a position")
                         );
+                    } else {
+                        IntStream.range(0, contributor.getPosition().size())
+                                .forEach(positionIndex -> {
+                                    final var position = contributor.getPosition().get(positionIndex);
+                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
+                                });
+
+                        failures.addAll(validatePositions(contributor.getPosition(), index));
+                    }
+                });
+
+        failures.addAll(validateLeader(contributors));
+        failures.addAll(validateContact(contributors));
+
+        return failures;
+    }
+
+    public List<ValidationFailure> validateForPatch(
+            List<Contributor> contributors
+    ) {
+        if (contributors == null || contributors.isEmpty()) {
+            return List.of(CONTRIB_NOT_SET);
+        }
+
+        var failures = new ArrayList<ValidationFailure>();
+
+        IntStream.range(0, contributors.size())
+                .forEach(index -> {
+                    final var contributor = contributors.get(index);
+
+                    final var isValid = Arrays.stream(ContributorStatus.values())
+                            .anyMatch(value -> value.name().equals(contributor.getStatus().toUpperCase()));
+
+                    if (!isValid) {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].status".formatted(index))
+                                        .errorType(INVALID_VALUE_TYPE)
+                                        .message("Contributor status should be one of %s"
+                                                .formatted(Arrays.stream(ContributorStatus.values())
+                                                        .map(Enum::name)
+                                                        .collect(Collectors.joining(", ")))
+                                        )
+                        );
                     }
 
+                        // uuid must be present
+                    if (!isBlank(contributor.getUuid())) {
+                        final var contributorOptional = contributorRepository.findByUuid(
+                                contributor.getUuid()
+                        );
+
+                        if (contributorOptional.isEmpty()) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d].uuid".formatted(index))
+                                            .errorType(NOT_FOUND_TYPE)
+                                            .message("Contributor not found with UUID (%s)"
+                                                    .formatted(contributor.getUuid())));
+
+                        }
+                    } else {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].uuid".formatted(index))
+                                        .errorType(NOT_SET_TYPE)
+                                        .message("uuid is required"));
+                    }
+
+                    if (contributor.getId() == null) {
+                        failures.add(
+                            new ValidationFailure()
+                                    .fieldId("contributor[%d].id".formatted(index))
+                                    .errorType(NOT_SET_TYPE)
+                                    .message("id is required"));
+                    }
+
+                    if (isBlank(contributor.getSchemaUri())) {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].schemaUri".formatted(index))
+                                        .errorType(NOT_SET_TYPE)
+                                        .message(NOT_SET_MESSAGE)
+                        );
+                    } else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d].schemaUri".formatted(index))
+                                .errorType(INVALID_VALUE_TYPE)
+                                .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
+                        );
+                    }
 
                     IntStream.range(0, contributor.getRole().size())
                             .forEach(roleIndex -> {
@@ -126,14 +222,21 @@ public class ContributorValidator {
                                 failures.addAll(roleValidationService.validate(role, index, roleIndex));
                             });
 
-                    IntStream.range(0, contributor.getPosition().size())
-                            .forEach(positionIndex -> {
-                                final var position = contributor.getPosition().get(positionIndex);
-                                failures.addAll(positionValidationService.validate(position, index, positionIndex));
-                            });
+                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d]".formatted(index))
+                                .errorType(NOT_SET_TYPE)
+                                .message("A contributor must have a position")
+                        );
+                    } else {
+                        IntStream.range(0, contributor.getPosition().size())
+                                .forEach(positionIndex -> {
+                                    final var position = contributor.getPosition().get(positionIndex);
+                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
+                                });
 
-                    failures.addAll(validatePositions(contributor.getPosition(), index));
-
+                        failures.addAll(validatePositions(contributor.getPosition(), index));
+                    }
                 });
 
         failures.addAll(validateLeader(contributors));
@@ -154,7 +257,7 @@ public class ContributorValidator {
         if (leaders.isEmpty()) {
             failures.add(new ValidationFailure().
                     fieldId("contributor").
-                    errorType(INVALID_VALUE_TYPE).
+                    errorType(NOT_SET_TYPE).
                     message("At least one contributor must be flagged as a project leader"));
         }
 

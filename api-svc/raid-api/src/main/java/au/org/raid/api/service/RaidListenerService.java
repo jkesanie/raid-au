@@ -37,9 +37,11 @@ public class RaidListenerService {
         final var contributorsToUpdate = contributors.stream()
                 .filter(contributor -> contributor.getUuid() != null)
                 .filter(contributor -> {
-                    final var existingContributorOptional = existingContributors.stream().filter(c -> c.getUuid().equals(contributor.getUuid())).findFirst();
+                    final var existingContributorOptional = existingContributors.stream()
+                            .filter(c -> c.getUuid().equals(contributor.getUuid()))
+                            .findFirst();
 
-                    // ignore if existing contributor has an orcid and it's status us 'confirmed'
+                    // ignore if existing contributor has an orcid and it's status is 'confirmed'
 
                     if (existingContributorOptional.isPresent()) {
                         final var existingContributor = existingContributorOptional.get();

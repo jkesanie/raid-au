@@ -105,7 +105,7 @@ class ContributorValidatorTest {
         assertThat(failures, hasItem(
                 new ValidationFailure()
                         .fieldId("contributor")
-                        .errorType("invalidValue")
+                        .errorType("notSet")
                         .message("At least one contributor must be flagged as a project leader")
         ));
 
@@ -864,5 +864,43 @@ class ContributorValidatorTest {
         verify(roleValidationService).validate(role, 0, 0);
         verify(positionValidationService).validate(position, 0, 0);
         verifyNoInteractions(contributorRepository);
+    }
+
+    @Test
+    @DisplayName("Validation fails with invalid status")
+    void invalidContributorStatus() {
+        final var role = new ContributorRole()
+                .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
+                .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+
+        final var position = new ContributorPosition()
+                .schemaUri(TestConstants.CONTRIBUTOR_POSITION_SCHEMA_URI)
+                .id(TestConstants.LEADER_CONTRIBUTOR_POSITION)
+                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        final var contributor = new Contributor()
+                .schemaUri(TestConstants.CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                .id(TestConstants.VALID_ORCID)
+                .uuid(_UUID)
+                .status("Invalid")
+                .role(List.of(role))
+                .position(List.of(position))
+                .leader(true)
+                .contact(true);
+
+        when(contributorRepository.findByPidAndUuid(TestConstants.VALID_ORCID, _UUID)).thenReturn(Optional.of(new ContributorRecord()));
+
+        final var failures = validationService.validate(List.of(contributor));
+
+        assertThat(failures, hasSize(1));
+        assertThat(failures, is(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].status")
+                        .errorType("invalidValue")
+                        .message("Contributor status should be one of VERIFIED, UNVERIFIED, PENDING, FAILED")
+        )));
+
+        verify(roleValidationService).validate(role, 0, 0);
+        verify(positionValidationService).validate(position, 0, 0);
     }
 }

@@ -110,7 +110,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "POST"))
                         .hasRole(OPERATOR_ROLE)
                         .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "GET"))
-                        .hasRole(SERVICE_POINT_USER_ROLE)
+                        .hasAnyRole(SERVICE_POINT_USER_ROLE, OPERATOR_ROLE)
                         .anyRequest().denyAll()
         );
         http.oauth2ResourceServer((oauth2) -> oauth2
