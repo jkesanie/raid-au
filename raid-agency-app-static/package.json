@@ -1,9 +1,9 @@
 {
-  "name": "sw-astro-app",
+  "name": "raid-agency-app-static",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "FOO=foobar astro dev",
+    "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",

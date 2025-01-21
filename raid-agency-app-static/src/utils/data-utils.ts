@@ -1,15 +1,16 @@
 export function getRaidAppUrl(): string {
   const localStaticPort = 4321;
-  const apiEndpoint = import.meta.env.API_ENDPOINT;
-  const environment = apiEndpoint.includes("test")
-    ? "test"
-    : apiEndpoint.includes("demo")
+  const raidEnv = import.meta.env.RAID_ENV;
+  const environment =
+    raidEnv === "test"
+      ? "test"
+      : raidEnv === "demo"
       ? "demo"
-      : apiEndpoint.includes("prod")
-        ? "prod"
-        : apiEndpoint.includes("stage")
-          ? "stage"
-          : "dev";
+      : raidEnv === "prod"
+      ? "prod"
+      : raidEnv === "stage"
+      ? "stage"
+      : "dev";
 
   if (environment === "dev") {
     return `http://localhost:${localStaticPort}`;
