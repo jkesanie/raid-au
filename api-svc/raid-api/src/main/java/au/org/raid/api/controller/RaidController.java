@@ -146,10 +146,16 @@ public class RaidController implements RaidApi {
     }
 
     @Override
-    public ResponseEntity<RaidDto> patchRaid(final String prefix, final String suffix, final RaidPatchRequest raidPatchRequest) {
+    public ResponseEntity<RaidDto> patchRaid(final String prefix, final String suffix, final RaidPatchRequest request) {
+
+        final var failures = new ArrayList<>(validationService.validateForPatch(request));
+
+        if (!failures.isEmpty()) {
+            throw new ValidationException(failures);
+        }
 
         return ResponseEntity.ok(
-                raidService.patchContributors(prefix, suffix, raidPatchRequest.getContributor()));
+                raidService.patchContributors(prefix, suffix, request.getContributor()));
     }
 
 

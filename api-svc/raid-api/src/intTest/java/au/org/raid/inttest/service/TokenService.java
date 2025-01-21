@@ -44,7 +44,9 @@ public class TokenService {
         return Objects.requireNonNull(tokenResponse.getBody()).getAccessToken();
     }
 
-    public String getClientToken(final String clientId, final String clientSecret) {
+    public String getClientToken(
+            final String clientId,
+            final String clientSecret) {
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 

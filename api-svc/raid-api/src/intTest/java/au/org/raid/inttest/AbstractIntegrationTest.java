@@ -5,7 +5,7 @@ import au.org.raid.idl.raidv2.model.*;
 import au.org.raid.inttest.client.keycloak.KeycloakClient;
 import au.org.raid.inttest.config.IntegrationTestConfig;
 import au.org.raid.inttest.dto.UserContext;
-import au.org.raid.inttest.service.RaidUpdateRequestFactory;
+import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
 import au.org.raid.inttest.service.TestClient;
 import au.org.raid.inttest.service.TokenService;
 import au.org.raid.inttest.service.UserService;

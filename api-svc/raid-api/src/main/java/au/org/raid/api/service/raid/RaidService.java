@@ -35,6 +35,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -119,6 +120,8 @@ public class RaidService {
         if (updateChecksum.equals(existingChecksum)) {
             return existing;
         }
+
+        mergeContributors(existing.getContributor(), raid.getContributor());
 
         raidListenerService.update(raid.getIdentifier().getId(), raid.getContributor(), existing.getContributor());
 
@@ -229,5 +232,17 @@ public class RaidService {
         }
 
         return raids;
+    }
+
+    public void mergeContributors(final List<Contributor> existingContributors, final List<Contributor> newContributors) {
+        final var existingContributorMap = existingContributors.stream()
+                .collect(Collectors.toMap(Contributor::getUuid, contributor -> contributor));
+
+        newContributors.forEach(contributor -> {
+            final var existingContributor = existingContributorMap.get(contributor.getUuid());
+            if (existingContributor != null) {
+                contributor.setStatus(existingContributor.getStatus());
+            }
+        });
     }
 }

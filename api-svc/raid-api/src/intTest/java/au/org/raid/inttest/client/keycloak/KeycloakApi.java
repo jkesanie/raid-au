@@ -34,7 +34,7 @@ public interface KeycloakApi {
     ResponseEntity<String> joinGroup(@RequestBody final GroupJoinRequest groupJoinRequest);
 
     @RequestMapping(method = RequestMethod.PUT, value = "/realms/raid/group/active-group")
-    ResponseEntity<String> setActiveGroup(@RequestBody final ActiveGroupRequest groupJoinRequest);
+    ResponseEntity<Object> setActiveGroup(@RequestBody final ActiveGroupRequest groupJoinRequest);
 
     @RequestMapping(method = RequestMethod.GET, value = "/realms/raid/group/user-groups")
     ResponseEntity<List<Group>> getUserGroups();

@@ -1,4 +1,4 @@
-package au.org.raid.inttest.service;
+package au.org.raid.inttest.factory;
 
 import au.org.raid.idl.raidv2.model.RaidDto;
 import au.org.raid.idl.raidv2.model.RaidUpdateRequest;

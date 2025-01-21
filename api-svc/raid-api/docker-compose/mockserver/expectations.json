@@ -39,7 +39,7 @@
       "path": "/raid-listener"
     },
     "httpResponse": {
-      "statusCode": 204,
+      "statusCode": 202,
       "headers": {
         "Content-Type": ["application/json"]
       }
