@@ -1,7 +1,7 @@
 import raidConfig from "@/../raid.config.json";
 import { CheckboxField } from "@/fields/CheckboxField";
 import { TextInputField } from "@/fields/TextInputField";
-import { Box, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 const ContributorForm = ({ index }: { index: number }) => {
   return (
@@ -20,7 +20,6 @@ const ContributorForm = ({ index }: { index: number }) => {
           name={`contributor.${index}.email`}
           label="Email"
           placeholder="Email"
-          required={true}
           width={12}
         />
       )}

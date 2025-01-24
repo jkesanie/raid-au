@@ -16,10 +16,41 @@ export const MintRaid = () => {
 
   const mintMutation = useMutation({
     mutationFn: createRaid,
-    onSuccess: (mintResult: RaidDto) => {
-      const resultHandle = new URL(mintResult.identifier?.id ?? "");
+    onSuccess: async (data, variables) => {
+      const resultHandle = new URL(data.identifier?.id ?? "");
       const [prefix, suffix] = resultHandle.pathname.split("/").filter(Boolean);
-      navigate(`/show-raid/${prefix}/${suffix}`);
+
+      const contributors: {
+        uuid: string;
+        email: string;
+      }[] = [];
+
+      if (data.contributor) {
+        for (let i = 0; i < data.contributor.length; i++) {
+          contributors.push({
+            uuid: data.contributor[i].uuid ?? "",
+            email: variables.data.contributor?.[i]?.email ?? "",
+          });
+        }
+      }
+
+      const response = await fetch(
+        `https://orcid.test.raid.org.au/raid-update`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            handle: data?.identifier?.id,
+            contributors,
+          }),
+        }
+      );
+      console.log("response", response);
+
+      navigate(`/raids/${prefix}/${suffix}`);
     },
     onError: (error: Error) => {
       RaidFormErrorMessage(error, openErrorDialog);

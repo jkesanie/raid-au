@@ -1,4 +1,3 @@
-import { ServicePointSwitcher } from "@/components/service-point-switcher";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import {
@@ -147,8 +146,6 @@ export default function UserDropdown() {
                   secondary={roles?.sort().join(" | ")}
                 />
               </MenuItem>
-              {activeGroup && <ServicePointSwitcher />}
-
               <Divider />
               <MenuItem
                 onClick={() => {

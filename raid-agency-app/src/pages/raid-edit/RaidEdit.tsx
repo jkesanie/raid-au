@@ -4,7 +4,7 @@ import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useErrorDialog } from "@/components/error-dialog";
 import { RaidForm } from "@/components/raid-form";
 import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
-import { RaidDto } from "@/generated/raid";
+import { Contributor, RaidDto } from "@/generated/raid";
 import { Loading } from "@/pages/loading";
 import { fetchRaid, updateRaid } from "@/services/raid";
 import { raidRequest } from "@/utils/data-utils";
@@ -97,6 +97,12 @@ export const RaidEdit = () => {
     return <ErrorAlertComponent error={query.error} />;
   }
 
+  const contributors: Contributor[] = [];
+  for (const contributor of query.data?.contributor ?? []) {
+    contributor.email = contributor.email || "";
+    contributors.push(contributor);
+  }
+
   return (
     <Container
       maxWidth="lg"
@@ -114,7 +120,10 @@ export const RaidEdit = () => {
         <RaidForm
           prefix={prefix}
           suffix={suffix}
-          raidData={query.data}
+          raidData={{
+            ...query.data,
+            contributor: contributors,
+          }}
           onSubmit={handleSubmit}
           isSubmitting={updateMutation.isPending}
         />

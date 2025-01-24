@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { ServicePointSwitcher } from "../service-point-switcher";
 import NavigationDrawer from "./components/NavigationDrawer";
 import UserDropdown from "./components/UserDropdown";
+import raidConfig from "@/../raid.config.json";
 
 const AuthenticatedNavbarContent = () => {
   return (
@@ -25,6 +26,7 @@ const AuthenticatedNavbarContent = () => {
         color="error"
         size="small"
         sx={{ mr: 2 }}
+        title={`Version: ${raidConfig.version}`}
       />
       <NavigationDrawer />
     </React.Fragment>
