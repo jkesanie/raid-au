@@ -32,12 +32,13 @@ const ContributorItem = memo(
     orcidData?: any;
     i: number;
   }) => {
+    console.log(orcidData);
     return (
       <Stack gap={2}>
         <Typography variant="body1">Contributor #{i + 1}</Typography>
 
         <Stack direction="row" alignItems="center" gap={1}>
-          {orcidData ? (
+          {orcidData && orcidData.status && orcidData.status === "VERIFIED" ? (
             <Button
               href={
                 contributor.id
@@ -47,24 +48,32 @@ const ContributorItem = memo(
               target="_blank"
               startIcon={
                 <img
-                  src={
-                    contributor.status === "VERIFIED"
-                      ? "/orcid-authenticated.svg"
-                      : "/orcid-unauthenticated.svg"
-                  }
-                  alt="orcid-unauthenticated"
+                  src="/orcid-authenticated.svg"
+                  alt="orcid-authenticated"
                   height={24}
                   width="auto"
                 />
               }
               sx={{ textTransform: "none" }}
             >
-              {contributor.status === "VERIFIED"
-                ? `${orcidData.name}`
-                : `${orcidData.email} (awaiting authentication)`}
+              {orcidData.name}
             </Button>
           ) : (
-            <Skeleton variant="rectangular" width={200} height={36} />
+            <>
+              <Button
+                startIcon={
+                  <img
+                    src="/orcid-unauthenticated.svg"
+                    alt="orcid-unauthenticated"
+                    height={24}
+                    width="auto"
+                  />
+                }
+                sx={{ textTransform: "none" }}
+              >
+                {orcidData?.email} (awaiting authentication)
+              </Button>
+            </>
           )}
         </Stack>
 
@@ -150,7 +159,8 @@ const ContributorItem = memo(
 const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
   const { prefix, suffix } = useParams<{ prefix: string; suffix: string }>();
   const { data: orcidData, isError } = useQuery({
-    queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
+    // queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
+    queryFn: () => fetchOrcidContributors({ handle: `10.82841/3fd19312` }),
     queryKey: ["contributors"],
   });
 
@@ -172,7 +182,9 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
             <ContributorItem
               contributor={contributor}
               orcidData={orcidData?.find(
-                (orcid: any) => orcid.uuid === contributor.uuid
+                // (orcid: any) => orcid.uuid === contributor.uuid
+                (orcid: any) =>
+                  orcid.uuid === "254b9d1c-3c0d-49e2-ae21-fa68cac247a6"
               )}
               key={crypto.randomUUID()}
               i={i}
