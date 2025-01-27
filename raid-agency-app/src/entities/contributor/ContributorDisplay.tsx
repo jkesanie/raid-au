@@ -159,8 +159,7 @@ const ContributorItem = memo(
 const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
   const { prefix, suffix } = useParams<{ prefix: string; suffix: string }>();
   const { data: orcidData, isError } = useQuery({
-    // queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
-    queryFn: () => fetchOrcidContributors({ handle: `10.82841/3fd19312` }),
+    queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
     queryKey: ["contributors"],
   });
 
@@ -182,9 +181,7 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
             <ContributorItem
               contributor={contributor}
               orcidData={orcidData?.find(
-                // (orcid: any) => orcid.uuid === contributor.uuid
-                (orcid: any) =>
-                  orcid.uuid === "254b9d1c-3c0d-49e2-ae21-fa68cac247a6"
+                (orcid: any) => orcid.uuid === contributor.uuid
               )}
               key={crypto.randomUUID()}
               i={i}
