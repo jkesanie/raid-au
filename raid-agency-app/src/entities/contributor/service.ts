@@ -1,4 +1,3 @@
-import { OrcidLookupResponse } from "./types";
 
 const BASE_URL = "https://orcid.test.raid.org.au";
 

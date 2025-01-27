@@ -172,7 +172,7 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
             <ContributorItem
               contributor={contributor}
               orcidData={orcidData?.find(
-                (orcid: any) => orcid.contributorUuid === contributor.uuid
+                (orcid: any) => orcid.uuid === contributor.uuid
               )}
               key={crypto.randomUUID()}
               i={i}
