@@ -82,6 +82,7 @@ type BaseConfiguration = {
   entityKey: keyof RaidDto;
   DetailsFormComponent: any;
   generator: () => any;
+  data?: any;
 };
 
 type FlatFormConfiguration = BaseConfiguration & {
@@ -169,6 +170,7 @@ export const RaidForm = memo(
           component: DynamicForm,
           DetailsFormComponent: ContributorForm,
           generator: contributorGenerator,
+          data: raidData.contributor || [],
           childConfigs: [
             {
               fieldKey: "role",
@@ -388,6 +390,7 @@ export const RaidForm = memo(
                   entityKey: config.entityKey,
                   DetailsFormComponent: config.DetailsFormComponent,
                   generator: config.generator,
+                  data: config.data,
                 };
 
                 if (config.component === FlatFormComponent) {
@@ -417,7 +420,6 @@ export const RaidForm = memo(
                 ) {
                   return (
                     <DynamicForm
-                      // ChildFormComponent={undefined}
                       key={config.id}
                       {...commonProps}
                       childConfigs={config.childConfigs}
@@ -425,13 +427,7 @@ export const RaidForm = memo(
                   );
                 }
 
-                return (
-                  <DynamicForm
-                    key={config.id}
-                    {...commonProps}
-                    // ChildFormComponent={config.ChildFormComponent}
-                  />
-                );
+                return <DynamicForm key={config.id} {...commonProps} />;
               })}
             </Stack>
           </Stack>

@@ -18,7 +18,7 @@ const organisationGenerator = ({
 
   return {
     // id: alternativeId ?? organisations[0].pid,
-    id: `https://ror.org/${Date.now().toString().substring(3, 12)}`,
+    id: `https://ror.org/038sjwq14`,
     schemaUri: organisationSchemas[0].uri,
     role: Array.from({ length: numRoles }, () => organisationRoleGenerator()),
   };
