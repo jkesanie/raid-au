@@ -39,7 +39,7 @@ public class ContributorService {
                     .orElseThrow(() -> new ContributorSchemaNotFoundException(contributor.getSchemaUri()));
 
             final var contributorRecord = contributorRecordFactory.create(contributor, contributorSchema.getId());
-            final var contributorId = contributorRepository.findOrCreate(contributorRecord).getId();
+            final var contributorId = contributorRepository.updateOrCreate(contributorRecord).getId();
 
             final var raidContributorRecord = raidContributorRecordFactory.create(contributor, contributorId, handle);
             final var raidContributorId = raidContributorRepository.create(raidContributorRecord).getId();

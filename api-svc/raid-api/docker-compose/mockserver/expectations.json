@@ -44,5 +44,86 @@
         "Content-Type": ["application/json"]
       }
     }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/contributors",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "authenticated@example.org"
+        },
+        "matchType": "STRICT"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": "{  \"expires_in\": 631138518,  \"handle\": \"10.82841/c588ab06\",  \"updatedOn\": 1737667052597,  \"status\": \"AUTHENTICATED\",  \"scope\": \"/read-limited /activities/update /person/update\",  \"email\": \"authenticated@example.org\",  \"name\": \"Darryl Arnold\",  \"access_token\": \"54243bda-a81d-473d-9572-b698fdd92cd0\",  \"token_type\": \"bearer\",  \"contributorUuid\": \"203f3484-62c6-44ec-a617-1269d79f1b4e\",  \"createdOn\": 1737666965367,  \"refresh_token\": \"2a4bfcaa-846d-45ef-88c5-847ab444f97a\",  \"orcid\": \"0009-0007-7956-4018\",  \"stateUuid\": \"81cc58c7-7021-4205-8070-179d19e568f5\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/contributors",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "awaiting-authentication@example.org"
+        },
+        "matchType": "STRING"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": "{  \"expires_in\": 631138518,  \"handle\": \"10.82841/c588ab06\",  \"updatedOn\": 1737667052597,  \"status\": \"AWAITING_AUTHENTICATION\",  \"scope\": \"/read-limited /activities/update /person/update\",  \"email\": \"awaiting-authentication@example.org\",  \"name\": \"Brandon Gilmore\",  \"access_token\": \"bcba4bd1-6fad-4ae4-a17f-d1dfaf4cddbe\",  \"token_type\": \"bearer\",  \"contributorUuid\": \"8adc8bc1-3df9-4e7d-b8af-056103edbac6\",  \"createdOn\": 1737666965367,  \"refresh_token\": \"eb134211-68b4-4a76-868a-d036148cbebc\",  \"stateUuid\": \"7c9fa013-c6bc-4a9f-8d6e-e791af0864a8\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/contributors",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "authentication-failed@example.org"
+        },
+        "matchType": "STRICT"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "{  \"expires_in\": 631138518,  \"handle\": \"10.82841/c588ab06\",  \"updatedOn\": 1737667052597,  \"status\": \"AUTHENTICATION_FAILED\",  \"scope\": \"/read-limited /activities/update /person/update\",  \"email\": \"authentication-failed@example.org\",  \"name\": \"Glenna Livingston\",  \"access_token\": \"07e04b6b-8dc2-46e0-9582-87bc7281fe24\",  \"token_type\": \"bearer\",  \"contributorUuid\": \"2e485e86-8578-4013-9671-988bd5b01eb8\",  \"createdOn\": 1737666965367,  \"refresh_token\": \"80bb843f-10e8-4c71-ae2b-3b1078edb253\",  \"stateUuid\": \"e832af4a-734a-4a80-a4da-3dd4728b6a29\"}"
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/contributors",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "not-found@example.org"
+        },
+        "matchType": "STRICT"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 404,
+      "headers": {
+        "Content-Type": ["application/json"]
+      }
+    }
   }
 ]

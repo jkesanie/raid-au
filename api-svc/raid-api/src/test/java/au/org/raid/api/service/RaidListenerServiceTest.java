@@ -1,5 +1,7 @@
 package au.org.raid.api.service;
 
+import au.org.raid.api.dto.ContributorLookupResponse;
+import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.dto.RaidListenerMessage;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
 import au.org.raid.idl.raidv2.model.Contributor;
@@ -10,97 +12,147 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RaidListenerServiceTest {
+
     @Mock
-    private RaidListenerClient raidListenerClient;
+    private OrcidIntegrationClient orcidIntegrationClient;
+
     @Mock
     private RaidListenerMessageFactory raidListenerMessageFactory;
 
     @InjectMocks
     private RaidListenerService raidListenerService;
 
+    private static final String TEST_HANDLE = "test-handle";
+    private static final String TEST_EMAIL = "test@example.com";
+    private static final String TEST_ORCID = "0000-0000-0000-0000";
+    private static final String TEST_UUID = UUID.randomUUID().toString();
+
     @Test
-    @DisplayName("Sends contributors to raid listener on create")
-    void create() {
-        final var handle = "_handle";
-        final var email = "_email";
-        final var message = new RaidListenerMessage();
-        final var contributor = new Contributor().email(email);
+    @DisplayName("Should update contributor with ORCID ID when authenticated")
+    void whenContributorIsAuthenticated_thenUpdateWithOrcidId() {
+        // Arrange
+        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
+                .status("AUTHENTICATED")
+                .contributorUuid(TEST_UUID)
+                .orcid(TEST_ORCID)
+                .build();
 
-        when(raidListenerMessageFactory.create(handle, contributor))
-                .thenReturn(message);
+        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
 
-        raidListenerService.create(handle, List.of(contributor));
+        // Act
+        raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
-        verify(raidListenerMessageFactory).create(handle, contributor);
-        verify(raidListenerClient).post(message);
+        // Assert
+        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, never()).post(any());
+
+        assert contributor.getId().equals("https://orcid.org/" + TEST_ORCID);
+        assert contributor.getUuid().equals(TEST_UUID);
+        assert contributor.getStatus().equals("AUTHENTICATED");
+        assert contributor.getEmail() == null;
     }
 
     @Test
-    @DisplayName("Creates contributors on update")
-    void createsContributorsOnUpdate() {
-        final var handle = "_handle";
-        final var email = "_email";
-        final var contributor = new Contributor().email(email);
-        final var message = new RaidListenerMessage();
+    @DisplayName("Should post message when contributor is not authenticated")
+    void whenContributorIsNotAuthenticated_thenPostMessage() {
+        // Arrange
+        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        final var raidName = "raid-name";
+        final var message = RaidListenerMessage.builder()
+                .raidName(raidName)
+                .contributor(contributor)
+                .build();
+        ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
+                .status("PENDING")
+                .contributorUuid(TEST_UUID)
+                .build();
 
-        when(raidListenerMessageFactory.create(handle, contributor))
-                .thenReturn(message);
+        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
+        when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
-        raidListenerService.update(handle, List.of(contributor), Collections.emptyList());
+        // Act
+        raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
-        verifyNoMoreInteractions(raidListenerMessageFactory);
-        verify(raidListenerClient).post(message);
-        verifyNoMoreInteractions(raidListenerClient);
+        // Assert
+        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, times(1)).post(message);
+
+        assert contributor.getId() == null;
+        assert contributor.getUuid().equals(TEST_UUID);
+        assert contributor.getStatus().equals("PENDING");
+        assert contributor.getEmail() == null;
     }
 
     @Test
-    @DisplayName("Updates contributors on update")
-    void updatesContributorsOnUpdate() {
-        final var handle = "_handle";
-        final var uuid = "_uuid";
-        final var contributor = new Contributor().uuid(uuid).contact(true);
-        final var existingContributor = new Contributor().uuid(uuid).contact(false);
-        final var message = new RaidListenerMessage();
+    @DisplayName("Should create new contributor and post message when contributor not found")
+    void whenContributorNotFound_thenCreateNewAndPostMessage() {
+        // Arrange
 
-        when(raidListenerMessageFactory.create(handle, contributor))
-                .thenReturn(message);
+        final var raidName = "raid-name";
+        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        final var message = RaidListenerMessage.builder()
+                .raidName(raidName)
+                .contributor(contributor)
+                .build();
+        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
-        raidListenerService.update(handle, List.of(contributor), List.of(existingContributor));
+        // Act
+        raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
-        verifyNoMoreInteractions(raidListenerMessageFactory);
-        verify(raidListenerClient).post(message);
-        verifyNoMoreInteractions(raidListenerClient);
+        // Assert
+        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, times(1)).post(message);
+
+        assert contributor.getId() == null;
+        assert contributor.getUuid() != null;
+        assert contributor.getStatus().equals(ContributorStatus.PENDING_AUTHENTICATION.name());
+        assert contributor.getEmail() == null;
     }
 
     @Test
-    @DisplayName("Ignores confirmed contributors")
-    void ignoresUnchangedContributors() {
-        final var handle = "_handle";
-        final var uuid = "_uuid";
-        final var id = "_id";
-        final var status = "confirmed";
-        final var contributor = new Contributor()
-                .id(id)
-                .status(status)
-                .uuid(uuid)
-                .contact(true);
+    @DisplayName("Should process all contributors with different authentication states")
+    void whenMultipleContributors_thenProcessAll() {
+        // Arrange
+        Contributor contributor1 = new Contributor().email("test1@example.com");
+        Contributor contributor2 = new Contributor().email("test2@example.com");
+        final var raidName = "raid-name";
+        final var message = RaidListenerMessage.builder()
+                .raidName(raidName)
+                .contributor(contributor2)
+                .build();
 
-        final var existingContributor = new Contributor()
-                .id(id)
-                .status(status)
-                .uuid(uuid)
-                .contact(false);
+        ContributorLookupResponse lookupResponse1 = ContributorLookupResponse.builder()
+                .status("AUTHENTICATED")
+                .contributorUuid(UUID.randomUUID().toString())
+                .orcid(TEST_ORCID)
+                .build();
 
-        raidListenerService.update(handle, List.of(contributor), List.of(existingContributor));
+        when(orcidIntegrationClient.get("test1@example.com")).thenReturn(Optional.of(lookupResponse1));
+        when(orcidIntegrationClient.get("test2@example.com")).thenReturn(Optional.empty());
+        when(raidListenerMessageFactory.create(eq(TEST_HANDLE), any())).thenReturn(message);
 
-        verifyNoInteractions(raidListenerMessageFactory);
-        verifyNoInteractions(raidListenerClient);
+        // Act
+        raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor1, contributor2));
+
+        // Assert
+        verify(orcidIntegrationClient, times(1)).get("test1@example.com");
+        verify(orcidIntegrationClient, times(1)).get("test2@example.com");
+        verify(orcidIntegrationClient, times(1)).post(any());
+
+        assert contributor1.getId().equals("https://orcid.org/" + TEST_ORCID);
+        assert contributor2.getId() == null;
+        assert contributor2.getStatus().equals(ContributorStatus.PENDING_AUTHENTICATION.name());
     }
 }

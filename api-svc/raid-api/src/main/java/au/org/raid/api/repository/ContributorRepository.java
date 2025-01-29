@@ -23,12 +23,42 @@ public class ContributorRepository {
                 .fetchOne();
     }
 
-    public ContributorRecord findOrCreate(final ContributorRecord contributor) {
-        final var result = dslContext.selectFrom(CONTRIBUTOR)
-                .where(CONTRIBUTOR.UUID.eq(contributor.getUuid()))
-                .fetchOptional();
+    public ContributorRecord updateOrCreate(final ContributorRecord contributor) {
+        // Look for existing UNAUTHENTICATED contributor
+        if (contributor.getPid() != null) {
+            final var result = dslContext.selectFrom(CONTRIBUTOR)
+                    .where(CONTRIBUTOR.PID.eq(contributor.getPid()))
+                    .fetchOptional();
 
-        return result.orElseGet(() -> create(contributor));
+            if (result.isPresent()) {
+                return dslContext.update(CONTRIBUTOR)
+                        .set(CONTRIBUTOR.SCHEMA_ID, contributor.getSchemaId())
+                        .set(CONTRIBUTOR.STATUS, contributor.getStatus())
+                        .where(CONTRIBUTOR.PID.eq(contributor.getPid()))
+                        .returning()
+                        .fetchOne();
+
+            }
+        }
+        if (contributor.getUuid() != null) {
+            final var result = dslContext.selectFrom(CONTRIBUTOR)
+                    .where(CONTRIBUTOR.UUID.eq(contributor.getUuid()))
+                    .fetchOptional();
+
+            if (result.isPresent()) {
+                return dslContext.update(CONTRIBUTOR)
+                        .set(CONTRIBUTOR.PID, contributor.getPid())
+                        .set(CONTRIBUTOR.SCHEMA_ID, contributor.getSchemaId())
+                        .set(CONTRIBUTOR.STATUS, contributor.getStatus())
+                        .where(CONTRIBUTOR.UUID.eq(contributor.getUuid()))
+                        .returning()
+                        .fetchOne();
+            } else {
+                return create(contributor);
+            }
+        } else {
+            return create(contributor);
+        }
     }
 
     public Optional<ContributorRecord> findById(final Integer id) {

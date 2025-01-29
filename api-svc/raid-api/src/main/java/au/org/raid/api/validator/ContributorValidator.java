@@ -43,21 +43,22 @@ public class ContributorValidator {
 
                     if (isBlank(contributor.getEmail())) {
                         // uuid must be present
-                        if (!isBlank(contributor.getId()) && !isBlank(contributor.getUuid())) {
-                            final var contributorOptional = contributorRepository.findByPidAndUuid(
-                                    contributor.getId(), contributor.getUuid()
-                            );
-
-                            if (contributorOptional.isEmpty()) {
-                                failures.add(
-                                        new ValidationFailure()
-                                                .fieldId("contributor[%d]".formatted(index))
-                                                .errorType(NOT_FOUND_TYPE)
-                                                .message("Contributor not found with PID (%s) and UUID (%s)"
-                                                        .formatted(contributor.getId(), contributor.getUuid())));
-
-                            }
-                        } else if (!isBlank(contributor.getUuid())) {
+//                        if (!isBlank(contributor.getId()) && !isBlank(contributor.getUuid())) {
+//                            final var contributorOptional = contributorRepository.findByPidAndUuid(
+//                                    contributor.getId(), contributor.getUuid()
+//                            );
+//
+//                            if (contributorOptional.isEmpty()) {
+//                                failures.add(
+//                                        new ValidationFailure()
+//                                                .fieldId("contributor[%d]".formatted(index))
+//                                                .errorType(NOT_FOUND_TYPE)
+//                                                .message("Contributor not found with PID (%s) and UUID (%s)"
+//                                                        .formatted(contributor.getId(), contributor.getUuid())));
+//
+//                            }
+//                        } else
+                        if (!isBlank(contributor.getUuid())) {
                             final var contributorOptional = contributorRepository.findByUuid(
                                     contributor.getUuid()
                             );

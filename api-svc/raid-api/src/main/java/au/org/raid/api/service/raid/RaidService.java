@@ -70,7 +70,7 @@ public class RaidService {
 
         mintHandle(raid, servicePointRecord, 0);
 
-        raidListenerService.create(raid.getIdentifier().getId(), raid.getContributor());
+        raidListenerService.createOrUpdate(raid.getIdentifier().getId(), raid.getContributor());
 
         final var raidDto = raidHistoryService.save(raid);
         raidIngestService.create(raidDto);
@@ -123,7 +123,7 @@ public class RaidService {
 
         mergeContributors(existing.getContributor(), raid.getContributor());
 
-        raidListenerService.update(raid.getIdentifier().getId(), raid.getContributor(), existing.getContributor());
+        raidListenerService.createOrUpdate(raid.getIdentifier().getId(), raid.getContributor());
 
         final var raidDto = raidHistoryService.save(raid);
 
@@ -142,8 +142,6 @@ public class RaidService {
 
         final var servicePointRecord = servicePointRepository.findById(servicePointId)
                 .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
-
-        //TODO; validate contributors?
 
         raid.setContributor(contributors);
 

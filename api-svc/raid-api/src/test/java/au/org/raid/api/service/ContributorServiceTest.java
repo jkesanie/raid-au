@@ -8,7 +8,6 @@ import au.org.raid.api.factory.record.RaidContributorRecordFactory;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.repository.ContributorSchemaRepository;
 import au.org.raid.api.repository.RaidContributorRepository;
-import au.org.raid.db.jooq.tables.ContributorSchema;
 import au.org.raid.db.jooq.tables.records.ContributorRecord;
 import au.org.raid.db.jooq.tables.records.ContributorSchemaRecord;
 import au.org.raid.db.jooq.tables.records.RaidContributorRecord;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -29,7 +27,8 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +82,7 @@ class ContributorServiceTest {
 
         when(contributorSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(contributorSchemaRecord));
         when(contributorRecordFactory.create(contributor, schemaId)).thenReturn(contributorRecordForCreate);
-        when(contributorRepository.findOrCreate(contributorRecordForCreate)).thenReturn(savedContributorRecord);
+        when(contributorRepository.updateOrCreate(contributorRecordForCreate)).thenReturn(savedContributorRecord);
 
         when(raidContributorRecordFactory.create(contributor, id, handle)).thenReturn(raidContributorRecordForCreate);
         when(raidContributorRepository.create(raidContributorRecordForCreate)).thenReturn(savedRaidContributorRecord);
@@ -285,7 +284,7 @@ class ContributorServiceTest {
 
         when(contributorSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(contributorSchemaRecord));
         when(contributorRecordFactory.create(contributor, schemaId)).thenReturn(contributorRecordForCreate);
-        when(contributorRepository.findOrCreate(contributorRecordForCreate)).thenReturn(savedContributorRecord);
+        when(contributorRepository.updateOrCreate(contributorRecordForCreate)).thenReturn(savedContributorRecord);
 
         when(raidContributorRecordFactory.create(contributor, id, handle)).thenReturn(raidContributorRecordForCreate);
         when(raidContributorRepository.create(raidContributorRecordForCreate)).thenReturn(savedRaidContributorRecord);

@@ -11,8 +11,11 @@ raid:
   iam:
     realm-uri: http://localhost:8001/realms/raid
   orcid-integration:
+    host: http://localhost:1080
     raid-listener:
-      uri: http://localhost:1080/raid-listener
+      uri: ${raid.orcid-integration.host}/raid-listener
+    contributor-lookup:
+      uri: ${raid.orcid-integration.host}/contributors
   raid-permissions:
     client-id: raid-permissions-admin
     client-secret: 07ATOSG9hYs8oATcz5wcQAdRuoEsLzEY

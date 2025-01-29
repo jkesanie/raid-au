@@ -119,7 +119,7 @@ class RaidServiceTest {
             raidService.mint(createRaidRequest, servicePointId);
             verify(raidIngestService).create(raidDto);
             verify(dataciteService).mint(createRaidRequest, handle.toString(), repositoryId, password);
-            verify(raidListenerService).create(handle.toString(), createRaidRequest.getContributor());
+            verify(raidListenerService).createOrUpdate(handle.toString(), createRaidRequest.getContributor());
         }
     }
 
@@ -173,7 +173,7 @@ class RaidServiceTest {
         assertThat(result, Matchers.is(expected));
 
         verify(dataciteService).update(updateRequest, handle, repositoryId, password);
-        verify(raidListenerService).update("https://raid.org.au/"  + handle, updateRequest.getContributor(), expected.getContributor());
+        verify(raidListenerService).createOrUpdate("https://raid.org.au/"  + handle, updateRequest.getContributor());
     }
 
     @Test
