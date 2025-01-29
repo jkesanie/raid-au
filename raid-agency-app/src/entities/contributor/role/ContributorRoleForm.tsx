@@ -22,7 +22,7 @@ const ContributorRoleForm = memo(
           label="Role"
           placeholder="Role"
           required={true}
-          width={6}
+          width={12}
         />
       </Grid>
     );

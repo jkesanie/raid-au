@@ -23,7 +23,6 @@ import { useParams } from "react-router-dom";
 
 export const RaidDisplay = () => {
   const { keycloak, initialized } = useKeycloak();
-
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   const handle = `${prefix}/${suffix}`;
 
@@ -72,12 +71,10 @@ export const RaidDisplay = () => {
   return (
     <>
       <RaidDisplayMenu prefix={prefix} suffix={suffix} />
-
       <Container>
-        <Stack direction={"column"} spacing={2}>
+        <Stack direction="column" spacing={2}>
           <BreadcrumbsBar breadcrumbs={breadcrumbs} />
           <AnchorButtons raidData={raidData} />
-
           {displayItems.map(({ itemKey, Component, emptyValue }) => {
             const data =
               raidData[itemKey as keyof RaidDto] || (emptyValue as any);
@@ -87,7 +84,6 @@ export const RaidDisplay = () => {
               </Box>
             );
           })}
-
           <Box id="externalLinks" className="scroll">
             <ExternalLinksDisplay prefix={prefix} suffix={suffix} />
           </Box>

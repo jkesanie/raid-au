@@ -3,6 +3,10 @@ import { contributorRoleValidationSchema } from "@/entities/contributor/role/dat
 import { z } from "zod";
 
 const baseContributorSchema = z.object({
+  status: z.string().optional(),
+  email: z.string().optional(),
+  uuid: z.string().optional(),
+  id: z.string().optional(),
   leader: z.boolean(),
   contact: z.boolean(),
   schemaUri: z.literal("https://orcid.org/"),
