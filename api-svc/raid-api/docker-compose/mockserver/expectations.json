@@ -36,7 +36,7 @@
   {
     "httpRequest": {
       "method": "POST",
-      "path": "/raid-listener"
+      "path": "/raid-update"
     },
     "httpResponse": {
       "statusCode": 202,
