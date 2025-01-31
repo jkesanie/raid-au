@@ -20,6 +20,7 @@ import { Box, Container, Stack } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { MetadataDisplay } from "./components/MetadataDisplay";
 
 export const RaidDisplay = () => {
   const { keycloak, initialized } = useKeycloak();
@@ -75,6 +76,7 @@ export const RaidDisplay = () => {
         <Stack direction="column" spacing={2}>
           <BreadcrumbsBar breadcrumbs={breadcrumbs} />
           <AnchorButtons raidData={raidData} />
+          <MetadataDisplay metadata={raidData.metadata!} />
           {displayItems.map(({ itemKey, Component, emptyValue }) => {
             const data =
               raidData[itemKey as keyof RaidDto] || (emptyValue as any);

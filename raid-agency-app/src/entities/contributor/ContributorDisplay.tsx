@@ -3,6 +3,7 @@ import { DisplayItem } from "@/components/display-item";
 import ContributorPositionItem from "@/entities/contributor/position/ContributorPositionItem";
 import ContributorRoleItem from "@/entities/contributor/role/ContributorRoleItem";
 import { Contributor } from "@/generated/raid";
+import { fetchOrcidContributors } from "@/services/contributor";
 import {
   Button,
   Divider,
@@ -14,7 +15,47 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
 import { useParams } from "react-router-dom";
-import { fetchOrcidContributors } from "./service";
+
+function OrcidButton({
+  contributor,
+  orcidData,
+}: {
+  contributor: Contributor;
+  orcidData: any;
+}) {
+  const isAuthenticated =
+    orcidData &&
+    orcidData.hasOwnProperty("status") &&
+    orcidData.status === "AUTHENTICATED";
+
+  return (
+    <Button
+      variant="contained"
+      color="inherit"
+      href={contributor.id ? `https://sandbox.orcid.org/${contributor.id}` : ""}
+      target="_blank"
+      startIcon={
+        <img
+          src={
+            isAuthenticated
+              ? "/orcid-authenticated.svg"
+              : "/orcid-unauthenticated.svg"
+          }
+          alt={isAuthenticated ? "authenticated" : "unauthenticated"}
+          height={24}
+          width="auto"
+        />
+      }
+      sx={{ textTransform: "none" }}
+    >
+      {isAuthenticated
+        ? orcidData.name
+        : `${
+            orcidData?.email ? orcidData?.email : ""
+          } (awaiting authentication)`}
+    </Button>
+  );
+}
 
 const NoItemsMessage = memo(() => (
   <Typography variant="body2" color="text.secondary" textAlign="center">
@@ -32,60 +73,16 @@ const ContributorItem = memo(
     orcidData?: any;
     i: number;
   }) => {
-    console.log(orcidData);
     return (
       <Stack gap={2}>
         <Typography variant="body1">Contributor #{i + 1}</Typography>
 
         <Stack direction="row" alignItems="center" gap={1}>
-          {orcidData && orcidData.status && orcidData.status === "VERIFIED" ? (
-            <Button
-              href={
-                contributor.id
-                  ? `https://sandbox.orcid.org/${contributor.id}`
-                  : ""
-              }
-              target="_blank"
-              startIcon={
-                <img
-                  src="/orcid-authenticated.svg"
-                  alt="orcid-authenticated"
-                  height={24}
-                  width="auto"
-                />
-              }
-              sx={{ textTransform: "none" }}
-            >
-              {orcidData.name}
-            </Button>
-          ) : (
-            <>
-              <Button
-                startIcon={
-                  <img
-                    src="/orcid-unauthenticated.svg"
-                    alt="orcid-unauthenticated"
-                    height={24}
-                    width="auto"
-                  />
-                }
-                sx={{ textTransform: "none" }}
-              >
-                {orcidData?.email} (awaiting authentication)
-              </Button>
-            </>
-          )}
+          <OrcidButton contributor={contributor} orcidData={orcidData} />
         </Stack>
 
         <Grid container spacing={2}>
-          {orcidData && orcidData.name && (
-            <DisplayItem
-              label="Name"
-              value={orcidData ? orcidData.name : <Skeleton width={150} />}
-              width={6}
-            />
-          )}
-          {orcidData && orcidData.name && (
+          {orcidData && orcidData.orcid && (
             <DisplayItem
               label="ORCID"
               value={orcidData ? orcidData.orcid : <Skeleton width={150} />}
@@ -158,18 +155,32 @@ const ContributorItem = memo(
 
 const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
   const { prefix, suffix } = useParams<{ prefix: string; suffix: string }>();
-  const { data: orcidData, isError } = useQuery({
+  const orcidDataQuery = useQuery({
     queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
-    queryKey: ["contributors"],
+    queryKey: ["orcid-contributors"],
   });
 
-  if (isError) {
+  if (orcidDataQuery.isPending) {
+    return <Skeleton variant="rectangular" height={200} />;
+  }
+
+  if (orcidDataQuery.isError) {
     return (
       <Typography variant="body1" color="error" textAlign="center">
         Error loading contributor details
       </Typography>
     );
   }
+
+  const orcidData = orcidDataQuery.data;
+
+  const fetchCurrentOrcidData = ({
+    contributor,
+  }: {
+    contributor: Contributor;
+  }) => {
+    return orcidData?.find((orcid: any) => orcid.uuid === contributor.uuid);
+  };
 
   return (
     <DisplayCard data={data} labelPlural="Contributors">
@@ -180,10 +191,8 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
           {data?.map((contributor, i) => (
             <ContributorItem
               contributor={contributor}
-              orcidData={orcidData?.find(
-                (orcid: any) => orcid.uuid === contributor.uuid
-              )}
-              key={crypto.randomUUID()}
+              orcidData={fetchCurrentOrcidData({ contributor })}
+              key={contributor.id}
               i={i}
             />
           ))}

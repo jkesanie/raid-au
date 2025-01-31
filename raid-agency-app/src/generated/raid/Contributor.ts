@@ -2,13 +2,13 @@ import type { ContributorPosition } from './ContributorPosition';
 import type { ContributorRole } from './ContributorRole';
 
 export interface Contributor {
-    id: string;
-    schemaUri: string;
-    status?: string;
+    contact?: boolean;
     email?: string;
-    uuid?: string;
+    id: string;
+    leader?: boolean;
     position: Array<ContributorPosition>;
     role: Array<ContributorRole>;
-    leader?: boolean;
-    contact?: boolean;
+    schemaUri: string;
+    status?: string;
+    uuid?: string;
 }
