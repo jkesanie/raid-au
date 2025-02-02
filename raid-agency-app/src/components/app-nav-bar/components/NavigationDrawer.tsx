@@ -2,6 +2,7 @@ import { useAuthHelper } from "@/keycloak";
 import {
   Add as AddIcon,
   ExitToApp as ExitToAppIcon,
+  GroupWork as GroupWorkIcon,
   Home as HomeIcon,
   Hub as HubIcon,
   Key as KeyIcon,
@@ -22,7 +23,7 @@ import {
 } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function MainSidebarMenu() {
   return (
@@ -164,6 +165,29 @@ function ActionsSidebarMenu() {
   );
 }
 
+function InviteSidebarMenu() {
+  const { keycloak } = useKeycloak();
+  return (
+    <List subheader={<ListSubheader component="div">Invite</ListSubheader>}>
+      {[
+        {
+          label: "Your received invites",
+          link: "/invites",
+          icon: <GroupWorkIcon />,
+          hidden: false,
+        },
+      ].map((link) => (
+        <ListItem key={link.link} disablePadding>
+          <ListItemButton component={Link} to={link.link}>
+            <ListItemIcon>{link.icon}</ListItemIcon>
+            <ListItemText primary={link.label} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
+}
+
 export default function NavigationDrawer() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -187,6 +211,7 @@ export default function NavigationDrawer() {
         <RaidSidebarMenu />
         <ServicepointSidebarMenu />
         <ApiKeySidebarMenu />
+        <InviteSidebarMenu />
         <ActionsSidebarMenu />
       </Drawer>
     </>

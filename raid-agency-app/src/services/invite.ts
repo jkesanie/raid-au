@@ -20,3 +20,14 @@ export async function sendInvite({
   });
   return await response.json();
 }
+
+export async function fetchInvites({ token }: { token: string }) {
+  const response = await fetch("https://orcid.test.raid.org.au/invite/fetch", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return await response.json();
+}
