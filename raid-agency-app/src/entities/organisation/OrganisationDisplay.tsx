@@ -2,16 +2,8 @@ import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
 import OrganisationRoleItem from "@/entities/organisation/role/OrganisationRoleItem";
 import type { Organisation } from "@/generated/raid";
-import {
-  Divider,
-  Grid,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { memo } from "react";
-import { CloudDownload as CloudDownloadIcon } from "@mui/icons-material";
+import { Divider, Grid, Stack, Typography } from "@mui/material";
+import { memo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const fetchOrgData = async (id: string) => {
@@ -39,65 +31,27 @@ const NoItemsMessage = memo(() => (
 
 const OrganisationItem = memo(
   ({
-    organisation,
     i,
+    organisation,
     organisationName,
   }: {
-    organisation: Organisation;
     i: number;
+    organisation: Organisation;
     organisationName?: string | null;
   }) => {
-    const queryClient = useQueryClient();
-
-    const { mutate: downloadOrg } = useMutation({
-      mutationFn: fetchOrgData,
-      onSuccess: (data, id) => {
-        const currentNames =
-          queryClient.getQueryData<Map<string, string>>([
-            "organisationNames",
-          ]) || new Map();
-        const newNames = new Map(currentNames);
-
-        if (!newNames.has(id)) {
-          const displayName = data.names.find((name: any) =>
-            name.types.includes("ror_display")
-          ).value;
-          newNames.set(id, displayName);
-          localStorage.setItem(
-            "organisationNames",
-            JSON.stringify([...newNames])
-          );
-          queryClient.setQueryData(["organisationNames"], newNames);
-        }
-      },
-    });
-
     return (
       <Stack gap={2}>
-        <Typography variant="body1">Organisation #{i + 1}</Typography>
+        <Typography variant="h6">
+          {organisationName ? organisationName : `Organisation #{${i + 1}}`}
+        </Typography>
         <Grid container spacing={2}>
-          {(organisationName && (
+          <Grid item xs={12} sm={12}>
             <DisplayItem
-              label="Organisation Name"
-              value={organisationName}
+              label="Organisation ID"
+              value={organisation.id}
               width={6}
             />
-          )) || (
-            <Grid item xs={12} sm={12}>
-              <Stack direction="row" alignItems="center" width="100%" gap={2}>
-                <DisplayItem
-                  label="Organisation ID"
-                  value={organisation.id}
-                  width={6}
-                />
-                <Tooltip title="Download organisation data to local cache" placement="top">
-                  <IconButton onClick={() => downloadOrg(organisation.id)}>
-                    <CloudDownloadIcon />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-            </Grid>
-          )}
+          </Grid>
         </Grid>
         <Stack sx={{ pl: 3 }} gap={1}>
           <Stack direction="row" alignItems="baseline">
@@ -105,12 +59,12 @@ const OrganisationItem = memo(
               Roles
             </Typography>
             <Typography variant="caption" color="text.disabled">
-              Organisation #{i + 1}
+              {organisationName ? organisationName : `Organisation #{${i + 1}}`}
             </Typography>
           </Stack>
           <Stack gap={2} divider={<Divider />}>
-            {organisation.role.map((role) => (
-              <OrganisationRoleItem key={crypto.randomUUID()} item={role} />
+            {organisation.role.map((role, i) => (
+              <OrganisationRoleItem key={organisation.id || i} item={role} />
             ))}
           </Stack>
         </Stack>
@@ -121,6 +75,47 @@ const OrganisationItem = memo(
 
 const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
   const { data: organisationNames } = useOrganisationNames();
+  const queryClient = useQueryClient();
+
+  const { mutate: downloadAllOrgs } = useMutation({
+    mutationFn: async (organisations: Organisation[]) => {
+      // Only fetch for organizations not in cache
+      const results = await Promise.all(
+        organisations.map((org) => fetchOrgData(org.id))
+      );
+      return results;
+    },
+    onSuccess: (data, organisations) => {
+      const currentNames =
+        queryClient.getQueryData<Map<string, string>>(["organisationNames"]) ||
+        new Map();
+      const newNames = new Map(currentNames);
+
+      data.forEach((orgData, index) => {
+        const orgId = organisations[index].id;
+        const displayName = orgData.names.find((name: any) =>
+          name.types.includes("ror_display")
+        ).value;
+        newNames.set(orgId, displayName);
+      });
+
+      localStorage.setItem("organisationNames", JSON.stringify([...newNames]));
+      queryClient.setQueryData(["organisationNames"], newNames);
+    },
+  });
+
+  useEffect(() => {
+    if (data.length > 0 && organisationNames) {
+      // Filter out organisations that are already in the cache
+      const orgsToDownload = data.filter(
+        (org) => !organisationNames.has(org.id)
+      );
+
+      if (orgsToDownload.length > 0) {
+        downloadAllOrgs(orgsToDownload);
+      }
+    }
+  }, [data, organisationNames, downloadAllOrgs]);
 
   return (
     <DisplayCard
@@ -132,9 +127,9 @@ const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
           <Stack gap={2} divider={<Divider />}>
             {data?.map((organisation, i) => (
               <OrganisationItem
-                organisation={organisation}
-                key={crypto.randomUUID()}
                 i={i}
+                key={organisation.id || i}
+                organisation={organisation}
                 organisationName={organisationNames?.get(organisation.id)}
               />
             ))}

@@ -1,14 +1,27 @@
 import OrganisationLookupButton from "@/components/organisation-lookup/OrganisationLookupButton";
 import OrganisationLookupDialog from "@/components/organisation-lookup/OrganisationLookupDialog";
 import { TextInputField } from "@/fields/TextInputField";
-import { Button, Grid, Stack } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { memo, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 const OrganisationForm = memo(({ index }: { index: number }) => {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const { setValue } = useFormContext();
+  const { setValue, getValues } = useFormContext();
+
+  const useOrganisationNames = () => {
+    return useQuery({
+      queryKey: ["organisationNames"],
+      queryFn: () => {
+        const stored = localStorage.getItem("organisationNames");
+        return stored ? new Map(JSON.parse(stored)) : new Map();
+      },
+    });
+  };
+
+  const { data: organisationNames } = useOrganisationNames();
 
   useEffect(() => {
     if (selectedValue) {
@@ -20,6 +33,10 @@ const OrganisationForm = memo(({ index }: { index: number }) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={12}>
+        <Typography variant="subtitle2" gutterBottom>
+          Current value:{" "}
+          {organisationNames?.get(getValues(`organisation.${index}.id`))}
+        </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <TextInputField
             name={`organisation.${index}.id`}

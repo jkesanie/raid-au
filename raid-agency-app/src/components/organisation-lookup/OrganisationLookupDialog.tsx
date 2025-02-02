@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  IconButton,
   List,
   ListItemButton,
   ListItemText,
@@ -11,6 +12,7 @@ import {
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { Search as SearchIcon } from "@mui/icons-material";
 
 const searchAPI = async (query: string) => {
   const response = await fetch(
@@ -63,7 +65,7 @@ export default function OrganisationLookupDialog({
 
       <DialogContent>
         <form onSubmit={handleSearch}>
-          <Stack gap={2} alignItems={"flex-start"} direction={"row"}>
+          <Stack gap={2} alignItems="center" direction="row">
             <TextField
               label="Search"
               placeholder="Search for an organisation / city"
@@ -73,9 +75,9 @@ export default function OrganisationLookupDialog({
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <Button type="submit" disabled={searchMutation.isPending}>
-              {searchMutation.isPending ? "Searching..." : "Search"}
-            </Button>
+            <IconButton type="submit" disabled={searchMutation.isPending}>
+              <SearchIcon />
+            </IconButton>
           </Stack>
         </form>
         <List>
