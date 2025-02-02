@@ -192,7 +192,7 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
             <ContributorItem
               contributor={contributor}
               orcidData={fetchCurrentOrcidData({ contributor })}
-              key={contributor.id}
+              key={contributor.id || i}
               i={i}
             />
           ))}
