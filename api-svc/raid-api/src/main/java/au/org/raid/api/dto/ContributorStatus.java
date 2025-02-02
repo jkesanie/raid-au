@@ -3,6 +3,6 @@ package au.org.raid.api.dto;
 public enum ContributorStatus {
     AUTHENTICATED,
     UNAUTHENTICATED,
-    PENDING_AUTHENTICATION,
+    AWAITING_AUTHENTICATION,
     AUTHENTICATION_FAILED,
 }

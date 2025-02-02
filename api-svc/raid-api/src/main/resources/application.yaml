@@ -4,7 +4,7 @@ raid:
     raid-listener:
       uri: ${raid.orcid-integration.host}/raid-update
     contributor-lookup:
-      uri: ${raid.orcid-integration.host}/contributors
+      uri: ${raid.orcid-integration.host}/find-contributor-by-email
   stub:
     geo-names:
       enabled: true

@@ -45,7 +45,7 @@ public class RaidListenerService {
                     }
                 } else {
                     contributor.uuid(UUID.randomUUID().toString())
-                            .status(ContributorStatus.PENDING_AUTHENTICATION.name())
+                            .status(ContributorStatus.AWAITING_AUTHENTICATION.name())
                             .id(null);
                     final var message = raidListenerMessageFactory.create(
                             handle,
