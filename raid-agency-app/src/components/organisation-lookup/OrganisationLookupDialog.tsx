@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { useSnackbar } from "../snackbar";
 
 const searchAPI = async (query: string) => {
   const response = await fetch(
@@ -20,7 +19,7 @@ const searchAPI = async (query: string) => {
   return response.json();
 };
 
-export default function OrganisationQueryDialog({
+export default function OrganisationLookupDialog({
   open,
   setOpen,
   setSelectedValue,
@@ -30,7 +29,6 @@ export default function OrganisationQueryDialog({
   setSelectedValue: (value: string | null) => void;
 }) {
   const [query, setQuery] = useState("");
-  const { openSnackbar } = useSnackbar();
   const searchMutation = useMutation({
     mutationFn: searchAPI,
     onError: (error) => {
@@ -45,8 +43,6 @@ export default function OrganisationQueryDialog({
   };
 
   const handleListItemClick = (item: any) => {
-    navigator.clipboard.writeText(item.id || "");
-    openSnackbar("✅ ROR ID copied to clipboard", 1000);
     setOpen(false);
     setSelectedValue(item.id);
   };
@@ -63,13 +59,14 @@ export default function OrganisationQueryDialog({
         },
       }}
     >
-      <DialogTitle>Search for ROR</DialogTitle>
+      <DialogTitle>Lookup ROR by name</DialogTitle>
 
       <DialogContent>
         <form onSubmit={handleSearch}>
-          <Stack gap={2}>
+          <Stack gap={2} alignItems={"flex-start"} direction={"row"}>
             <TextField
               label="Search"
+              placeholder="Search for an organisation / city"
               size="small"
               variant="filled"
               fullWidth
@@ -82,21 +79,23 @@ export default function OrganisationQueryDialog({
           </Stack>
         </form>
         <List>
-          {searchMutation.data?.items?.map((item: any, index: number) => {
-            return (
-              <ListItemButton
-                key={index}
-                onClick={() => handleListItemClick(item)}
-              >
-                <ListItemText
-                  primary={item.name}
-                  secondary={`${item.country.country_name} |  ${
-                    item?.links && item.links.length > 0 ? item.links[0] : ""
-                  }`}
-                />
-              </ListItemButton>
-            );
-          })}
+          {searchMutation.data?.items
+            ?.sort((a: any, b: any) => a.name.localeCompare(b.name))
+            .map((item: any, index: number) => {
+              return (
+                <ListItemButton
+                  key={index}
+                  onClick={() => handleListItemClick(item)}
+                >
+                  <ListItemText
+                    primary={item.name}
+                    secondary={`${item.country.country_name} | ${
+                      item?.links && item.links.length > 0 ? item.links[0] : ""
+                    }`}
+                  />
+                </ListItemButton>
+              );
+            })}
         </List>
       </DialogContent>
     </Dialog>

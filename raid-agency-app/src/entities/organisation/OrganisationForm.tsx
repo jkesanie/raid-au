@@ -1,5 +1,5 @@
-import OrganisationQueryButton from "@/components/organisation-query/OrganisationQueryButton";
-import OrganisationQueryDialog from "@/components/organisation-query/OrganisationQueryDialog";
+import OrganisationLookupButton from "@/components/organisation-lookup/OrganisationLookupButton";
+import OrganisationLookupDialog from "@/components/organisation-lookup/OrganisationLookupDialog";
 import { TextInputField } from "@/fields/TextInputField";
 import { Button, Grid, Stack } from "@mui/material";
 import { memo, useEffect, useState } from "react";
@@ -28,10 +28,10 @@ const OrganisationForm = memo(({ index }: { index: number }) => {
             required={true}
             width={6}
           />
-          <OrganisationQueryButton setOpen={setOpen} />
+          <OrganisationLookupButton setOpen={setOpen} />
         </Stack>
       </Grid>
-      <OrganisationQueryDialog
+      <OrganisationLookupDialog
         open={open}
         setOpen={setOpen}
         setSelectedValue={setSelectedValue}

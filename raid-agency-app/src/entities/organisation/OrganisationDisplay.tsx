@@ -90,7 +90,7 @@ const OrganisationItem = memo(
                   value={organisation.id}
                   width={6}
                 />
-                <Tooltip title="Download organisation data to local cache">
+                <Tooltip title="Download organisation data to local cache" placement="top">
                   <IconButton onClick={() => downloadOrg(organisation.id)}>
                     <CloudDownloadIcon />
                   </IconButton>
