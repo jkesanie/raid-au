@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -81,11 +82,15 @@ export default function OrganisationLookupDialog({
                 onChange={(e) => setQuery(e.target.value)}
               />
               <IconButton type="submit" disabled={searchMutation.isPending}>
-                <SearchIcon />
+                {searchMutation.isPending ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <SearchIcon />
+                )}
               </IconButton>
             </Stack>
           </form>
-          {!searchMutation.data && (
+          {!searchMutation.data && !searchMutation.isPending && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="subtitle2">Examples: </Typography>
               <Stack direction="row" gap={1}>
@@ -123,60 +128,69 @@ export default function OrganisationLookupDialog({
             </Box>
           )}
         </Stack>
-        <List>
-          {Object.entries(
-            searchMutation.data?.items?.reduce(
-              (acc: Record<string, any[]>, item: any) => {
-                const countryName = item.country.country_name;
-                if (!acc[countryName]) {
-                  acc[countryName] = [];
-                }
-                acc[countryName].push(item);
-                return acc;
-              },
-              {}
-            ) || {}
-          )
-            .sort(([countryA], [countryB]) => countryA.localeCompare(countryB))
-            .map((value: [string, unknown]) => {
-              const countryName = value[0];
-              const items = value[1] as any[];
-              return (
-                <div key={countryName}>
-                  <ListSubheader
-                    sx={{
-                      backgroundColor: "white",
-                      position: "sticky",
-                      top: "0px",
-                      zIndex: 1,
-                      fontWeight: "bold",
-                      bgcolor: "primary.light",
-                      opacity: 1,
-                    }}
-                  >
-                    {countryName}
-                  </ListSubheader>
-                  {items
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((item, index) => (
-                      <ListItemButton
-                        key={`${countryName}-${index}`}
-                        onClick={() => handleListItemClick(item)}
-                      >
-                        <ListItemText
-                          primary={item.name}
-                          secondary={
-                            item?.links && item.links.length > 0
-                              ? item.links[0]
-                              : ""
-                          }
-                        />
-                      </ListItemButton>
-                    ))}
-                </div>
-              );
-            })}
-        </List>
+
+        {searchMutation.isPending ? (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <List>
+            {Object.entries(
+              searchMutation.data?.items?.reduce(
+                (acc: Record<string, any[]>, item: any) => {
+                  const countryName = item.country.country_name;
+                  if (!acc[countryName]) {
+                    acc[countryName] = [];
+                  }
+                  acc[countryName].push(item);
+                  return acc;
+                },
+                {}
+              ) || {}
+            )
+              .sort(([countryA], [countryB]) =>
+                countryA.localeCompare(countryB)
+              )
+              .map((value: [string, unknown]) => {
+                const countryName = value[0];
+                const items = value[1] as any[];
+                return (
+                  <div key={countryName}>
+                    <ListSubheader
+                      sx={{
+                        backgroundColor: "white",
+                        position: "sticky",
+                        top: "0px",
+                        zIndex: 1,
+                        fontWeight: "bold",
+                        bgcolor: "primary.light",
+                        opacity: 1,
+                      }}
+                    >
+                      {countryName}
+                    </ListSubheader>
+                    {items
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((item, index) => (
+                        <ListItemButton
+                          key={`${countryName}-${index}`}
+                          onClick={() => handleListItemClick(item)}
+                        >
+                          <ListItemText
+                            primary={item.name}
+                            secondary={
+                              item?.links && item.links.length > 0
+                                ? item.links[0]
+                                : ""
+                            }
+                          />
+                        </ListItemButton>
+                      ))}
+                  </div>
+                );
+              })}
+          </List>
+        )}
       </DialogContent>
     </Dialog>
   );

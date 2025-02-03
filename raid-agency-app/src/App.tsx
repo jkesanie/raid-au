@@ -1,6 +1,8 @@
 import { SnackbarProvider } from "@/components/snackbar";
 import { ReactErrorBoundary } from "@/error/ReactErrorBoundary";
 import { MappingProvider } from "@/mapping";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Box,
   createTheme,
@@ -75,8 +77,10 @@ export function App() {
               <SnackbarProvider>
                 <QueryClientProvider client={queryClient}>
                   <ReactErrorBoundary>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <Box sx={{ pt: 3 }}></Box>
                     <Outlet />
+                    </LocalizationProvider>
                   </ReactErrorBoundary>
                 </QueryClientProvider>
               </SnackbarProvider>
