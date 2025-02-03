@@ -27,7 +27,7 @@ public class RaidListenerService {
                     if (lookupResponse.getOrcidStatus().equalsIgnoreCase("AUTHENTICATED")) {
                         contributor.uuid(lookupResponse.getUuid())
                                 .status(lookupResponse.getOrcidStatus())
-                                .id("https://orcid.org/%s".formatted(lookupResponse.getOrcidData().getOrcid()));
+                                .id("https://orcid.org/%s".formatted(lookupResponse.getOrcid().getOrcid()));
 
                         contributor.setEmail(null);
                     } else {

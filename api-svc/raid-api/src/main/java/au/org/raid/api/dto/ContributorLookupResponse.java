@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class ContributorLookupResponse {
     private String uuid;
     private String orcidStatus;
-    private OrcidData orcidData;
+    private OrcidData orcid;
 }

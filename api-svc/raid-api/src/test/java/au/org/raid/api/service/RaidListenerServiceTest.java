@@ -46,7 +46,7 @@ class RaidListenerServiceTest {
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
                 .orcidStatus("AUTHENTICATED")
                 .uuid(TEST_UUID)
-                .orcidData(OrcidData.builder().orcid(TEST_ORCID).build())
+                .orcid(OrcidData.builder().orcid(TEST_ORCID).build())
                 .build();
 
         when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
