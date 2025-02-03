@@ -24,15 +24,15 @@ public class RaidListenerService {
                 if (response.isPresent()) {
                     final var lookupResponse = response.get();
 
-                    if (lookupResponse.getStatus().equalsIgnoreCase("AUTHENTICATED")) {
+                    if (lookupResponse.getOrcidStatus().equalsIgnoreCase("AUTHENTICATED")) {
                         contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getStatus())
-                                .id("https://orcid.org/%s".formatted(lookupResponse.getOrcid()));
+                                .status(lookupResponse.getOrcidStatus())
+                                .id("https://orcid.org/%s".formatted(lookupResponse.getOrcidData().getOrcid()));
 
                         contributor.setEmail(null);
                     } else {
                         contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getStatus())
+                                .status(lookupResponse.getOrcidStatus())
                                 .id(null);
 
                         final var message = raidListenerMessageFactory.create(

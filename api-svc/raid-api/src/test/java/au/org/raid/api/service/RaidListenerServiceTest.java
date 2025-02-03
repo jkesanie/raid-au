@@ -2,6 +2,7 @@ package au.org.raid.api.service;
 
 import au.org.raid.api.dto.ContributorLookupResponse;
 import au.org.raid.api.dto.ContributorStatus;
+import au.org.raid.api.dto.OrcidData;
 import au.org.raid.api.dto.RaidListenerMessage;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
 import au.org.raid.idl.raidv2.model.Contributor;
@@ -43,9 +44,9 @@ class RaidListenerServiceTest {
         // Arrange
         Contributor contributor = new Contributor().email(TEST_EMAIL);
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
-                .status("AUTHENTICATED")
+                .orcidStatus("AUTHENTICATED")
                 .uuid(TEST_UUID)
-                .orcid(TEST_ORCID)
+                .orcidData(OrcidData.builder().orcid(TEST_ORCID).build())
                 .build();
 
         when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
@@ -74,7 +75,7 @@ class RaidListenerServiceTest {
                 .contributor(contributor)
                 .build();
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
-                .status("PENDING")
+                .orcidStatus("PENDING")
                 .uuid(TEST_UUID)
                 .build();
 
@@ -134,9 +135,9 @@ class RaidListenerServiceTest {
                 .build();
 
         ContributorLookupResponse lookupResponse1 = ContributorLookupResponse.builder()
-                .status("AUTHENTICATED")
+                .orcidStatus("AUTHENTICATED")
                 .uuid(UUID.randomUUID().toString())
-                .orcid(TEST_ORCID)
+                .orcidData(OrcidData.builder().orcid(TEST_ORCID).build())
                 .build();
 
         when(orcidIntegrationClient.get("test1@example.com")).thenReturn(Optional.of(lookupResponse1));

@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ContributorLookupResponse {
-    private String uuid;
-    private String orcidStatus;
-    private OrcidData orcidData;
+public class OrcidData {
+    private String orcid;
 }
