@@ -65,53 +65,54 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/swagger-ui*/**").permitAll()
-                        .requestMatchers("/docs/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/error").permitAll()
+                        authorizeHttpRequests
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers("/swagger-ui*/**").permitAll()
+                                .requestMatchers("/docs/**").permitAll()
+                                .requestMatchers("/actuator/**").permitAll()
+                                .requestMatchers("/error").permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/", "GET"))
 //                        //TODO: Any service point user but embargoed raids should only be visible to service point
 //                        // owners or raid users/admins with permissions for the raid
 //                        .access(AuthorizationManagers.anyOf(
 //                                hasAnyRole(SERVICE_POINT_USER_ROLE, RAID_ADMIN_ROLE)
 //                        ))
-                        //TODO: Available to any user on same service point unless embargoed then on service-point-owner
-                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/all-public", "GET"))
-                        .hasRole(RAID_DUMPER_ROLE)
-                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "GET"))
-                        .access(AuthorizationManagers.anyOf(
-                                anyServicePointUserUnlessEmbargoed(),
-                                servicePointOwner(),
-                                hasRaidPermissions(RAID_ADMIN_ROLE, ADMIN_RAIDS_CLAIM),
-                                hasRaidPermissions(RAID_USER_ROLE, USER_RAIDS_CLAIM),
-                                hasPidSearcherRoleIfPidSearch()
+                                //TODO: Available to any user on same service point unless embargoed then on service-point-owner
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/all-public", "GET"))
+                                .hasRole(RAID_DUMPER_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "GET"))
+                                .access(AuthorizationManagers.anyOf(
+                                        anyServicePointUserUnlessEmbargoed(),
+                                        servicePointOwner(),
+                                        hasRaidPermissions(RAID_ADMIN_ROLE, ADMIN_RAIDS_CLAIM),
+                                        hasRaidPermissions(RAID_USER_ROLE, USER_RAIDS_CLAIM),
+                                        hasPidSearcherRoleIfPidSearch(),
+                                        isContributorWriter()
                                 ))
-                         .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "POST"))
-                        .hasAnyRole(SERVICE_POINT_USER_ROLE, RAID_ADMIN_ROLE)
-                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "PUT"))
-                        .access(AuthorizationManagers.anyOf(
-                                servicePointOwner(),
-                                hasRaidPermissions(RAID_ADMIN_ROLE, ADMIN_RAIDS_CLAIM),
-                                hasRaidPermissions(RAID_USER_ROLE, USER_RAIDS_CLAIM)
-                        ))
-                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "PATCH"))
-                        .access(AuthorizationManagers.anyOf(
-                                hasRole(CONTRIBUTOR_WRITER_ROLE),
-                                servicePointOwner()
-                        ))
-                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "POST"))
-                        .hasAnyRole(RAID_ADMIN_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "POST"))
+                                .hasAnyRole(SERVICE_POINT_USER_ROLE, RAID_ADMIN_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "PUT"))
+                                .access(AuthorizationManagers.anyOf(
+                                        servicePointOwner(),
+                                        hasRaidPermissions(RAID_ADMIN_ROLE, ADMIN_RAIDS_CLAIM),
+                                        hasRaidPermissions(RAID_USER_ROLE, USER_RAIDS_CLAIM)
+                                ))
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "PATCH"))
+                                .access(AuthorizationManagers.anyOf(
+                                        hasRole(CONTRIBUTOR_WRITER_ROLE),
+                                        servicePointOwner()
+                                ))
+                                .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "POST"))
+                                .hasAnyRole(RAID_ADMIN_ROLE)
 //                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**"))
 //                        .hasRole(SERVICE_POINT_USER_ROLE)
-                        .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "PUT"))
-                        .hasRole(OPERATOR_ROLE)
-                        .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "POST"))
-                        .hasRole(OPERATOR_ROLE)
-                        .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "GET"))
-                        .hasAnyRole(SERVICE_POINT_USER_ROLE, OPERATOR_ROLE)
-                        .anyRequest().denyAll()
+                                .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "PUT"))
+                                .hasRole(OPERATOR_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "POST"))
+                                .hasRole(OPERATOR_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "GET"))
+                                .hasAnyRole(SERVICE_POINT_USER_ROLE, OPERATOR_ROLE)
+                                .anyRequest().denyAll()
         );
         http.oauth2ResourceServer((oauth2) -> oauth2
                 .jwt(Customizer.withDefaults()));
@@ -245,7 +246,16 @@ public class SecurityConfig {
         };
     }
 
-    private AuthorizationManager<RequestAuthorizationContext> anyServicePointUserUnlessEmbargoed() {
+    private AuthorizationManager<RequestAuthorizationContext> isContributorWriter() {
+        return (authentication, context) -> {
+            final var token = getToken();
+
+            return new AuthorizationDecision(tokenContainsRole(token, CONTRIBUTOR_WRITER_ROLE));
+        };
+    }
+
+
+        private AuthorizationManager<RequestAuthorizationContext> anyServicePointUserUnlessEmbargoed() {
         return (authentication, context) -> {
             if (isPidSearch(context)) {
                 return new AuthorizationDecision(false);
