@@ -1,5 +1,16 @@
-import { InfoOutlined as InfoOutlinedIcon } from "@mui/icons-material";
-import { Box, Grid, Stack, Theme, Tooltip, Typography } from "@mui/material";
+import {
+  InfoOutlined as InfoOutlinedIcon,
+  Link as LinkIcon,
+} from "@mui/icons-material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  Stack,
+  Theme,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { darken, lighten } from "@mui/material/styles";
 import React, { memo } from "react";
 import Markdown from "react-markdown";
@@ -59,15 +70,15 @@ export const DisplayItem = memo(
         }
       : {};
 
-    return (
-      <Grid item xs={12} sm={width}>
-        <Box
-          sx={{
-            ...boxStyles,
-            backgroundColor: getBackgroundColor,
-          }}
-        >
-          <Stack direction="row" alignItems="start" gap={0.5}>
+    if (link) {
+      return (
+        <Grid item xs={12} sm={width}>
+          <Box
+            sx={{
+              ...boxStyles,
+              backgroundColor: getBackgroundColor,
+            }}
+          >
             <Typography
               variant="body2"
               color="text.secondary"
@@ -75,39 +86,87 @@ export const DisplayItem = memo(
             >
               {label}
             </Typography>
-            {tooltip && (
-              <Tooltip title={tooltip || ""} placement="top">
-                <InfoOutlinedIcon
-                  fontSize="small"
-                  sx={{
-                    fontSize: 12,
-                  }}
-                />
-              </Tooltip>
-            )}
-          </Stack>
-          {!multiline && (
-            <Typography
-              variant="body1"
-              sx={typographyStyles}
-              component={Component}
-              {...linkProps}
-              data-testid={testid}
-            >
-              {value ?? ""}
-            </Typography>
-          )}
 
-          {multiline && (
-            <Typography variant="body2" component={Component} {...linkProps}>
-              <Markdown data-testid={testid}>
-                {value?.toString() ?? ""}
-              </Markdown>
-            </Typography>
-          )}
-        </Box>
-      </Grid>
-    );
+            <Stack direction="row" alignItems="start" gap={0.5}>
+              <Tooltip title="Open link" placement="left">
+                <Link
+                  to={link}
+                  style={{ textDecoration: "none" }}
+                  {...linkProps}
+                >
+                  <IconButton
+                    size="small"
+                    sx={{
+                      padding: 0,
+                      marginRight: 1,
+                    }}
+                  >
+                    <LinkIcon fontSize="small" />
+                  </IconButton>
+                </Link>
+              </Tooltip>
+              <Typography
+                variant="body1"
+                sx={typographyStyles}
+                data-testid={testid}
+              >
+                {value ?? ""}
+              </Typography>
+            </Stack>
+          </Box>
+        </Grid>
+      );
+    } else {
+      return (
+        <Grid item xs={12} sm={width}>
+          <Box
+            sx={{
+              ...boxStyles,
+              backgroundColor: getBackgroundColor,
+            }}
+          >
+            <Stack direction="row" alignItems="start" gap={0.5}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: 12 }}
+              >
+                {label}
+              </Typography>
+              {tooltip && (
+                <Tooltip title={tooltip || ""} placement="top">
+                  <InfoOutlinedIcon
+                    fontSize="small"
+                    sx={{
+                      fontSize: 12,
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </Stack>
+            {!multiline && (
+              <Typography
+                variant="body1"
+                sx={typographyStyles}
+                component={Component}
+                {...linkProps}
+                data-testid={testid}
+              >
+                {value ?? ""}
+              </Typography>
+            )}
+
+            {multiline && (
+              <Typography variant="body2" component={Component} {...linkProps}>
+                <Markdown data-testid={testid}>
+                  {value?.toString() ?? ""}
+                </Markdown>
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+      );
+    }
   }
 );
 
