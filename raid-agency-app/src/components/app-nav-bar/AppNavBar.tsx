@@ -1,3 +1,4 @@
+import raidConfig from "@/../raid.config.json";
 import { Home as HomeIcon } from "@mui/icons-material";
 import {
   AppBar,
@@ -8,18 +9,15 @@ import {
   Toolbar,
   useTheme,
 } from "@mui/material";
-import React from "react";
 import { Link } from "react-router-dom";
 import { ServicePointSwitcher } from "../service-point-switcher";
 import NavigationDrawer from "./components/NavigationDrawer";
 import UserDropdown from "./components/UserDropdown";
-import raidConfig from "@/../raid.config.json";
 
 const AuthenticatedNavbarContent = () => {
   return (
-    <React.Fragment>
+    <Stack direction="row" alignItems="center" gap={1}>
       <ServicePointSwitcher />
-
       <UserDropdown />
       <Chip
         label={import.meta.env.VITE_RAIDO_ENV.toUpperCase()}
@@ -29,7 +27,7 @@ const AuthenticatedNavbarContent = () => {
         title={`Version: ${raidConfig.version}`}
       />
       <NavigationDrawer />
-    </React.Fragment>
+    </Stack>
   );
 };
 
