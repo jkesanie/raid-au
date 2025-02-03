@@ -25,13 +25,13 @@ public class RaidListenerService {
                     final var lookupResponse = response.get();
 
                     if (lookupResponse.getStatus().equalsIgnoreCase("AUTHENTICATED")) {
-                        contributor.uuid(lookupResponse.getContributorUuid())
+                        contributor.uuid(lookupResponse.getUuid())
                                 .status(lookupResponse.getStatus())
                                 .id("https://orcid.org/%s".formatted(lookupResponse.getOrcid()));
 
                         contributor.setEmail(null);
                     } else {
-                        contributor.uuid(lookupResponse.getContributorUuid())
+                        contributor.uuid(lookupResponse.getUuid())
                                 .status(lookupResponse.getStatus())
                                 .id(null);
 

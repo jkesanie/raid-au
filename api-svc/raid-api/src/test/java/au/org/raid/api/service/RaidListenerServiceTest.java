@@ -44,7 +44,7 @@ class RaidListenerServiceTest {
         Contributor contributor = new Contributor().email(TEST_EMAIL);
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
                 .status("AUTHENTICATED")
-                .contributorUuid(TEST_UUID)
+                .uuid(TEST_UUID)
                 .orcid(TEST_ORCID)
                 .build();
 
@@ -75,7 +75,7 @@ class RaidListenerServiceTest {
                 .build();
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
                 .status("PENDING")
-                .contributorUuid(TEST_UUID)
+                .uuid(TEST_UUID)
                 .build();
 
         when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
@@ -117,7 +117,7 @@ class RaidListenerServiceTest {
 
         assert contributor.getId() == null;
         assert contributor.getUuid() != null;
-        assert contributor.getStatus().equals(ContributorStatus.PENDING_AUTHENTICATION.name());
+        assert contributor.getStatus().equals(ContributorStatus.AWAITING_AUTHENTICATION.name());
         assert contributor.getEmail() == null;
     }
 
@@ -135,7 +135,7 @@ class RaidListenerServiceTest {
 
         ContributorLookupResponse lookupResponse1 = ContributorLookupResponse.builder()
                 .status("AUTHENTICATED")
-                .contributorUuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID().toString())
                 .orcid(TEST_ORCID)
                 .build();
 
@@ -153,6 +153,6 @@ class RaidListenerServiceTest {
 
         assert contributor1.getId().equals("https://orcid.org/" + TEST_ORCID);
         assert contributor2.getId() == null;
-        assert contributor2.getStatus().equals(ContributorStatus.PENDING_AUTHENTICATION.name());
+        assert contributor2.getStatus().equals(ContributorStatus.AWAITING_AUTHENTICATION.name());
     }
 }

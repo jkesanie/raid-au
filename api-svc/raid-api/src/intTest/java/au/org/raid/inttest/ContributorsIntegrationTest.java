@@ -922,7 +922,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
                 try {
                     final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
-                    assertThat(updateResponse.getBody().getContributor().get(0).getStatus()).isEqualTo("PENDING_AUTHENTICATION");
+                    assertThat(updateResponse.getBody().getContributor().get(0).getStatus()).isEqualTo("AWAITING_AUTHENTICATION");
                 } catch (Exception e) {
                     fail("Update failed");
                 }
@@ -1488,7 +1488,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var raidDto = readResponse.getBody();
 
                 assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AUTHENTICATED");
-                assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0009-0007-7956-4018");
+                assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0009-0002-5128-5184");
                 assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("203f3484-62c6-44ec-a617-1269d79f1b4e");
             } catch (Exception e) {
                 fail("An unexpected error occurred when trying to create Raid in test");
@@ -1584,7 +1584,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                             new ValidationFailure()
                                     .fieldId("contributor[0].status")
                                     .errorType("invalidValue")
-                                    .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, PENDING_AUTHENTICATION, AUTHENTICATION_FAILED")
+                                    .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED")
                     );
                 } catch (Exception e) {
                     fail("Raid patch failed");

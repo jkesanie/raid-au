@@ -62,7 +62,7 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{  \"updatedAt\": \"2025-01-30T23:40:16.568Z\",  \"status\": \"AUTHENTICATED\", \"uuid\": \"203f3484-62c6-44ec-a617-1269d79f1b4e\", \"SK\": \"METADATA\", \"PK\": \"CONTRIBUTOR#authenticated@example.org\"}"
+      "body": "{  \"updatedAt\": \"2025-01-30T23:40:16.568Z\",  \"status\": \"AUTHENTICATED\", \"uuid\": \"203f3484-62c6-44ec-a617-1269d79f1b4e\", \"SK\": \"METADATA\", \"PK\": \"CONTRIBUTOR#authenticated@example.org\", \"orcid\": \"0009-0002-5128-5184\" }"
     }
   },
   {
