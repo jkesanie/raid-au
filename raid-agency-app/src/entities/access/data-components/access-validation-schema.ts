@@ -28,7 +28,10 @@ const accessStatementValidationSchema = z.object({
 export const accessValidationSchema = z.object({
   type: accessTypeValidationSchema,
   statement: accessStatementValidationSchema,
-  embargoExpiry: z.string().regex(yearMonthDayPattern, {
-    message: "needs to be YYYY-MM-DD",
-  }),
+  embargoExpiry: z
+    .string()
+    .regex(yearMonthDayPattern, {
+      message: "needs to be YYYY-MM-DD",
+    })
+    .or(z.date()),
 });

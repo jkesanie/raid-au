@@ -1,5 +1,7 @@
 import {
+  Box,
   Button,
+  Chip,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -7,8 +9,10 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  ListSubheader,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
@@ -64,38 +68,112 @@ export default function OrganisationLookupDialog({
       <DialogTitle>Lookup ROR by name</DialogTitle>
 
       <DialogContent>
-        <form onSubmit={handleSearch}>
-          <Stack gap={2} alignItems="center" direction="row">
-            <TextField
-              label="Search"
-              placeholder="Search for an organisation / city"
-              size="small"
-              variant="filled"
-              fullWidth
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <IconButton type="submit" disabled={searchMutation.isPending}>
-              <SearchIcon />
-            </IconButton>
-          </Stack>
-        </form>
-        <List>
-          {searchMutation.data?.items
-            ?.sort((a: any, b: any) => a.name.localeCompare(b.name))
-            .map((item: any, index: number) => {
-              return (
-                <ListItemButton
-                  key={index}
-                  onClick={() => handleListItemClick(item)}
+        <Stack>
+          <form onSubmit={handleSearch}>
+            <Stack gap={2} alignItems="center" direction="row">
+              <TextField
+                label="Search"
+                placeholder="Search for an organisation / city"
+                size="small"
+                variant="filled"
+                fullWidth
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <IconButton type="submit" disabled={searchMutation.isPending}>
+                <SearchIcon />
+              </IconButton>
+            </Stack>
+          </form>
+          {!searchMutation.data && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle2">Examples: </Typography>
+              <Stack direction="row" gap={1}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    setQuery("ARDC");
+                    searchMutation.mutate("ARDC");
+                  }}
                 >
-                  <ListItemText
-                    primary={item.name}
-                    secondary={`${item.country.country_name} | ${
-                      item?.links && item.links.length > 0 ? item.links[0] : ""
-                    }`}
-                  />
-                </ListItemButton>
+                  ARDC
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    setQuery("Sydney");
+                    searchMutation.mutate("Sydney");
+                  }}
+                >
+                  Sydney
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    setQuery("Imperial");
+                    searchMutation.mutate("Imperial");
+                  }}
+                >
+                  Imperial
+                </Button>
+              </Stack>
+            </Box>
+          )}
+        </Stack>
+        <List>
+          {Object.entries(
+            searchMutation.data?.items?.reduce(
+              (acc: Record<string, any[]>, item: any) => {
+                const countryName = item.country.country_name;
+                if (!acc[countryName]) {
+                  acc[countryName] = [];
+                }
+                acc[countryName].push(item);
+                return acc;
+              },
+              {}
+            ) || {}
+          )
+            .sort(([countryA], [countryB]) => countryA.localeCompare(countryB))
+            .map((value: [string, unknown]) => {
+              const countryName = value[0];
+              const items = value[1] as any[];
+              return (
+                <div key={countryName}>
+                  <ListSubheader
+                    sx={{
+                      backgroundColor: "white",
+                      position: "sticky",
+                      top: "0px",
+                      zIndex: 1,
+                      fontWeight: "bold",
+                      bgcolor: "primary.light",
+                      opacity: 1,
+                    }}
+                  >
+                    {countryName}
+                  </ListSubheader>
+                  {items
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((item, index) => (
+                      <ListItemButton
+                        key={`${countryName}-${index}`}
+                        onClick={() => handleListItemClick(item)}
+                      >
+                        <ListItemText
+                          primary={item.name}
+                          secondary={
+                            item?.links && item.links.length > 0
+                              ? item.links[0]
+                              : ""
+                          }
+                        />
+                      </ListItemButton>
+                    ))}
+                </div>
               );
             })}
         </List>

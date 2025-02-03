@@ -321,6 +321,9 @@ export const RaidForm = memo(
 
     const handleSubmit = useCallback(
       (data: RaidDto) => {
+        if (formState.errors) {
+          console.log(formState.errors);
+        }
         onSubmit(data);
       },
       [onSubmit]
