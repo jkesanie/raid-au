@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 export function parseJwtDate(
-  date: string | number | undefined,
+  date: string | number | undefined
 ): Date | undefined {
   if (!date || isNaN(Number(date))) {
     return undefined;
@@ -56,6 +56,3 @@ export const dateDisplayFormatter = (input?: string) => {
 
   return "---";
 };
-
-export const dateHelperTextRequired = "YYYY or YYYY-MM or YYYY-MM-DD";
-export const dateHelperText = "YYYY or YYYY-MM or YYYY-MM-DD or empty";

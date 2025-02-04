@@ -11,7 +11,7 @@ import type { AlternateIdentifier } from './AlternateIdentifier';
 import type { Subject } from './Subject';
 import type { Id } from './Id';
 import type { AlternateUrl } from './AlternateUrl';
-import type { TraditionalKnowledgeLabel } from './TraditionalKnowledgeLabel';
+// import type { TraditionalKnowledgeLabel } from './TraditionalKnowledgeLabel';
 import type { SpatialCoverage } from './SpatialCoverage';
 
 export interface RaidDto {
@@ -29,5 +29,5 @@ export interface RaidDto {
     relatedObject?: Array<RelatedObject>;
     alternateIdentifier?: Array<AlternateIdentifier>;
     spatialCoverage?: Array<SpatialCoverage>;
-    traditionalKnowledgeLabel?: Array<TraditionalKnowledgeLabel>;
+    // traditionalKnowledgeLabel?: Array<TraditionalKnowledgeLabel>;
 }

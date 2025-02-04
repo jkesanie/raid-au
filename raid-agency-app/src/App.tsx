@@ -1,6 +1,8 @@
 import { SnackbarProvider } from "@/components/snackbar";
 import { ReactErrorBoundary } from "@/error/ReactErrorBoundary";
 import { MappingProvider } from "@/mapping";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Box,
   createTheme,
@@ -9,8 +11,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Keycloak from "keycloak-js";
@@ -77,9 +77,9 @@ export function App() {
               <SnackbarProvider>
                 <QueryClientProvider client={queryClient}>
                   <ReactErrorBoundary>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <Box sx={{ pt: 3 }}></Box>
-                      <Outlet />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Box sx={{ pt: 3 }}></Box>
+                    <Outlet />
                     </LocalizationProvider>
                   </ReactErrorBoundary>
                 </QueryClientProvider>

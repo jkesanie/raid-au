@@ -3,8 +3,8 @@ import { DisplayItem } from "@/components/display-item";
 import OrganisationRoleItem from "@/entities/organisation/role/OrganisationRoleItem";
 import type { Organisation } from "@/generated/raid";
 import { Divider, Grid, Stack, Typography } from "@mui/material";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const fetchOrgData = async (id: string) => {
   const response = await fetch(`https://api.ror.org/v2/organizations/${id}`, {
@@ -50,6 +50,7 @@ const OrganisationItem = memo(
               label="Organisation ID"
               value={organisation.id}
               width={6}
+              link={organisation.id}
             />
           </Grid>
         </Grid>
