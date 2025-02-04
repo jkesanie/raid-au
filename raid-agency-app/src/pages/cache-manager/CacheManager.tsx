@@ -31,7 +31,7 @@ function CachedItemsList({
   handleDelete,
   storageKey,
 }: {
-  cachedMap: Map<string, { value: string; cachedAt: number }>;
+  cachedMap: Map<string, { value: string; cachedAt: number; source?: string }>;
   handleDelete: ({
     key,
     storageKey,
@@ -123,7 +123,7 @@ function CachedItemsList({
                 primary={highlightMatch(value.value)}
                 secondary={`${key} | ${dayjs
                   .unix(value.cachedAt / 1000)
-                  .fromNow()}`}
+                  .fromNow()}  ${value.source ? ` | ${value.source}` : ""}`}
               />
             </ListItem>
           ))}

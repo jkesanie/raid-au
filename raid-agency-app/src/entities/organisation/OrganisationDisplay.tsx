@@ -41,7 +41,7 @@ const OrganisationItem = memo(
   }) => {
     return (
       <Stack gap={2}>
-        <Typography variant="h6">
+        <Typography variant="subtitle2">
           {organisationName ? organisationName : `Organisation #{${i + 1}}`}
         </Typography>
         <Grid container spacing={2}>

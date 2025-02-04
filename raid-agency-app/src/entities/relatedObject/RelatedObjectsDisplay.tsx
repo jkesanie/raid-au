@@ -2,26 +2,12 @@ import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
 import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
+import { getTitleFromDOI } from "@/services/related-object";
 import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { Divider, Grid, Stack, Typography } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useMemo } from "react";
 import RelatedObjectCategoryItem from "./category/RelatedObjectCategoryItem";
-
-interface CrossRefResponse {
-  message: {
-    title: string[];
-    [key: string]: any; // for other properties we might not use
-  };
-}
-
-const fetchDoiData = async (id: string): Promise<CrossRefResponse> => {
-  const response = await fetch(`https://api.crossref.org/works/${id}`, {
-    headers: { Accept: "application/json" },
-  });
-  const data = await response.json();
-  return data;
-};
 
 const useRelatedObjectTitles = () => {
   return useQuery({
@@ -83,7 +69,9 @@ const RelatedObjectItem = memo(
               Categories
             </Typography>
             <Typography variant="caption" color="text.disabled">
-              Related Object #{i + 1}
+              {relatedObjectTitle
+                ? relatedObjectTitle
+                : `Related Object #{${i + 1}}`}
             </Typography>
           </Stack>
           <Stack gap={2} divider={<Divider />}>
@@ -110,12 +98,15 @@ const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
         relatedObjects.map(async (obj) => {
           if (!obj.id) return null;
 
-          await queryClient.prefetchQuery<CrossRefResponse>({
+          await queryClient.prefetchQuery<{
+            title: string;
+            ra: string;
+          }>({
             queryKey: ["doi", obj.id],
             queryFn: async () => {
               const lastTwoUrlSegments = getLastTwoUrlSegments(obj.id!);
               if (lastTwoUrlSegments) {
-                return fetchDoiData(lastTwoUrlSegments);
+                return await getTitleFromDOI(lastTwoUrlSegments);
               } else {
                 return Promise.reject(new Error("Invalid URL segments"));
               }
@@ -123,7 +114,10 @@ const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
             staleTime: 1000 * 60 * 60 * 24 * 90,
           });
 
-          return queryClient.getQueryData<CrossRefResponse>(["doi", obj.id]);
+          return queryClient.getQueryData<{
+            title: string;
+            ra: string;
+          }>(["doi", obj.id]);
         })
       );
       return { results, objectsToFetch: relatedObjects };
@@ -138,10 +132,12 @@ const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
         if (!relatedObjectData) return;
 
         const relatedObjectId = objectsToFetch[index].id;
-        const displayName = relatedObjectData.message.title[0];
+        const displayName = relatedObjectData;
+
         newNames.set(relatedObjectId, {
           cachedAt: Date.now(),
-          value: displayName,
+          value: displayName.title,
+          source: displayName.ra,
         });
       });
 
