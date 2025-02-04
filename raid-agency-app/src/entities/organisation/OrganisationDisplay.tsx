@@ -80,9 +80,16 @@ const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
 
   const { mutate: downloadAllOrgs } = useMutation({
     mutationFn: async (organisations: Organisation[]) => {
-      // Only fetch for organizations not in cache
       const results = await Promise.all(
-        organisations.map((org) => fetchOrgData(org.id))
+        organisations.map(async (org) => {
+          // Use prefetchQuery to leverage caching
+          await queryClient.prefetchQuery({
+            queryKey: ["organization", org.id],
+            queryFn: () => fetchOrgData(org.id),
+            staleTime: 1000 * 60 * 60 * 24 * 90,
+          });
+          return queryClient.getQueryData(["organization", org.id]);
+        })
       );
       return results;
     },
@@ -92,12 +99,15 @@ const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
         new Map();
       const newNames = new Map(currentNames);
 
-      data.forEach((orgData, index) => {
+      data.forEach((orgData: any, index) => {
         const orgId = organisations[index].id;
         const displayName = orgData.names.find((name: any) =>
           name.types.includes("ror_display")
         ).value;
-        newNames.set(orgId, displayName);
+        newNames.set(orgId, {
+          cachedAt: Date.now(),
+          value: displayName,
+        });
       });
 
       localStorage.setItem("organisationNames", JSON.stringify([...newNames]));
@@ -107,13 +117,19 @@ const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
 
   useEffect(() => {
     if (data.length > 0 && organisationNames) {
-      // Filter out organisations that are already in the cache
-      const orgsToDownload = data.filter(
-        (org) => !organisationNames.has(org.id)
-      );
+      const CACHE_EXPIRY_DAYS = 90;
+      const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-      if (orgsToDownload.length > 0) {
-        downloadAllOrgs(orgsToDownload);
+      const dataToDownload = data.filter((org) => {
+        if (!org.id) return false;
+        const cached = organisationNames?.size && organisationNames.get(org.id);
+        if (!cached) return true;
+        const cacheAge = Date.now() - cached.cachedAt;
+        return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
+      });
+
+      if (dataToDownload.length > 0) {
+        downloadAllOrgs(dataToDownload);
       }
     }
   }, [data, organisationNames, downloadAllOrgs]);
@@ -131,7 +147,10 @@ const OrganisationDisplay = memo(({ data }: { data: Organisation[] }) => {
                 i={i}
                 key={organisation.id || i}
                 organisation={organisation}
-                organisationName={organisationNames?.get(organisation.id)}
+                organisationName={
+                  organisationNames?.size &&
+                  organisationNames?.get(organisation.id)?.value
+                }
               />
             ))}
           </Stack>

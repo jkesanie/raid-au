@@ -35,7 +35,9 @@ const OrganisationForm = memo(({ index }: { index: number }) => {
       <Grid item xs={12} sm={12}>
         <Typography variant="subtitle2" gutterBottom>
           Current value:{" "}
-          {organisationNames?.get(getValues(`organisation.${index}.id`))}
+          {organisationNames?.size &&
+            organisationNames?.get(getValues(`organisation.${index}.id`))
+              ?.value}
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <TextInputField

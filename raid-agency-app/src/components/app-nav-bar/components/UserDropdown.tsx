@@ -14,7 +14,8 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  MenuList
+  MenuList,
+  Typography,
 } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import { useQuery } from "@tanstack/react-query";
@@ -87,7 +88,13 @@ export default function UserDropdown() {
                 textTransform: "none",
               }}
             >
-              {keycloak?.tokenParsed?.email}
+              <Typography
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                }}
+              >
+                {keycloak?.tokenParsed?.email}
+              </Typography>
             </Button>
           )) || (
             <IconButton
