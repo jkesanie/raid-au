@@ -1,8 +1,11 @@
 ---
 import { raids } from "@/store/raids";
-const prefixSet = new Set(
-  raids.map((el) => new URL(el.identifier.id).pathname.split("/")[1])
-);
+const handles = new Set();
+for (const raid in raids) {
+  const pathname = new URL(raids[raid].identifier.id).pathname;
+  const [, prefix, suffix] = pathname.split("/");
+  handles.add(`${prefix}/${suffix}`);
+}
 
 const headers = new Headers({
   "Access-Control-Allow-Origin": "*",
@@ -18,7 +21,7 @@ if (Astro.request.method === "OPTIONS") {
   });
 }
 
-return new Response(JSON.stringify([...prefixSet]), {
+return new Response(JSON.stringify([...handles]), {
   headers,
 });
 ---
