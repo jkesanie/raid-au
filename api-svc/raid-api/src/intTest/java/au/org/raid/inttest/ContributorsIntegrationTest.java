@@ -914,11 +914,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @DisplayName("Should not be able to update status of contributor with PUT request")
         void updateStatus() {
             try {
+                createRequest.getContributor().get(0).email("awaiting-authentication@test.raid.org.au");
+
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var raidDto = createResponse.getBody();
                 final var handle = new Handle(raidDto.getIdentifier().getId());
 
-                raidDto.getContributor().get(0).setStatus("VERIFIED");
+                raidDto.getContributor().get(0).setStatus("AUTHENTICATED");
 
                 try {
                     final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
@@ -1479,7 +1481,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @DisplayName("Should add authenticated contributor to raid")
         void authenticatedContributor() {
             try {
-                createRequest.getContributor().get(0).setEmail("authenticated@example.org");
+                createRequest.getContributor().get(0).setEmail("authenticated@test.raid.org.au");
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1488,8 +1490,8 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var raidDto = readResponse.getBody();
 
                 assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AUTHENTICATED");
-                assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0009-0002-5128-5184");
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("203f3484-62c6-44ec-a617-1269d79f1b4e");
+                assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0000-0002-1474-3214");
+                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("04742bfa-0e91-4339-b878-a4b850724f7b");
             } catch (Exception e) {
                 fail("An unexpected error occurred when trying to create Raid in test");
             }
@@ -1499,7 +1501,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @DisplayName("Should set awaiting-authentication contributor")
         void awaitingAuthenticationContributor() {
             try {
-                createRequest.getContributor().get(0).setEmail("awaiting-authentication@example.org");
+                createRequest.getContributor().get(0).setEmail("awaiting-authentication@test.raid.org.au");
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1509,7 +1511,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
                 assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AWAITING_AUTHENTICATION");
                 assertThat(raidDto.getContributor().get(0).getId()).isNull();
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("8adc8bc1-3df9-4e7d-b8af-056103edbac6");
+                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb");
             } catch (Exception e) {
                 fail("An unexpected error occurred when trying to create Raid in test");
             }
@@ -1519,7 +1521,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @DisplayName("Should set authentication-failed contributor")
         void authenticationFailedContributor() {
             try {
-                createRequest.getContributor().get(0).setEmail("authentication-failed@example.org");
+                createRequest.getContributor().get(0).setEmail("authentication-failed@test.raid.org.au");
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1529,7 +1531,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
                 assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AUTHENTICATION_FAILED");
                 assertThat(raidDto.getContributor().get(0).getId()).isNull();
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("2e485e86-8578-4013-9671-988bd5b01eb8");
+                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("de8cb78e-3cb6-424d-9537-3b6a0b15604c");
             } catch (Exception e) {
                 fail("An unexpected error occurred when trying to create Raid in test");
             }

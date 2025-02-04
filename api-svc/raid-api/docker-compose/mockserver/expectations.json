@@ -13,7 +13,15 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{\"data\":{\"id\":\"10.1234/example.doi\",\"type\":\"dois\",\"attributes\":{\"doi\":\"10.1234/example.doi\"}}}"
+      "body": {
+        "data": {
+          "id": "10.1234/example.doi",
+          "type": "dois",
+          "attributes": {
+            "doi": "10.1234/example.doi"
+          }
+        }
+      }
     }
   },
   {
@@ -30,7 +38,15 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{\"data\":{\"id\":\"10.1234/example.doi\",\"type\":\"dois\",\"attributes\":{\"doi\":\"10.1234/example.doi\"}}}"
+      "body": {
+        "data": {
+          "id": "10.1234/example.doi",
+          "type":"dois",
+          "attributes": {
+            "doi":"10.1234/example.doi"
+          }
+        }
+      }
     }
   },
   {
@@ -52,7 +68,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "email": "authenticated@example.org"
+          "email": "authenticated@test.raid.org.au"
         },
         "matchType": "STRICT"
       }
@@ -62,7 +78,21 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{  \"updatedAt\": \"2025-01-30T23:40:16.568Z\",  \"status\": \"AUTHENTICATED\", \"uuid\": \"203f3484-62c6-44ec-a617-1269d79f1b4e\", \"SK\": \"METADATA\", \"PK\": \"CONTRIBUTOR#authenticated@example.org\", \"orcid\": \"0009-0002-5128-5184\" }"
+      "body": {
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AUTHENTICATED",
+        "uuid": "04742bfa-0e91-4339-b878-a4b850724f7b",
+        "SK": "METADATA", "PK": "CONTRIBUTOR#authenticated@test.raid.org.au",
+        "orcid": {
+          "access_token": "156f7934-40bb-4f7e-93ff-1fefa33275ca",
+          "expires_in": "631138518",
+          "name": "David Smith",
+          "orcid": "0000-0002-1474-3214",
+          "refresh_token": "1b0741dd-ab12-41de-8eb2-0dec9731d3cf",
+          "scope": "/read-limited /activities/update /person/update",
+          "token_type": "bearer"
+        }
+      }
     }
   },
   {
@@ -72,7 +102,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "email": "awaiting-authentication@example.org"
+          "email": "awaiting-authentication@test.raid.org.au"
         },
         "matchType": "STRING"
       }
@@ -82,8 +112,13 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{  \"updatedAt\": \"2025-01-30T23:40:16.568Z\",  \"status\": \"AWAITING_AUTHENTICATION\", \"uuid\": \"8adc8bc1-3df9-4e7d-b8af-056103edbac6\", \"SK\": \"METADATA\", \"PK\": \"CONTRIBUTOR#awaiting-authentication@example.org\"}"
-
+      "body": {
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AWAITING_AUTHENTICATION",
+        "uuid": "4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb",
+        "SK": "METADATA",
+        "PK": "CONTRIBUTOR#awaiting-authentication@test.raid.org.au"
+      }
     }
   },
   {
@@ -93,7 +128,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "email": "authentication-failed@example.org"
+          "email": "authentication-failed@test.raid.org.au"
         },
         "matchType": "STRICT"
       }
@@ -105,25 +140,12 @@
           "application/json"
         ]
       },
-      "body": "{  \"updatedAt\": \"2025-01-30T23:40:16.568Z\",  \"status\": \"AUTHENTICATION_FAILED\", \"uuid\": \"2e485e86-8578-4013-9671-988bd5b01eb8\", \"SK\": \"METADATA\", \"PK\": \"CONTRIBUTOR#authentication-failed@example.org\"}"
-    }
-  },
-  {
-    "httpRequest": {
-      "method": "POST",
-      "path": "/find-contributor-by-email",
       "body": {
-        "type": "JSON",
-        "json": {
-          "email": "not-found@example.org"
-        },
-        "matchType": "STRICT"
-      }
-    },
-    "httpResponse": {
-      "statusCode": 404,
-      "headers": {
-        "Content-Type": ["application/json"]
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AUTHENTICATION_FAILED",
+        "uuid": "de8cb78e-3cb6-424d-9537-3b6a0b15604c",
+        "SK": "METADATA",
+        "PK": "CONTRIBUTOR#authentication-failed@test.raid.org.au"
       }
     }
   }
