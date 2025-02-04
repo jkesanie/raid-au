@@ -1,0 +1,10 @@
+---
+import { raids } from "@/store/raids";
+
+const prefixSet = new Set(
+  raids.map(el => new URL(el.identifier.id).pathname.split("/")[1])
+);
+
+Astro.response.headers.set("Content-Type", "application/json");
+return new Response(JSON.stringify([...prefixSet]));
+---
