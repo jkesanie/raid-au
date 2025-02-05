@@ -1,0 +1,9 @@
+---
+import { raids } from "@/store/raids";
+
+return new Response(JSON.stringify([...raids]), {
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+---
