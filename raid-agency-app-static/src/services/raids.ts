@@ -8,7 +8,17 @@ const iamEndpoint = import.meta.env.IAM_ENDPOINT;
 const iamClientId = import.meta.env.IAM_CLIENT_ID;
 const iamClientSecret = import.meta.env.IAM_CLIENT_SECRET;
 
+const iamClientUsername = import.meta.env.IAM_CLIENT_USERNAME;
+const iamClientPassword = import.meta.env.IAM_CLIENT_PASSWORD;
+
 async function getAuthToken(): Promise<string> {
+  // const TOKEN_PARAMS = {
+  //   grant_type: "password",
+  //   client_id: iamClientId,
+  //   username: iamClientUsername,
+  //   password: iamClientPassword,
+  // };
+
   const TOKEN_PARAMS = {
     grant_type: "client_credentials",
     client_id: iamClientId,

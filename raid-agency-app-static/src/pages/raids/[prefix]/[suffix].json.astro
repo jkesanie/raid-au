@@ -1,5 +1,25 @@
 ---
+import type { RaidDto } from "@/generated/raid";
 import { raids } from "@/store/raids";
+
+export async function getStaticPaths() {
+  return raids.map((el: RaidDto) => {
+    const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
+    return {
+      params: {
+        prefix,
+        suffix,
+      },
+      props: {
+        raid: el,
+      },
+    };
+  });
+}
+
+const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
+const { raid }: { raid: RaidDto } = Astro.props;
+
 const handles = new Set();
 for (const raid in raids) {
   const pathname = new URL(raids[raid].identifier.id).pathname;
@@ -21,7 +41,13 @@ if (Astro.request.method === "OPTIONS") {
   });
 }
 
-return new Response(JSON.stringify([...handles]), {
-  headers,
-});
+return new Response(
+  JSON.stringify({
+    raid,
+    handle: `${prefix}/${suffix}`,
+  }),
+  {
+    headers,
+  }
+);
 ---
