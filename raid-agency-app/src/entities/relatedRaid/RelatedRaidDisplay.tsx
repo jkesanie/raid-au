@@ -1,13 +1,12 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
+import type { RelatedRaid } from "@/generated/raid";
 import { useMapping } from "@/mapping";
-import type { RelatedRaid, Title } from "@/generated/raid";
-import { Divider, Grid, Stack, Typography } from "@mui/material";
-import { memo, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { fetchRelatedRaidTitle } from "@/services/related-raid";
 import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
-import { useKeycloak } from "@react-keycloak/web";
-import { getApiEndpoint } from "@/utils/api-utils/api-utils";
+import { Divider, Grid, Stack, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { memo, useMemo } from "react";
 
 const NoItemsMessage = memo(() => (
   <Typography variant="body2" color="text.secondary" textAlign="center">
@@ -17,36 +16,42 @@ const NoItemsMessage = memo(() => (
 
 const RelatedRaidItem = memo(
   ({ relatedRaid, i }: { relatedRaid: RelatedRaid; i: number }) => {
-    const { keycloak } = useKeycloak();
-    const apiEndpoint = getApiEndpoint();
-    const raidQuery = useQuery({
-      queryKey: ["raid", relatedRaid.id],
-      queryFn: () =>
-        fetch(`${apiEndpoint}/raid/${getLastTwoUrlSegments(relatedRaid.id!)}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }).then((res) => res.json()),
-      enabled: !!relatedRaid.id,
-    });
-
-    const { generalMap } = useMapping();
+    const handle = getLastTwoUrlSegments(relatedRaid.id!);
+    const { generalMap } = useMapping(); // Moved up before any conditionals
 
     const relatedRaidTypeMappedValue = useMemo(
       () => generalMap.get(String(relatedRaid.type?.id)) ?? "",
       [relatedRaid.type?.id]
     );
 
+    const raidQuery = useQuery({
+      queryKey: ["related-raid", handle],
+      queryFn: () =>
+        fetchRelatedRaidTitle({
+          handle: handle!,
+        }),
+      enabled: !!handle,
+    });
+
+    if (raidQuery.isPending) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Loading...
+        </Typography>
+      );
+    }
+
+    if (raidQuery.isError) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Error loading related RAiD
+        </Typography>
+      );
+    }
+
     return (
       <>
-        {raidQuery.data && raidQuery.data.title ? (
-          <Typography variant="body1">
-            {raidQuery.data.title.map((el: Title) => el.text).join(",")}
-          </Typography>
-        ) : (
-          <Typography variant="body1">Related RAiD #{i + 1}</Typography>
-        )}
+        {raidQuery.data}
 
         <Grid container spacing={2}>
           <DisplayItem
@@ -77,7 +82,7 @@ const RelatedRaidDisplay = memo(({ data }: { data: RelatedRaid[] }) => (
           {(data || []).map((relatedRaid, i) => (
             <RelatedRaidItem
               relatedRaid={relatedRaid}
-              key={crypto.randomUUID()}
+              key={relatedRaid.id || i}
               i={i}
             />
           ))}
