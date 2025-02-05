@@ -4,16 +4,9 @@ import { raids } from "@/store/raids";
 const headers = new Headers({
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Content-Type": "application/json",
 });
 
-if (Astro.request.method === "OPTIONS") {
-  return new Response(null, {
-    status: 204,
-    headers,
-  });
-}
-
-return new Response(JSON.stringify(raids));
+return new Response(JSON.stringify(raids), {
+  headers,
+});
 ---
