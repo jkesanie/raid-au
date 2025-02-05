@@ -1,30 +1,17 @@
-import { RaidDto, Title } from "@/generated/raid";
-import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
+import { RaidDto } from "@/generated/raid";
 
-const BACKENDS = [
-  { key: "prod", url: "https://static.prod.raid.org.au/raids/handles.json" },
-  { key: "stage", url: "https://static.stage.raid.org.au/raids/handles.json" },
-  { key: "demo", url: "https://static.demo.raid.org.au/raids/handles.json" },
-  { key: "test", url: "https://static.test.raid.org.au/raids/handles.json" },
-] as const;
-
-export async function getEnvironmentForHandle({
-  handle,
-}: {
-  handle: string;
-}): Promise<string | null> {
-  for (const { key, url } of BACKENDS) {
-    try {
-      const response = await fetch(url);
-      const handles = await response.json();
-      if (new Set(handles).has(handle)) {
-        return key;
-      }
-    } catch (error) {
-      console.error(`Failed to check ${key} environment:`, error);
-    }
+async function getEnvironmentForHandle(handle: string): Promise<string> {
+  try {
+    const response = await fetch(
+      "https://static.test.raid.org.au/api/handles.json"
+    );
+    const handles = await response.json();
+    const handlesMap = new Map<string, string>(handles);
+    return handlesMap.get(handle) ?? "";
+  } catch (error) {
+    console.error(`Failed to check`, error);
   }
-  return null;
+  return "";
 }
 
 export const fetchRelatedRaidTitle = async ({
@@ -32,9 +19,7 @@ export const fetchRelatedRaidTitle = async ({
 }: {
   handle: string;
 }): Promise<string> => {
-  const environment = await getEnvironmentForHandle({
-    handle,
-  });
+  const environment = await getEnvironmentForHandle(handle);
 
   const url = `https://static.${environment}.raid.org.au/raids/${handle}.json`;
   const response = await fetch(url, {
