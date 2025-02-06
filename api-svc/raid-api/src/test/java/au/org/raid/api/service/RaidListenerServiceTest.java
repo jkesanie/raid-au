@@ -43,20 +43,30 @@ class RaidListenerServiceTest {
     void whenContributorIsAuthenticated_thenUpdateWithOrcidId() {
         // Arrange
         Contributor contributor = new Contributor().email(TEST_EMAIL);
+
+        final var raidName = "raid-name";
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
                 .orcidStatus("AUTHENTICATED")
                 .uuid(TEST_UUID)
                 .orcid(OrcidData.builder().orcid(TEST_ORCID).build())
                 .build();
 
+        final var message = RaidListenerMessage.builder()
+                .raidName(raidName)
+                .contributor(contributor)
+                .build();
+
         when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
+        when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
         verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
-        verify(orcidIntegrationClient, never()).post(any());
+
+
+        verify(orcidIntegrationClient, times(1)).post(message);
 
         assert contributor.getId().equals("https://orcid.org/" + TEST_ORCID);
         assert contributor.getUuid().equals(TEST_UUID);
@@ -74,8 +84,9 @@ class RaidListenerServiceTest {
                 .raidName(raidName)
                 .contributor(contributor)
                 .build();
-        ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
-                .orcidStatus("PENDING")
+
+        final var lookupResponse = ContributorLookupResponse.builder()
+                .orcidStatus("AWAITING_AUTHENTICATION")
                 .uuid(TEST_UUID)
                 .build();
 
@@ -91,7 +102,7 @@ class RaidListenerServiceTest {
 
         assert contributor.getId() == null;
         assert contributor.getUuid().equals(TEST_UUID);
-        assert contributor.getStatus().equals("PENDING");
+        assert contributor.getStatus().equals("AWAITING_AUTHENTICATION");
         assert contributor.getEmail() == null;
     }
 
@@ -150,7 +161,7 @@ class RaidListenerServiceTest {
         // Assert
         verify(orcidIntegrationClient, times(1)).get("test1@example.com");
         verify(orcidIntegrationClient, times(1)).get("test2@example.com");
-        verify(orcidIntegrationClient, times(1)).post(any());
+        verify(orcidIntegrationClient, times(2)).post(any());
 
         assert contributor1.getId().equals("https://orcid.org/" + TEST_ORCID);
         assert contributor2.getId() == null;

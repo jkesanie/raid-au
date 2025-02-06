@@ -35,33 +35,23 @@ public class RaidListenerService {
                         contributor.uuid(lookupResponse.getUuid())
                                 .status(lookupResponse.getOrcidStatus())
                                 .id("https://orcid.org/%s".formatted(lookupResponse.getOrcid().getOrcid()));
-
-                        contributor.setEmail(null);
                     } else {
                         contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getOrcidStatus())
-                                .id(null);
-
-                        final var message = raidListenerMessageFactory.create(
-                                handle,
-                                contributor
-                        );
-                        orcidIntegrationClient.post(message);
-
-                        contributor.setEmail(null);
+                                .status(lookupResponse.getOrcidStatus());
                     }
                 } else {
                     contributor.uuid(UUID.randomUUID().toString())
                             .status(ContributorStatus.AWAITING_AUTHENTICATION.name())
                             .id(null);
-                    final var message = raidListenerMessageFactory.create(
-                            handle,
-                            contributor
-                    );
-                    orcidIntegrationClient.post(message);
-
-                    contributor.email(null);
                 }
+
+                final var message = raidListenerMessageFactory.create(
+                        handle,
+                        contributor
+                );
+                orcidIntegrationClient.post(message);
+
+                contributor.email(null);
             }
         }
     }
