@@ -2,20 +2,12 @@ import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
 import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
+import { getTitleFromDOI } from "@/services/related-object";
 import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { Divider, Grid, Stack, Typography } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useMemo } from "react";
 import RelatedObjectCategoryItem from "./category/RelatedObjectCategoryItem";
-
-const fetchDoiData = async (id: string) => {
-  const response = await fetch(`https://api.crossref.org/works/${id}`, {
-    headers: { Accept: "application/json" },
-  });
-  const data = await response.json();
-  console.log("+++ fetchDoiData - response", data);
-  return data;
-};
 
 const useRelatedObjectTitles = () => {
   return useQuery({
@@ -77,7 +69,9 @@ const RelatedObjectItem = memo(
               Categories
             </Typography>
             <Typography variant="caption" color="text.disabled">
-              Related Object #{i + 1}
+              {relatedObjectTitle
+                ? relatedObjectTitle
+                : `Related Object #{${i + 1}}`}
             </Typography>
           </Stack>
           <Stack gap={2} divider={<Divider />}>
@@ -97,32 +91,54 @@ const RelatedObjectItem = memo(
 const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
   const { data: relatedObjectTitles } = useRelatedObjectTitles();
   const queryClient = useQueryClient();
-
+  // Update the mutation with proper typing
   const { mutate: downloadAllObjects } = useMutation({
     mutationFn: async (relatedObjects: RelatedObject[]) => {
-      // Only fetch for organizations not in cache
       const results = await Promise.all(
-        relatedObjects.map((obj) => {
-          const lastTwoUrlSegments = getLastTwoUrlSegments(obj.id!);
-          if (obj?.id && lastTwoUrlSegments) {
-            console.log("fetching doi data for", lastTwoUrlSegments);
-            return fetchDoiData(lastTwoUrlSegments);
-          }
+        relatedObjects.map(async (obj) => {
+          if (!obj.id) return null;
+
+          await queryClient.prefetchQuery<{
+            title: string;
+            ra: string;
+          }>({
+            queryKey: ["doi", obj.id],
+            queryFn: async () => {
+              const lastTwoUrlSegments = getLastTwoUrlSegments(obj.id!);
+              if (lastTwoUrlSegments) {
+                return await getTitleFromDOI(lastTwoUrlSegments);
+              } else {
+                return Promise.reject(new Error("Invalid URL segments"));
+              }
+            },
+            staleTime: 1000 * 60 * 60 * 24 * 90,
+          });
+
+          return queryClient.getQueryData<{
+            title: string;
+            ra: string;
+          }>(["doi", obj.id]);
         })
       );
-      return results;
+      return { results, objectsToFetch: relatedObjects };
     },
-    onSuccess: (data, relatedObjects) => {
+    onSuccess: ({ results, objectsToFetch }) => {
       const currentNames =
-        queryClient.getQueryData<Map<string, string>>([
-          "relatedObjectTitles",
-        ]) || new Map();
+        queryClient.getQueryData<Map<string, any>>(["relatedObjectTitles"]) ||
+        new Map();
       const newNames = new Map(currentNames);
 
-      data.forEach((relatedObjectData, index) => {
-        const relatedObjectId = relatedObjects[index].id;
-        const displayName = relatedObjectData.message.title;
-        newNames.set(relatedObjectId, displayName);
+      results.forEach((relatedObjectData, index) => {
+        if (!relatedObjectData) return;
+
+        const relatedObjectId = objectsToFetch[index].id;
+        const displayName = relatedObjectData;
+
+        newNames.set(relatedObjectId, {
+          cachedAt: Date.now(),
+          value: displayName.title,
+          source: displayName.ra,
+        });
       });
 
       localStorage.setItem(
@@ -135,10 +151,16 @@ const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
 
   useEffect(() => {
     if (data.length > 0 && relatedObjectTitles) {
-      // Filter out organisations that are already in the cache
-      const orgsToDownload = data.filter(
-        (org) => !relatedObjectTitles.has(org.id)
-      );
+      const CACHE_EXPIRY_DAYS = 90;
+      const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+      const orgsToDownload = data.filter((org) => {
+        if (!org.id) return false;
+        const cached = relatedObjectTitles.get(org.id);
+        if (!cached) return true;
+        const cacheAge = Date.now() - cached.cachedAt;
+        return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
+      });
 
       if (orgsToDownload.length > 0) {
         downloadAllObjects(orgsToDownload);
@@ -159,7 +181,10 @@ const RelatedObjectsDisplay = memo(({ data }: { data: RelatedObject[] }) => {
                 relatedObject={relatedObject}
                 key={relatedObject.id || i}
                 i={i}
-                relatedObjectTitle={relatedObjectTitles?.get(relatedObject.id)}
+                relatedObjectTitle={
+                  relatedObjectTitles?.size &&
+                  relatedObjectTitles?.get(relatedObject.id)?.value
+                }
               />
             ))}
           </Stack>

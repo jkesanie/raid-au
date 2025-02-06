@@ -37,7 +37,11 @@ const RelatedObjectForm = memo(({ index }: { index: number }) => {
       <Grid item xs={12} sm={12}>
         <Typography variant="subtitle2" gutterBottom>
           Current value:{" "}
-          {relatedObjectTitles?.get(getValues(`relatedObject.${index}.id`))}
+          {relatedObjectTitles &&
+            relatedObjectTitles.size &&
+            relatedObjectTitles?.get(
+              getValues(`relatedObject.${index}.id`).value || ""
+            )}
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <TextInputField

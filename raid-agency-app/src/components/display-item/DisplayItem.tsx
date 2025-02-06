@@ -157,11 +157,9 @@ export const DisplayItem = memo(
             )}
 
             {multiline && (
-              <Typography variant="body2" component={Component} {...linkProps}>
-                <Markdown data-testid={testid}>
-                  {value?.toString() ?? ""}
-                </Markdown>
-              </Typography>
+              <Markdown data-testid={testid}>
+                {value?.toString() ?? ""}
+              </Markdown>
             )}
           </Box>
         </Grid>
