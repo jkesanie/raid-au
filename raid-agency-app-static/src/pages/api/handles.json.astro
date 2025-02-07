@@ -1,0 +1,11 @@
+---
+import { combinedHandles } from "../../services/combined";
+
+const handles = await combinedHandles();
+
+return new Response(JSON.stringify([...handles]), {
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+---

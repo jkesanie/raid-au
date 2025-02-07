@@ -1,11 +1,13 @@
-import { ServicePointSwitcher } from "@/components/service-point-switcher";
+import { useSnackbar } from "@/components/snackbar";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import {
   AccountCircle as AccountCircleIcon,
   ExitToApp as ExitToAppIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 import {
+  Button,
   Divider,
   IconButton,
   ListItemIcon,
@@ -13,6 +15,7 @@ import {
   Menu,
   MenuItem,
   MenuList,
+  Typography,
 } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import { useQuery } from "@tanstack/react-query";
@@ -37,6 +40,7 @@ function getRolesFromToken({
 
 export default function UserDropdown() {
   const { keycloak, initialized } = useKeycloak();
+  const snackbar = useSnackbar();
 
   const [accountMenuAnchor, setAccountMenuAnchor] =
     React.useState<null | HTMLElement>(null);
@@ -69,23 +73,40 @@ export default function UserDropdown() {
     return <div>Error...</div>;
   }
 
-  const activeGroup = keycloakGroupsQuery.data?.find(
-    (el) => el.id === keycloak.tokenParsed?.service_point_group_id
-  );
-
   return (
     <>
       {keycloak.authenticated && initialized && (
         <div>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleAccountMenuOpen}
-          >
-            <AccountCircleIcon />
-          </IconButton>
+          {(keycloak.authenticated && keycloak?.tokenParsed?.email && (
+            <Button
+              variant="outlined"
+              startIcon={<AccountCircleIcon />}
+              endIcon={<ExpandMoreIcon />}
+              color="primary"
+              onClick={handleAccountMenuOpen}
+              sx={{
+                textTransform: "none",
+              }}
+            >
+              <Typography
+                sx={{
+                  display: { xs: "none", md: "block" },
+                }}
+              >
+                {keycloak?.tokenParsed?.email}
+              </Typography>
+            </Button>
+          )) || (
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleAccountMenuOpen}
+            >
+              <AccountCircleIcon />
+            </IconButton>
+          )}
           <Menu
             id="menu-appbar"
             anchorEl={accountMenuAnchor}
@@ -102,16 +123,32 @@ export default function UserDropdown() {
             onClose={handleAccountMenuClose}
           >
             <MenuList dense>
-              <MenuItem disabled>
+              {keycloak.tokenParsed?.email && (
+                <MenuItem
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      keycloak.tokenParsed?.email || ""
+                    );
+                    snackbar?.openSnackbar(`✅ Copied value to clipboard`);
+                  }}
+                >
+                  <ListItemText
+                    primary="Email"
+                    secondary={keycloak.tokenParsed?.email || ""}
+                  />
+                </MenuItem>
+              )}
+              <MenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    keycloak.tokenParsed?.sub || ""
+                  );
+                  snackbar?.openSnackbar(`✅ Copied value to clipboard`);
+                }}
+              >
                 <ListItemText
                   primary="Identity"
                   secondary={keycloak.tokenParsed?.sub}
-                />
-              </MenuItem>
-              <MenuItem disabled>
-                <ListItemText
-                  primary="ID Provider"
-                  secondary={keycloak.tokenParsed?.typ}
                 />
               </MenuItem>
               <MenuItem disabled>
@@ -147,8 +184,6 @@ export default function UserDropdown() {
                   secondary={roles?.sort().join(" | ")}
                 />
               </MenuItem>
-              {activeGroup && <ServicePointSwitcher />}
-
               <Divider />
               <MenuItem
                 onClick={() => {

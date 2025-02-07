@@ -35,12 +35,13 @@ export const AnchorButton = memo(
             textTransform: "none",
             alignItems: "center",
             justifyContent: "space-between",
+            minHeight: 32,
             "&:hover": {
               borderLeftWidth: 3,
             },
           }}
         >
-          <Typography variant="body2" noWrap sx={{ fontSize: 12 }}>
+          <Typography variant="caption" noWrap>
             {label}
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>

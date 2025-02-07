@@ -2,7 +2,9 @@ import { AppNavBar } from "@/components/app-nav-bar";
 import { ProtectedRoute } from "@/components/protected-route";
 import { AboutRaid } from "@/pages/about-raid";
 import { ApiKey } from "@/pages/api-key";
+import { CacheManager } from "@/pages/cache-manager";
 import { Home } from "@/pages/home";
+import { Invites } from "@/pages/invites";
 import { Login } from "@/pages/login";
 import { Privacy } from "@/pages/privacy";
 import { UsageTerms } from "@/pages/usage-terms";
@@ -57,12 +59,32 @@ export const otherRoutes: RouteObject[] = [
     ),
   },
   {
-    path: "api-key",
+    path: "/api-key",
     element: <ProtectedRoute />,
     children: [
       {
         path: "",
         element: <ApiKey />,
+      },
+    ],
+  },
+  {
+    path: "/invites",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <Invites />,
+      },
+    ],
+  },
+  {
+    path: "/cache-manager",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <CacheManager />,
       },
     ],
   },

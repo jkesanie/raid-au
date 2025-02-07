@@ -1,5 +1,3 @@
-# committing IDEA config files is awkward, messy and sometimes leads to people 
-# accidetnally committing sensitive data to the repo (secrets, API keys, etc.)
 .idea
 
 # temp directory that Gradle dumps in the repo root
@@ -19,6 +17,12 @@ build/
 
 .run/
 .DS_Store
-.env
-.DS_Store
-.idea
+dist/
+node_modules/*
+node_modules/
+
+raid-agency-app/node_modules/*
+raid-agency-app-static/node_modules/*
+raid-agency-app-static/.astro/types.d.ts
+raid-agency-app-static/.env
+scripts/.env

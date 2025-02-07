@@ -1,8 +1,11 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
-import { useMapping } from "@/mapping";
 import type { RelatedRaid } from "@/generated/raid";
+import { useMapping } from "@/mapping";
+import { fetchRelatedRaidTitle } from "@/services/related-raid";
+import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { Divider, Grid, Stack, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
 
 const NoItemsMessage = memo(() => (
@@ -13,16 +16,43 @@ const NoItemsMessage = memo(() => (
 
 const RelatedRaidItem = memo(
   ({ relatedRaid, i }: { relatedRaid: RelatedRaid; i: number }) => {
-    const { generalMap } = useMapping();
+    const handle = getLastTwoUrlSegments(relatedRaid.id!);
+    const { generalMap } = useMapping(); // Moved up before any conditionals
 
     const relatedRaidTypeMappedValue = useMemo(
       () => generalMap.get(String(relatedRaid.type?.id)) ?? "",
       [relatedRaid.type?.id]
     );
 
+    const raidQuery = useQuery({
+      queryKey: ["related-raid", handle],
+      queryFn: () =>
+        fetchRelatedRaidTitle({
+          handle: handle!,
+        }),
+      enabled: !!handle,
+    });
+
+    if (raidQuery.isPending) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Loading...
+        </Typography>
+      );
+    }
+
+    if (raidQuery.isError) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Error loading related RAiD
+        </Typography>
+      );
+    }
+
     return (
       <>
-        <Typography variant="body1">Related RAiD #{i + 1}</Typography>
+        {raidQuery.data}
+
         <Grid container spacing={2}>
           <DisplayItem
             label="Related RAiD"
@@ -52,7 +82,7 @@ const RelatedRaidDisplay = memo(({ data }: { data: RelatedRaid[] }) => (
           {(data || []).map((relatedRaid, i) => (
             <RelatedRaidItem
               relatedRaid={relatedRaid}
-              key={crypto.randomUUID()}
+              key={relatedRaid.id || i}
               i={i}
             />
           ))}

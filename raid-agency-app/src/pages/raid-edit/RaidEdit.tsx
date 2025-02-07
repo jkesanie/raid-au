@@ -1,10 +1,11 @@
+import raidConfig from "@/../raid.config.json";
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useErrorDialog } from "@/components/error-dialog";
 import { RaidForm } from "@/components/raid-form";
 import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
-import { RaidDto } from "@/generated/raid";
+import { Contributor, RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { Loading } from "@/pages/loading";
 import { fetchRaid, updateRaid } from "@/services/raid";
 import { raidRequest } from "@/utils/data-utils";
@@ -97,6 +98,29 @@ export const RaidEdit = () => {
     return <ErrorAlertComponent error={query.error} />;
   }
 
+  let contributors: (Contributor & { email?: string | undefined })[] = [];
+
+  if (raidConfig.version === "3") {
+    for (const contributor of query.data?.contributor ?? []) {
+      const updatedContributor = {
+        ...contributor,
+        email: (contributor as { email?: string }).email || "",
+      };
+      contributors.push(updatedContributor);
+    }
+  }
+
+  let raidData: RaidDto | RaidCreateRequest;
+
+  if (raidConfig.version === "3") {
+    raidData = {
+      ...query.data,
+      contributor: contributors,
+    };
+  } else {
+    raidData = query.data;
+  }
+
   return (
     <Container
       maxWidth="lg"
@@ -114,7 +138,7 @@ export const RaidEdit = () => {
         <RaidForm
           prefix={prefix}
           suffix={suffix}
-          raidData={query.data}
+          raidData={raidData}
           onSubmit={handleSubmit}
           isSubmitting={updateMutation.isPending}
         />

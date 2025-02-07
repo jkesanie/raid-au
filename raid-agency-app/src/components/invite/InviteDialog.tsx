@@ -23,7 +23,7 @@ export default function InviteDialog({
   setOpen: (open: boolean) => void;
 }) {
   const { prefix, suffix } = useParams();
-  const [email, setEmail] = useState("@ardc-raid.testinator.com");
+  const [email, setEmail] = useState("john.doe@ardc-raid.testinator.com");
   const snackbar = useSnackbar();
   const { keycloak } = useKeycloak();
 
@@ -33,7 +33,7 @@ export default function InviteDialog({
       snackbar.openSnackbar(`✅ Thank you, invite has been sent.`);
     },
     onError: (error) => {
-      console.log(error);
+      snackbar.openSnackbar(`❌ An error occurred.`);
     },
   });
 

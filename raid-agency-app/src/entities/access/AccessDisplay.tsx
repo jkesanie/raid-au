@@ -1,7 +1,7 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
-import { useMapping } from "@/mapping";
 import { Access } from "@/generated/raid";
+import { useMapping } from "@/mapping";
 import { dateDisplayFormatter } from "@/utils/date-utils/date-utils";
 import { Grid } from "@mui/material";
 import dayjs from "dayjs";
@@ -31,21 +31,21 @@ const AccessDisplay = memo(({ data }: { data: Access }) => {
           <DisplayItem
             label="Statement"
             value={data?.statement?.text}
-            width={hasEmbargoedAccess ? 6 : 8}
+            width={6}
           />
-          <DisplayItem label="Language" value={languageMappedValue} width={2} />
+          <DisplayItem label="Language" value={languageMappedValue} width={6} />
           <DisplayItem
             label="Access Type"
             value={accessTypeMappedValue}
-            width={2}
+            width={3}
           />
           {hasEmbargoedAccess && (
             <DisplayItem
-              label="Embargo Expiry"
+              label="Embargo Expiry Date"
               value={dateDisplayFormatter(
                 dayjs(data?.embargoExpiry).format("YYYY-MM-DD")
               )}
-              width={2}
+              width={3}
             />
           )}
         </Grid>

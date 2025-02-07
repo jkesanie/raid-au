@@ -2,11 +2,13 @@ import { useAuthHelper } from "@/keycloak";
 import {
   Add as AddIcon,
   ExitToApp as ExitToAppIcon,
+  GroupWork as GroupWorkIcon,
   Home as HomeIcon,
   Hub as HubIcon,
   Key as KeyIcon,
   ListAltOutlined as ListAltOutlinedIcon,
   Menu as MenuIcon,
+  Layers as LayersIcon,
 } from "@mui/icons-material";
 import {
   Drawer,
@@ -16,149 +18,106 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  ListSubheader,
   Toolbar,
   Tooltip,
 } from "@mui/material";
 import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
-function MainSidebarMenu() {
-  return (
-    <List subheader={<ListSubheader component="div">Main</ListSubheader>}>
-      {[
-        {
-          label: "Home",
-          link: "/",
-          icon: <HomeIcon />,
-        },
-      ].map((link) => (
-        <ListItem key={link.link} disablePadding>
-          <ListItemButton component={NavLink} to={link.link}>
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.label} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  );
-}
-function RaidSidebarMenu() {
-  return (
-    <List subheader={<ListSubheader component="div">RAiDs</ListSubheader>}>
-      {[
-        {
-          label: "Mint new RAiD",
-          link: "/raids/new",
-          icon: <AddIcon />,
-          hidden: false,
-        },
-        {
-          label: "Show all RAiDs",
-          link: "/raids",
-          icon: <ListAltOutlinedIcon />,
-          hidden: false,
-        },
-      ].map((link) => (
-        <ListItem key={link.link} disablePadding>
-          <ListItemButton
-            component={NavLink}
-            to={link.link}
-            disabled={link.hidden}
-          >
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.label} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  );
-}
-function ServicepointSidebarMenu() {
+function CombinedMenu() {
   const { isOperator, isGroupAdmin } = useAuthHelper();
+  const { keycloak } = useKeycloak();
+
+  const menuItems = [
+    {
+      label: "Home",
+      link: "/",
+      icon: <HomeIcon />,
+      isNavLink: true,
+    },
+    {
+      label: "Mint new RAiD",
+      link: "/raids/new",
+      icon: <AddIcon />,
+      isNavLink: true,
+    },
+    {
+      label: "Show all RAiDs",
+      link: "/raids",
+      icon: <ListAltOutlinedIcon />,
+      isNavLink: true,
+    },
+    {
+      label: "Manage service points",
+      link: "/service-points",
+      icon: <HubIcon />,
+      hidden: !isOperator && !isGroupAdmin,
+      isNavLink: true,
+    },
+    {
+      label: "Create API key",
+      link: "/api-key",
+      icon: <KeyIcon />,
+      isNavLink: true,
+    },
+    {
+      label: "Your received invites",
+      link: "/invites",
+      icon: <GroupWorkIcon />,
+      isNavLink: false,
+    },
+    {
+      label: "Cache Manager",
+      link: "/cache-manager",
+      icon: <LayersIcon />,
+      isNavLink: false,
+    },
+    {
+      label: "Sign out",
+      icon: <ExitToAppIcon />,
+      onClick: () => {
+        localStorage.removeItem("client_id");
+        keycloak.logout();
+      },
+    },
+  ];
+
   return (
-    <List
-      subheader={<ListSubheader component="div">Service points</ListSubheader>}
-    >
-      {[
-        {
-          label: "Manage service points",
-          link: "/service-points",
-          icon: <HubIcon />,
-          hidden: !isOperator && !isGroupAdmin,
-        },
-      ].map((link) => (
+    <List>
+      {menuItems.map((item) => (
         <Tooltip
           placement="top"
-          title={link.hidden ? "Not enabled for your user" : ""}
-          key={link.link}
+          title={item.hidden ? "Not enabled for your user" : ""}
+          key={item.link || item.label}
         >
           <ListItem disablePadding>
-            <ListItemButton
-              component={NavLink}
-              to={link.link}
-              disabled={link.hidden}
-            >
-              <ListItemIcon>{link.icon}</ListItemIcon>
-              <ListItemText primary={link.label} />
-            </ListItemButton>
+            {item.onClick ? (
+              <ListItemButton onClick={item.onClick} disabled={item.hidden}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            ) : item.isNavLink ? (
+              <ListItemButton
+                component={NavLink}
+                to={item.link || ""}
+                disabled={item.hidden}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            ) : (
+              <ListItemButton
+                component={Link}
+                to={item.link || ""}
+                disabled={item.hidden}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            )}
           </ListItem>
         </Tooltip>
-      ))}
-    </List>
-  );
-}
-function ApiKeySidebarMenu() {
-  return (
-    <List subheader={<ListSubheader component="div">API keys</ListSubheader>}>
-      {[
-        {
-          label: "Create API key",
-          link: "/api-key",
-          icon: <KeyIcon />,
-          hidden: false,
-        },
-      ].map((link) => (
-        <ListItem key={link.link} disablePadding>
-          <ListItemButton
-            component={NavLink}
-            to={link.link}
-            disabled={link.hidden}
-          >
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.label} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  );
-}
-function ActionsSidebarMenu() {
-  const { keycloak } = useKeycloak();
-  return (
-    <List
-      subheader={<ListSubheader component="div">More actions</ListSubheader>}
-    >
-      {[
-        {
-          label: "Sign out",
-          link: "/api-key",
-          icon: <ExitToAppIcon />,
-          hidden: false,
-        },
-      ].map((link) => (
-        <ListItem key={link.link} disablePadding>
-          <ListItemButton
-            onClick={() => {
-              localStorage.removeItem("client_id");
-              keycloak.logout();
-            }}
-          >
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.label} />
-          </ListItemButton>
-        </ListItem>
       ))}
     </List>
   );
@@ -181,13 +140,20 @@ export default function NavigationDrawer() {
       >
         <MenuIcon />
       </IconButton>
-      <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer(false)}
+        sx={{
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: 320,
+            boxSizing: "border-box",
+          },
+        }}
+      >
         <Toolbar />
-        <MainSidebarMenu />
-        <RaidSidebarMenu />
-        <ServicepointSidebarMenu />
-        <ApiKeySidebarMenu />
-        <ActionsSidebarMenu />
+        <CombinedMenu />
       </Drawer>
     </>
   );
