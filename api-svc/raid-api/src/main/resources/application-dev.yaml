@@ -12,7 +12,7 @@ raid:
     realm-uri: http://localhost:8001/realms/raid
 spring:
   flyway:
-    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/demo
+    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/dev
   security:
     oauth2:
       client:
