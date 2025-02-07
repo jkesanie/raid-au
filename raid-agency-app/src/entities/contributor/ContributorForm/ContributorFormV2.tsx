@@ -1,17 +1,9 @@
 import raidConfig from "@/../raid.config.json";
-import { DisplayItem } from "@/components/display-item";
 import { CheckboxField } from "@/fields/CheckboxField";
 import { TextInputField } from "@/fields/TextInputField";
-import { Contributor } from "@/generated/raid";
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
-const ContributorForm = ({
-  index,
-  data,
-}: {
-  index: number;
-  data: Contributor[];
-}) => {
+const ContributorForm = ({ index }: { index: number }) => {
   return (
     <Grid container spacing={2}>
       {raidConfig.version === "2" && (
@@ -24,23 +16,13 @@ const ContributorForm = ({
         />
       )}
       {raidConfig.version === "3" && (
-        <>
-          {(!data || !data[index] || !data[index]?.status) && (
-            <TextInputField
-              name={`contributor.${index}.email`}
-              label="Email"
-              placeholder="Email"
-              width={12}
-            />
-          )}
-          {data?.[index]?.status && (
-            <DisplayItem
-              label="Contributor Status"
-              value={data[index].status}
-              width={12}
-            />
-          )}
-        </>
+        <TextInputField
+          name={`contributor.${index}.email`}
+          label="Email"
+          placeholder="Email"
+          required={true}
+          width={12}
+        />
       )}
 
       <CheckboxField

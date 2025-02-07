@@ -76,7 +76,16 @@ export const RaidDisplay = () => {
         <Stack direction="column" spacing={2}>
           <BreadcrumbsBar breadcrumbs={breadcrumbs} />
           <AnchorButtons raidData={raidData} />
-          <MetadataDisplay metadata={raidData.metadata!} />
+          {raidData && "metadata" in raidData && (
+            <MetadataDisplay
+              metadata={
+                raidData.metadata as {
+                  created?: number;
+                  updated?: number;
+                }
+              }
+            />
+          )}
           {displayItems.map(({ itemKey, Component, emptyValue }) => {
             const data =
               raidData[itemKey as keyof RaidDto] || (emptyValue as any);

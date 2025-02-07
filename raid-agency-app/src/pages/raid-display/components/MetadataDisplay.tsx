@@ -1,8 +1,11 @@
 import { DisplayItem } from "@/components/display-item";
-import type { Metadata } from "@/generated/raid/Metadata";
 import { Card, CardContent, Grid } from "@mui/material";
 
-export const MetadataDisplay = ({ metadata }: { metadata: Metadata }) => {
+export const MetadataDisplay = ({
+  metadata,
+}: {
+  metadata: { created?: number; updated?: number };
+}) => {
   return (
     <Card>
       <CardContent>

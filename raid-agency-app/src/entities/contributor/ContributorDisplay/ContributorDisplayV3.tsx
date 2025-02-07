@@ -179,7 +179,9 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
   }: {
     contributor: Contributor;
   }) => {
-    return orcidData?.find((orcid: any) => orcid.uuid === contributor.uuid);
+    return "uuid" in contributor
+      ? orcidData?.find((orcid: any) => orcid?.uuid === contributor.uuid)
+      : null;
   };
 
   return (
