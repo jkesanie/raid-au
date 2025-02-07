@@ -28,7 +28,7 @@ const relatedObjectCategoryGenerator = (): RelatedObjectCategory => {
 
 const relatedObjectGenerator = (): RelatedObject => {
   return {
-    id: `https://doi.org/10.5555.25/raid.2023.00000001`,
+    id: ``,
     schemaUri: "https://doi.org/",
     type: relatedObjectTypeGenerator(),
     category: [relatedObjectCategoryGenerator()],

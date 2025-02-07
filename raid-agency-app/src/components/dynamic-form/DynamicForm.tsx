@@ -33,6 +33,7 @@ export const DynamicForm = memo(
     DetailsFormComponent,
     generator,
     childConfigs,
+    data,
   }: {
     control: Control<RaidDto>;
     errors?: FieldErrors<RaidDto>;
@@ -40,9 +41,10 @@ export const DynamicForm = memo(
     label: string;
     labelPlural: string;
     entityKey: string;
-    DetailsFormComponent: React.ComponentType<{ index: number }>;
+    DetailsFormComponent: React.ComponentType<{ index: number; data?: any }>;
     generator: () => any;
     childConfigs?: ChildConfig[];
+    data?: any;
   }) => {
     const NoItemsMessage = memo(({ type }: { type: string }) => (
       <Typography variant="body2" color="text.secondary" textAlign="center">
@@ -85,7 +87,7 @@ export const DynamicForm = memo(
                   onRemove={remove}
                   label={label}
                 >
-                  <DetailsFormComponent index={parentIndex} />
+                  <DetailsFormComponent index={parentIndex} data={data} />
 
                   {childConfigs &&
                     childConfigs.map((childConfig) => (

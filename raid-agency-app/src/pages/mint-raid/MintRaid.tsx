@@ -16,10 +16,10 @@ export const MintRaid = () => {
 
   const mintMutation = useMutation({
     mutationFn: createRaid,
-    onSuccess: (mintResult: RaidDto) => {
-      const resultHandle = new URL(mintResult.identifier?.id ?? "");
+    onSuccess: async (data) => {
+      const resultHandle = new URL(data.identifier?.id ?? "");
       const [prefix, suffix] = resultHandle.pathname.split("/").filter(Boolean);
-      navigate(`/show-raid/${prefix}/${suffix}`);
+      navigate(`/raids/${prefix}/${suffix}`);
     },
     onError: (error: Error) => {
       RaidFormErrorMessage(error, openErrorDialog);

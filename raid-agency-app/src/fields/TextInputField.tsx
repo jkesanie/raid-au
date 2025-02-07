@@ -9,9 +9,10 @@ interface TextInputFieldProps {
   placeholder?: string;
   helperText?: string;
   errorText?: string;
-  required: boolean;
+  required?: boolean;
   multiline?: boolean;
   width?: number;
+  disabled?: boolean;
 }
 
 const TextInputField = memo(function TextInputField({
@@ -19,9 +20,10 @@ const TextInputField = memo(function TextInputField({
   label,
   helperText,
   errorText,
-  required,
+  required = false,
   multiline,
   width = 12,
+  disabled,
 }: TextInputFieldProps) {
   const {
     field,
@@ -57,6 +59,7 @@ const TextInputField = memo(function TextInputField({
         required={Boolean(required)}
         variant="filled"
         multiline={multiline}
+        disabled={disabled}
         sx={{
           boxShadow: 0,
         }}

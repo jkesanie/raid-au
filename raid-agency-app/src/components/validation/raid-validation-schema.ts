@@ -11,7 +11,7 @@ import { relatedRaidValidationSchema } from "@/entities/relatedRaid/data-compone
 import { spatialCoverageValidationSchema } from "@/entities/spatialCoverage/spatial-coverage-validation-schema";
 import { subjectValidationSchema } from "@/entities/subject/data-components/subject-validation-schema";
 import { titleValidationSchema } from "@/entities/title/data-components/title-validation-schema";
-import { traditionalKnowledgeLabelValidationSchema } from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-validation-schema";
+// import { traditionalKnowledgeLabelValidationSchema } from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-validation-schema";
 import { z } from "zod";
 
 export const RaidValidationSchema = z.object({
@@ -28,5 +28,5 @@ export const RaidValidationSchema = z.object({
   relatedObject: relatedObjectValidationSchema,
   alternateIdentifier: alternateIdentifierValidationSchema,
   spatialCoverage: spatialCoverageValidationSchema,
-  traditionalKnowledgeLabel: traditionalKnowledgeLabelValidationSchema,
+  // traditionalKnowledgeLabel: traditionalKnowledgeLabelValidationSchema,
 });

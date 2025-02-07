@@ -6,6 +6,9 @@ export const startDateColumn: GridColDef = {
   headerName: "Start Date",
   flex: 1,
   valueGetter: (params) => {
-    return dateDisplayFormatter(params.row.date.startDate);
+    return params.row.date.startDate; // Return the raw date value for sorting
+  },
+  valueFormatter: (params) => {
+    return dateDisplayFormatter(params.value); // Format the date for display
   },
 };

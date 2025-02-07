@@ -73,26 +73,28 @@ const ContributorItem = memo(
   )
 );
 
-const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => (
-  <DisplayCard
-    data={data}
-    labelPlural="Contributors"
-    children={
-      <>
-        {data.length === 0 && <NoItemsMessage />}
-        <Stack gap={2} divider={<Divider />}>
-          {data?.map((contributor, i) => (
-            <ContributorItem
-              contributor={contributor}
-              key={crypto.randomUUID()}
-              i={i}
-            />
-          ))}
-        </Stack>
-      </>
-    }
-  />
-));
+const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
+  return (
+    <DisplayCard
+      data={data}
+      labelPlural="Contributors"
+      children={
+        <>
+          {data.length === 0 && <NoItemsMessage />}
+          <Stack gap={2} divider={<Divider />}>
+            {data?.map((contributor, i) => (
+              <ContributorItem
+                contributor={contributor}
+                key={crypto.randomUUID()}
+                i={i}
+              />
+            ))}
+          </Stack>
+        </>
+      }
+    />
+  );
+});
 
 NoItemsMessage.displayName = "NoItemsMessage";
 ContributorItem.displayName = "ContributorItem";

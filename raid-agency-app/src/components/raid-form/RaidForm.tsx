@@ -1,20 +1,20 @@
-import accessGenerator from "@/entities/access/data-components/access-generator";
 import AccessForm from "@/entities/access/AccessForm";
+import accessGenerator from "@/entities/access/data-components/access-generator";
 
-import alternateIdentifierGenerator from "@/entities/alternateIdentifier/data-components/alternate-identifier-generator";
 import AlternateIdentifierForm from "@/entities/alternateIdentifier/AlternateIdentifierForm";
+import alternateIdentifierGenerator from "@/entities/alternateIdentifier/data-components/alternate-identifier-generator";
 
-import alternateUrlGenerator from "@/entities/alternateUrl/data-components/alternate-url-generator";
 import AlternateUrlForm from "@/entities/alternateUrl/AlternateUrlForm";
+import alternateUrlGenerator from "@/entities/alternateUrl/data-components/alternate-url-generator";
 
+import { ContributorForm } from "@/entities/contributor/ContributorForm";
 import contributorGenerator from "@/entities/contributor/data-components/contributor-generator";
-import ContributorForm from "@/entities/contributor/ContributorForm";
 
-import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
 import ContributorPositionForm from "@/entities/contributor/position/ContributorPositionForm";
+import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
 
-import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
 import ContributorRoleForm from "@/entities/contributor/role/ContributorRoleForm";
+import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
 
 import dateGenerator from "@/entities/date/data-components/date-generator";
 import DateForm from "@/entities/date/DateForm";
@@ -52,8 +52,8 @@ import SubjectKeywordForm from "@/entities/subject/keyword/SubjectKeywordForm";
 import titleGenerator from "@/entities/title/data-components/title-generator";
 import TitleForm from "@/entities/title/TitleForm";
 
-import traditionalKnowledgeLabelGenerator from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-generator";
-import TraditionalKnowledgeLabelForm from "@/entities/traditionalKnowledgeLabel/TraditionalKnowledgeLabelForm";
+// import traditionalKnowledgeLabelGenerator from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-generator";
+// import TraditionalKnowledgeLabelForm from "@/entities/traditionalKnowledgeLabel/TraditionalKnowledgeLabelForm";
 
 import { ChildConfig } from "@/types";
 
@@ -82,6 +82,7 @@ type BaseConfiguration = {
   entityKey: keyof RaidDto;
   DetailsFormComponent: any;
   generator: () => any;
+  data?: any;
 };
 
 type FlatFormConfiguration = BaseConfiguration & {
@@ -169,6 +170,7 @@ export const RaidForm = memo(
           component: DynamicForm,
           DetailsFormComponent: ContributorForm,
           generator: contributorGenerator,
+          data: raidData.contributor || [],
           childConfigs: [
             {
               fieldKey: "role",
@@ -276,16 +278,15 @@ export const RaidForm = memo(
             },
           ],
         },
-
-        {
-          id: "traditionalKnowledgeLabel",
-          label: "Traditional Knowledge Label",
-          labelPlural: "Traditional Knowledge Labels",
-          entityKey: "traditionalKnowledgeLabel" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: TraditionalKnowledgeLabelForm,
-          generator: traditionalKnowledgeLabelGenerator,
-        },
+        // {
+        //   id: "traditionalKnowledgeLabel",
+        //   label: "Traditional Knowledge Label",
+        //   labelPlural: "Traditional Knowledge Labels",
+        //   entityKey: "traditionalKnowledgeLabel" as keyof RaidDto,
+        //   component: DynamicForm,
+        //   DetailsFormComponent: TraditionalKnowledgeLabelForm,
+        //   generator: traditionalKnowledgeLabelGenerator,
+        // },
         {
           id: "spatialCoverage",
           label: "Spatial Coverage",
@@ -320,6 +321,9 @@ export const RaidForm = memo(
 
     const handleSubmit = useCallback(
       (data: RaidDto) => {
+        if (formState.errors) {
+          console.log(formState.errors);
+        }
         onSubmit(data);
       },
       [onSubmit]
@@ -388,6 +392,7 @@ export const RaidForm = memo(
                   entityKey: config.entityKey,
                   DetailsFormComponent: config.DetailsFormComponent,
                   generator: config.generator,
+                  data: config.data,
                 };
 
                 if (config.component === FlatFormComponent) {
@@ -417,7 +422,6 @@ export const RaidForm = memo(
                 ) {
                   return (
                     <DynamicForm
-                      // ChildFormComponent={undefined}
                       key={config.id}
                       {...commonProps}
                       childConfigs={config.childConfigs}
@@ -425,13 +429,7 @@ export const RaidForm = memo(
                   );
                 }
 
-                return (
-                  <DynamicForm
-                    key={config.id}
-                    {...commonProps}
-                    // ChildFormComponent={config.ChildFormComponent}
-                  />
-                );
+                return <DynamicForm key={config.id} {...commonProps} />;
               })}
             </Stack>
           </Stack>
