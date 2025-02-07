@@ -1,9 +1,10 @@
 ---
+import InfoField from "@/components/info-field.astro";
 import type { Title } from "@/generated/raid";
-import InfoField from "../info-field.astro";
-import mapping from "@/mapping.json";
-import language from "@/language.json";
+import language from "@/mapping/data//language.json";
+import mapping from "@/mapping/data/general-mapping.json";
 import { dateDisplayFormatter } from "@/utils/date-utils";
+
 interface Props {
   titles: Title[];
 }

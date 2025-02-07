@@ -1,0 +1,12 @@
+---
+import { raids } from "@/store/raids";
+
+const headers = new Headers({
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+});
+
+return new Response(JSON.stringify(raids), {
+  headers,
+});
+---

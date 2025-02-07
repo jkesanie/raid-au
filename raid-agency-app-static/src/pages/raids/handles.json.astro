@@ -1,0 +1,18 @@
+---
+import { raids } from "@/store/raids";
+
+const handles = new Set();
+for (const raid in raids) {
+  const pathname = new URL(raids[raid].identifier.id).pathname;
+  const [, prefix, suffix] = pathname.split("/");
+  handles.add(`${prefix}/${suffix}`);
+}
+const headers = new Headers({
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+});
+
+return new Response(JSON.stringify([...handles]), {
+  headers,
+});
+---
