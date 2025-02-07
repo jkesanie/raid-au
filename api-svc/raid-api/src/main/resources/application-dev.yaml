@@ -7,12 +7,12 @@ raid:
     host: localhost
     port: 7432
     name: raido
-    encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
+#    encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
   iam:
     realm-uri: http://localhost:8001/realms/raid
 spring:
   flyway:
-    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/dev
+    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/demo
   security:
     oauth2:
       client:

@@ -19,6 +19,7 @@ public class RelatedRaidRepository {
                 .set(RELATED_RAID.HANDLE, record.getHandle())
                 .set(RELATED_RAID.RELATED_RAID_HANDLE, record.getRelatedRaidHandle())
                 .set(RELATED_RAID.RELATED_RAID_TYPE_ID, record.getRelatedRaidTypeId())
+                .onConflictDoNothing()
                 .returning()
                 .fetchOne();
     }

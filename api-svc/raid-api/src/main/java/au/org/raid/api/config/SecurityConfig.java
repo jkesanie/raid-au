@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private static final String GROUPS = "groups";
     private static final String REALM_ACCESS_CLAIM = "realm_access";
     private static final String ROLES_CLAIM = "roles";
+    private static final String RAID_UPGRADER_ROLE = "raid-upgrader";
 
     private final KeycloakLogoutHandler keycloakLogoutHandler;
     public static final String RAID_V2_API = "/v2";
@@ -56,6 +58,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui*/**").permitAll()
                         .requestMatchers("/docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/upgradable/all", "GET")).hasRole(RAID_UPGRADER_ROLE)
+                        .requestMatchers(new AntPathRequestMatcher("/upgrade", "POST")).hasRole(RAID_UPGRADER_ROLE)
                         .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**"))
                         .hasRole(SERVICE_POINT_USER_ROLE)
                         .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "PUT"))
@@ -71,9 +75,7 @@ public class SecurityConfig {
         http.oauth2Login(Customizer.withDefaults())
                 .logout(logout -> logout.addLogoutHandler(keycloakLogoutHandler).logoutSuccessUrl("/"));
 
-
-
-
+//        http.securityMatcher("/upgrade").csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

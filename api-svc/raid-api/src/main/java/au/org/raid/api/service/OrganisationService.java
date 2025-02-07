@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -109,7 +111,38 @@ public class OrganisationService {
     }
 
     public void update(final List<Organisation> organisations, final String handle) {
-        raidOrganisationRepository.deleteAllByHandle(handle);
-        create(organisations, handle);
+        if (organisations == null || organisations.isEmpty()) {
+            raidOrganisationRepository.deleteAllByHandle(handle);
+            return;
+        }
+
+        // Create a set of new organisation IDs to keep
+        final Set<Integer> newOrganisationIds = new HashSet<>();
+
+        for (final var organisation : organisations) {
+            final var organisationSchemaRecord = organisationSchemaRepository.findByUri(organisation.getSchemaUri())
+                    .orElseThrow(() ->
+                            new OrganisationSchemaNotFoundException(organisation.getSchemaUri()));
+
+            final var organisationRecord = organisationRecordFactory.create(
+                    organisation,
+                    organisationSchemaRecord.getId()
+            );
+            final var savedOrganisation = organisationRepository.findOrCreate(organisationRecord);
+            newOrganisationIds.add(savedOrganisation.getId());
+
+            // Use upsert instead of delete + insert
+            final var raidOrganisationRecord = raidOrganisationRecordFactory.create(
+                    savedOrganisation.getId(),
+                    handle
+            );
+
+            final var savedRaidOrganisationRecord = raidOrganisationRepository.upsert(
+                    raidOrganisationRecord
+            );
+        }
+
+        // Delete any old organisations that aren't in the new list
+        raidOrganisationRepository.deleteByHandleAndNotInOrganisationIds(handle, newOrganisationIds);
     }
 }
