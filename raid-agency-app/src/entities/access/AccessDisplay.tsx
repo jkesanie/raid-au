@@ -29,24 +29,30 @@ const AccessDisplay = memo(({ data }: { data: Access }) => {
       children={
         <Grid container spacing={2}>
           <DisplayItem
-            label="Statement"
-            value={data?.statement?.text}
-            width={6}
-          />
-          <DisplayItem label="Language" value={languageMappedValue} width={6} />
-          <DisplayItem
             label="Access Type"
             value={accessTypeMappedValue}
-            width={3}
+            width={6}
           />
           {hasEmbargoedAccess && (
-            <DisplayItem
-              label="Embargo Expiry Date"
-              value={dateDisplayFormatter(
-                dayjs(data?.embargoExpiry).format("YYYY-MM-DD")
-              )}
-              width={3}
-            />
+            <>
+              <DisplayItem
+                label="Statement"
+                value={data?.statement?.text}
+                width={12}
+              />
+              <DisplayItem
+                label="Language"
+                value={languageMappedValue}
+                width={6}
+              />
+              <DisplayItem
+                label="Embargo Expiry Date"
+                value={dateDisplayFormatter(
+                  dayjs(data?.embargoExpiry).format("YYYY-MM-DD")
+                )}
+                width={6}
+              />
+            </>
           )}
         </Grid>
       }

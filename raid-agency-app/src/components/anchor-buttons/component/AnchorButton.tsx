@@ -12,11 +12,15 @@ interface AnchorButtonProps {
 export const AnchorButton = memo(
   ({ itemKey, label, count, hasError }: AnchorButtonProps) => {
     const handleClick = useCallback(() => {
-      document.getElementById(itemKey)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest",
-      });
+      const element = document.getElementById(itemKey);
+      if (element) {
+        const elementPosition =
+          element.getBoundingClientRect().top + window.scrollY - 60;
+        window.scrollTo({
+          top: elementPosition,
+          behavior: "smooth",
+        });
+      }
     }, [itemKey]);
 
     return (
