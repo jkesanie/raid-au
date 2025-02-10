@@ -103,4 +103,13 @@ public class RaidRepository {
                 )
                 .fetchInto(RaidRecord.class);
     }
+
+    public List<RaidRecord> findAllV2() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .where(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
+                )
+                .fetchInto(RaidRecord.class);
+    }
 }

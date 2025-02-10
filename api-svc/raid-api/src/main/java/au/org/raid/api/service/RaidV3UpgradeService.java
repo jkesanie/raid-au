@@ -1,6 +1,7 @@
 package au.org.raid.api.service;
 
 import au.org.raid.api.factory.JsonValueFactory;
+import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.repository.RaidHistoryRepository;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.db.jooq.tables.records.RaidHistoryRecord;
@@ -23,6 +24,8 @@ public class RaidV3UpgradeService {
     private final JsonValueFactory jsonValueFactory;
     private final ObjectMapper objectMapper;
     private final CacheableRaidService raidService;
+    private final ContributorRepository contributorRepository;
+
 
     public List<RaidDto> upgrade() {
         final List<Map<?, ?>> raids = findAllRaids();
@@ -52,7 +55,18 @@ public class RaidV3UpgradeService {
                             contributor.setStatus("UNAUTHENTICATED");
                         }
                         if (contributor.getUuid() == null) {
-                            contributor.setUuid(UUID.randomUUID().toString());
+                            final var uuid = UUID.randomUUID().toString();
+
+                            contributor.setUuid(uuid);
+
+                            final var orcid = contributor.getId().substring(contributor.getId().lastIndexOf('/') + 1);
+
+                            final var contributorRecord = contributorRepository.findByPid(contributor.getId())
+                                    .orElseThrow(() -> new RuntimeException("Contributor not found with orcid %s".formatted(orcid)));
+                            contributorRecord.setUuid(uuid);
+                            contributorRecord.setStatus("UNAUTHENTICATED");
+
+                            contributorRepository.update(contributorRecord);
                         }
                     });
                 })
@@ -120,7 +134,7 @@ public class RaidV3UpgradeService {
 
     public List<Map<?,?>> findAllRaids() {
         final var raids = new ArrayList<Map<?,?>>();
-        final var records = raidRepository.findAll();
+        final var records = raidRepository.findAllV2();
 
         for (final var record : records) {
             final var raidOptional = findByHandle(record.getHandle());

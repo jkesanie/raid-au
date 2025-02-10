@@ -35,4 +35,18 @@ public class ContributorRepository {
                 .where(CONTRIBUTOR.ID.eq(id))
                 .fetchOptional();
     }
+
+    public Optional<ContributorRecord> findByPid(final String pid) {
+        return dslContext.selectFrom(CONTRIBUTOR)
+                .where(CONTRIBUTOR.PID.eq(pid))
+                .fetchOptional();
+    }
+
+    public void update(final ContributorRecord contributor) {
+        dslContext.update(CONTRIBUTOR)
+                .set(CONTRIBUTOR.UUID, contributor.getUuid())
+                .set(CONTRIBUTOR.STATUS, contributor.getStatus())
+                .where(CONTRIBUTOR.PID.eq(contributor.getPid()))
+                .execute();
+    }
 }

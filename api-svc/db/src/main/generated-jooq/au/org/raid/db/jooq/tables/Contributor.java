@@ -14,12 +14,12 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function3;
+import org.jooq.Function5;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row3;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -60,12 +60,22 @@ public class Contributor extends TableImpl<ContributorRecord> {
     /**
      * The column <code>api_svc.contributor.pid</code>.
      */
-    public final TableField<ContributorRecord, String> PID = createField(DSL.name("pid"), SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<ContributorRecord, String> PID = createField(DSL.name("pid"), SQLDataType.VARCHAR, this, "");
 
     /**
      * The column <code>api_svc.contributor.schema_id</code>.
      */
     public final TableField<ContributorRecord, Integer> SCHEMA_ID = createField(DSL.name("schema_id"), SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>api_svc.contributor.uuid</code>.
+     */
+    public final TableField<ContributorRecord, String> UUID = createField(DSL.name("uuid"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>api_svc.contributor.status</code>.
+     */
+    public final TableField<ContributorRecord, String> STATUS = createField(DSL.name("status"), SQLDataType.VARCHAR, this, "");
 
     private Contributor(Name alias, Table<ContributorRecord> aliased) {
         this(alias, aliased, null);
@@ -117,7 +127,7 @@ public class Contributor extends TableImpl<ContributorRecord> {
 
     @Override
     public List<UniqueKey<ContributorRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.CONTRIBUTOR_PID_SCHEMA_ID_KEY);
+        return Arrays.asList(Keys.CONTRIBUTOR_PID_SCHEMA_ID_KEY, Keys.CONTRIBUTOR_UUID_KEY);
     }
 
     @Override
@@ -178,18 +188,18 @@ public class Contributor extends TableImpl<ContributorRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, String, Integer> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row5<Integer, String, Integer, String, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function3<? super Integer, ? super String, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super Integer, ? super String, ? super Integer, ? super String, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -197,7 +207,7 @@ public class Contributor extends TableImpl<ContributorRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super Integer, ? super String, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Integer, ? super String, ? super Integer, ? super String, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
