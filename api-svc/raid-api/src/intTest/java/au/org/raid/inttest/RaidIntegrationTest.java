@@ -403,7 +403,6 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
                 .relatedRaid(read.getRelatedRaid())
                 .relatedObject(read.getRelatedObject())
                 .alternateIdentifier(read.getAlternateIdentifier())
-                .spatialCoverage(read.getSpatialCoverage())
-                .traditionalKnowledgeLabel(read.getTraditionalKnowledgeLabel());
+                .spatialCoverage(read.getSpatialCoverage());
     }
 }

@@ -297,9 +297,6 @@ components:
         spatialCoverage:
           type: array
           items: { $ref: '#/components/schemas/SpatialCoverage' }
-        traditionalKnowledgeLabel:
-          type: array
-          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
     RaidUpdateRequest:
       type: object
       required:
@@ -344,9 +341,6 @@ components:
         spatialCoverage:
           type: array
           items: { $ref: '#/components/schemas/SpatialCoverage' }
-        traditionalKnowledgeLabel:
-          type: array
-          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
     RaidPatchRequest:
       type: object
       properties:
@@ -356,6 +350,11 @@ components:
     RaidDto:
       allOf:
         - $ref: '#/components/schemas/RaidUpdateRequest'
+      type: object
+      properties:
+        traditionalKnowledgeLabel:
+          type: array
+          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
     Metadata:
       type: object
       properties:

@@ -25,35 +25,6 @@ public class TraditionalKnowledgeLabelService {
     private final RaidTraditionalKnowledgeLabelRepository raidTraditionalKnowledgeLabelRepository;
     private final TraditionalKnowledgeLabelFactory traditionalKnowledgeLabelFactory;
 
-    public void create(final List<TraditionalKnowledgeLabel> labels, final String handle) {
-        if (labels == null) {
-            return;
-        }
-
-        for (final var label : labels) {
-            final var schemaRecord =
-                    traditionalKnowledgeLabelSchemaRepository.findByUri(label.getSchemaUri())
-                            .orElseThrow(() ->
-                                    new TraditionalKnowledgeLabelSchemaNotFoundException(label.getSchemaUri()));
-
-            Integer id = null;
-
-            if (label.getId() != null) {
-                final var record = traditionalKnowledgeLabelRepository
-                        .findByUriAndSchemaId(label.getId(), schemaRecord.getId())
-                        .orElseThrow(() -> new TraditionalKnowledgeLabelNotFoundException(label.getId()));
-
-                id = record.getId();
-            }
-
-            final var raidTraditionalKnowledgeLabelRecord = raidTraditionalKnowledgeLabelRecordFactory.create(
-                    handle, id, schemaRecord.getId()
-            );
-
-            raidTraditionalKnowledgeLabelRepository.create(raidTraditionalKnowledgeLabelRecord);
-        }
-    }
-
     public List<TraditionalKnowledgeLabel> findAllByHandle(final String handle) {
         final var traditionalKnowledgeLabels = new ArrayList<TraditionalKnowledgeLabel>();
 
@@ -80,9 +51,5 @@ public class TraditionalKnowledgeLabelService {
         return traditionalKnowledgeLabels;
     }
 
-    public void update(final List<TraditionalKnowledgeLabel> traditionalKnowledgeLabels, final String handle) {
-        raidTraditionalKnowledgeLabelRepository.deleteAllByHandle(handle);
-        create(traditionalKnowledgeLabels, handle);
 
-    }
 }

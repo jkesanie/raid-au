@@ -38,7 +38,6 @@ public class ValidationService {
     private final AlternateIdentifierValidator alternateIdentifierValidator;
     private final RelatedRaidValidator relatedRaidValidator;
     private final SpatialCoverageValidator spatialCoverageValidator;
-    private final TraditionalKnowledgeLabelValidator traditionalKnowledgeLabelValidator;
     private final DateValidator dateValidator;
 
     private List<ValidationFailure> validateUpdateHandle(final String decodedHandleFromPath, final Id id) {
@@ -113,8 +112,6 @@ public class ValidationService {
         failures.addAll(relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()));
         failures.addAll(alternateIdentifierValidator.validateAlternateIdentifier(request.getAlternateIdentifier()));
         failures.addAll(spatialCoverageValidator.validate(request.getSpatialCoverage()));
-        failures.addAll(traditionalKnowledgeLabelValidator.validate(
-                request.getTraditionalKnowledgeLabel()));
 
         return failures;
     }
@@ -140,8 +137,6 @@ public class ValidationService {
         failures.addAll(relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()));
         failures.addAll(alternateIdentifierValidator.validateAlternateIdentifier(request.getAlternateIdentifier()));
         failures.addAll(spatialCoverageValidator.validate(request.getSpatialCoverage()));
-        failures.addAll(traditionalKnowledgeLabelValidator.validate(
-                request.getTraditionalKnowledgeLabel()));
 
         return failures;
     }

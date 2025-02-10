@@ -216,14 +216,6 @@
       ]
     }
   ],
-  "traditionalKnowledgeLabel": [
-    {
-      "schemaUri": "https://localcontexts.org/labels/traditional-knowledge-labels/"
-    },
-    {
-      "schemaUri": "https://localcontexts.org/labels/biocultural-labels/"
-    }
-  ],
   "spatialCoverage": [
     {
       "id": "https://www.geonames.org/264371/athens.html",

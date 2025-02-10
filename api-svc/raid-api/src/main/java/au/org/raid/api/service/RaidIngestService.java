@@ -73,7 +73,6 @@ public class RaidIngestService {
         alternateUrlService.create(raid.getAlternateUrl(), handle);
         relatedRaidService.create(raid.getRelatedRaid(), handle);
         subjectService.create(raid.getSubject(), handle);
-        traditionalKnowledgeLabelService.create(raid.getTraditionalKnowledgeLabel(), handle);
         spatialCoverageService.create(raid.getSpatialCoverage(), handle);
     }
 
@@ -176,7 +175,6 @@ public class RaidIngestService {
         alternateUrlService.update(raid.getAlternateUrl(), handle);
         relatedRaidService.update(raid.getRelatedRaid(), handle);
         subjectService.update(raid.getSubject(), handle);
-        traditionalKnowledgeLabelService.update(raid.getTraditionalKnowledgeLabel(), handle);
         spatialCoverageService.update(raid.getSpatialCoverage(), handle);
 
         return raid;

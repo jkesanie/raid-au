@@ -101,7 +101,6 @@ class RaidIngestServiceTest {
         verify(alternateUrlService).create(RAID_DTO.getAlternateUrl(), HANDLE);
         verify(relatedRaidService).create(RAID_DTO.getRelatedRaid(), HANDLE);
         verify(subjectService).create(RAID_DTO.getSubject(), HANDLE);
-        verify(traditionalKnowledgeLabelService).create(RAID_DTO.getTraditionalKnowledgeLabel(), HANDLE);
         verify(spatialCoverageService).create(RAID_DTO.getSpatialCoverage(), HANDLE);
     }
 
@@ -214,7 +213,6 @@ class RaidIngestServiceTest {
         verify(alternateUrlService).update(ALTERNATE_URLS, HANDLE);
         verify(relatedRaidService).update(RELATED_RAIDS, HANDLE);
         verify(subjectService).update(SUBJECTS, HANDLE);
-        verify(traditionalKnowledgeLabelService).update(TRADITIONAL_KNOWLEDGE_LABELS, HANDLE);
         verify(spatialCoverageService).update(SPATIAL_COVERAGES, HANDLE);
     }
 }

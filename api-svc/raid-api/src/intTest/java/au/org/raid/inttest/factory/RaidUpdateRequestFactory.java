@@ -20,7 +20,6 @@ public class RaidUpdateRequestFactory {
                 .relatedObject(raidDto.getRelatedObject())
                 .spatialCoverage(raidDto.getSpatialCoverage())
                 .relatedRaid(raidDto.getRelatedRaid())
-                .subject(raidDto.getSubject())
-                .traditionalKnowledgeLabel(raidDto.getTraditionalKnowledgeLabel());
+                .subject(raidDto.getSubject());
     }
 }

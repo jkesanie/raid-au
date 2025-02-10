@@ -136,16 +136,8 @@ public class AbstractIntegrationTest {
                                         .language(new Language()
                                                 .id("eng")
                                                 .schemaUri("https://www.iso.org/standard/74575.html"))
-                                                .text("ENES")
-                                ))))
-                .traditionalKnowledgeLabel(List.of(
-                        new TraditionalKnowledgeLabel()
-                                .id("https://localcontexts.org/label/tk-attribution/")
-                                .schemaUri("https://localcontexts.org/labels/traditional-knowledge-labels/"),
-                        new TraditionalKnowledgeLabel()
-                                .id("https://localcontexts.org/label/bc-provenance/")
-                                .schemaUri("https://localcontexts.org/labels/biocultural-labels/")
-                ));
+                                        .text("ENES")
+                                ))));
     }
     public Contributor contributor(
             final String orcid,
