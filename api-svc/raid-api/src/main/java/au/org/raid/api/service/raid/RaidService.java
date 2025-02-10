@@ -6,6 +6,7 @@ import au.org.raid.api.exception.UnknownServicePointException;
 import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.IdFactory;
 import au.org.raid.api.repository.ServicePointRepository;
+import au.org.raid.api.service.ContributorService;
 import au.org.raid.api.service.Handle;
 import au.org.raid.api.service.RaidHistoryService;
 import au.org.raid.api.service.RaidIngestService;
@@ -37,6 +38,7 @@ public class RaidService {
     private final RaidHistoryService raidHistoryService;
     private final RaidIngestService raidIngestService;
     private final HandleFactory handleFactory;
+    private final ContributorService contributorService;
 
     @Transactional
     public RaidDto mint(
@@ -47,6 +49,8 @@ public class RaidService {
         final var servicePointRecord =
                 servicePointRepository.findById(servicePointId).orElseThrow(() ->
                         new UnknownServicePointException(servicePointId));
+
+        contributorService.setStatusAndUuid(request.getContributor());
 
         mintHandle(request, servicePointRecord, 0);
 
@@ -96,6 +100,8 @@ public class RaidService {
         if (updateChecksum.equals(existingChecksum)) {
             return existing;
         }
+
+        contributorService.setStatusAndUuid(raid.getContributor());
 
         final var raidDto = raidHistoryService.save(raid);
 

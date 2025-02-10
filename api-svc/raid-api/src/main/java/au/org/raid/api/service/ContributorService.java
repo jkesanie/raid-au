@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ContributorService {
+    private static final String UNAUTHENTICATED_STATUS = "UNAUTHENTICATED";
+
     private final ContributorRepository contributorRepository;
     private final RaidContributorRepository raidContributorRepository;
     private final ContributorRecordFactory contributorRecordFactory;
@@ -84,5 +87,40 @@ public class ContributorService {
     public void update(final List<Contributor> contributors, final String handle) {
         raidContributorRepository.deleteAllByHandle(handle);
         create(contributors, handle);
+    }
+
+    public void setStatusAndUuid(final List<Contributor> contributors) {
+
+        contributors.forEach(contributor -> {
+            var updateContributorRecord = false;
+            final var orcid = contributor.getId().substring(contributor.getId().lastIndexOf('/') + 1);
+            final var optional = contributorRepository.findByPid(orcid);
+            if (optional.isPresent()) {
+                final var contributorRecord = optional.get();
+                if (contributorRecord.getStatus() == null) {
+                    contributor.status(UNAUTHENTICATED_STATUS);
+                    contributorRecord.setStatus(UNAUTHENTICATED_STATUS);
+                    updateContributorRecord = true;
+                } else {
+                    contributor.status(contributorRecord.getStatus());
+                }
+
+                if (contributorRecord.getUuid() == null){
+                    final var uuid = UUID.randomUUID().toString();
+                    contributor.uuid(uuid);
+                    contributorRecord.setUuid(uuid);
+                    updateContributorRecord = true;
+                } else {
+                    contributor.uuid(contributorRecord.getUuid());
+                }
+
+                if (updateContributorRecord) {
+                    contributorRepository.update(contributorRecord);
+                }
+            } else {
+                contributor.uuid(UUID.randomUUID().toString());
+                contributor.status(UNAUTHENTICATED_STATUS);
+            }
+        });
     }
 }

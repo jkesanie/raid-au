@@ -33,7 +33,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
         assertThat(result.getTitle()).isEqualTo(createRequest.getTitle());
         assertThat(result.getDescription()).isEqualTo(createRequest.getDescription());
         assertThat(result.getAccess()).isEqualTo(createRequest.getAccess());
-        assertThat(result.getContributor()).isEqualTo(createRequest.getContributor());
+        assertThat(result.getContributor().get(0).getId()).isEqualTo(createRequest.getContributor().get(0).getId());
         assertThat(result.getOrganisation()).isEqualTo(createRequest.getOrganisation());
         assertThat(result.getDate()).isEqualTo(createRequest.getDate());
     }
