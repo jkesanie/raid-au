@@ -1,4 +1,4 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
 import { fetchServicePoints } from "@/services/service-points";
@@ -50,7 +50,7 @@ export const fetchRaids = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${keycloak.token}`,
-      "X-Raid-Api-Version": raidConfig.version === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
     },
   });
   return await response.json();
@@ -68,7 +68,7 @@ export const fetchRaid = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "X-Raid-Api-Version": raidConfig.version === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
     },
   });
   return await response.json();
@@ -86,7 +86,7 @@ export const fetchRaidHistory = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "X-Raid-Api-Version": raidConfig.version === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
     },
   });
   return await response.json();
@@ -105,7 +105,7 @@ export const createRaid = async ({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Raid-Api-Version": raidConfig.version === "3" ? "3" : "2",
+        "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
       },
       body: JSON.stringify(data),
     });
@@ -142,7 +142,7 @@ export const updateRaid = async ({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Raid-Api-Version": raidConfig.version === "3" ? "3" : "2",
+        "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
       },
       body: JSON.stringify(raidToBeUpdated),
     });
@@ -164,7 +164,7 @@ export const updateRaid = async ({
 };
 
 export const beforeRaidUpdate = (raid: RaidDto): RaidDto => {
-  // set all endDates to `undefined` if they value is an empty string
+  // set all endDates to `undefined` if the value is an empty string
   if (raid?.date?.endDate === "") {
     raid.date.endDate = undefined;
   }
@@ -203,4 +203,3 @@ export const beforeRaidUpdate = (raid: RaidDto): RaidDto => {
 
   return raid;
 };
-
