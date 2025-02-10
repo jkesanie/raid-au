@@ -1,4 +1,4 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import { CheckboxField } from "@/fields/CheckboxField";
 import { TextInputField } from "@/fields/TextInputField";
 import { Box, Grid } from "@mui/material";
@@ -6,7 +6,7 @@ import { Box, Grid } from "@mui/material";
 const ContributorForm = ({ index }: { index: number }) => {
   return (
     <Grid container spacing={2}>
-      {raidConfig.version === "2" && (
+      {packageJson.apiVersion === "2" && (
         <TextInputField
           name={`contributor.${index}.id`}
           label="ORCID URL"
@@ -15,7 +15,7 @@ const ContributorForm = ({ index }: { index: number }) => {
           width={12}
         />
       )}
-      {raidConfig.version === "3" && (
+      {packageJson.apiVersion === "3" && (
         <TextInputField
           name={`contributor.${index}.email`}
           label="Email"

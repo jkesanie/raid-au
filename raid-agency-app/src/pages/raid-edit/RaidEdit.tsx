@@ -1,4 +1,4 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
@@ -100,7 +100,7 @@ export const RaidEdit = () => {
 
   let contributors: (Contributor & { email?: string | undefined })[] = [];
 
-  if (raidConfig.version === "3") {
+  if (packageJson.apiVersion === "3") {
     for (const contributor of query.data?.contributor ?? []) {
       const updatedContributor = {
         ...contributor,
@@ -112,7 +112,7 @@ export const RaidEdit = () => {
 
   let raidData: RaidDto | RaidCreateRequest;
 
-  if (raidConfig.version === "3") {
+  if (packageJson.apiVersion === "3") {
     raidData = {
       ...query.data,
       contributor: contributors,
