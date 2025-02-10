@@ -1,18 +1,33 @@
+import raidConfig from "@/../raid.config.json";
 import { contributorPositionValidationSchema } from "@/entities/contributor/position/data-components/contributor-position-validation-schema";
 import { contributorRoleValidationSchema } from "@/entities/contributor/role/data-components/contributor-role-validation-schema";
 import { z } from "zod";
 
-const baseContributorSchema = z.object({
-  status: z.string().optional(),
-  email: z.string().optional(),
-  uuid: z.string().optional(),
-  id: z.string().optional(),
-  leader: z.boolean(),
-  contact: z.boolean(),
-  schemaUri: z.literal("https://orcid.org/"),
-  position: contributorPositionValidationSchema,
-  role: contributorRoleValidationSchema,
-});
+let baseContributorSchema = z.object({});
+
+if (raidConfig.version === "2") {
+  baseContributorSchema = z.object({
+    contact: z.boolean(),
+    leader: z.boolean(),
+    position: contributorPositionValidationSchema,
+    role: contributorRoleValidationSchema,
+    schemaUri: z.literal("https://orcid.org/"),
+  });
+}
+
+if (raidConfig.version === "3") {
+  baseContributorSchema = z.object({
+    contact: z.boolean(),
+    email: z.string().optional(),
+    id: z.string().optional(),
+    leader: z.boolean(),
+    position: contributorPositionValidationSchema,
+    role: contributorRoleValidationSchema,
+    schemaUri: z.literal("https://orcid.org/"),
+    status: z.string().optional(),
+    uuid: z.string().optional(),
+  });
+}
 
 export const singleContributorValidationSchema = z.union([
   baseContributorSchema

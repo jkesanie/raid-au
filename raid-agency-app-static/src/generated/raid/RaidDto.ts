@@ -3,7 +3,6 @@ import type { Description } from './Description';
 import type { Organisation } from './Organisation';
 import type { ModelDate } from './ModelDate';
 import type { Access } from './Access';
-import type { Metadata } from './Metadata';
 import type { Contributor } from './Contributor';
 import type { Title } from './Title';
 import type { RelatedRaid } from './RelatedRaid';
@@ -15,7 +14,6 @@ import type { TraditionalKnowledgeLabel } from './TraditionalKnowledgeLabel';
 import type { SpatialCoverage } from './SpatialCoverage';
 
 export interface RaidDto {
-    metadata?: Metadata;
     identifier: Id;
     title?: Array<Title>;
     date?: ModelDate;

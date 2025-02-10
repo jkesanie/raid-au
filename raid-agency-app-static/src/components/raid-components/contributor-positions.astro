@@ -1,8 +1,8 @@
 ---
+import InfoField from "@/components/info-field.astro";
 import type { ContributorPosition } from "@/generated/raid";
-import mapping from "@/mapping.json";
+import mapping from "@/mapping/data/general-mapping.json";
 import { dateDisplayFormatter } from "@/utils/date-utils";
-import InfoField from "../info-field.astro";
 
 interface Props {
   contributorPositions: ContributorPosition[];

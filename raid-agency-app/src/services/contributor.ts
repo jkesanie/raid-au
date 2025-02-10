@@ -1,4 +1,8 @@
-const BASE_URL = "https://orcid.test.raid.org.au";
+import { getEnv } from "@/utils/api-utils/api-utils";
+
+let environment = getEnv();
+environment = environment === "dev" ? "demo" : environment;
+const BASE_URL = `https://orcid.${environment}.raid.org.au`;
 export async function fetchOrcidContributors({ handle }: { handle: string }) {
   const response = await fetch(`${BASE_URL}/contributors`, {
     method: "POST",

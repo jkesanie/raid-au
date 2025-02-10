@@ -17,3 +17,19 @@ export function getApiEndpoint() {
       : `api.${environment}.${baseDomain}`
   }`.replace(/\/+$/, "");
 }
+
+export function getEnv() {
+  const hostname = window.location.hostname;
+
+  const environment = hostname.includes("test")
+    ? "test"
+    : hostname.includes("demo")
+    ? "demo"
+    : hostname.includes("prod")
+    ? "prod"
+    : hostname.includes("stage")
+    ? "stage"
+    : "dev";
+
+  return environment;
+}

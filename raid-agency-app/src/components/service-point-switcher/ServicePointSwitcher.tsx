@@ -4,7 +4,7 @@ import {
 } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import { Circle as CircleIcon } from "@mui/icons-material";
-import { Box, Tooltip } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import { useQuery } from "@tanstack/react-query";
@@ -95,11 +95,26 @@ export function ServicePointSwitcher() {
                 mr: 1,
               }}
             />
-            {
-              servicePointGroups?.find(
-                (el) => el.id === keycloak.tokenParsed?.service_point_group_id
-              )?.name
-            }
+
+            <Typography
+              sx={{
+                display: { xs: "none", md: "block" },
+              }}
+            >
+              {
+                servicePointGroups?.find(
+                  (el) => el.id === keycloak.tokenParsed?.service_point_group_id
+                )?.name
+              }
+            </Typography>
+
+            <Typography
+              sx={{
+                display: { xs: "block", md: "none" },
+              }}
+            >
+              SP
+            </Typography>
           </ListItemButton>
         </List>
       </Tooltip>

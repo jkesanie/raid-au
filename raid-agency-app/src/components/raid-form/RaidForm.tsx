@@ -7,7 +7,7 @@ import alternateIdentifierGenerator from "@/entities/alternateIdentifier/data-co
 import AlternateUrlForm from "@/entities/alternateUrl/AlternateUrlForm";
 import alternateUrlGenerator from "@/entities/alternateUrl/data-components/alternate-url-generator";
 
-import ContributorForm from "@/entities/contributor/ContributorForm";
+import { ContributorForm } from "@/entities/contributor/ContributorForm";
 import contributorGenerator from "@/entities/contributor/data-components/contributor-generator";
 
 import ContributorPositionForm from "@/entities/contributor/position/ContributorPositionForm";

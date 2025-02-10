@@ -90,7 +90,7 @@ export default function UserDropdown() {
             >
               <Typography
                 sx={{
-                  display: { xs: "none", sm: "block" },
+                  display: { xs: "none", md: "block" },
                 }}
               >
                 {keycloak?.tokenParsed?.email}

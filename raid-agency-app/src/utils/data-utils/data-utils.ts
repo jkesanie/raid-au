@@ -24,7 +24,7 @@ import {
 import AccessDisplay from "@/entities/access/AccessDisplay";
 import AlternateIdentifiersDisplay from "@/entities/alternateIdentifier/AlternateIdentifiersDisplay";
 import AlternateUrlDisplay from "@/entities/alternateUrl/AlternateUrlDisplay";
-import ContributorDisplay from "@/entities/contributor/ContributorDisplay";
+import { ContributorDisplay } from "@/entities/contributor/ContributorDisplay";
 import DateDisplay from "@/entities/date/DateDisplay";
 import DescriptionDisplay from "@/entities/description/DescriptionDisplay";
 import OrganisationDisplay from "@/entities/organisation/OrganisationDisplay";

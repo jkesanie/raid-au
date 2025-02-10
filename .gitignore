@@ -1,5 +1,3 @@
-# committing IDEA config files is awkward, messy and sometimes leads to people 
-# accidetnally committing sensitive data to the repo (secrets, API keys, etc.)
 .idea
 
 # temp directory that Gradle dumps in the repo root
