@@ -31,7 +31,7 @@ public class OrcidIntegrationClient {
         log.debug("Response from Raid Listener: {} {}", response.getStatusCode(), response.getBody());
     }
 
-    public Optional<ContributorLookupResponse> get(final String email) {
+    public Optional<ContributorLookupResponse> findByEmail(final String email) {
         final var httpEntity = httpEntityFactory.create(Map.of("email", email));
 
         try {

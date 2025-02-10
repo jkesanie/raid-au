@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -20,10 +22,10 @@ public class RaidListenerService {
     public void createOrUpdate(final String handle, final List<Contributor> contributors) {
 
         for (final var contributor : contributors) {
-            if (contributor.getEmail() != null) {
+            if (!isBlank(contributor.getEmail())) {
                 log.debug("Looking up contributor by email {}", contributor.getEmail());
 
-                final var response = orcidIntegrationClient.get(contributor.getEmail());
+                final var response = orcidIntegrationClient.findByEmail(contributor.getEmail());
 
                 if (response.isPresent()) {
 

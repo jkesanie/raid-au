@@ -56,14 +56,14 @@ class RaidListenerServiceTest {
                 .contributor(contributor)
                 .build();
 
-        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
+        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
 
 
         verify(orcidIntegrationClient, times(1)).post(message);
@@ -90,14 +90,14 @@ class RaidListenerServiceTest {
                 .uuid(TEST_UUID)
                 .build();
 
-        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
+        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
         verify(orcidIntegrationClient, times(1)).post(message);
 
         assert contributor.getId() == null;
@@ -117,14 +117,14 @@ class RaidListenerServiceTest {
                 .raidName(raidName)
                 .contributor(contributor)
                 .build();
-        when(orcidIntegrationClient.get(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).get(TEST_EMAIL);
+        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
         verify(orcidIntegrationClient, times(1)).post(message);
 
         assert contributor.getId() == null;
@@ -151,16 +151,16 @@ class RaidListenerServiceTest {
                 .orcid(OrcidData.builder().orcid(TEST_ORCID).build())
                 .build();
 
-        when(orcidIntegrationClient.get("test1@example.com")).thenReturn(Optional.of(lookupResponse1));
-        when(orcidIntegrationClient.get("test2@example.com")).thenReturn(Optional.empty());
+        when(orcidIntegrationClient.findByEmail("test1@example.com")).thenReturn(Optional.of(lookupResponse1));
+        when(orcidIntegrationClient.findByEmail("test2@example.com")).thenReturn(Optional.empty());
         when(raidListenerMessageFactory.create(eq(TEST_HANDLE), any())).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor1, contributor2));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).get("test1@example.com");
-        verify(orcidIntegrationClient, times(1)).get("test2@example.com");
+        verify(orcidIntegrationClient, times(1)).findByEmail("test1@example.com");
+        verify(orcidIntegrationClient, times(1)).findByEmail("test2@example.com");
         verify(orcidIntegrationClient, times(2)).post(any());
 
         assert contributor1.getId().equals("https://orcid.org/" + TEST_ORCID);
