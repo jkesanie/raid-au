@@ -1,11 +1,11 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import { contributorPositionValidationSchema } from "@/entities/contributor/position/data-components/contributor-position-validation-schema";
 import { contributorRoleValidationSchema } from "@/entities/contributor/role/data-components/contributor-role-validation-schema";
 import { z } from "zod";
 
 let baseContributorSchema = z.object({});
 
-if (raidConfig.version === "2") {
+if (packageJson.apiVersion === "2") {
   baseContributorSchema = z.object({
     contact: z.boolean(),
     leader: z.boolean(),
@@ -15,7 +15,7 @@ if (raidConfig.version === "2") {
   });
 }
 
-if (raidConfig.version === "3") {
+if (packageJson.apiVersion === "3") {
   baseContributorSchema = z.object({
     contact: z.boolean(),
     email: z.string().optional(),
