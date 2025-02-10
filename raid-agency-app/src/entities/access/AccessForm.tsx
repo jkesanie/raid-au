@@ -26,28 +26,31 @@ const AccessForm = memo(({ errors }: { errors: FieldErrors<RaidDto> }) => {
 
   return (
     <Grid container spacing={2}>
-      <TextInputField
-        name={`access.statement.text`}
-        label="Access Statement"
-        required={true}
-        width={6}
-      />
-      <LanguageSelector name={`access.statement.language.id`} width={6} />
       <TextSelectField
         options={accessTypeOptions}
         name={`access.type.id`}
         label="Access Type"
         required={true}
-        width={3}
+        width={6}
       />
-      {/* Show embargo expiry date if access type is c_f1cf */}
+      {/* Show embargo related fields only if access type is c_f1cf (embargoed) */}
       {accessTypeId?.includes("c_f1cf/") && (
-        <DateInputField
-          name="access.embargoExpiry"
-          label="Embargo Expiry Date"
-          required={true}
-          width={3}
-        />
+        <>
+          <TextInputField
+            name={`access.statement.text`}
+            label="Access Statement"
+            required={true}
+            width={12}
+          />
+          <LanguageSelector name={`access.statement.language.id`} width={6} />
+
+          <DateInputField
+            name="access.embargoExpiry"
+            label="Embargo Expiry Date"
+            required={true}
+            width={6}
+          />
+        </>
       )}
     </Grid>
   );

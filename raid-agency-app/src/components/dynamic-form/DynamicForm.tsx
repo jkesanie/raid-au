@@ -69,6 +69,7 @@ export const DynamicForm = memo(
       <Card
         sx={getErrorCardStyles(errors && errors[entityKey as keyof RaidDto])}
         data-testid={`dynamic-form-${entityKey}`}
+        id={entityKey}
       >
         <CardHeader title={labelPlural} />
         <CardContent>

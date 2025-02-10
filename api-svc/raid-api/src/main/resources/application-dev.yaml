@@ -7,7 +7,7 @@ raid:
     host: localhost
     port: 7432
     name: raido
-#    encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
+    encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
   iam:
     realm-uri: http://localhost:8001/realms/raid
 spring:

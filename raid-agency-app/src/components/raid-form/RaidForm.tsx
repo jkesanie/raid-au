@@ -102,11 +102,13 @@ export const FlatFormComponent = memo(
   ({
     DetailsFormComponent,
     labelPlural,
+    id,
   }: {
     DetailsFormComponent: React.ComponentType<{}>;
     labelPlural: string;
+    id: string;
   }) => (
-    <Card data-testid={`dynamic-form-${labelPlural.toLowerCase()}`}>
+    <Card id={id} data-testid={`dynamic-form-${labelPlural.toLowerCase()}`}>
       <CardHeader title={labelPlural} />
       <CardContent>
         <DetailsFormComponent />
@@ -401,6 +403,7 @@ export const RaidForm = memo(
                       key={config.id}
                       labelPlural={config.labelPlural}
                       DetailsFormComponent={config.DetailsFormComponent}
+                      id={config.id}
                     />
                   );
                 }
