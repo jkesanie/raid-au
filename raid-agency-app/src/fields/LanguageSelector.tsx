@@ -14,7 +14,7 @@ export default function LanguageSelector({
   name,
   helperText,
   errorText,
-  required,
+  required = false,
   width = 12,
 }: FormFieldProps) {
   const {
@@ -63,7 +63,7 @@ export default function LanguageSelector({
               variant="filled"
               size="small"
               label="Language"
-              required
+              required={required}
             />
           );
         }}

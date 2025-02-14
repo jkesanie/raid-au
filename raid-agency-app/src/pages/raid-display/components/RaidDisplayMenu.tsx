@@ -1,4 +1,4 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import InviteButton from "@/components/invite/InviteButton";
 import InviteDialog from "@/components/invite/InviteDialog";
 import {
@@ -16,7 +16,7 @@ export const RaidDisplayMenu = ({
   prefix: string;
   suffix: string;
 }) => {
-  const { version } = raidConfig;
+  const { apiVersion } = packageJson;
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   return (
     <>
@@ -52,7 +52,7 @@ export const RaidDisplayMenu = ({
           </Fab>
         </Tooltip>
 
-        {version === "3" && (
+        {apiVersion === "3" && (
           <>
             <InviteButton setOpen={setIsInviteDialogOpen} />
             <InviteDialog

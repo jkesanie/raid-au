@@ -1,4 +1,4 @@
-import raidConfig from "@/../raid.config.json";
+import packageJson from "@/../package.json";
 import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
 import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
 import { Contributor } from "@/generated/raid";
@@ -20,7 +20,7 @@ const contributorGenerator = (): ContributorExtended => {
     role: [contributorRoleGenerator(), contributorRoleGenerator()],
   };
 
-  if (raidConfig.version === "3") {
+  if (packageJson.apiVersion === "3") {
     return {
       ...baseData,
       email: "jane.doe@ardc-raid.testinator.com",
