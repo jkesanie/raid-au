@@ -5,7 +5,9 @@ import au.org.raid.api.entity.ChangeType;
 import au.org.raid.api.exception.InvalidVersionException;
 import au.org.raid.api.factory.*;
 import au.org.raid.api.repository.RaidHistoryRepository;
+import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.db.jooq.tables.records.RaidHistoryRecord;
+import au.org.raid.db.jooq.tables.records.RaidRecord;
 import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +22,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -46,6 +50,8 @@ class RaidHistoryServiceTest {
     private RaidHistoryProperties raidHistoryProperties;
     @Mock
     private RaidChangeFactory raidChangeFactory;
+    @Mock
+    private RaidRepository raidRepository;
     @InjectMocks
     private RaidHistoryService raidHistoryService;
 
@@ -71,6 +77,10 @@ class RaidHistoryServiceTest {
         final var history2Diff = mock(JsonValue.class);
         final var existingRaid = mock(JsonValue.class);
         final var existingRaidString = "existing-raid";
+        final var raidRecord = new RaidRecord();
+        raidRecord.setDateCreated(LocalDateTime.now());
+
+        when(raidRepository.findByHandle(handleString)).thenReturn(Optional.of(raidRecord));
 
         when(jsonValueFactory.create(diffString1)).thenReturn(history1Diff);
         when(jsonValueFactory.create(diffString2)).thenReturn(history2Diff);
@@ -159,6 +169,10 @@ class RaidHistoryServiceTest {
             final var history2Diff = mock(JsonValue.class);
             final var existingRaid = mock(JsonValue.class);
             final var existingRaidString = "existing-raid";
+            final var raidRecord = new RaidRecord();
+            raidRecord.setDateCreated(LocalDateTime.now());
+
+            when(raidRepository.findByHandle(handleString)).thenReturn(Optional.of(raidRecord));
 
             when(jsonValueFactory.create(diffString1)).thenReturn(history1Diff);
             when(jsonValueFactory.create(diffString2)).thenReturn(history2Diff);
@@ -214,6 +228,10 @@ class RaidHistoryServiceTest {
             final var history2Diff = mock(JsonValue.class);
             final var existingRaid = mock(JsonValue.class);
             final var existingRaidString = "existing-raid";
+            final var raidRecord = new RaidRecord();
+            raidRecord.setDateCreated(LocalDateTime.now());
+
+            when(raidRepository.findByHandle(handleString)).thenReturn(Optional.of(raidRecord));
 
             when(jsonValueFactory.create(diffString1)).thenReturn(history1Diff);
             when(jsonValueFactory.create(diffString2)).thenReturn(history2Diff);
