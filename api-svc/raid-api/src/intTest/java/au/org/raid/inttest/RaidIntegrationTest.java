@@ -171,6 +171,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
 
     private RaidUpdateRequest mapReadToUpdate(RaidDto read) {
         return new RaidUpdateRequest()
+                .metadata(read.getMetadata())
                 .identifier(read.getIdentifier())
                 .title(read.getTitle())
                 .date(read.getDate())

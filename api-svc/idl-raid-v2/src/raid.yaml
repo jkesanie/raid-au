@@ -176,6 +176,8 @@ components:
         - contributors
         - access
       properties:
+        metadata:
+          $ref: '#/components/schemas/Metadata'
         identifier:
           $ref: '#/components/schemas/Id'
         title:
@@ -223,6 +225,8 @@ components:
         - contributors
         - access
       properties:
+        metadata:
+          $ref: '#/components/schemas/Metadata'
         identifier: { $ref: '#/components/schemas/Id' }
         title:
           type: array
@@ -262,6 +266,15 @@ components:
     RaidDto:
       allOf:
         - $ref: '#/components/schemas/RaidUpdateRequest'
+    Metadata:
+      type: object
+      properties:
+        created:
+          type: number
+          format: datetime
+        updated:
+          type: number
+          format: datetime
     Id:
       type: object
       required: [ id, schemaUri, registrationAgency, owner, servicePoint, license, version ]
