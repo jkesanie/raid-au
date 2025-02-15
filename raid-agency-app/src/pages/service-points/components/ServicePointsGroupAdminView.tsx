@@ -1,21 +1,22 @@
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { ServicePointsTable } from "@/components/service-points-table";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
 import {
   fetchServicePoint,
   fetchServicePoints,
 } from "@/services/service-points";
 import { Card, CardContent, CardHeader } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 
 export const ServicePointsGroupAdminView = () => {
-  const { keycloak } = useKeycloak();
-  const servicePointGroupId = keycloak?.tokenParsed?.service_point_group_id;
+  const { token, tokenParsed } = useKeycloak();
+  const servicePointGroupId = tokenParsed?.service_point_group_id;
 
   const fetchServicePointById = async () => {
     const data = await fetchServicePoints({
-      token: keycloak.token || "",
+      token: token!,
     });
 
     const servicePointNumber = data.find(
@@ -24,7 +25,7 @@ export const ServicePointsGroupAdminView = () => {
 
     return await fetchServicePoint({
       id: servicePointNumber!,
-      token: keycloak.token || "",
+      token: token!,
     });
   };
 

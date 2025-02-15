@@ -1,4 +1,4 @@
-import { useKeycloak } from "@react-keycloak/web";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { useCallback, useMemo } from "react";
 
 // Define roles as readonly const to ensure type safety
@@ -18,13 +18,13 @@ interface TokenPayload {
 }
 
 export function useAuthHelper() {
-  const { keycloak } = useKeycloak();
-  const { tokenParsed } = keycloak as { tokenParsed?: TokenPayload };
+  const { user } = useKeycloak();
+  const { tokenParsed } = useKeycloak();
 
   // Memoize the role checking function
   const hasRole = useCallback(
-    (role: RealmRole): boolean => keycloak.hasRealmRole(role),
-    [keycloak]
+    (role: RealmRole): boolean => !!user?.roles?.includes(role),
+    [tokenParsed]
   );
 
   // Memoize the return object to prevent unnecessary re-renders

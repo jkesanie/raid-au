@@ -1,3 +1,4 @@
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { fetchInvites } from "@/services/invite";
 import {
   Circle as CircleIcon,
@@ -15,7 +16,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
@@ -28,12 +29,12 @@ interface Invite {
 }
 
 export const Invites = () => {
-  const { keycloak } = useKeycloak();
+  const { token } = useKeycloak();
   const invitesQuery = useQuery<Invite>({
     queryKey: ["invites"],
     queryFn: () =>
       fetchInvites({
-        token: keycloak.token!,
+        token: token!,
       }),
   });
 

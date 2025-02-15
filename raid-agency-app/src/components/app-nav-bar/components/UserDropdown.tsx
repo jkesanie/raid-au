@@ -1,4 +1,6 @@
 import { useSnackbar } from "@/components/snackbar";
+import { useKeycloak } from "@/contexts/keycloak-context";
+import { Loading } from "@/pages/loading";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import {
@@ -17,7 +19,7 @@ import {
   MenuList,
   Typography,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 import { KeycloakTokenParsed } from "keycloak-js";
 import React from "react";
@@ -39,7 +41,8 @@ function getRolesFromToken({
 }
 
 export default function UserDropdown() {
-  const { keycloak, initialized } = useKeycloak();
+  const { isInitialized, tokenParsed, token, authenticated, logout } =
+    useKeycloak();
   const snackbar = useSnackbar();
 
   const [accountMenuAnchor, setAccountMenuAnchor] =
@@ -53,20 +56,20 @@ export default function UserDropdown() {
     setAccountMenuAnchor(null);
   };
 
-  const roles = getRolesFromToken({ tokenParsed: keycloak.tokenParsed });
+  const roles = getRolesFromToken({ tokenParsed: tokenParsed });
 
   const keycloakGroupsQuery = useQuery<KeycloakGroup[]>({
     queryKey: ["keycloak-groups"],
     queryFn: async () => {
       const servicePoints = await fetchCurrentUserKeycloakGroups({
-        token: keycloak.token!,
+        token: token,
       });
       return servicePoints;
     },
   });
 
   if (keycloakGroupsQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (keycloakGroupsQuery.isError) {
@@ -75,9 +78,9 @@ export default function UserDropdown() {
 
   return (
     <>
-      {keycloak.authenticated && initialized && (
+      {authenticated && isInitialized && (
         <div>
-          {(keycloak.authenticated && keycloak?.tokenParsed?.email && (
+          {(authenticated && tokenParsed?.email && (
             <Button
               variant="outlined"
               startIcon={<AccountCircleIcon />}
@@ -93,7 +96,7 @@ export default function UserDropdown() {
                   display: { xs: "none", md: "block" },
                 }}
               >
-                {keycloak?.tokenParsed?.email}
+                {tokenParsed?.email}
               </Typography>
             </Button>
           )) || (
@@ -123,44 +126,37 @@ export default function UserDropdown() {
             onClose={handleAccountMenuClose}
           >
             <MenuList dense>
-              {keycloak.tokenParsed?.email && (
+              {tokenParsed?.email && (
                 <MenuItem
                   onClick={() => {
-                    navigator.clipboard.writeText(
-                      keycloak.tokenParsed?.email || ""
-                    );
+                    navigator.clipboard.writeText(tokenParsed?.email || "");
                     snackbar?.openSnackbar(`✅ Copied value to clipboard`);
                   }}
                 >
                   <ListItemText
                     primary="Email"
-                    secondary={keycloak.tokenParsed?.email || ""}
+                    secondary={tokenParsed?.email || ""}
                   />
                 </MenuItem>
               )}
               <MenuItem
                 onClick={() => {
-                  navigator.clipboard.writeText(
-                    keycloak.tokenParsed?.sub || ""
-                  );
+                  navigator.clipboard.writeText(tokenParsed?.sub || "");
                   snackbar?.openSnackbar(`✅ Copied value to clipboard`);
                 }}
               >
-                <ListItemText
-                  primary="Identity"
-                  secondary={keycloak.tokenParsed?.sub}
-                />
+                <ListItemText primary="Identity" secondary={tokenParsed?.sub} />
               </MenuItem>
               <MenuItem disabled>
                 <ListItemText
                   primary="Signed in (24h format)"
                   secondary={
-                    keycloak.tokenParsed?.iat &&
+                    tokenParsed?.iat &&
                     Intl.DateTimeFormat("en-AU", {
                       timeStyle: "short",
                       dateStyle: "medium",
                       hour12: false,
-                    }).format(keycloak.tokenParsed?.iat * 1000)
+                    }).format(+tokenParsed?.iat * 1000)
                   }
                 />
               </MenuItem>
@@ -168,12 +164,12 @@ export default function UserDropdown() {
                 <ListItemText
                   primary="Session expiry (24h format)"
                   secondary={
-                    keycloak.tokenParsed?.exp &&
+                    tokenParsed?.exp &&
                     Intl.DateTimeFormat("en-AU", {
                       timeStyle: "short",
                       dateStyle: "medium",
                       hour12: false,
-                    }).format(keycloak.tokenParsed?.exp * 1000)
+                    }).format(+tokenParsed?.exp * 1000)
                   }
                 />
               </MenuItem>
@@ -188,7 +184,7 @@ export default function UserDropdown() {
               <MenuItem
                 onClick={() => {
                   localStorage.removeItem("client_id");
-                  keycloak.logout();
+                  logout();
                 }}
               >
                 <ListItemIcon>

@@ -1,6 +1,7 @@
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
 import type {
   RaidHistoryElementType,
@@ -25,12 +26,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 export const RaidHistory = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { authenticated, isInitialized, token } = useKeycloak();
 
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   const handle = `${prefix}/${suffix}`;
@@ -40,9 +41,9 @@ export const RaidHistory = () => {
     queryFn: () =>
       fetchRaidHistory({
         id: handle,
-        token: keycloak.token || "",
+        token: token!,
       }),
-    enabled: initialized && keycloak.authenticated,
+    enabled: isInitialized && authenticated,
   });
 
   if (raidHistoryQuery.isPending) {

@@ -1,3 +1,4 @@
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { createServicePoint } from "@/services/service-points";
 import { CreateServicePointRequest } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +11,7 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -18,7 +19,7 @@ import { z } from "zod";
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
-  const { keycloak } = useKeycloak();
+  const { token } = useKeycloak();
 
   const initalServicePointValues: CreateServicePointRequest = {
     servicePointCreateRequest: {
@@ -75,7 +76,7 @@ export const ServicePointCreateForm = () => {
       data: {
         servicePointCreateRequest: servicePoint.servicePointCreateRequest,
       },
-      token: keycloak.token || "",
+      token: token!,
     });
     // return await api.createServicePoint(servicePoint, {
     //   headers: {

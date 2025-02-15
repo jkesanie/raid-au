@@ -1,4 +1,3 @@
-import DateInputField from "@/fields/DateInputField";
 import LanguageSelector from "@/fields/LanguageSelector";
 import { TextInputField } from "@/fields/TextInputField";
 import { TextSelectField } from "@/fields/TextSelectField";
@@ -44,9 +43,10 @@ const AccessForm = memo(({ errors }: { errors: FieldErrors<RaidDto> }) => {
           />
           <LanguageSelector name={`access.statement.language.id`} width={6} />
 
-          <DateInputField
-            name="access.embargoExpiry"
+          <TextInputField
+            name={`access.embargoExpiry`}
             label="Embargo Expiry Date"
+            placeholder="Embargo Expiry Date"
             required={true}
             width={6}
           />

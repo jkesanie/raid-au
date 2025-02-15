@@ -1,3 +1,4 @@
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { useAuthHelper } from "@/keycloak";
 import {
   Add as AddIcon,
@@ -21,13 +22,12 @@ import {
   Toolbar,
   Tooltip,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
 function CombinedMenu() {
   const { isOperator, isGroupAdmin } = useAuthHelper();
-  const { keycloak } = useKeycloak();
+  const { logout } = useKeycloak();
 
   const menuItems = [
     {
@@ -78,7 +78,7 @@ function CombinedMenu() {
       icon: <ExitToAppIcon />,
       onClick: () => {
         localStorage.removeItem("client_id");
-        keycloak.logout();
+        logout();
       },
     },
   ];

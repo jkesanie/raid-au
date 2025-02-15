@@ -51,7 +51,8 @@ export async function fetchAllKeycloakGroups({
         Authorization: `Bearer ${token}`,
       },
     });
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     const errorMessage = "Error: Keycloak groups could not be fetched";
     console.error(errorMessage);
@@ -78,7 +79,8 @@ export async function fetchCurrentUserKeycloakGroups({
         Authorization: `Bearer ${token}`,
       },
     });
-    return await response.json();
+    const data = await response.json();
+    return data
   } catch (error) {
     const errorMessage = "Error: Keycloak groups could not be fetched";
     console.error(errorMessage);

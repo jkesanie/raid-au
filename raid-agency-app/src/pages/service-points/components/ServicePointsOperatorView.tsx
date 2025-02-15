@@ -1,27 +1,28 @@
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { ServicePointUsers } from "@/components/service-point-users";
 import { ServicePointsTable } from "@/components/service-points-table";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
 import { ServicePointCreateForm } from "@/pages/service-point";
 import { fetchServicePointsWithMembers } from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
 import { Card, CardContent, CardHeader, Stack } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 
 export const ServicePointsOperatorView = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { authenticated, isInitialized, token } = useKeycloak();
 
   const getServicePoints = async () => {
     return await fetchServicePointsWithMembers({
-      token: keycloak.token || "",
+      token: token!,
     });
   };
 
   const query = useQuery<ServicePointWithMembers[]>({
     queryFn: getServicePoints,
     queryKey: ["servicePoints"],
-    enabled: initialized && keycloak.authenticated,
+    enabled: isInitialized && authenticated,
   });
 
   if (query.isPending) {
