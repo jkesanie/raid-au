@@ -1,0 +1,30 @@
+---
+import type { RaidDto } from "@/generated/raid";
+import { raids } from "@/store/raids";
+
+export async function getStaticPaths() {
+  return raids.map((el: RaidDto) => {
+    const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
+    return {
+      params: {
+        prefix,
+        suffix,
+      },
+      props: {
+        raid: el,
+      },
+    };
+  });
+}
+
+const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
+const { raid }: { raid: RaidDto } = Astro.props;
+
+return new Response(JSON.stringify(raid), {
+  status: 200,
+  headers: {
+    "Content-Type": "application/json",
+    "Content-Disposition": `attachment; filename="${prefix}-${suffix}.json"`,
+  },
+});
+---

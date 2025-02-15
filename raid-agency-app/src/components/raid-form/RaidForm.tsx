@@ -338,111 +338,106 @@ export const RaidForm = memo(
     }, [isInitialLoad]);
 
     return (
-      <>
-        <FormProvider {...formMethods}>
-          <form
-            onSubmit={formMethods.handleSubmit(handleSubmit)}
-            autoComplete="off"
-            noValidate
+      <FormProvider {...formMethods}>
+        <form
+          onSubmit={formMethods.handleSubmit(handleSubmit)}
+          autoComplete="off"
+          noValidate
+        >
+          <Stack
+            gap={2}
+            sx={{
+              position: "fixed",
+              bottom: "16px",
+              right: "16px",
+              zIndex: 1000,
+            }}
+            alignItems="end"
           >
-            <Stack
-              gap={2}
-              sx={{
-                position: "fixed",
-                bottom: "16px",
-                right: "16px",
-                zIndex: 1000,
-              }}
-              alignItems="end"
-            >
-              <Tooltip title="Cancel" placement="left">
-                <Fab
-                  component={Link}
-                  color="primary"
-                  size="small"
-                  to={
-                    raidData?.identifier?.id
-                      ? `/raids/${prefix}/${suffix}`
-                      : "/"
-                  }
-                >
-                  <CloseIcon />
-                </Fab>
-              </Tooltip>
-              <Tooltip title="Save changes" placement="left">
-                <Fab
-                  variant="extended"
-                  color="primary"
-                  component="button"
-                  type="submit"
-                  disabled={isSubmitting || !isFormValid}
-                  data-testid="save-raid-button"
-                >
-                  <SaveIcon sx={{ mr: 1 }} />
-                  {isSubmitting ? "Saving..." : "Save"}
-                </Fab>
-              </Tooltip>
+            <Tooltip title="Cancel" placement="left">
+              <Fab
+                component={Link}
+                color="primary"
+                size="small"
+                to={
+                  raidData?.identifier?.id ? `/raids/${prefix}/${suffix}` : "/"
+                }
+              >
+                <CloseIcon />
+              </Fab>
+            </Tooltip>
+            <Tooltip title="Save changes" placement="left">
+              <Fab
+                variant="extended"
+                color="primary"
+                component="button"
+                type="submit"
+                disabled={isSubmitting || !isFormValid}
+                data-testid="save-raid-button"
+              >
+                <SaveIcon sx={{ mr: 1 }} />
+                {isSubmitting ? "Saving..." : "Save"}
+              </Fab>
+            </Tooltip>
+          </Stack>
+
+          <Stack spacing={2} data-testid="raid-form">
+            <AnchorButtons raidData={raidData} errors={formState.errors} />
+            <Stack spacing={2}>
+              {configurations.map((config) => {
+                const commonProps = {
+                  control,
+                  errors: formState.errors,
+                  trigger,
+                  label: config.label,
+                  labelPlural: config.labelPlural,
+                  entityKey: config.entityKey,
+                  DetailsFormComponent: config.DetailsFormComponent,
+                  generator: config.generator,
+                  data: config.data,
+                };
+
+                if (config.component === FlatFormComponent) {
+                  return (
+                    <FlatFormComponent
+                      key={config.id}
+                      labelPlural={config.labelPlural}
+                      DetailsFormComponent={config.DetailsFormComponent}
+                      id={config.id}
+                    />
+                  );
+                }
+
+                if (config.component === DynamicForm && config.childConfigs) {
+                  return (
+                    <DynamicForm
+                      key={config.id}
+                      {...commonProps}
+                      childConfigs={config.childConfigs}
+                    />
+                  );
+                }
+
+                if (
+                  config &&
+                  config.component === DynamicForm &&
+                  config.childConfigs
+                ) {
+                  return (
+                    <DynamicForm
+                      key={config.id}
+                      {...commonProps}
+                      childConfigs={config.childConfigs}
+                    />
+                  );
+                }
+
+                return <DynamicForm key={config.id} {...commonProps} />;
+              })}
             </Stack>
-
-            <Stack spacing={2} data-testid="raid-form">
-              <AnchorButtons raidData={raidData} errors={formState.errors} />
-              <Stack spacing={2}>
-                {configurations.map((config) => {
-                  const commonProps = {
-                    control,
-                    errors: formState.errors,
-                    trigger,
-                    label: config.label,
-                    labelPlural: config.labelPlural,
-                    entityKey: config.entityKey,
-                    DetailsFormComponent: config.DetailsFormComponent,
-                    generator: config.generator,
-                    data: config.data,
-                  };
-
-                  if (config.component === FlatFormComponent) {
-                    return (
-                      <FlatFormComponent
-                        key={config.id}
-                        labelPlural={config.labelPlural}
-                        DetailsFormComponent={config.DetailsFormComponent}
-                        id={config.id}
-                      />
-                    );
-                  }
-
-                  if (config.component === DynamicForm && config.childConfigs) {
-                    return (
-                      <DynamicForm
-                        key={config.id}
-                        {...commonProps}
-                        childConfigs={config.childConfigs}
-                      />
-                    );
-                  }
-
-                  if (
-                    config &&
-                    config.component === DynamicForm &&
-                    config.childConfigs
-                  ) {
-                    return (
-                      <DynamicForm
-                        key={config.id}
-                        {...commonProps}
-                        childConfigs={config.childConfigs}
-                      />
-                    );
-                  }
-
-                  return <DynamicForm key={config.id} {...commonProps} />;
-                })}
-              </Stack>
-            </Stack>
-          </form>
-        </FormProvider>
-        <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
-      </>
+          </Stack>
+        </form>
+      </FormProvider>
     );
   }
 );

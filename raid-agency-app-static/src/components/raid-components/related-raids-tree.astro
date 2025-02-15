@@ -1,0 +1,192 @@
+---
+import { raids } from "@/store/raids";
+import type { RaidDto, RelatedRaid } from "@/generated/raid";
+import InfoField from "@/components/info-field.astro";
+import mapping from "@/mapping/data/general-mapping.json";
+
+interface Props {
+  relatedRaids: RelatedRaid[];
+  currentRaidId: string;
+}
+
+const { relatedRaids, currentRaidId } = Astro.props as Props;
+
+interface RelatedRaidWithLevel extends RelatedRaid {
+  level: number;
+  title: string | undefined;
+}
+
+function findAllRelatedRaids(
+  relatedRaid: RelatedRaid,
+  level: number = 0,
+  visited: Set<string> = new Set()
+): RelatedRaidWithLevel[] {
+  if (!relatedRaid.id) return [];
+
+  const lastSegments = relatedRaid.id.split("/").slice(-2).join("/");
+  if (visited.has(lastSegments)) return [];
+
+  visited.add(lastSegments);
+
+  const raid = raids.find(
+    (raid) => raid.identifier.id.split("/").slice(-2).join("/") === lastSegments
+  );
+
+  // Only include if the raid actually exists
+  if (!raid) return [];
+
+  const allRelated: RelatedRaidWithLevel[] = [
+    {
+      ...relatedRaid,
+      level,
+      title: raid.title?.map((el) => el.text).join(" | "),
+    },
+  ];
+
+  if (raid.relatedRaid && raid.relatedRaid.length > 0) {
+    for (const childRaid of raid.relatedRaid) {
+      allRelated.push(...findAllRelatedRaids(childRaid, level + 1, visited));
+    }
+  }
+  return allRelated;
+}
+
+// Then update how you call it:
+const allNestedRaids = relatedRaids.flatMap(
+  (raid) => findAllRelatedRaids(raid, 0, new Set()) // Initialize with new Set
+);
+
+function findReverseRelations(
+  raidId: string,
+  level: number = 0,
+  visited: Set<string> = new Set()
+): RelatedRaidWithLevel[] {
+  if (!raidId) return [];
+
+  const currentLastSegments = raidId.split("/").slice(-2).join("/");
+  if (visited.has(currentLastSegments)) return [];
+
+  visited.add(currentLastSegments);
+
+  const reverseRelations: RelatedRaidWithLevel[] = [];
+
+  raids.forEach((raid: RaidDto) => {
+    if (!raid.identifier.id) return;
+
+    const raidLastSegments = raid.identifier.id.split("/").slice(-2).join("/");
+    const matchingRelation = raid.relatedRaid?.find((related) => {
+      const relatedLastSegments = related.id?.split("/").slice(-2).join("/");
+      return relatedLastSegments === currentLastSegments;
+    });
+
+    if (matchingRelation) {
+      reverseRelations.push({
+        id: raid.identifier.id,
+        type: matchingRelation.type, // Use the exact matching relation's type
+        level: level,
+        title: raid.title?.map((el) => el.text).join(" | "),
+      });
+
+      if (!visited.has(raidLastSegments)) {
+        reverseRelations.push(
+          ...findReverseRelations(raid.identifier.id, level + 1, visited)
+        );
+      }
+    }
+  });
+
+  return reverseRelations;
+}
+
+// And call it with:
+const reverseRelations = findReverseRelations(currentRaidId, 0, new Set());
+---
+
+<section class="py-5">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h3 class="text-lg font-semibold text-gray-900">Related RAiDs</h3>
+    {
+      allNestedRaids.length === 0 && (
+        <h5 class="text-gray-500 text-sm">No Entries</h5>
+      )
+    }
+    <div class="divide-y divide-gray-200">
+      {
+        allNestedRaids
+          .filter((el) => el.id && el.title)
+          .map((el) => {
+            const relatedRaidType = mapping.find(
+              (mapEl) => mapEl.key === el.type?.id
+            );
+            return (
+              <div class={`space-y-2 py-4 ml-${el.level * 5}`}>
+                {el.level > 0 && (
+                  <div class="flex items-center text-gray-400 mb-2">
+                    <span class="mr-2">└─▶</span>
+                  </div>
+                )}
+                <div class="grid grid-cols-1 gap-5 text-sm">
+                  <InfoField
+                    label="Title"
+                    value={
+                      `${el.title} (${el.id?.split("/").slice(-2).join("/") || ""})` ||
+                      ""
+                    }
+                  />
+                </div>
+                <div class="grid grid-cols-4 gap-5 text-sm">
+                  <InfoField
+                    label="Relation"
+                    value={relatedRaidType?.value}
+                    tooltip={relatedRaidType?.definition}
+                  />
+                </div>
+              </div>
+            );
+          })
+      }
+    </div>
+
+    {
+      reverseRelations.length > 0 && (
+        <>
+          <h3 class="text-lg font-semibold text-gray-900 mt-8">
+            Referenced By
+          </h3>
+          <div class="divide-y divide-gray-200">
+            {reverseRelations.map((el) => {
+              const relatedRaidType = mapping.find(
+                (mapEl) => mapEl.key === el.type?.id
+              );
+              return (
+                <div class={`space-y-2 py-4 ml-${el.level * 5}`}>
+                  {el.level > 0 && (
+                    <div class="flex items-center text-gray-400 mb-2">
+                      <span class="mr-2">└─◀</span>
+                    </div>
+                  )}
+                  <div class="grid grid-cols-1 gap-5 text-sm">
+                    <InfoField
+                      label="Title"
+                      value={
+                        `${el.title} (${el.id?.split("/").slice(-2).join("/") || ""})` ||
+                        ""
+                      }
+                    />
+                  </div>
+                  <div class="grid grid-cols-4 gap-5 text-sm">
+                    <InfoField
+                      label="Relation"
+                      value={relatedRaidType?.value}
+                      tooltip={relatedRaidType?.definition}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )
+    }
+  </div>
+</section>

@@ -10,6 +10,7 @@ import Descriptions from "@/components/raid-components/descriptions.astro";
 import Organisations from "@/components/raid-components/organisations.astro";
 import RelatedObjects from "@/components/raid-components/related-objects.astro";
 import RelatedRaids from "@/components/raid-components/related-raids.astro";
+import RelatedRaidsTree from "@/components/raid-components/related-raids-tree.astro";
 import Subjects from "@/components/raid-components/subjects.astro";
 import Raw from "@/components/raid-components/raw.astro";
 import Titles from "@/components/raid-components/titles.astro";
@@ -37,7 +38,7 @@ const { raid }: { raid: RaidDto } = Astro.props;
 ---
 
 <Layout title={`RAiD ${prefix}/${suffix}`}>
-  <div class="overflow-hidden rounded-md border border-gray-300">
+  <div class="sticky top-0 z-10 bg-white border border-gray-300 rounded-t-md">
     <Breadcrumbs
       elements={[
         { to: "/raids", label: "RAiDs" },
@@ -49,23 +50,29 @@ const { raid }: { raid: RaidDto } = Astro.props;
       id={`${prefix}/${suffix}`}
       label={raid.title?.map((el) => el.text).join(" | ")}
     />
+  </div>
 
-    <!-- <div class="-mx-4 px-4 py-8 sm:mx-0 sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16 bg-white"> -->
+  <div class="overflow-hidden border-x border-b border-gray-300 rounded-b-md">
     <div class="divide-y">
-      <Dates dates={raid?.date || ({} as ModelDate)} />
-      <Titles titles={raid?.title || []} />
-      <Descriptions descriptions={raid?.description || []} />
-      <Contributors contributors={raid?.contributor || []} />
-      <Organisations organisations={raid?.organisation || []} />
-      <RelatedObjects relatedObjects={raid?.relatedObject || []} />
-      <AlternateIdentifiers
-        alternateIdentifiers={raid?.alternateIdentifier || []}
-      />
-      <AlternateUrls alternateUrls={raid?.alternateUrl || []} />
-      <RelatedRaids relatedRaids={raid?.relatedRaid || []} />
-      <Access access={raid?.access} />
-      <Subjects subjects={raid?.subject || []} />
-      <Raw raid={raid} />
+      <div class="divide-y">
+        <Dates dates={raid?.date || ({} as ModelDate)} />
+        <Titles titles={raid?.title || []} />
+        <Descriptions descriptions={raid?.description || []} />
+        <Contributors contributors={raid?.contributor || []} />
+        <Organisations organisations={raid?.organisation || []} />
+        <RelatedObjects relatedObjects={raid?.relatedObject || []} />
+        <AlternateIdentifiers
+          alternateIdentifiers={raid?.alternateIdentifier || []}
+        />
+        <AlternateUrls alternateUrls={raid?.alternateUrl || []} />
+        <RelatedRaidsTree
+          relatedRaids={raid?.relatedRaid || []}
+          currentRaidId={`${prefix}/${suffix}`}
+        />
+        <Access access={raid?.access} />
+        <Subjects subjects={raid?.subject || []} />
+        <Raw raid={raid} />
+      </div>
     </div>
   </div>
 </Layout>

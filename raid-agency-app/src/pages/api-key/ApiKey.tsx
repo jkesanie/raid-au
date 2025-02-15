@@ -8,6 +8,7 @@ import {
   Home as HomeIcon,
   Key as KeyIcon,
   Refresh as RefreshIcon,
+  AutoAwesomeOutlined as AutoAwesomeIcon,
 } from "@mui/icons-material";
 import {
   Button,
@@ -19,19 +20,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const ApiKey = () => {
   const { token, refreshToken, updateToken } = useKeycloak();
   const { openSnackbar } = useSnackbar();
   const [apiToken, setApiToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (refreshToken) {
-      handleApiTokenCreate();
-    }
-  }, [refreshToken]);
 
   async function handleApiTokenCreate() {
     try {
@@ -97,17 +92,16 @@ export const ApiKey = () => {
           />
           <CardContent>
             <Stack direction="column" gap={4}>
-              {/* API Token Section */}
               <Stack gap={2}>
                 <Typography variant="h6">API Token</Typography>
                 <Stack direction="row" alignItems="flex-start" gap={2}>
                   <Button
                     variant="outlined"
                     onClick={handleApiTokenCreate}
-                    startIcon={<RefreshIcon />}
+                    startIcon={<AutoAwesomeIcon />}
                     disabled={isLoading || !refreshToken}
                   >
-                    {isLoading ? "Generating..." : "Generate API Token"}
+                    Generate API Token
                   </Button>
                   <Button
                     variant="outlined"
@@ -124,29 +118,6 @@ export const ApiKey = () => {
                   fullWidth
                   size="small"
                   placeholder="No API token generated yet"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </Stack>
-
-              {/* Refresh Token Section */}
-              <Stack gap={2}>
-                <Typography variant="h6">Refresh Token</Typography>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleCopyToken("refresh")}
-                  startIcon={<ContentCopyIcon />}
-                  disabled={!refreshToken}
-                >
-                  Copy Refresh Token
-                </Button>
-                <TextField
-                  multiline
-                  value={refreshToken || ""}
-                  fullWidth
-                  size="small"
-                  placeholder="No refresh token available"
                   InputProps={{
                     readOnly: true,
                   }}
