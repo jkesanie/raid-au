@@ -77,7 +77,6 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
         console.log(location.origin);
         const authenticated = await keycloakInstance.init({
           onLoad: "check-sso",
-          silentCheckSsoRedirectUri: `${location.origin}/silent-check-sso.html`,
         });
 
         if (authenticated) {
