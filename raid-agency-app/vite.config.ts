@@ -1,17 +1,8 @@
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { defineConfig } from "vite";
-import { visualizer } from "rollup-plugin-visualizer";
-
 export default defineConfig({
-  plugins: [
-    react(),
-    visualizer({
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-    }),
-  ],
+  plugins: [react()],
   base: "/.",
   resolve: {
     alias: {
