@@ -5,15 +5,16 @@ import { updateUserServicePointUserRole } from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
 import { Check as CheckIcon, Circle as CircleIcon } from "@mui/icons-material";
 import { Chip, Stack } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const ServicePointUsers = ({
   servicePointWithMembers,
 }: {
   servicePointWithMembers?: ServicePointWithMembers;
 }) => {
-  const { keycloak } = useKeycloak();
+  const { token } = useKeycloak();
 
   const queryClient = useQueryClient();
   const snackbar = useSnackbar();
@@ -120,7 +121,7 @@ export const ServicePointUsers = ({
                 userId: row.id,
                 userGroupId: servicePointWithMembers?.groupId as string,
                 operation: "grant",
-                token: keycloak?.token as string,
+                token: token as string,
               });
             }}
           >
@@ -147,7 +148,7 @@ export const ServicePointUsers = ({
                 userId: row.id,
                 userGroupId: servicePointWithMembers?.groupId as string,
                 operation: "revoke",
-                token: keycloak?.token as string,
+                token: token as string,
               });
             }}
           >

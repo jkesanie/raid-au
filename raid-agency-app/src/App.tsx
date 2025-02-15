@@ -1,8 +1,6 @@
 import { SnackbarProvider } from "@/components/snackbar";
 import { ReactErrorBoundary } from "@/error/ReactErrorBoundary";
 import { MappingProvider } from "@/mapping";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   Box,
   createTheme,
@@ -11,18 +9,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Keycloak from "keycloak-js";
 import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
-
-const keycloak = new Keycloak({
-  url: import.meta.env.VITE_KEYCLOAK_URL,
-  realm: import.meta.env.VITE_KEYCLOAK_REALM,
-  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
-});
+import { KeycloakProvider } from "./contexts/keycloak-context";
 
 export function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -63,12 +54,7 @@ export function App() {
   });
 
   return (
-    <ReactKeycloakProvider
-      authClient={keycloak}
-      initOptions={{
-        pkceMethod: "S256",
-      }}
-    >
+    <KeycloakProvider>
       <StrictMode>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -77,10 +63,8 @@ export function App() {
               <SnackbarProvider>
                 <QueryClientProvider client={queryClient}>
                   <ReactErrorBoundary>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <Box sx={{ pt: 3 }}></Box>
                     <Outlet />
-                    </LocalizationProvider>
                   </ReactErrorBoundary>
                 </QueryClientProvider>
               </SnackbarProvider>
@@ -88,6 +72,6 @@ export function App() {
           </ErrorDialogProvider>
         </ThemeProvider>
       </StrictMode>
-    </ReactKeycloakProvider>
+    </KeycloakProvider>
   );
 }

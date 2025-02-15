@@ -1,37 +1,33 @@
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { useAuthHelper } from "@/keycloak";
 import { GroupSelector } from "@/pages/home/components/GroupSelector";
 import { RaidTable } from "@/pages/raid-table";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
 import { KeycloakGroup } from "@/types";
 import { Add as AddIcon } from "@mui/icons-material";
-import { Alert, Container, Fab, Stack, Typography } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+import { Alert, Container, Fab, Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 export const Home = () => {
   const { hasServicePointGroup, isServicePointUser } = useAuthHelper();
-  const { keycloak } = useKeycloak();
+  const { token, tokenParsed } = useKeycloak();
   const keycloakGroupsQuery = useQuery<KeycloakGroup[]>({
     queryKey: ["keycloak-groups"],
     queryFn: async () => {
       const servicePoints = await fetchCurrentUserKeycloakGroups({
-        token: keycloak.token!,
+        token: token!,
       });
       return servicePoints;
     },
   });
-
-  if (keycloakGroupsQuery.isLoading) {
-    return <div>Loading...</div>;
-  }
 
   if (keycloakGroupsQuery.isError) {
     return <div>Error...</div>;
   }
 
   const activeGroup = keycloakGroupsQuery.data?.find(
-    (el) => el.id === keycloak.tokenParsed?.service_point_group_id
+    (el) => el.id === tokenParsed?.service_point_group_id
   );
 
   return (
@@ -59,7 +55,9 @@ export const Home = () => {
           </Alert>
         )}
         {!hasServicePointGroup && <GroupSelector />}
-        {hasServicePointGroup && isServicePointUser && <RaidTable />}
+        {hasServicePointGroup &&
+          isServicePointUser &&
+          !keycloakGroupsQuery.isPending && <RaidTable />}
       </Stack>
     </Container>
   );

@@ -17,13 +17,14 @@ import {
   Home as HomeIcon,
 } from "@mui/icons-material";
 import { Box, Container, Stack } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { MetadataDisplay } from "./components/MetadataDisplay";
+import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const RaidDisplay = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { isInitialized, authenticated, token } = useKeycloak();
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   const handle = `${prefix}/${suffix}`;
 
@@ -32,9 +33,9 @@ export const RaidDisplay = () => {
     queryFn: () =>
       fetchRaid({
         id: handle,
-        token: keycloak.token || "",
+        token: token!,
       }),
-    enabled: initialized && keycloak.authenticated,
+    enabled: isInitialized && authenticated,
   });
 
   if (readQuery.isPending) {

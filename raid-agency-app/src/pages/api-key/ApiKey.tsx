@@ -1,6 +1,7 @@
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { useSnackbar } from "@/components/snackbar";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { fetchApiTokenFromKeycloak } from "@/services/keycloak";
 import {
   ContentCopy as ContentCopyIcon,
@@ -16,31 +17,60 @@ import {
   Container,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
 import { useEffect, useState } from "react";
 
 export const ApiKey = () => {
-  const { keycloak } = useKeycloak();
+  const { token, refreshToken, updateToken } = useKeycloak();
   const { openSnackbar } = useSnackbar();
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [apiToken, setApiToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (keycloak.refreshToken) {
+    if (refreshToken) {
       handleApiTokenCreate();
     }
-  }, [keycloak]);
+  }, [refreshToken]);
 
   async function handleApiTokenCreate() {
-    if (!keycloak.refreshToken) {
-      throw new Error("No refresh token found");
-    }
-    const data = await fetchApiTokenFromKeycloak({
-      refreshToken: keycloak.refreshToken || "",
-    });
+    try {
+      setIsLoading(true);
+      if (!refreshToken) {
+        throw new Error("No refresh token found");
+      }
 
-    setRefreshToken(data.access_token);
+      // First try to update the token
+      await updateToken(70);
+
+      const data = await fetchApiTokenFromKeycloak({
+        refreshToken: refreshToken,
+      });
+
+      setApiToken(data.access_token);
+      openSnackbar("✅ New API key generated successfully", 2000);
+    } catch (error) {
+      console.error("Failed to create API token:", error);
+      openSnackbar("❌ Failed to generate API key", 2000);
+    } finally {
+      setIsLoading(false);
+    }
   }
+
+  const handleCopyToken = async (tokenType: "api" | "refresh") => {
+    const textToCopy = tokenType === "api" ? apiToken : refreshToken;
+    try {
+      await navigator.clipboard.writeText(textToCopy || "");
+      openSnackbar(
+        `✅ ${
+          tokenType === "api" ? "API" : "Refresh"
+        } token copied to clipboard`,
+        1000
+      );
+    } catch (error) {
+      openSnackbar("❌ Failed to copy to clipboard", 2000);
+    }
+  };
 
   const breadcrumbs: Breadcrumb[] = [
     {
@@ -56,50 +86,76 @@ export const ApiKey = () => {
   ];
 
   return (
-    <>
-      <Container>
-        <Stack gap={2}>
-          <BreadcrumbsBar breadcrumbs={breadcrumbs} />
-          <Card>
-            <CardHeader
-              title="Create API Key"
-              subheader="Refresh this page to generate a new API key"
-            />
-            <CardContent>
-              <Stack direction="column" alignItems="flex-start" gap={2}>
+    <Container>
+      <Stack gap={2}>
+        <BreadcrumbsBar breadcrumbs={breadcrumbs} />
+
+        <Card>
+          <CardHeader
+            title="API Tokens"
+            subheader="Manage your API and refresh tokens"
+          />
+          <CardContent>
+            <Stack direction="column" gap={4}>
+              {/* API Token Section */}
+              <Stack gap={2}>
+                <Typography variant="h6">API Token</Typography>
                 <Stack direction="row" alignItems="flex-start" gap={2}>
                   <Button
                     variant="outlined"
-                    type="button"
                     onClick={handleApiTokenCreate}
                     startIcon={<RefreshIcon />}
+                    disabled={isLoading || !refreshToken}
                   >
-                    Create API key
+                    {isLoading ? "Generating..." : "Generate API Token"}
                   </Button>
                   <Button
                     variant="outlined"
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(refreshToken || "");
-                      openSnackbar("✅ API key copied to clipboard", 1000);
-                    }}
+                    onClick={() => handleCopyToken("api")}
                     startIcon={<ContentCopyIcon />}
-                    disabled={!refreshToken}
+                    disabled={!apiToken}
                   >
-                    Copy to clipboard
+                    Copy API Token
                   </Button>
                 </Stack>
                 <TextField
-                  multiline={true}
-                  defaultValue={refreshToken || ""}
+                  multiline
+                  value={apiToken || ""}
                   fullWidth
                   size="small"
+                  placeholder="No API token generated yet"
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Stack>
-            </CardContent>
-          </Card>
-        </Stack>
-      </Container>
-    </>
+
+              {/* Refresh Token Section */}
+              <Stack gap={2}>
+                <Typography variant="h6">Refresh Token</Typography>
+                <Button
+                  variant="outlined"
+                  onClick={() => handleCopyToken("refresh")}
+                  startIcon={<ContentCopyIcon />}
+                  disabled={!refreshToken}
+                >
+                  Copy Refresh Token
+                </Button>
+                <TextField
+                  multiline
+                  value={refreshToken || ""}
+                  fullWidth
+                  size="small"
+                  placeholder="No refresh token available"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+              </Stack>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Stack>
+    </Container>
   );
 };

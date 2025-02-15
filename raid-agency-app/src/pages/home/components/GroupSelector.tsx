@@ -1,3 +1,4 @@
+import { useKeycloak } from "@/contexts/keycloak-context";
 import {
   fetchAllKeycloakGroups,
   joinKeycloakGroup,
@@ -21,7 +22,7 @@ import {
   SelectChangeEvent,
   Stack,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { memo, useState } from "react";
 
@@ -34,7 +35,7 @@ type KeycloakGroupSPI = {
 };
 
 export const GroupSelector = memo(() => {
-  const { keycloak, initialized } = useKeycloak();
+  const { token, isInitialized } = useKeycloak();
   const [open, setOpen] = useState(false);
 
   // const handleClickOpen = () => {
@@ -49,9 +50,9 @@ export const GroupSelector = memo(() => {
     useState<string>("");
 
   const fetchKeycloakGroupsQuery = useQuery({
-    queryFn: () => fetchAllKeycloakGroups({ token: keycloak.token }),
+    queryFn: () => fetchAllKeycloakGroups({ token: token }),
     queryKey: ["keycloakGroups"],
-    enabled: initialized,
+    enabled: isInitialized,
   });
 
   const handleGroupSelectorChange = (event: SelectChangeEvent) => {
@@ -85,7 +86,7 @@ export const GroupSelector = memo(() => {
           setKeycloakUserAttributeMutation.mutate(
             {
               groupId: selectedServicePointId,
-              token: keycloak.token,
+              token: token,
             },
             {
               onSuccess: resolve,
@@ -97,7 +98,7 @@ export const GroupSelector = memo(() => {
           joinKeycloakGroupMutation.mutate(
             {
               groupId: selectedServicePointId,
-              token: keycloak.token,
+              token: token,
             },
             {
               onSuccess: resolve,

@@ -3,29 +3,29 @@ import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
 import { fetchServicePoints } from "@/services/service-points";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
-import type Keycloak from "keycloak-js";
 
 const endpoint = getApiEndpoint();
 const API_ENDPOINT = `${endpoint}/raid/`;
 
 export const fetchRaids = async ({
   fields,
-  keycloak,
+  token,
+  tokenParsed,
   spOnly,
 }: {
   fields?: string[];
-  keycloak: Keycloak;
+  token: string;
+  tokenParsed: Record<string, any> | undefined;
   spOnly?: boolean;
 }): Promise<RaidDto[]> => {
   const url = new URL(`${endpoint}/raid/`);
 
-  const { service_point_group_id: servicePointGroupId } =
-    keycloak.tokenParsed || {};
+  const servicePointGroupId = tokenParsed?.service_point_group_id;
 
   if (servicePointGroupId && spOnly) {
     try {
       const servicePoints = await fetchServicePoints({
-        token: keycloak.token || "",
+        token: token!,
       });
 
       const userServicePoint = servicePoints.find(
@@ -49,7 +49,7 @@ export const fetchRaids = async ({
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${keycloak.token}`,
+      Authorization: `Bearer ${token}`,
       "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
     },
   });

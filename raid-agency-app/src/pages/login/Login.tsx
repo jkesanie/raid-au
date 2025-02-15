@@ -15,16 +15,17 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Australia } from "./icons/Australia";
 import { Orcid } from "./icons/Orcid";
+import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const Login = () => {
-  const { keycloak, initialized } = useKeycloak();
+  const { authenticated, isInitialized, login } = useKeycloak();
   const navigate = useNavigate();
 
-  if (initialized && keycloak.authenticated) {
+  if (isInitialized && authenticated) {
     setTimeout(() => navigate("/"), 0);
   }
 
@@ -120,7 +121,7 @@ export const Login = () => {
                 startIcon={<GoogleIcon />}
                 variant="contained"
                 onClick={() =>
-                  keycloak.login({
+                  login({
                     idpHint: "google",
                     scope: "openid",
                   })
@@ -132,7 +133,7 @@ export const Login = () => {
                 startIcon={<Australia />}
                 variant="contained"
                 onClick={() =>
-                  keycloak.login({
+                  login({
                     idpHint: "aaf-saml",
                     scope: "openid",
                   })
@@ -144,7 +145,7 @@ export const Login = () => {
                 startIcon={<Orcid />}
                 variant="contained"
                 onClick={() =>
-                  keycloak.login({
+                  login({
                     idpHint: "orcid",
                     scope: "openid",
                   })
@@ -158,7 +159,7 @@ export const Login = () => {
                 startIcon={<CodeIcon />}
                 variant="contained"
                 onClick={() =>
-                  keycloak.login({
+                  login({
                     scope: "openid",
                   })
                 }
