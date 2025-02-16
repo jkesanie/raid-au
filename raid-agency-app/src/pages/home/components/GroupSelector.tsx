@@ -3,7 +3,7 @@ import {
   fetchAllKeycloakGroups,
   joinKeycloakGroup,
   setKeycloakUserAttribute,
-} from "@/services/keycloak";
+} from "@/services/keycloak-groups";
 import {
   Alert,
   Button,

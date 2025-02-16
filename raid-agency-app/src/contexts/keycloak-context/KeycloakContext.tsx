@@ -63,9 +63,9 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
     isLoading,
     user,
     authenticated: keycloakInstance.authenticated,
-    login, // Use our custom login function
+    login,
     logout: keycloakInstance.logout,
-    token: keycloakInstance.token,
+    token: keycloakInstance.token || "",
     tokenParsed: keycloakInstance.tokenParsed,
     refreshToken: keycloakInstance.refreshToken,
     updateToken: keycloakInstance.updateToken,
@@ -74,7 +74,6 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initKeycloak = async () => {
       try {
-        console.log(location.origin);
         const authenticated = await keycloakInstance.init({
           onLoad: "check-sso",
         });

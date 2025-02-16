@@ -11,6 +11,11 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: false,
+    sourcemap: true,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      sourcemap: false,
+    },
   },
 });

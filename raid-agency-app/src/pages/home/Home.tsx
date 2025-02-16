@@ -2,7 +2,7 @@ import { useKeycloak } from "@/contexts/keycloak-context";
 import { useAuthHelper } from "@/keycloak";
 import { GroupSelector } from "@/pages/home/components/GroupSelector";
 import { RaidTable } from "@/pages/raid-table";
-import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
+import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak-groups";
 import { KeycloakGroup } from "@/types";
 import { Add as AddIcon } from "@mui/icons-material";
 import { Alert, Container, Fab, Stack } from "@mui/material";

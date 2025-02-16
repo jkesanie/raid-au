@@ -5,40 +5,16 @@ import { fetchServicePoints } from "@/services/service-points";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 
 const endpoint = getApiEndpoint();
-const API_ENDPOINT = `${endpoint}/raid/`;
+const API_ENDPOINT = `${endpoint}/raid`;
 
 export const fetchRaids = async ({
   fields,
   token,
-  tokenParsed,
-  spOnly,
 }: {
   fields?: string[];
   token: string;
-  tokenParsed: Record<string, any> | undefined;
-  spOnly?: boolean;
 }): Promise<RaidDto[]> => {
-  const url = new URL(`${endpoint}/raid/`);
-
-  const servicePointGroupId = tokenParsed?.service_point_group_id;
-
-  if (servicePointGroupId && spOnly) {
-    try {
-      const servicePoints = await fetchServicePoints({
-        token: token!,
-      });
-
-      const userServicePoint = servicePoints.find(
-        ({ groupId }) => groupId === servicePointGroupId
-      );
-
-      if (userServicePoint?.id) {
-        url.searchParams.set("servicePointId", userServicePoint?.id.toString());
-      }
-    } catch (error) {
-      console.error("Failed to fetch service points:", error);
-    }
-  }
+  const url = new URL(`${API_ENDPOINT}/`);
 
   if (fields && fields.length > 0) {
     const fieldsQuery = fields.join(",");
@@ -50,25 +26,25 @@ export const fetchRaids = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
 };
 
 export const fetchRaid = async ({
-  id,
+  handle,
   token,
 }: {
-  id: string;
+  handle: string;
   token: string;
 }): Promise<RaidDto> => {
-  const response = await fetch(`${endpoint}/raid/${id}`, {
+  const response = await fetch(`${API_ENDPOINT}/${handle}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
@@ -81,12 +57,12 @@ export const fetchRaidHistory = async ({
   id: string;
   token: string;
 }): Promise<RaidHistoryType[]> => {
-  const response = await fetch(`${endpoint}/raid/${id}/history`, {
+  const response = await fetch(`${API_ENDPOINT}/${id}/history`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
+      "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
@@ -105,7 +81,7 @@ export const createRaid = async ({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
+        "X-Raid-Api-Version": packageJson.apiVersion,
       },
       body: JSON.stringify(data),
     });
@@ -137,12 +113,12 @@ export const updateRaid = async ({
 }): Promise<RaidDto> => {
   try {
     const raidToBeUpdated = beforeRaidUpdate(data);
-    const response = await fetch(`${endpoint}/raid/${id}`, {
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Raid-Api-Version": packageJson.apiVersion === "3" ? "3" : "2",
+        "X-Raid-Api-Version": packageJson.apiVersion,
       },
       body: JSON.stringify(raidToBeUpdated),
     });
