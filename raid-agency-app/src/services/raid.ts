@@ -76,7 +76,7 @@ export const createRaid = async ({
   token: string;
 }): Promise<RaidDto> => {
   try {
-    const response = await fetch(API_ENDPOINT, {
+    const response = await fetch(`${API_ENDPOINT}/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

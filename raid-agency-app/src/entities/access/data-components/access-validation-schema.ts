@@ -32,5 +32,5 @@ const accessStatementValidationSchema = z.object({
 export const accessValidationSchema = z.object({
   type: accessTypeValidationSchema,
   statement: accessStatementValidationSchema,
-  embargoExpiry: yearMonthDayPatternSchema,
+  embargoExpiry: yearMonthDayPatternSchema.nullish(),
 });

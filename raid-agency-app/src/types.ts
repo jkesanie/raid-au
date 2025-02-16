@@ -8,11 +8,6 @@ import type {
 import type Keycloak from "keycloak-js";
 import { FieldErrors } from "react-hook-form";
 
-export interface KeycloakContextValue {
-  keycloak: Keycloak;
-  initialized: boolean;
-}
-
 export type KeycloakGroup = {
   id: string;
   name: string;
@@ -51,20 +46,6 @@ export type RequestTokenResponse = {
   session_state: string;
   token_type: string;
 };
-
-export interface ChildConfig {
-  fieldKey: string;
-  label: string;
-  labelPlural: string;
-  DetailsComponent: React.ComponentType<{
-    parentIndex: number;
-    index: number;
-    errors?: FieldErrors<RaidDto>;
-  }>;
-  generator: () => any;
-}
-
-/// /// ///
 
 export interface CreateServicePointRequest {
   servicePointCreateRequest: ServicePointCreateRequest;

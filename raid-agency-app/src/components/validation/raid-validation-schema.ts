@@ -8,10 +8,9 @@ import { identifierValidationSchema } from "@/entities/identifier/data-component
 import { organisationValidationSchema } from "@/entities/organisation/data-components/organisation-validation-schema";
 import { relatedObjectValidationSchema } from "@/entities/relatedObject/data-components/related-object-validation-schema";
 import { relatedRaidValidationSchema } from "@/entities/relatedRaid/data-components/related-raid-validation-schema";
-import { spatialCoverageValidationSchema } from "@/entities/spatialCoverage/spatial-coverage-validation-schema";
+import { spatialCoverageValidationSchema } from "@/entities/spatialCoverage/data-components/spatial-coverage-validation-schema";
 import { subjectValidationSchema } from "@/entities/subject/data-components/subject-validation-schema";
 import { titleValidationSchema } from "@/entities/title/data-components/title-validation-schema";
-// import { traditionalKnowledgeLabelValidationSchema } from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-validation-schema";
 import { z } from "zod";
 
 export const RaidValidationSchema = z.object({
@@ -28,5 +27,4 @@ export const RaidValidationSchema = z.object({
   relatedObject: relatedObjectValidationSchema,
   alternateIdentifier: alternateIdentifierValidationSchema,
   spatialCoverage: spatialCoverageValidationSchema,
-  // traditionalKnowledgeLabel: traditionalKnowledgeLabelValidationSchema,
 });

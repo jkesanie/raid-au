@@ -60,4 +60,4 @@ export const singleContributorValidationSchema = z.union([
 
 export const contributorValidationSchema = z.array(
   singleContributorValidationSchema
-);
+).min(1);

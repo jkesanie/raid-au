@@ -18,7 +18,6 @@ import {
   SpatialCoverage,
   Subject,
   Title,
-  // TraditionalKnowledgeLabel,
 } from "@/generated/raid";
 
 import AccessDisplay from "@/entities/access/AccessDisplay";
@@ -27,14 +26,13 @@ import AlternateUrlDisplay from "@/entities/alternateUrl/AlternateUrlDisplay";
 import { ContributorDisplay } from "@/entities/contributor/ContributorDisplay";
 import DateDisplay from "@/entities/date/DateDisplay";
 import DescriptionDisplay from "@/entities/description/DescriptionDisplay";
+import organisationGenerator from "@/entities/organisation/data-components/organisation-generator";
 import OrganisationDisplay from "@/entities/organisation/OrganisationDisplay";
 import RelatedObjectsDisplay from "@/entities/relatedObject/RelatedObjectsDisplay";
 import RelatedRaidDisplay from "@/entities/relatedRaid/RelatedRaidDisplay";
 import SpatialCoverageDisplay from "@/entities/spatialCoverage/SpatialCoverageDisplay";
 import SubjectDisplay from "@/entities/subject/SubjectDisplay";
 import TitleDisplay from "@/entities/title/display-components/TitleDisplay";
-// import TraditionalKnowledgeLabelDisplay from "@/entities/traditionalKnowledgeLabel/TraditionalKnowledgeLabelDisplay";
-import organisationGenerator from "@/entities/organisation/data-components/organisation-generator";
 
 export const displayItems = [
   {
@@ -103,12 +101,6 @@ export const displayItems = [
     Component: SubjectDisplay,
     emptyValue: [],
   },
-  // {
-  //   itemKey: "traditionalKnowledgeLabel",
-  //   label: "Traditional Knowledge Labels",
-  //   Component: TraditionalKnowledgeLabelDisplay,
-  //   emptyValue: [],
-  // },
   {
     itemKey: "spatialCoverage",
     label: "Spatial Coverages",
@@ -133,8 +125,6 @@ export const raidRequest = (data: RaidDto): RaidDto => {
     relatedObject: data?.relatedObject || ([] as RelatedObject[]),
     spatialCoverage: data?.spatialCoverage || ([] as SpatialCoverage[]),
     subject: data?.subject || ([] as Subject[]),
-    // traditionalKnowledgeLabel:
-    //   data?.traditionalKnowledgeLabel || ([] as TraditionalKnowledgeLabel[]),
   };
 };
 
