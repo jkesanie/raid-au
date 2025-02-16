@@ -67,7 +67,7 @@ export const RaidEdit = () => {
     queryKey: useMemo(() => ["raids", prefix, suffix], [prefix, suffix]),
     queryFn: () =>
       fetchRaid({
-        id: `${prefix}/${suffix}`,
+        handle: `${prefix}/${suffix}`,
         token: token!,
       }),
     enabled: isInitialized && authenticated,

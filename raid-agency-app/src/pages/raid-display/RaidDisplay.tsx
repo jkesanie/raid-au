@@ -32,7 +32,7 @@ export const RaidDisplay = () => {
     queryKey: ["raids", prefix, suffix],
     queryFn: () =>
       fetchRaid({
-        id: handle,
+        handle,
         token: token!,
       }),
     enabled: isInitialized && authenticated,

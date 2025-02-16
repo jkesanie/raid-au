@@ -22,7 +22,7 @@ import { RaidTableRowContextMenu } from "./components";
 import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const RaidTable = ({ title }: { title?: string }) => {
-  const { authenticated, token, isInitialized, tokenParsed } = useKeycloak();
+  const { authenticated, token, isInitialized } = useKeycloak();
 
   const raidQuery = useQuery<RaidDto[]>({
     queryKey: ["listRaids"],
@@ -30,8 +30,6 @@ export const RaidTable = ({ title }: { title?: string }) => {
       fetchRaids({
         fields: ["identifier", "title", "date"],
         token: token!,
-        tokenParsed: tokenParsed,
-        spOnly: false,
       }),
     enabled: isInitialized && authenticated,
   });

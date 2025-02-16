@@ -1,7 +1,7 @@
 import {
   fetchCurrentUserKeycloakGroups,
   setKeycloakUserAttribute,
-} from "@/services/keycloak";
+} from "@/services/keycloak-groups";
 import { KeycloakGroup } from "@/types";
 import { Circle as CircleIcon } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";

@@ -1,7 +1,7 @@
 import { useSnackbar } from "@/components/snackbar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
-import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak";
+import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak-groups";
 import { KeycloakGroup } from "@/types";
 import {
   AccountCircle as AccountCircleIcon,
