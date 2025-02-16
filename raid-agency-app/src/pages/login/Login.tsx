@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Australia } from "./icons/Australia";
 import { Orcid } from "./icons/Orcid";
 import { useKeycloak } from "@/contexts/keycloak-context";
@@ -24,10 +24,20 @@ import { useKeycloak } from "@/contexts/keycloak-context";
 export const Login = () => {
   const { authenticated, isInitialized, login } = useKeycloak();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   if (isInitialized && authenticated) {
     setTimeout(() => navigate("/"), 0);
   }
+
+  const handleLogin = (idpHint?: string) => {
+    login({
+      idpHint,
+      scope: "openid",
+      redirectUri: window.location.origin + from,
+    });
+  };
 
   const raidLinkButton = (
     <Link to="/about-raid">
@@ -120,36 +130,21 @@ export const Login = () => {
               <Button
                 startIcon={<GoogleIcon />}
                 variant="contained"
-                onClick={() =>
-                  login({
-                    idpHint: "google",
-                    scope: "openid",
-                  })
-                }
+                onClick={() => handleLogin("google")}
               >
                 Google
               </Button>
               <Button
                 startIcon={<Australia />}
                 variant="contained"
-                onClick={() =>
-                  login({
-                    idpHint: "aaf-saml",
-                    scope: "openid",
-                  })
-                }
+                onClick={() => handleLogin("aaf-saml")}
               >
                 AAF
               </Button>
               <Button
                 startIcon={<Orcid />}
                 variant="contained"
-                onClick={() =>
-                  login({
-                    idpHint: "orcid",
-                    scope: "openid",
-                  })
-                }
+                onClick={() => handleLogin("orcid")}
               >
                 ORCID
               </Button>
@@ -158,11 +153,7 @@ export const Login = () => {
                 data-testid="login-button"
                 startIcon={<CodeIcon />}
                 variant="contained"
-                onClick={() =>
-                  login({
-                    scope: "openid",
-                  })
-                }
+                onClick={() => handleLogin()}
               >
                 DEV
               </Button>
