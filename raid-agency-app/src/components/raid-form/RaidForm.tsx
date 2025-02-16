@@ -1,121 +1,28 @@
-import AccessForm from "@/entities/access/AccessForm";
-import accessGenerator from "@/entities/access/data-components/access-generator";
-
-import AlternateIdentifierForm from "@/entities/alternateIdentifier/AlternateIdentifierForm";
-import alternateIdentifierGenerator from "@/entities/alternateIdentifier/data-components/alternate-identifier-generator";
-
-import AlternateUrlForm from "@/entities/alternateUrl/AlternateUrlForm";
-import alternateUrlGenerator from "@/entities/alternateUrl/data-components/alternate-url-generator";
-
-import { ContributorForm } from "@/entities/contributor/ContributorForm";
-import contributorGenerator from "@/entities/contributor/data-components/contributor-generator";
-
-import ContributorPositionForm from "@/entities/contributor/position/ContributorPositionForm";
-import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
-
-import ContributorRoleForm from "@/entities/contributor/role/ContributorRoleForm";
-import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
-
-import dateGenerator from "@/entities/date/data-components/date-generator";
-import DateForm from "@/entities/date/DateForm";
-
-import descriptionGenerator from "@/entities/description/data-components/description-generator";
-import DescriptionForm from "@/entities/description/DescriptionForm";
-
-import organisationGenerator from "@/entities/organisation/data-components/organisation-generator";
-import OrganisationForm from "@/entities/organisation/OrganisationForm";
-
-import organisationRoleGenerator from "@/entities/organisation/role/data-components/organisation-role-generator";
-import OrganisationRoleForm from "@/entities/organisation/role/OrganisationRoleForm";
-
-import relatedObjectGenerator from "@/entities/relatedObject/data-components/related-object-generator";
-import RelatedObjectForm from "@/entities/relatedObject/RelatedObjectForm";
-
-import relatedObjectCategoryGenerator from "@/entities/relatedObject/category/data-components/related-object-category-generator";
-import RelatedObjectCategoryForm from "@/entities/relatedObject/category/RelatedObjectCategoryForm";
-
-import relatedRaidGenerator from "@/entities/relatedRaid/data-components/related-raid-generator";
-import RelatedRaidForm from "@/entities/relatedRaid/RelatedRaidForm";
-
-import spatialCoverageGenerator from "@/entities/spatialCoverage/spatial-coverage-generator";
-import SpatialCoverageForm from "@/entities/spatialCoverage/SpatialCoverageForm";
-
-import spatialCoveragePlaceGenerator from "@/entities/spatialCoverage/place/spatial-coverage-place-generator";
-import SpatialCoveragePlaceForm from "@/entities/spatialCoverage/place/SpatialCoveragePlaceForm";
-
-import subjectGenerator from "@/entities/subject/data-components/subject-generator";
-import SubjectForm from "@/entities/subject/SubjectForm";
-
-import subjectKeywordGenerator from "@/entities/subject/keyword/data-components/subject-keyword-generator";
-import SubjectKeywordForm from "@/entities/subject/keyword/SubjectKeywordForm";
-
-import titleGenerator from "@/entities/title/data-components/title-generator";
-import TitleForm from "@/entities/title/TitleForm";
-
-// import traditionalKnowledgeLabelGenerator from "@/entities/traditionalKnowledgeLabel/traditional-knowledge-label-generator";
-// import TraditionalKnowledgeLabelForm from "@/entities/traditionalKnowledgeLabel/TraditionalKnowledgeLabelForm";
-
-import { ChildConfig } from "@/types";
-
 import { AnchorButtons } from "@/components/anchor-buttons";
-import { DynamicForm } from "@/components/dynamic-form";
 import { RaidValidationSchema } from "@/components/validation";
+import AccessFormComponent from "@/entities/access/form-components/AccessFormComponent";
+import AlternateIdentifiersFormComponent from "@/entities/alternateIdentifier/form-components/AlternateIdentifiersFormComponent";
+import AlternateUrlsFormComponent from "@/entities/alternateUrl/form-components/AlternateUrlsFormComponent";
+import ContributorsFormComponent from "@/entities/contributor/form-components/ContributorsFormComponent";
+import DateFormComponent from "@/entities/date/form-components/DateFormComponent";
+import DescriptionsFormComponent from "@/entities/description/form-components/DescriptionsFormComponent";
+import OrganisationsFormComponent from "@/entities/organisation/form-components/OrganisationsFormComponent";
+import RelatedObjectsFormComponent from "@/entities/relatedObject/form-components/RelatedObjectsFormComponent";
+import RelatedRaidsFormComponent from "@/entities/relatedRaid/form-components/RelatedRaidsFormComponent";
+import SpatialCoveragesFormComponent from "@/entities/spatialCoverage/form-components/SpatialCoveragesFormComponent";
+import SubjectsFormComponent from "@/entities/subject/form-components/SubjectsFormComponent";
+import TitlesFormComponent from "@/entities/title/form-components/TitlesFormComponent";
 import { RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Close as CloseIcon, Save as SaveIcon } from "@mui/icons-material";
 import {
-  Card,
-  CardContent,
-  CardHeader,
   Fab,
   Stack,
-  Tooltip,
+  Tooltip
 } from "@mui/material";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-
-type BaseConfiguration = {
-  id: string;
-  label: string;
-  labelPlural: string;
-  entityKey: keyof RaidDto;
-  DetailsFormComponent: any;
-  generator: () => any;
-  data?: any;
-};
-
-type FlatFormConfiguration = BaseConfiguration & {
-  component: typeof FlatFormComponent;
-  childConfigs?: ChildConfig[];
-};
-
-type MultiFormConfiguration = BaseConfiguration & {
-  component: typeof DynamicForm;
-  ChildFormComponent?: React.ComponentType<{ index: number }>;
-  childConfigs?: ChildConfig[];
-};
-
-type FormConfiguration = FlatFormConfiguration | MultiFormConfiguration;
-
-export const FlatFormComponent = memo(
-  ({
-    DetailsFormComponent,
-    labelPlural,
-    id,
-  }: {
-    DetailsFormComponent: React.ComponentType<{}>;
-    labelPlural: string;
-    id: string;
-  }) => (
-    <Card id={id} data-testid={`dynamic-form-${labelPlural.toLowerCase()}`}>
-      <CardHeader title={labelPlural} />
-      <CardContent>
-        <DetailsFormComponent />
-      </CardContent>
-    </Card>
-  )
-);
 
 export const RaidForm = memo(
   ({
@@ -132,184 +39,6 @@ export const RaidForm = memo(
     suffix: string;
   }) => {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-    const configurations: FormConfiguration[] = useMemo(
-      () => [
-        {
-          id: "date",
-          label: "Date",
-          labelPlural: "Dates",
-          entityKey: "date" as keyof RaidDto,
-          component: FlatFormComponent,
-          DetailsFormComponent: DateForm,
-          generator: dateGenerator,
-        },
-        {
-          id: "title",
-          label: "Title",
-          labelPlural: "Titles",
-          entityKey: "title" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: TitleForm,
-          ChildFormComponent: undefined,
-          generator: titleGenerator,
-        },
-        {
-          id: "description",
-          label: "Description",
-          labelPlural: "Descriptions",
-          entityKey: "description" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: DescriptionForm,
-          ChildFormComponent: TitleForm,
-          generator: descriptionGenerator,
-        },
-        {
-          id: "contributor",
-          label: "Contributor",
-          labelPlural: "Contributors",
-          entityKey: "contributor" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: ContributorForm,
-          generator: contributorGenerator,
-          data: raidData.contributor || [],
-          childConfigs: [
-            {
-              fieldKey: "role",
-              label: "Role",
-              labelPlural: "Roles",
-              DetailsComponent: ContributorRoleForm,
-              generator: contributorRoleGenerator,
-            },
-            {
-              fieldKey: "position",
-              label: "Position",
-              labelPlural: "Positions",
-              DetailsComponent: ContributorPositionForm,
-              generator: contributorPositionGenerator,
-            },
-          ],
-        },
-        {
-          id: "organisation",
-          label: "Organisation",
-          labelPlural: "Organisations",
-          entityKey: "organisation" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: OrganisationForm,
-          generator: organisationGenerator,
-          childConfigs: [
-            {
-              fieldKey: "role",
-              label: "Role",
-              labelPlural: "Roles",
-              DetailsComponent: OrganisationRoleForm,
-              generator: organisationRoleGenerator,
-            },
-          ],
-        },
-        {
-          id: "relatedObject",
-          label: "Related Object",
-          labelPlural: "Related Objects",
-          entityKey: "relatedObject" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: RelatedObjectForm,
-          generator: relatedObjectGenerator,
-          childConfigs: [
-            {
-              fieldKey: "category",
-              label: "Category",
-              labelPlural: "Categories",
-              DetailsComponent: RelatedObjectCategoryForm,
-              generator: relatedObjectCategoryGenerator,
-            },
-          ],
-        },
-        {
-          id: "alternateIdentifier",
-          label: "Alternate Identifier",
-          labelPlural: "Alternate Identifiers",
-          entityKey: "alternateIdentifier" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: AlternateIdentifierForm,
-          generator: alternateIdentifierGenerator,
-        },
-        {
-          id: "alternateUrl",
-          label: "Alternate URL",
-          labelPlural: "Alternate URLs",
-          entityKey: "alternateUrl" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: AlternateUrlForm,
-          generator: alternateUrlGenerator,
-        },
-        {
-          id: "relatedRaid",
-          label: "Related RAiD",
-          labelPlural: "Related RAiDs",
-          entityKey: "relatedRaid" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: RelatedRaidForm,
-          generator: relatedRaidGenerator,
-        },
-        {
-          id: "access",
-          label: "Access",
-          labelPlural: "Access",
-          entityKey: "access" as keyof RaidDto,
-          component: FlatFormComponent,
-          DetailsFormComponent: AccessForm,
-          generator: accessGenerator,
-        },
-        {
-          id: "subject",
-          label: "Subject",
-          labelPlural: "Subjects",
-          entityKey: "subject" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: SubjectForm,
-          generator: subjectGenerator,
-          childConfigs: [
-            {
-              fieldKey: "keyword",
-              label: "Keyword",
-              labelPlural: "Keywords",
-              DetailsComponent: SubjectKeywordForm,
-              generator: subjectKeywordGenerator,
-            },
-          ],
-        },
-        // {
-        //   id: "traditionalKnowledgeLabel",
-        //   label: "Traditional Knowledge Label",
-        //   labelPlural: "Traditional Knowledge Labels",
-        //   entityKey: "traditionalKnowledgeLabel" as keyof RaidDto,
-        //   component: DynamicForm,
-        //   DetailsFormComponent: TraditionalKnowledgeLabelForm,
-        //   generator: traditionalKnowledgeLabelGenerator,
-        // },
-        {
-          id: "spatialCoverage",
-          label: "Spatial Coverage",
-          labelPlural: "Spatial Coverages",
-          entityKey: "spatialCoverage" as keyof RaidDto,
-          component: DynamicForm,
-          DetailsFormComponent: SpatialCoverageForm,
-          generator: spatialCoverageGenerator,
-          childConfigs: [
-            {
-              fieldKey: "place",
-              label: "Place",
-              labelPlural: "Places",
-              DetailsComponent: SpatialCoveragePlaceForm,
-              generator: spatialCoveragePlaceGenerator,
-            },
-          ],
-        },
-      ],
-      []
-    );
 
     const formMethods = useForm<RaidDto>({
       defaultValues: raidData,
@@ -384,58 +113,81 @@ export const RaidForm = memo(
           <Stack spacing={2} data-testid="raid-form">
             <AnchorButtons raidData={raidData} errors={formState.errors} />
             <Stack spacing={2}>
-              {configurations.map((config) => {
-                const commonProps = {
-                  control,
-                  errors: formState.errors,
-                  trigger,
-                  label: config.label,
-                  labelPlural: config.labelPlural,
-                  entityKey: config.entityKey,
-                  DetailsFormComponent: config.DetailsFormComponent,
-                  generator: config.generator,
-                  data: config.data,
-                };
+              <DateFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
 
-                if (config.component === FlatFormComponent) {
-                  return (
-                    <FlatFormComponent
-                      key={config.id}
-                      labelPlural={config.labelPlural}
-                      DetailsFormComponent={config.DetailsFormComponent}
-                      id={config.id}
-                    />
-                  );
-                }
+              <TitlesFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
 
-                if (config.component === DynamicForm && config.childConfigs) {
-                  return (
-                    <DynamicForm
-                      key={config.id}
-                      {...commonProps}
-                      childConfigs={config.childConfigs}
-                    />
-                  );
-                }
+              <DescriptionsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
 
-                if (
-                  config &&
-                  config.component === DynamicForm &&
-                  config.childConfigs
-                ) {
-                  return (
-                    <DynamicForm
-                      key={config.id}
-                      {...commonProps}
-                      childConfigs={config.childConfigs}
-                    />
-                  );
-                }
+              <ContributorsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+                data={raidData.contributor || []}
+              />
 
-                return <DynamicForm key={config.id} {...commonProps} />;
-              })}
+              <OrganisationsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <RelatedObjectsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <AlternateIdentifiersFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <AlternateUrlsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <RelatedRaidsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <AccessFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <SubjectsFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
+
+              <SpatialCoveragesFormComponent
+                control={control}
+                errors={formState.errors}
+                trigger={trigger}
+              />
             </Stack>
           </Stack>
+          <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
         </form>
       </FormProvider>
     );

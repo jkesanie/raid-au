@@ -11,7 +11,6 @@ import type { AlternateIdentifier } from "./AlternateIdentifier";
 import type { Subject } from "./Subject";
 import type { Id } from "./Id";
 import type { AlternateUrl } from "./AlternateUrl";
-// import type { TraditionalKnowledgeLabel } from './TraditionalKnowledgeLabel';
 import type { SpatialCoverage } from "./SpatialCoverage";
 
 export interface RaidUpdateRequest {
@@ -29,5 +28,4 @@ export interface RaidUpdateRequest {
   relatedObject?: Array<RelatedObject>;
   alternateIdentifier?: Array<AlternateIdentifier>;
   spatialCoverage?: Array<SpatialCoverage>;
-  // traditionalKnowledgeLabel?: Array<TraditionalKnowledgeLabel>;
 }

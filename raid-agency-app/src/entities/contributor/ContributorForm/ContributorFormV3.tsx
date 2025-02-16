@@ -10,10 +10,12 @@ const ContributorForm = ({
   data,
 }: {
   index: number;
-  data: Contributor &
-    {
-      status?: string;
-    }[];
+  data:
+    | (Contributor &
+        {
+          status?: string;
+        }[])
+    | Contributor[];
 }) => {
   return (
     <Grid container spacing={2}>
