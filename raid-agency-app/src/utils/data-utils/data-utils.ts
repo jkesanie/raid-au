@@ -133,7 +133,7 @@ export const newRaid: RaidCreateRequest = {
   // description: [descriptionGenerator()],
   date: dateGenerator(),
   access: accessGenerator(),
-  organisation: [organisationGenerator()],
+  organisation: [],
   contributor: [],
   // subject: [subjectGenerator()],
   // relatedRaid: [],

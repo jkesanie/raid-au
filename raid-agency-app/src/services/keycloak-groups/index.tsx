@@ -1,6 +1,9 @@
+import { getApiEndpoint } from "@/utils/api-utils/api-utils";
+
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
 const keycloakGroupEndpoint = `${kcUrl}/realms/${kcRealm}/group`;
+const apiEndpoint = getApiEndpoint();
 
 export async function joinKeycloakGroup({
   token,
@@ -111,6 +114,49 @@ export async function setKeycloakUserAttribute({
     });
   } catch (error) {
     const errorMessage = "Error: Keycloak group could not be joined";
+    console.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+}
+
+export async function fetchCurrentUserRor({
+  token,
+  tokenParsed,
+}: {
+  token: string | undefined;
+  tokenParsed: Record<string, string> | undefined;
+}): Promise<string | null> {
+  try {
+    if (tokenParsed === undefined) {
+      throw new Error("Error: Keycloak token not set");
+    }
+
+    const requestUrl = `${apiEndpoint}/service-point/`;
+
+    const response = await fetch(requestUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const servicePointGroupId = tokenParsed.service_point_group_id;
+
+    const data = await response.json();
+
+    let ror = null;
+    for (const servicePoint of data) {
+      if (
+        servicePoint.groupId &&
+        servicePoint.groupId === servicePointGroupId
+      ) {
+        ror = servicePoint.identifierOwner;
+      }
+    }
+    return ror;
+  } catch (error) {
+    const errorMessage = "Error: Curren user ROR could not be determined";
     console.error(errorMessage);
     throw new Error(errorMessage);
   }
