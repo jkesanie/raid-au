@@ -13,7 +13,7 @@ import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { sendInvite } from "@/services/invite";
-import { useKeycloak } from "@react-keycloak/web";
+import { useKeycloak } from "@/contexts/keycloak-context";
 
 export default function InviteDialog({
   open,
@@ -25,7 +25,7 @@ export default function InviteDialog({
   const { prefix, suffix } = useParams();
   const [email, setEmail] = useState("john.doe@ardc-raid.testinator.com");
   const snackbar = useSnackbar();
-  const { keycloak } = useKeycloak();
+  const { token } = useKeycloak();
 
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
@@ -51,7 +51,7 @@ export default function InviteDialog({
     sendInviteMutation.mutate({
       email,
       handle: `${prefix}/${suffix}`,
-      token: keycloak?.token || "",
+      token: token!,
     });
     handleClose();
   };

@@ -10,10 +10,12 @@ const ContributorForm = ({
   data,
 }: {
   index: number;
-  data: Contributor &
-    {
-      status?: string;
-    }[];
+  data:
+    | (Contributor &
+        {
+          status?: string;
+        }[])
+    | Contributor[];
 }) => {
   return (
     <Grid container spacing={2}>
@@ -39,7 +41,7 @@ const ContributorForm = ({
           {data[index] && Object.hasOwn(data[index], "status") && (
             <DisplayItem
               label="Contributor Status"
-              value={Object.hasOwn(data[index], "status") && data[index].status}
+              value={"status" in data[index] ? data[index].status : ""}
               width={12}
             />
           )}

@@ -1,7 +1,7 @@
 import {
   fetchCurrentUserKeycloakGroups,
   setKeycloakUserAttribute,
-} from "@/services/keycloak";
+} from "@/services/keycloak-groups";
 import { KeycloakGroup } from "@/types";
 import { Circle as CircleIcon } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
@@ -12,7 +12,8 @@ import * as React from "react";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useKeycloak } from "@react-keycloak/web";
+import { useKeycloak } from "@/contexts/keycloak-context";
+import { Loading } from "@/pages/loading";
 
 export function ServicePointSwitcher() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -22,10 +23,7 @@ export function ServicePointSwitcher() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLElement>,
-    index: number
-  ) => {
+  const handleMenuItemClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(null);
     switchToNewServicePoint(event.currentTarget.id);
   };
@@ -34,11 +32,11 @@ export function ServicePointSwitcher() {
     setAnchorEl(null);
   };
 
-  const { keycloak } = useKeycloak();
+  const { token, tokenParsed } = useKeycloak();
 
   const switchToNewServicePoint = async (groupId: string) => {
     await setKeycloakUserAttribute({
-      token: keycloak.token,
+      token: token,
       groupId: groupId,
     });
 
@@ -51,14 +49,14 @@ export function ServicePointSwitcher() {
     queryKey: ["keycloak-groups"],
     queryFn: async () => {
       const servicePoints = await fetchCurrentUserKeycloakGroups({
-        token: keycloak.token!,
+        token: token!,
       });
       return servicePoints;
     },
   });
 
   if (keycloakGroupsQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (keycloakGroupsQuery.isError) {
@@ -103,7 +101,7 @@ export function ServicePointSwitcher() {
             >
               {
                 servicePointGroups?.find(
-                  (el) => el.id === keycloak.tokenParsed?.service_point_group_id
+                  (el) => el.id === tokenParsed?.service_point_group_id
                 )?.name
               }
             </Typography>
@@ -129,13 +127,13 @@ export function ServicePointSwitcher() {
             role: "listbox",
           }}
         >
-          {servicePointGroups?.map((el, i) => (
+          {servicePointGroups?.map((el) => (
             <MenuItem
               key={el.id}
               id={el.id}
-              disabled={el.id === keycloak.tokenParsed?.service_point_group_id}
-              selected={el.id === keycloak.tokenParsed?.service_point_group_id}
-              onClick={(event) => handleMenuItemClick(event, i)}
+              disabled={el.id === tokenParsed?.service_point_group_id}
+              selected={el.id === tokenParsed?.service_point_group_id}
+              onClick={(event) => handleMenuItemClick(event)}
             >
               <CircleIcon
                 sx={{

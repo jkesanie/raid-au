@@ -5,6 +5,7 @@ import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useErrorDialog } from "@/components/error-dialog";
 import { RaidForm } from "@/components/raid-form";
 import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { Contributor, RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { Loading } from "@/pages/loading";
 import { fetchRaid, updateRaid } from "@/services/raid";
@@ -16,7 +17,7 @@ import {
   Home as HomeIcon,
 } from "@mui/icons-material";
 import { Container, Stack } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -54,7 +55,7 @@ function createEditRaidPageBreadcrumbs({
 
 export const RaidEdit = () => {
   const { openErrorDialog } = useErrorDialog();
-  const { keycloak, initialized } = useKeycloak();
+  const { authenticated, isInitialized, token } = useKeycloak();
   const navigate = useNavigate();
 
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
@@ -66,10 +67,10 @@ export const RaidEdit = () => {
     queryKey: useMemo(() => ["raids", prefix, suffix], [prefix, suffix]),
     queryFn: () =>
       fetchRaid({
-        id: `${prefix}/${suffix}`,
-        token: keycloak.token || "",
+        handle: `${prefix}/${suffix}`,
+        token: token!,
       }),
-    enabled: initialized && keycloak.authenticated,
+    enabled: isInitialized && authenticated,
   });
 
   const updateMutation = useMutation({
@@ -86,7 +87,7 @@ export const RaidEdit = () => {
     updateMutation.mutate({
       id: `${prefix}/${suffix}`,
       data: raidRequest(data),
-      token: keycloak.token || "",
+      token: token!,
     });
   };
 

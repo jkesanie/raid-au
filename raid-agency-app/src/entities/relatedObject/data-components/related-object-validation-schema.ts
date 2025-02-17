@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { relatedObjectCategoryValidationSchema } from "../category/data-components/related-object-category-validation-schema";
 
 export const relatedObjectValidationSchema = z.array(
   z.object({
@@ -8,11 +9,6 @@ export const relatedObjectValidationSchema = z.array(
       id: z.string(),
       schemaUri: z.string(),
     }),
-    category: z
-      .object({
-        id: z.string(),
-        schemaUri: z.string(),
-      })
-      .array(),
-  }),
+    category: relatedObjectCategoryValidationSchema,
+  })
 );

@@ -1,14 +1,15 @@
 import { AppNavBar } from "@/components/app-nav-bar";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
 import { Box, Container } from "@mui/material";
-import { useKeycloak } from "@react-keycloak/web";
 import { memo } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export const ProtectedRoute = memo(() => {
-  const { keycloak, initialized } = useKeycloak();
+  const { isInitialized, authenticated } = useKeycloak();
+  const location = useLocation();
 
-  if (!initialized) {
+  if (!isInitialized) {
     return (
       <Container>
         <Loading />
@@ -16,14 +17,18 @@ export const ProtectedRoute = memo(() => {
     );
   }
 
-  return keycloak?.authenticated ? (
+  return authenticated ? (
     <>
       <AppNavBar authenticated={true} />
       <Box sx={{ height: "3em" }} />
       <Outlet />
     </>
   ) : (
-    <Navigate to="/login" replace />
+    <Navigate
+      to="/login"
+      replace
+      state={{ from: location.pathname + location.search }}
+    />
   );
 });
 

@@ -4,10 +4,9 @@ import {
   AccessType,
   Language,
 } from "@/generated/raid";
-import languageSchema from "@/references/language_schema.json";
 import accessType from "@/references/access_type.json";
 import accessTypeSchema from "@/references/access_type_schema.json";
-import dayjs from "dayjs";
+import languageSchema from "@/references/language_schema.json";
 
 const accessTypeGenerator = (): AccessType => {
   return {
@@ -31,11 +30,10 @@ const accessStatementGenerator = (): AccessStatement => {
 };
 
 const accessGenerator = (): Access => {
-  const threeYearsFromNow = dayjs().add(1, "year").toDate();
   return {
     type: accessTypeGenerator(),
     statement: accessStatementGenerator(),
-    embargoExpiry: threeYearsFromNow,
+    embargoExpiry: undefined,
   };
 };
 

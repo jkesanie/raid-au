@@ -1,6 +1,7 @@
 import packageJson from "@/../package.json";
 import { contributorPositionValidationSchema } from "@/entities/contributor/position/data-components/contributor-position-validation-schema";
 import { contributorRoleValidationSchema } from "@/entities/contributor/role/data-components/contributor-role-validation-schema";
+import { stat } from "fs";
 import { z } from "zod";
 
 let baseContributorSchema = z.object({});
@@ -12,6 +13,8 @@ if (packageJson.apiVersion === "2") {
     position: contributorPositionValidationSchema,
     role: contributorRoleValidationSchema,
     schemaUri: z.literal("https://orcid.org/"),
+    status: z.string().optional(),
+    uuid: z.string().optional(),
   });
 }
 
@@ -57,4 +60,4 @@ export const singleContributorValidationSchema = z.union([
 
 export const contributorValidationSchema = z.array(
   singleContributorValidationSchema
-);
+).min(1);

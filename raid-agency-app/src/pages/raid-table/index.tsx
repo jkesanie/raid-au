@@ -12,26 +12,26 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
-import { useKeycloak } from "@react-keycloak/web";
+
 import { useQuery } from "@tanstack/react-query";
 import { endDateColumn } from "./columns/endDateColumn";
 import { handleColumn } from "./columns/handleColumn";
 import { startDateColumn } from "./columns/startDateColumn";
 import { titleColumn } from "./columns/titleColumn";
 import { RaidTableRowContextMenu } from "./components";
+import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const RaidTable = ({ title }: { title?: string }) => {
-  const { keycloak, initialized } = useKeycloak();
+  const { authenticated, token, isInitialized } = useKeycloak();
 
   const raidQuery = useQuery<RaidDto[]>({
     queryKey: ["listRaids"],
     queryFn: () =>
       fetchRaids({
         fields: ["identifier", "title", "date"],
-        keycloak: keycloak,
-        spOnly: false,
+        token: token!,
       }),
-    enabled: initialized && keycloak.authenticated,
+    enabled: isInitialized && authenticated,
   });
 
   const appWritesEnabled = true;
