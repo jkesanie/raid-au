@@ -3,8 +3,10 @@ package au.org.raid.api.service;
 import au.org.raid.api.config.properties.RaidHistoryProperties;
 import au.org.raid.api.entity.ChangeType;
 import au.org.raid.api.exception.InvalidVersionException;
+import au.org.raid.api.exception.ResourceNotFoundException;
 import au.org.raid.api.factory.*;
 import au.org.raid.api.repository.RaidHistoryRepository;
+import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.db.jooq.tables.records.RaidHistoryRecord;
 import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +37,7 @@ public class RaidHistoryService {
     private final RaidHistoryRecordFactory raidHistoryRecordFactory;
     private final RaidHistoryProperties properties;
     private final RaidChangeFactory raidChangeFactory;
+    private final RaidRepository raidRepository;
 
     @SneakyThrows
     public RaidDto save(final RaidCreateRequest request) {
@@ -61,7 +64,12 @@ public class RaidHistoryService {
         Metadata metadata =  raid.getMetadata();
 
         if (metadata == null) {
-            metadata = new Metadata();
+            final var handle = new Handle(raid.getIdentifier().getId());
+            final var existing = raidRepository.findByHandle(handle.toString())
+                    .orElseThrow(() -> new ResourceNotFoundException(handle.toString()));
+
+            metadata = new Metadata().created(
+                    BigDecimal.valueOf(existing.getDateCreated().toEpochSecond(ZoneOffset.UTC)));
         }
         raid.metadata(metadata.updated(now));
 
@@ -101,6 +109,19 @@ public class RaidHistoryService {
 
     @SneakyThrows
     public RaidDto save(final RaidDto raid) {
+        final var now = new BigDecimal(LocalDateTime.now().atOffset(ZoneOffset.UTC).toEpochSecond());
+
+        Metadata metadata =  raid.getMetadata();
+
+        if (metadata == null) {
+            final var handle = new Handle(raid.getIdentifier().getId());
+            final var existing = raidRepository.findByHandle(handle.toString())
+                    .orElseThrow(() -> new ResourceNotFoundException(handle.toString()));
+
+            metadata = new Metadata().created(
+                    BigDecimal.valueOf(existing.getDateCreated().toEpochSecond(ZoneOffset.UTC)));
+        }
+        raid.metadata(metadata.updated(now));
         final var version = raid.getIdentifier().getVersion();
         final var newVersion = version + 1;
         raid.getIdentifier().setVersion(newVersion);
