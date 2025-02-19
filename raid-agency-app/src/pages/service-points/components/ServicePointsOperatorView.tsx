@@ -1,5 +1,5 @@
 import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { ServicePointUsers } from "@/components/service-point-users";
+import { ServicePointUsersList } from "@/components/service-point-users/ServicePointUsersList";
 import { ServicePointsTable } from "@/components/service-points-table";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
@@ -48,13 +48,13 @@ export const ServicePointsOperatorView = () => {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader title="Service points members" />
+        <CardHeader title="Members (All service points)" />
         <CardContent>
           <Stack direction="column" gap={2}>
             {query.data
               .filter((sp) => sp.members.length > 0)
               .map((servicePoint) => (
-                <ServicePointUsers
+                <ServicePointUsersList
                   key={servicePoint.id}
                   servicePointWithMembers={servicePoint}
                 />

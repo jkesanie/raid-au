@@ -38,10 +38,6 @@ export const GroupSelector = memo(() => {
   const { token, isInitialized } = useKeycloak();
   const [open, setOpen] = useState(false);
 
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
   const handleClose = () => {
     setOpen(false);
   };
