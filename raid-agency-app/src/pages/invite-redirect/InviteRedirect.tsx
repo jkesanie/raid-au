@@ -1,3 +1,4 @@
+import { useSnackbar } from "@/components/snackbar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { acceptInvite, rejectInvite } from "@/services/invite";
 import {
@@ -9,13 +10,14 @@ import {
   Stack,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function InviteRedirect() {
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
   const handleBase64 = searchParams.get("handle");
   const navigate = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const handle = handleBase64 ? atob(handleBase64) : "";
 
@@ -24,8 +26,13 @@ export function InviteRedirect() {
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
     onSuccess: (data, variables) => {
-      if (handle) {
-        navigate(`/raids/${handle}`);
+      if (data?.handle) {
+        openSnackbar(
+          `You have accepted the invitation to join ${data.handle}. Redirecting now...`
+        );
+        setTimeout(() => {
+          navigate(`/raids/${data.handle}`);
+        }, 3000);
       }
     },
     onError: (error) => {
@@ -36,7 +43,12 @@ export function InviteRedirect() {
   const rejectInviteMutation = useMutation({
     mutationFn: rejectInvite,
     onSuccess: (data, variables) => {
-      navigate(`/raids/`);
+      openSnackbar(
+        `You have rejected the invitation to join ${data.handle}. Redirecting now...`
+      );
+      setTimeout(() => {
+        navigate(`/raids`);
+      }, 3000);
     },
     onError: (error) => {
       console.error("error", error);
