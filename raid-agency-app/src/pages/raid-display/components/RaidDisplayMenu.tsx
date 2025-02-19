@@ -1,7 +1,6 @@
 import packageJson from "@/../package.json";
 import InviteButton from "@/components/invite/InviteButton";
 import InviteDialog from "@/components/invite/InviteDialog";
-import { Title } from "@/generated/raid";
 import {
   Edit as EditIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,

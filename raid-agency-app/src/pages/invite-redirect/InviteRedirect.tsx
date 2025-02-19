@@ -12,20 +12,22 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 export function InviteRedirect() {
-  const { prefix, suffix } = useParams();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
+  const handleBase64 = searchParams.get("handle");
   const navigate = useNavigate();
+
+  const handle = handleBase64
+    ? Buffer.from(handleBase64, "base64").toString()
+    : "";
 
   const { token } = useKeycloak();
 
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
     onSuccess: (data, variables) => {
-      console.log("data", data);
-      console.log("variables", variables);
-      if (data && data.handle) {
-        navigate(`/raids/${data.handle}`);
+      if (handle) {
+        navigate(`/raids/${handle}`);
       }
     },
     onError: (error) => {
@@ -59,7 +61,7 @@ export function InviteRedirect() {
                 acceptInviteMutation.mutate({
                   code: code!,
                   token: token!,
-                  handle: `${prefix}/${suffix}`,
+                  handle,
                 });
               }}
             >
@@ -72,7 +74,7 @@ export function InviteRedirect() {
                 rejectInviteMutation.mutate({
                   code: code!,
                   token: token!,
-                  handle: `${prefix}/${suffix}`,
+                  handle,
                 });
               }}
             >
