@@ -12,13 +12,15 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { sendInvite } from "@/services/invite";
 import { useKeycloak } from "@/contexts/keycloak-context";
+import { sendInvite } from "@/services/invite";
 
 export default function InviteDialog({
+  title,
   open,
   setOpen,
 }: {
+  title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
@@ -49,6 +51,7 @@ export default function InviteDialog({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     sendInviteMutation.mutate({
+      title,
       email,
       handle: `${prefix}/${suffix}`,
       token: token!,

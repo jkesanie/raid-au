@@ -72,7 +72,11 @@ export const RaidDisplay = () => {
 
   return (
     <>
-      <RaidDisplayMenu prefix={prefix} suffix={suffix} />
+      <RaidDisplayMenu
+        prefix={prefix}
+        suffix={suffix}
+        title={raidData?.title?.map((el) => el.text).join("; ") || ""}
+      />
       <Container>
         <Stack direction="column" spacing={2}>
           <BreadcrumbsBar breadcrumbs={breadcrumbs} />

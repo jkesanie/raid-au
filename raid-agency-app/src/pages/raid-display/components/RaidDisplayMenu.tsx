@@ -1,6 +1,7 @@
 import packageJson from "@/../package.json";
 import InviteButton from "@/components/invite/InviteButton";
 import InviteDialog from "@/components/invite/InviteDialog";
+import { Title } from "@/generated/raid";
 import {
   Edit as EditIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
@@ -12,9 +13,11 @@ import { Link } from "react-router-dom";
 export const RaidDisplayMenu = ({
   prefix,
   suffix,
+  title,
 }: {
   prefix: string;
   suffix: string;
+  title: string;
 }) => {
   const { apiVersion } = packageJson;
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
@@ -56,6 +59,7 @@ export const RaidDisplayMenu = ({
           <>
             <InviteButton setOpen={setIsInviteDialogOpen} />
             <InviteDialog
+              title={title}
               open={isInviteDialogOpen}
               setOpen={setIsInviteDialogOpen}
             />
