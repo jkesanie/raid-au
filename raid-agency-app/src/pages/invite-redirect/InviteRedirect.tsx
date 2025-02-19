@@ -28,10 +28,11 @@ export function InviteRedirect() {
     onSuccess: (data, variables) => {
       if (data?.handle) {
         openSnackbar(
-          `You have accepted the invitation to join ${data.handle}. Redirecting now...`
+          `✅ You have accepted the invitation to join ${data.handle}. Redirecting now...`
         );
         setTimeout(() => {
-          navigate(`/raids/${data.handle}`);
+          // we can't use react-router's navigate here, because we need a page refresh to get the new token
+          window.location.href = `/raids/${data.handle}`;
         }, 3000);
       }
     },
@@ -44,7 +45,7 @@ export function InviteRedirect() {
     mutationFn: rejectInvite,
     onSuccess: (data, variables) => {
       openSnackbar(
-        `You have rejected the invitation to join ${data.handle}. Redirecting now...`
+        `✅ You have rejected the invitation to join ${data.handle}. Redirecting now...`
       );
       setTimeout(() => {
         navigate(`/raids`);
