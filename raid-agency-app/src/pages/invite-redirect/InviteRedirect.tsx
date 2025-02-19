@@ -9,9 +9,10 @@ import {
   Stack,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 export function InviteRedirect() {
+  const { prefix, suffix } = useParams();
   const [searchParams] = useSearchParams();
   const code = searchParams.get("code");
   const navigate = useNavigate();
@@ -55,7 +56,11 @@ export function InviteRedirect() {
               variant="outlined"
               color="success"
               onClick={() => {
-                acceptInviteMutation.mutate({ code: code!, token: token! });
+                acceptInviteMutation.mutate({
+                  code: code!,
+                  token: token!,
+                  handle: `${prefix}/${suffix}`,
+                });
               }}
             >
               Accept
@@ -64,7 +69,11 @@ export function InviteRedirect() {
               variant="outlined"
               color="error"
               onClick={() => {
-                rejectInviteMutation.mutate({ code: code!, token: token! });
+                rejectInviteMutation.mutate({
+                  code: code!,
+                  token: token!,
+                  handle: `${prefix}/${suffix}`,
+                });
               }}
             >
               Reject

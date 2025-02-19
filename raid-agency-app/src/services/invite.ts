@@ -48,9 +48,11 @@ export async function fetchInvites({ token }: { token: string }) {
 export async function acceptInvite({
   code,
   token,
+  handle,
 }: {
   code: string;
   token: string;
+  handle: string;
 }) {
   console.log("code", code);
   console.log("token", token);
@@ -64,6 +66,7 @@ export async function acceptInvite({
       },
       body: JSON.stringify({
         code,
+        handle,
       }),
     }
   );
@@ -73,9 +76,11 @@ export async function acceptInvite({
 export async function rejectInvite({
   code,
   token,
+  handle,
 }: {
   code: string;
   token: string;
+  handle: string;
 }) {
   const response = await fetch(
     `https://orcid.${environment}.raid.org.au/invite/reject`,
@@ -87,6 +92,7 @@ export async function rejectInvite({
       },
       body: JSON.stringify({
         code,
+        handle,
       }),
     }
   );
