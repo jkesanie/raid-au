@@ -17,9 +17,7 @@ export function InviteRedirect() {
   const handleBase64 = searchParams.get("handle");
   const navigate = useNavigate();
 
-  const handle = handleBase64
-    ? Buffer.from(handleBase64, "base64").toString()
-    : "";
+  const handle = handleBase64 ? atob(handleBase64) : "";
 
   const { token } = useKeycloak();
 
