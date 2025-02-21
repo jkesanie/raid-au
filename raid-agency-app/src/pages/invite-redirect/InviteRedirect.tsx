@@ -9,19 +9,18 @@ import { Loading } from "../loading";
 
 export function InviteRedirect() {
   const [searchParams] = useSearchParams();
-  const code = searchParams.get("code");
-  const handleBase64 = searchParams.get("handle");
+  const codeCombined = searchParams.get("code");
   const { openSnackbar } = useSnackbar();
 
-  const handle = handleBase64 ? atob(handleBase64) : "";
+  const [code, handle] = codeCombined?.split(":") || [];
 
   const { token } = useKeycloak();
   useEffect(() => {
-    if (code && token && handle) {
+    if (code && handle) {
       acceptInviteMutation.mutate({
         code: code!,
         token: token!,
-        handle,
+        handle: atob(handle),
       });
     }
   }, []);
