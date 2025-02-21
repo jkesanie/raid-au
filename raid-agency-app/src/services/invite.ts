@@ -5,14 +5,16 @@ const environment = getEnv();
 export async function sendInvite({
   email,
   handle,
-  token,
+  orcid,
   title,
+  token,
 }: {
-  email: string;
+  email?: string;
   handle: string;
-  token: string;
+  orcid?: string;
   title: string;
-}) {
+  token: string;
+} & ({ email: string } | { orcid: string })) {
   const response = await fetch(
     `https://orcid.${environment}.raid.org.au/invite`,
     {
@@ -22,7 +24,8 @@ export async function sendInvite({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        inviteeEmail: email,
+        inviteeEmail: email || "",
+        inviteeOrcid: orcid || "",
         title,
         handle,
       }),

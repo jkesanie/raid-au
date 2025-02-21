@@ -5,6 +5,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
 } from "@mui/material";
@@ -26,8 +31,16 @@ export default function InviteDialog({
 }) {
   const { prefix, suffix } = useParams();
   const [email, setEmail] = useState("john.doe@ardc-raid.testinator.com");
+  const [orcid, setOrcid] = useState("0000-0000-0000-0000");
   const snackbar = useSnackbar();
   const { token } = useKeycloak();
+
+  const [value, setValue] = React.useState("");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = (event.target as HTMLInputElement).value;
+    setValue(newValue);
+  };
 
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
@@ -50,9 +63,21 @@ export default function InviteDialog({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    let emailFinalValue = email;
+    let orcidFinalValue = orcid;
+
+    if (value === "email") {
+      orcidFinalValue = "";
+    }
+
+    if (value === "orcid") {
+      emailFinalValue = "";
+    }
+
     sendInviteMutation.mutate({
       title,
-      email,
+      email: emailFinalValue,
+      orcid: orcidFinalValue,
       handle: `${prefix}/${suffix}`,
       token: token!,
     });
@@ -76,6 +101,29 @@ export default function InviteDialog({
       >
         <DialogTitle id="invite-dialog-title">Invite user to RAiD</DialogTitle>
         <DialogContent>
+          <FormControl>
+            <FormLabel id="demo-row-radio-buttons-group-label">
+              Invite using
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={value}
+              onChange={handleChange}
+            >
+              <FormControlLabel
+                value="email"
+                control={<Radio />}
+                label="Email"
+              />
+              <FormControlLabel
+                value="orcid"
+                control={<Radio />}
+                label="ORCID"
+              />
+            </RadioGroup>
+          </FormControl>
           <form onSubmit={handleSubmit}>
             <Stack gap={2}>
               <TextField
@@ -87,6 +135,19 @@ export default function InviteDialog({
                 fullWidth
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={value === "" || value === "orcid"}
+              />
+              <TextField
+                label="Invitee's ORCID ID"
+                size="small"
+                variant="filled"
+                type="text"
+                helperText="Format: 0000-0000-0000-0000"
+                required
+                fullWidth
+                value={orcid}
+                onChange={(e) => setOrcid(e.target.value)}
+                disabled={value === "" || value === "email"}
               />
             </Stack>
             <DialogActions>

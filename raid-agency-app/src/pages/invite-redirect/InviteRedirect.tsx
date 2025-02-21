@@ -36,7 +36,7 @@ export function InviteRedirect() {
         setTimeout(() => {
           // we can't use react-router's navigate here, because we need a page refresh to get the new token
           window.location.href = `/raids/${data.handle}`;
-        }, 2000);
+        }, 500);
       }
     },
     onError: (error) => {
@@ -44,9 +44,5 @@ export function InviteRedirect() {
     },
   });
 
-  return (
-    <Container>
-      <Loading />
-    </Container>
-  );
+  return <></>;
 }
