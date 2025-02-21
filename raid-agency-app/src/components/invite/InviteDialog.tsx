@@ -14,9 +14,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { sendInvite } from "@/services/invite";
 
@@ -30,54 +29,47 @@ export default function InviteDialog({
   setOpen: (open: boolean) => void;
 }) {
   const { prefix, suffix } = useParams();
-  const [email, setEmail] = useState("john.doe@ardc-raid.testinator.com");
-  const [orcid, setOrcid] = useState("0000-0000-0000-0000");
-  const snackbar = useSnackbar();
   const { token } = useKeycloak();
+  const snackbar = useSnackbar();
 
-  const [value, setValue] = React.useState("");
+  const [inviteMethod, setInviteMethod] = useState("");
+  const [email, setEmail] = useState("");
+  const [orcid, setOrcid] = useState("");
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = (event.target as HTMLInputElement).value;
-    setValue(newValue);
-  };
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const isValidOrcid = (orcid: string) =>
+    /^\d{4}-\d{4}-\d{4}-\d{4}$/.test(orcid);
+
+  const isValidForm = useMemo(() => {
+    if (inviteMethod === "email") {
+      return isValidEmail(email) && !orcid;
+    }
+    if (inviteMethod === "orcid") {
+      return isValidOrcid(orcid) && !email;
+    }
+    return false;
+  }, [inviteMethod, email, orcid]);
 
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
-    onSuccess: (data) => {
-      snackbar.openSnackbar(`✅ Thank you, invite has been sent.`);
-    },
-    onError: (error) => {
-      snackbar.openSnackbar(`❌ An error occurred.`);
-    },
+    onSuccess: () =>
+      snackbar.openSnackbar("✅ Thank you, invite has been sent."),
+    onError: () => snackbar.openSnackbar("❌ An error occurred."),
   });
-
-  const resetForm = useCallback(() => {
-    setEmail("@ardc-raid.testinator.com");
-  }, []);
 
   const handleClose = useCallback(() => {
     setOpen(false);
-    resetForm();
-  }, [setOpen, resetForm]);
+    setEmail("");
+  }, [setOpen]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    let emailFinalValue = email;
-    let orcidFinalValue = orcid;
-
-    if (value === "email") {
-      orcidFinalValue = "";
-    }
-
-    if (value === "orcid") {
-      emailFinalValue = "";
-    }
-
     sendInviteMutation.mutate({
       title,
-      email: emailFinalValue,
-      orcid: orcidFinalValue,
+      email: inviteMethod === "email" ? email : "",
+      orcid: inviteMethod === "orcid" ? orcid : "",
       handle: `${prefix}/${suffix}`,
       token: token!,
     });
@@ -85,80 +77,72 @@ export default function InviteDialog({
   };
 
   return (
-    <React.Fragment>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="invite-dialog-title"
-        aria-describedby="invite-dialog-description"
-        maxWidth="md"
-        PaperProps={{
-          style: {
-            width: "600px",
-            maxWidth: "90vw",
-          },
-        }}
-      >
-        <DialogTitle id="invite-dialog-title">Invite user to RAiD</DialogTitle>
-        <DialogContent>
-          <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">
-              Invite using
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name="row-radio-buttons-group"
-              value={value}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="email"
-                control={<Radio />}
-                label="Email"
-              />
-              <FormControlLabel
-                value="orcid"
-                control={<Radio />}
-                label="ORCID"
-              />
-            </RadioGroup>
-          </FormControl>
-          <form onSubmit={handleSubmit}>
-            <Stack gap={2}>
-              <TextField
-                label="Invitee's Email"
-                size="small"
-                variant="filled"
-                type="email"
-                required
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={value === "" || value === "orcid"}
-              />
-              <TextField
-                label="Invitee's ORCID ID"
-                size="small"
-                variant="filled"
-                type="text"
-                helperText="Format: 0000-0000-0000-0000"
-                required
-                fullWidth
-                value={orcid}
-                onChange={(e) => setOrcid(e.target.value)}
-                disabled={value === "" || value === "email"}
-              />
-            </Stack>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button type="submit" autoFocus>
-                Invite now
-              </Button>
-            </DialogActions>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </React.Fragment>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="invite-dialog-title"
+      maxWidth="md"
+      PaperProps={{ style: { width: "600px", maxWidth: "90vw" } }}
+    >
+      <DialogTitle id="invite-dialog-title">Invite user to RAiD</DialogTitle>
+      <DialogContent>
+        <FormControl>
+          <FormLabel>Invite using</FormLabel>
+          <RadioGroup
+            row
+            value={inviteMethod}
+            onChange={(e) => {
+              setInviteMethod(e.target.value);
+              setEmail("");
+              setOrcid("");
+            }}
+          >
+            <FormControlLabel value="email" control={<Radio />} label="Email" />
+            <FormControlLabel value="orcid" control={<Radio />} label="ORCID" />
+          </RadioGroup>
+        </FormControl>
+
+        <form onSubmit={handleSubmit}>
+          <Stack gap={2}>
+            <TextField
+              label="Invitee's Email"
+              size="small"
+              variant="filled"
+              type="email"
+              required={inviteMethod === "email"}
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={inviteMethod !== "email"}
+              error={inviteMethod === "email" && !isValidEmail(email)}
+              helperText={
+                inviteMethod === "email" && !isValidEmail(email)
+                  ? "Please enter a valid email"
+                  : ""
+              }
+            />
+            <TextField
+              label="Invitee's ORCID ID"
+              size="small"
+              variant="filled"
+              type="text"
+              required={inviteMethod === "orcid"}
+              fullWidth
+              value={orcid}
+              onChange={(e) => setOrcid(e.target.value)}
+              disabled={inviteMethod !== "orcid"}
+              error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
+              helperText={inviteMethod === "orcid" ? "Format: 0000-0000-0000-0000" : ""}
+            />
+          </Stack>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit" disabled={!isValidForm} autoFocus>
+              Invite now
+            </Button>
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

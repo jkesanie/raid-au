@@ -31,6 +31,11 @@ export async function sendInvite({
       }),
     }
   );
+
+  if (!response.ok) {
+    throw new Error("Failed to send invite");
+  }
+
   return await response.json();
 }
 

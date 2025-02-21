@@ -1,7 +1,6 @@
 import { useSnackbar } from "@/components/snackbar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { acceptInvite } from "@/services/invite";
-import { Container } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -43,5 +42,9 @@ export function InviteRedirect() {
     },
   });
 
-  return <></>;
+  return (
+    <>
+      <Loading cardTitle="Redirecting..." cardSubheader="Please wait..." />
+    </>
+  );
 }
