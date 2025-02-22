@@ -104,40 +104,53 @@ export default function InviteDialog({
 
         <form onSubmit={handleSubmit}>
           <Stack gap={2}>
-            <TextField
-              label="Invitee's Email"
-              size="small"
-              variant="filled"
-              type="email"
-              required={inviteMethod === "email"}
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={inviteMethod !== "email"}
-              error={inviteMethod === "email" && !isValidEmail(email)}
-              helperText={
-                inviteMethod === "email" && !isValidEmail(email)
-                  ? "Please enter a valid email"
-                  : ""
-              }
-            />
-            <TextField
-              label="Invitee's ORCID ID"
-              size="small"
-              variant="filled"
-              type="text"
-              required={inviteMethod === "orcid"}
-              fullWidth
-              value={orcid}
-              onChange={(e) => setOrcid(e.target.value)}
-              disabled={inviteMethod !== "orcid"}
-              error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
-              helperText={inviteMethod === "orcid" ? "Format: 0000-0000-0000-0000" : ""}
-            />
+            {inviteMethod === "email" && (
+              <TextField
+                label="Invitee's Email"
+                size="small"
+                variant="filled"
+                type="email"
+                required={inviteMethod === "email"}
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={inviteMethod !== "email"}
+                error={inviteMethod === "email" && !isValidEmail(email)}
+                helperText={
+                  inviteMethod === "email" && !isValidEmail(email)
+                    ? "Please enter a valid email"
+                    : ""
+                }
+              />
+            )}
+            {inviteMethod === "orcid" && (
+              <TextField
+                label="Invitee's ORCID ID"
+                size="small"
+                variant="filled"
+                type="text"
+                required={inviteMethod === "orcid"}
+                fullWidth
+                value={orcid}
+                onChange={(e) => setOrcid(e.target.value)}
+                disabled={inviteMethod !== "orcid"}
+                error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
+                helperText={
+                  inviteMethod === "orcid" ? "Format: 0000-0000-0000-0000" : ""
+                }
+              />
+            )}
           </Stack>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" disabled={!isValidForm} autoFocus>
+            <Button variant="outlined" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              type="submit"
+              disabled={!isValidForm}
+              autoFocus
+            >
               Invite now
             </Button>
           </DialogActions>
