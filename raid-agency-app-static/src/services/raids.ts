@@ -55,31 +55,48 @@ export async function fetchRaids(): Promise<RaidDto[]> {
     const servicePoints = await fetchServicePoints({ token });
     const ids = servicePoints.map((sp) => sp.id);
 
-    const raidsFromAllSps: RaidDto[] = [];
+    let data: RaidDto[] = [];
 
-    for (const id of ids) {
-      console.log(
-        `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
-      );
-      const response = await fetch(
-        `${apiEndpoint}/raid/?servicePointId=${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    if (apiEndpoint.includes(".test.")) {
+      const response = await fetch(`${apiEndpoint}/raid/all-public`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "X-Raid-Api-Version": "3",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = (await response.json()) as RaidDto[];
-      console.log(`SP ${id}: ${data.length} raids`);
-      raidsFromAllSps.push(...data);
+      data = (await response.json()) as RaidDto[];
+    } else {
+      for (const id of ids) {
+        console.log(
+          `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
+        );
+        const response = await fetch(
+          `${apiEndpoint}/raid/?servicePointId=${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = (await response.json()) as RaidDto[];
+        console.log(`SP ${id}: ${data.length} raids`);
+        data.push(...data);
+      }
     }
-    return raidsFromAllSps;
+
+    return data;
   } catch (error) {
     console.error("There was a problem fetching the raids:", error);
     throw error;
