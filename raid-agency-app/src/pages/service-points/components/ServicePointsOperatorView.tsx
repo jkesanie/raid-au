@@ -30,7 +30,7 @@ export const ServicePointsOperatorView = () => {
   }
 
   if (query.isError) {
-    return <ErrorAlertComponent error={query.error} />;
+    return <ErrorAlertComponent error="Service point could not be fetched" />;
   }
 
   return (

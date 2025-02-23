@@ -1,4 +1,6 @@
+import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useKeycloak } from "@/contexts/keycloak-context";
+import { Loading } from "@/pages/loading";
 import {
   fetchAllKeycloakGroups,
   joinKeycloakGroup,
@@ -113,11 +115,11 @@ export const GroupSelector = memo(() => {
   };
 
   if (fetchKeycloakGroupsQuery.isPending) {
-    return <>Loading...</>;
+    return <Loading />;
   }
 
   if (fetchKeycloakGroupsQuery.isError) {
-    return <>Error: {JSON.stringify(fetchKeycloakGroupsQuery.error)}</>;
+    return <ErrorAlertComponent error="Keycloak groups could not be fetched" />;
   }
 
   return (

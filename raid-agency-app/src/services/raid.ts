@@ -1,7 +1,6 @@
 import packageJson from "@/../package.json";
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
-import { fetchServicePoints } from "@/services/service-points";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 
 const endpoint = getApiEndpoint();
@@ -29,6 +28,11 @@ export const fetchRaids = async ({
       "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
+
+  // wait 3 seconds
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
+
   return await response.json();
 };
 

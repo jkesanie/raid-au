@@ -96,7 +96,7 @@ export const RaidEdit = () => {
   }
 
   if (query.isError) {
-    return <ErrorAlertComponent error={query.error} />;
+    return <ErrorAlertComponent error="RAiD could not be fetched" />;
   }
 
   let contributors: (Contributor & { email?: string | undefined })[] = [];

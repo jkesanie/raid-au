@@ -14,6 +14,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
+import { ErrorAlertComponent } from "../error-alert-component";
 
 export function ServicePointSwitcher() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -60,7 +61,7 @@ export function ServicePointSwitcher() {
   }
 
   if (keycloakGroupsQuery.isError) {
-    return <div>Error...</div>;
+    return <ErrorAlertComponent error="Keycloak groups could not be fetched" />
   }
 
   const servicePointGroups = keycloakGroupsQuery.data?.sort((a, b) =>

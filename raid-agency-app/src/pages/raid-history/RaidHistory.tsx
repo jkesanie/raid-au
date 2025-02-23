@@ -51,7 +51,7 @@ export const RaidHistory = () => {
   }
 
   if (raidHistoryQuery.isError) {
-    return <ErrorAlertComponent error={raidHistoryQuery.error} />;
+    return <ErrorAlertComponent error="RAiD history could not be fetched" />;
   }
 
   const breadcrumbs: Breadcrumb[] = [

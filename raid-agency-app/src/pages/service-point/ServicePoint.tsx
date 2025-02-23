@@ -37,7 +37,7 @@ export const ServicePoint = () => {
   }
 
   if (servicePointQuery.isError) {
-    return <ErrorAlertComponent error={servicePointQuery.error} />;
+    return <ErrorAlertComponent error="Service point could not be fetched" />;
   }
 
   // Use spaces as decimal separator for thousands

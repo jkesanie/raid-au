@@ -1,3 +1,4 @@
+import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { useAuthHelper } from "@/keycloak";
 import { GroupSelector } from "@/pages/home/components/GroupSelector";
@@ -23,7 +24,7 @@ export const Home = () => {
   });
 
   if (keycloakGroupsQuery.isError) {
-    return <div>Error...</div>;
+    return <ErrorAlertComponent error="Keycloak groups could not be fetched" />;
   }
 
   const activeGroup = keycloakGroupsQuery.data?.find(

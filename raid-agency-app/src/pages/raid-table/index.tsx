@@ -20,6 +20,7 @@ import { startDateColumn } from "./columns/startDateColumn";
 import { titleColumn } from "./columns/titleColumn";
 import { RaidTableRowContextMenu } from "./components";
 import { useKeycloak } from "@/contexts/keycloak-context";
+import { ErrorAlertComponent } from "@/components/error-alert-component";
 
 export const RaidTable = ({ title }: { title?: string }) => {
   const { authenticated, token, isInitialized } = useKeycloak();
@@ -41,7 +42,7 @@ export const RaidTable = ({ title }: { title?: string }) => {
   }
 
   if (raidQuery.isError) {
-    return <Typography variant="h6">No data.</Typography>;
+    return <ErrorAlertComponent error="RAiDs could not be fetched" />;
   }
 
   const columns: GridColDef[] = [

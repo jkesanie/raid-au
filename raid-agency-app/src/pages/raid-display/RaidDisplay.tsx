@@ -47,7 +47,7 @@ export const RaidDisplay = () => {
   }
 
   if (readQuery.isError) {
-    return <ErrorAlertComponent error={readQuery.error} />;
+    return <ErrorAlertComponent error="RAiD could not be fetched" />;
   }
 
   const raidData = readQuery.data;
