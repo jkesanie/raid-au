@@ -1,6 +1,6 @@
 import { RaidDto } from "@/generated/raid";
 import { Loading } from "@/pages/loading";
-import { fetchRaids } from "@/services/raid";
+import { fetchAllRaids } from "@/services/raid";
 import {
   Alert,
   Card,
@@ -28,21 +28,24 @@ export const RaidTable = ({ title }: { title?: string }) => {
   const raidQuery = useQuery<RaidDto[]>({
     queryKey: ["listRaids"],
     queryFn: () =>
-      fetchRaids({
+      fetchAllRaids({
         fields: ["identifier", "title", "date"],
         token: token!,
       }),
     enabled: isInitialized && authenticated,
   });
 
-  const appWritesEnabled = true;
-
   if (raidQuery.isPending) {
     return <Loading />;
   }
 
   if (raidQuery.isError) {
-    return <ErrorAlertComponent error="RAiDs could not be fetched" />;
+    return (
+      <ErrorAlertComponent
+        error="RAiDs could not be fetched. Try to reload the page to reauthenticate."
+        showButtons={true}
+      />
+    );
   }
 
   const columns: GridColDef[] = [
@@ -66,14 +69,6 @@ export const RaidTable = ({ title }: { title?: string }) => {
 
   return (
     <>
-      {!appWritesEnabled ? (
-        <Alert severity="warning">
-          Editing is disabled for this service point.
-        </Alert>
-      ) : (
-        <></>
-      )}
-
       <Card>
         {title && <CardHeader title={title} />}
         <CardContent>

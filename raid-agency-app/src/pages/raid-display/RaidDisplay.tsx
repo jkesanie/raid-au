@@ -9,7 +9,7 @@ import {
   RaidDisplayMenu,
   RawDataDisplay,
 } from "@/pages/raid-display/components";
-import { fetchRaid } from "@/services/raid";
+import { fetchOneRaid } from "@/services/raid";
 import { displayItems } from "@/utils/data-utils/data-utils";
 import {
   DocumentScanner as DocumentScannerIcon,
@@ -31,7 +31,7 @@ export const RaidDisplay = () => {
   const readQuery = useQuery<RaidDto>({
     queryKey: ["raids", prefix, suffix],
     queryFn: () =>
-      fetchRaid({
+      fetchOneRaid({
         handle,
         token: token!,
       }),
