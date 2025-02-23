@@ -35,17 +35,13 @@ const RelatedRaidItem = memo(
       enabled: !!handle,
     });
 
-    if (raidQuery.isPending) {
-      return <Loading />;
-    }
-
-    if (!raidQuery.isError) {
-      return <ErrorAlertComponent error="Error loading related RAiD" />;
-    }
-
     return (
       <>
-        {raidQuery.data}
+        {raidQuery.isPending
+          ? "Loading..."
+          : raidQuery.isError
+          ? "Related RAiD"
+          : raidQuery.data}
 
         <Grid container spacing={2}>
           <DisplayItem

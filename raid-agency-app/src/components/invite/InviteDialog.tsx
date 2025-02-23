@@ -1,6 +1,7 @@
 import { useSnackbar } from "@/components/snackbar";
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,6 +13,7 @@ import {
   RadioGroup,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState, useMemo } from "react";
@@ -35,6 +37,7 @@ export default function InviteDialog({
   const [inviteMethod, setInviteMethod] = useState("");
   const [email, setEmail] = useState("");
   const [orcid, setOrcid] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -54,9 +57,16 @@ export default function InviteDialog({
 
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
-    onSuccess: () =>
-      snackbar.openSnackbar("✅ Thank you, invite has been sent."),
-    onError: () => snackbar.openSnackbar("❌ An error occurred."),
+    onSuccess: () => {
+      snackbar.openSnackbar("✅ Thank you, invite has been sent.");
+      setIsLoading(false);
+      handleClose();
+    },
+    onError: () => {
+      snackbar.openSnackbar("❌ An error occurred.");
+      setIsLoading(false);
+      handleClose();
+    },
   });
 
   const handleClose = useCallback(() => {
@@ -66,6 +76,7 @@ export default function InviteDialog({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     sendInviteMutation.mutate({
       title,
       email: inviteMethod === "email" ? email : "",
@@ -73,7 +84,6 @@ export default function InviteDialog({
       handle: `${prefix}/${suffix}`,
       token: token!,
     });
-    handleClose();
   };
 
   return (
@@ -86,75 +96,94 @@ export default function InviteDialog({
     >
       <DialogTitle id="invite-dialog-title">Invite user to RAiD</DialogTitle>
       <DialogContent>
-        <FormControl>
-          <FormLabel>Invite using</FormLabel>
-          <RadioGroup
-            row
-            value={inviteMethod}
-            onChange={(e) => {
-              setInviteMethod(e.target.value);
-              setEmail("");
-              setOrcid("");
-            }}
-          >
-            <FormControlLabel value="email" control={<Radio />} label="Email" />
-            <FormControlLabel value="orcid" control={<Radio />} label="ORCID" />
-          </RadioGroup>
-        </FormControl>
-
-        <form onSubmit={handleSubmit}>
-          <Stack gap={2}>
-            {inviteMethod === "email" && (
-              <TextField
-                label="Invitee's Email"
-                size="small"
-                variant="filled"
-                type="email"
-                required={inviteMethod === "email"}
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={inviteMethod !== "email"}
-                error={inviteMethod === "email" && !isValidEmail(email)}
-                helperText={
-                  inviteMethod === "email" && !isValidEmail(email)
-                    ? "Please enter a valid email"
-                    : ""
-                }
-              />
-            )}
-            {inviteMethod === "orcid" && (
-              <TextField
-                label="Invitee's ORCID ID"
-                size="small"
-                variant="filled"
-                type="text"
-                required={inviteMethod === "orcid"}
-                fullWidth
-                value={orcid}
-                onChange={(e) => setOrcid(e.target.value)}
-                disabled={inviteMethod !== "orcid"}
-                error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
-                helperText={
-                  inviteMethod === "orcid" ? "Format: 0000-0000-0000-0000" : ""
-                }
-              />
-            )}
+        {isLoading ? (
+          <Stack gap={2} alignItems="center">
+            <CircularProgress />
+            <Typography variant="body2">Sending invite...</Typography>
           </Stack>
-          <DialogActions>
-            <Button variant="outlined" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              variant="outlined"
-              type="submit"
-              disabled={!isValidForm}
-              autoFocus
-            >
-              Invite now
-            </Button>
-          </DialogActions>
-        </form>
+        ) : (
+          <>
+            <FormControl>
+              <FormLabel>Invite using</FormLabel>
+              <RadioGroup
+                row
+                value={inviteMethod}
+                onChange={(e) => {
+                  setInviteMethod(e.target.value);
+                  setEmail("");
+                  setOrcid("");
+                }}
+              >
+                <FormControlLabel
+                  value="email"
+                  control={<Radio />}
+                  label="Email"
+                />
+                <FormControlLabel
+                  value="orcid"
+                  control={<Radio />}
+                  label="ORCID"
+                />
+              </RadioGroup>
+            </FormControl>
+
+            <form onSubmit={handleSubmit}>
+              <Stack gap={2}>
+                {inviteMethod === "email" && (
+                  <TextField
+                    label="Invitee's Email"
+                    size="small"
+                    variant="filled"
+                    type="email"
+                    required={inviteMethod === "email"}
+                    fullWidth
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={inviteMethod !== "email"}
+                    error={inviteMethod === "email" && !isValidEmail(email)}
+                    helperText={
+                      inviteMethod === "email" && !isValidEmail(email)
+                        ? "Please enter a valid email"
+                        : ""
+                    }
+                  />
+                )}
+                {inviteMethod === "orcid" && (
+                  <TextField
+                    label="Invitee's ORCID ID"
+                    size="small"
+                    variant="filled"
+                    type="text"
+                    required={inviteMethod === "orcid"}
+                    fullWidth
+                    value={orcid}
+                    onChange={(e) => setOrcid(e.target.value)}
+                    disabled={inviteMethod !== "orcid"}
+                    error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
+                    helperText={
+                      inviteMethod === "orcid"
+                        ? "Format: 0000-0000-0000-0000"
+                        : ""
+                    }
+                  />
+                )}
+              </Stack>
+              <DialogActions>
+                <Button variant="outlined" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  disabled={!isValidForm}
+                  autoFocus
+                >
+                  Invite now
+                </Button>
+              </DialogActions>
+            </form>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
