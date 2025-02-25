@@ -11,12 +11,6 @@ const REALM_ROLES = {
 // Type for realm roles
 type RealmRole = (typeof REALM_ROLES)[keyof typeof REALM_ROLES];
 
-// Interface for token payload
-interface TokenPayload {
-  service_point_group_id?: string;
-  // Add other token fields as needed...
-}
-
 export function useAuthHelper() {
   const { user } = useKeycloak();
   const { tokenParsed } = useKeycloak();

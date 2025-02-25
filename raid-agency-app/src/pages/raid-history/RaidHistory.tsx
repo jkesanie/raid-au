@@ -7,7 +7,7 @@ import type {
   RaidHistoryElementType,
   RaidHistoryType,
 } from "@/pages/raid-history";
-import { fetchRaidHistory } from "@/services/raid";
+import { fetchOneRaidHistory } from "@/services/raid";
 import {
   DocumentScanner as DocumentScannerIcon,
   HistoryEdu as HistoryEduIcon,
@@ -39,8 +39,8 @@ export const RaidHistory = () => {
   const raidHistoryQuery = useQuery<RaidHistoryType[]>({
     queryKey: ["raids", prefix, suffix],
     queryFn: () =>
-      fetchRaidHistory({
-        id: handle,
+      fetchOneRaidHistory({
+        handle,
         token: token!,
       }),
     enabled: isInitialized && authenticated,
@@ -51,7 +51,7 @@ export const RaidHistory = () => {
   }
 
   if (raidHistoryQuery.isError) {
-    return <ErrorAlertComponent error={raidHistoryQuery.error} />;
+    return <ErrorAlertComponent error="RAiD history could not be fetched" />;
   }
 
   const breadcrumbs: Breadcrumb[] = [

@@ -34,20 +34,26 @@ export default function InviteDialog({
   const { token } = useKeycloak();
   const snackbar = useSnackbar();
 
-  const [inviteMethod, setInviteMethod] = useState("orcid");
-
+  const [inviteMethod, setInviteMethod] = useState("");
+  const [email, setEmail] = useState("");
   const [orcid, setOrcid] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const isValidOrcid = (orcid: string) =>
     /^\d{4}-\d{4}-\d{4}-\d{4}$/.test(orcid);
 
   const isValidForm = useMemo(() => {
+    if (inviteMethod === "email") {
+      return isValidEmail(email) && !orcid;
+    }
     if (inviteMethod === "orcid") {
-      return isValidOrcid(orcid);
+      return isValidOrcid(orcid) && !email;
     }
     return false;
-  }, [inviteMethod, orcid]);
+  }, [inviteMethod, email, orcid]);
 
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
@@ -65,7 +71,7 @@ export default function InviteDialog({
 
   const handleClose = useCallback(() => {
     setOpen(false);
-    setOrcid("");
+    setEmail("");
   }, [setOpen]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -73,8 +79,8 @@ export default function InviteDialog({
     setIsLoading(true);
     sendInviteMutation.mutate({
       title,
-      email: "",
-      orcid: orcid,
+      email: inviteMethod === "email" ? email : "",
+      orcid: inviteMethod === "orcid" ? orcid : "",
       handle: `${prefix}/${suffix}`,
       token: token!,
     });
@@ -104,9 +110,15 @@ export default function InviteDialog({
                 value={inviteMethod}
                 onChange={(e) => {
                   setInviteMethod(e.target.value);
+                  setEmail("");
                   setOrcid("");
                 }}
               >
+                <FormControlLabel
+                  value="email"
+                  control={<Radio />}
+                  label="Email"
+                />
                 <FormControlLabel
                   value="orcid"
                   control={<Radio />}
@@ -117,6 +129,25 @@ export default function InviteDialog({
 
             <form onSubmit={handleSubmit}>
               <Stack gap={2}>
+                {inviteMethod === "email" && (
+                  <TextField
+                    label="Invitee's Email"
+                    size="small"
+                    variant="filled"
+                    type="email"
+                    required={inviteMethod === "email"}
+                    fullWidth
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={inviteMethod !== "email"}
+                    error={inviteMethod === "email" && !isValidEmail(email)}
+                    helperText={
+                      inviteMethod === "email" && !isValidEmail(email)
+                        ? "Please enter a valid email"
+                        : ""
+                    }
+                  />
+                )}
                 {inviteMethod === "orcid" && (
                   <TextField
                     label="Invitee's ORCID ID"

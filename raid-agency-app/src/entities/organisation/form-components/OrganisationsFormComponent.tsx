@@ -1,4 +1,5 @@
-import { Contributor, RaidDto } from "@/generated/raid";
+import { useKeycloak } from "@/contexts/keycloak-context";
+import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
   Button,
@@ -15,11 +16,11 @@ import {
   Control,
   FieldErrors,
   UseFormTrigger,
-  useFieldArray,
+  useFieldArray
 } from "react-hook-form";
 import organisationGenerator from "../data-components/organisation-generator";
-import OrganisationDetailsFormComponent from "./OrganisationDetailsFormComponent";
 import OrganisationRolesFormComponent from "../role/form-components/OrganisationRolesFormComponent";
+import OrganisationDetailsFormComponent from "./OrganisationDetailsFormComponent";
 
 export default function OrganisationsFormComponent({
   control,
@@ -30,6 +31,8 @@ export default function OrganisationsFormComponent({
   errors: FieldErrors<RaidDto>;
   trigger: UseFormTrigger<RaidDto>;
 }) {
+  const { tokenParsed, token } = useKeycloak();
+
   const key = "organisation";
   const label = "Organisation";
   const labelPlural = "Organisations";
@@ -40,8 +43,12 @@ export default function OrganisationsFormComponent({
   const { fields, append, remove } = useFieldArray({ control, name: key });
   const errorMessage = errors[key]?.message;
 
-  const handleAddItem = () => {
-    append(generator());
+  const handleAddItem = async () => {
+    if (!token || !tokenParsed) {
+      console.error("Token or tokenParsed is undefined");
+      return;
+    }
+    append(await generator({ token, tokenParsed }));
     trigger(key);
   };
 
