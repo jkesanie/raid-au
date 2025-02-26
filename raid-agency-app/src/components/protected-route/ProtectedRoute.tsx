@@ -27,8 +27,7 @@ export const ProtectedRoute = memo(() => {
     <Navigate
       to="/login"
       replace
-      // state={{ from: location.pathname + location.search }}
-      state={{ from: location.pathname + location.search + location.hash }}
+      state={{ from: location.pathname + location.search }}
     />
   );
 });
