@@ -3,7 +3,7 @@ import { RaidForm } from "@/components/raid-form";
 import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { RaidDto } from "@/generated/raid";
-import { createRaid } from "@/services/raid";
+import { createOneRaid } from "@/services/raid";
 import { newRaid, raidRequest } from "@/utils/data-utils";
 import { Container, Stack } from "@mui/material";
 
@@ -16,7 +16,7 @@ export const MintRaid = () => {
   const navigate = useNavigate();
 
   const mintMutation = useMutation({
-    mutationFn: createRaid,
+    mutationFn: createOneRaid,
     onSuccess: async (data) => {
       const resultHandle = new URL(data.identifier?.id ?? "");
       const [prefix, suffix] = resultHandle.pathname.split("/").filter(Boolean);
@@ -29,7 +29,7 @@ export const MintRaid = () => {
 
   const handleSubmit = async (data: RaidDto) => {
     mintMutation.mutate({
-      data: raidRequest(data),
+      raid: raidRequest(data),
       token: token!,
     });
   };

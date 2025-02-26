@@ -1,10 +1,16 @@
 import { TextInputField } from "@/fields/TextInputField";
 import { TextSelectField } from "@/fields/TextSelectField";
+import { RelatedRaid, Title } from "@/generated/raid";
 import generalMapping from "@/mapping/data/general-mapping.json";
+import { fetchRelatedRaidTitle } from "@/services/related-raid";
+import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { get } from "http";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
 function FieldGrid({
   index,
@@ -49,14 +55,32 @@ export default function RelatedRaidDetailsFormComponent({
   index: number;
   handleRemoveItem: (index: number) => void;
 }) {
-  const key = "alternateIdentifier";
-  const label = "Alternate Identifier";
+  const { getValues } = useFormContext();
+  const key = "relatedRaid";
+  const label = "Related RAiD";
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
-  const { getValues } = useFormContext();
 
   const handleMouseEnter = () => setIsRowHighlighted(true);
   const handleMouseLeave = () => setIsRowHighlighted(false);
+
+  const relatedRaids: RelatedRaid[] = getValues("relatedRaid");
+
+  const segments = relatedRaids[index].id
+    ? getLastTwoUrlSegments(relatedRaids[index].id)
+    : null;
+  const [prefix, suffix] = segments ? segments.split("/") : ["", ""];
+
+  const handle = `${prefix}/${suffix}`;
+
+  const raidQuery = useQuery({
+    queryKey: ["related-raid", handle],
+    queryFn: () =>
+      fetchRelatedRaidTitle({
+        handle: handle!,
+      }),
+    enabled: !!handle,
+  });
 
   return (
     <Stack gap={2}>
@@ -64,9 +88,11 @@ export default function RelatedRaidDetailsFormComponent({
         <span
           style={{ textDecoration: isRowHighlighted ? "line-through" : "" }}
         >
-          {getValues(`${key}.${index}.text`)
-            ? getValues(`${key}.${index}.text`)
-            : `${label} # ${index + 1}`}
+          {raidQuery.isPending
+            ? "Loading..."
+            : raidQuery.isError
+            ? `${label} # ${index + 1}`
+            : raidQuery.data}
         </span>
         {isRowHighlighted && " (to be deleted)"}
       </Typography>
