@@ -23,7 +23,7 @@ const contributorGenerator = (): ContributorExtended => {
   if (packageJson.apiVersion === "3") {
     return {
       ...baseData,
-      email: null,
+      email: "",
     } as unknown as ContributorExtended;
   } else {
     return {
