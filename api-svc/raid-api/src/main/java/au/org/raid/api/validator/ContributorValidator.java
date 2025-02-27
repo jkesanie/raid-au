@@ -1,36 +1,32 @@
 package au.org.raid.api.validator;
 
+import au.org.raid.api.dto.ContributorStatus;
+import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.DateUtil;
 import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.ContributorPosition;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static au.org.raid.api.endpoint.message.ValidationMessage.*;
 import static au.org.raid.api.util.StringUtil.isBlank;
 
 @Component
+@RequiredArgsConstructor
 public class ContributorValidator {
     private static final String ORCID_ORG = "https://orcid.org/";
-    private static final String LEADER_POSITION =
-            "https://github.com/au-research/raid-metadata/blob/main/scheme/contributor/position/v1/leader.json";
-    private final OrcidValidator orcidValidationService;
     private final ContributorPositionValidator positionValidationService;
     private final ContributorRoleValidator roleValidationService;
-
-    public ContributorValidator(final OrcidValidator orcidValidationService,
-                                final ContributorPositionValidator positionValidationService,
-                                final ContributorRoleValidator roleValidationService) {
-        this.orcidValidationService = orcidValidationService;
-        this.positionValidationService = positionValidationService;
-        this.roleValidationService = roleValidationService;
-    }
+    private final ContributorRepository contributorRepository;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -44,6 +40,79 @@ public class ContributorValidator {
         IntStream.range(0, contributors.size())
                 .forEach(index -> {
                     final var contributor = contributors.get(index);
+
+                    if (!isBlank(contributor.getEmail())) {
+                        //TODO: uuid and id should not be present
+                    }
+                    if(!isBlank(contributor.getUuid())) {
+                        //TODO: email should be blank
+                        //TODO: id can be present
+                    }
+                    if(!isBlank(contributor.getId())) {
+                        //TODO: email should be blank
+                        //TODO: uuid can be present
+                    }
+
+                    if (isBlank(contributor.getEmail())) {
+                        // uuid must be present
+                        if (!isBlank(contributor.getId()) && !isBlank(contributor.getUuid())) {
+                            final var orcid = contributor.getId().replace("https://orcid.org/", "");
+
+                            final var contributorOptional = contributorRepository.findByPidAndUuid(
+                                    orcid, contributor.getUuid()
+                            );
+
+                            if (contributorOptional.isEmpty()) {
+                                failures.add(
+                                        new ValidationFailure()
+                                                .fieldId("contributor[%d]".formatted(index))
+                                                .errorType(NOT_FOUND_TYPE)
+                                                .message("Contributor not found with PID (%s) and UUID (%s)"
+                                                        .formatted(contributor.getId(), contributor.getUuid())));
+
+                            }
+                        } else
+                        if (!isBlank(contributor.getUuid())) {
+                            final var contributorOptional = contributorRepository.findByUuid(
+                                    contributor.getUuid()
+                            );
+
+                            if (contributorOptional.isEmpty()) {
+                                failures.add(
+                                        new ValidationFailure()
+                                                .fieldId("contributor[%d].uuid".formatted(index))
+                                                .errorType(NOT_FOUND_TYPE)
+                                                .message("Contributor not found with UUID (%s)"
+                                                        .formatted(contributor.getUuid())));
+
+                            }
+                        } else if (!isBlank(contributor.getId())) {
+                            //TODO: validate new contributor with orcid
+                        } else {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d]".formatted(index))
+                                            .errorType(NOT_SET_TYPE)
+                                            .message("email or uuid is required"));
+                        }
+                    }  else {
+                        if (!isBlank(contributor.getUuid())) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d]".formatted(index))
+                                            .errorType(INVALID_VALUE_TYPE)
+                                            .message("email and uuid cannot be present at the same time"));
+                        }
+
+                        if (contributor.getId() != null) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d]".formatted(index))
+                                            .errorType(INVALID_VALUE_TYPE)
+                                            .message("email and id cannot be present at the same time"));
+                        }
+
+                    }
 
                     if (isBlank(contributor.getSchemaUri())) {
                         failures.add(
@@ -60,15 +129,109 @@ public class ContributorValidator {
                         );
                     }
 
-                    if (contributor.getPosition().isEmpty()) {
+                    IntStream.range(0, contributor.getRole().size())
+                            .forEach(roleIndex -> {
+                                final var role = contributor.getRole().get(roleIndex);
+                                failures.addAll(roleValidationService.validate(role, index, roleIndex));
+                            });
+
+                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d]".formatted(index))
                                 .errorType(NOT_SET_TYPE)
                                 .message("A contributor must have a position")
                         );
+                    } else {
+                        IntStream.range(0, contributor.getPosition().size())
+                                .forEach(positionIndex -> {
+                                    final var position = contributor.getPosition().get(positionIndex);
+                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
+                                });
+
+                        failures.addAll(validatePositions(contributor.getPosition(), index));
+                    }
+                });
+
+        failures.addAll(validateLeader(contributors));
+        failures.addAll(validateContact(contributors));
+
+        return failures;
+    }
+
+    public List<ValidationFailure> validateForPatch(
+            List<Contributor> contributors
+    ) {
+        if (contributors == null || contributors.isEmpty()) {
+            return List.of(CONTRIB_NOT_SET);
+        }
+
+        var failures = new ArrayList<ValidationFailure>();
+
+        IntStream.range(0, contributors.size())
+                .forEach(index -> {
+                    final var contributor = contributors.get(index);
+
+                    final var isValid = Arrays.stream(ContributorStatus.values())
+                            .anyMatch(value -> value.name().equals(contributor.getStatus().toUpperCase()));
+
+                    if (!isValid) {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].status".formatted(index))
+                                        .errorType(INVALID_VALUE_TYPE)
+                                        .message("Contributor status should be one of %s"
+                                                .formatted(Arrays.stream(ContributorStatus.values())
+                                                        .map(Enum::name)
+                                                        .collect(Collectors.joining(", ")))
+                                        )
+                        );
                     }
 
-                    failures.addAll(orcidValidationService.validate(contributor.getId(), index));
+                        // uuid must be present
+                    if (!isBlank(contributor.getUuid())) {
+                        final var contributorOptional = contributorRepository.findByUuid(
+                                contributor.getUuid()
+                        );
+
+                        if (contributorOptional.isEmpty()) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d].uuid".formatted(index))
+                                            .errorType(NOT_FOUND_TYPE)
+                                            .message("Contributor not found with UUID (%s)"
+                                                    .formatted(contributor.getUuid())));
+
+                        }
+                    } else {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].uuid".formatted(index))
+                                        .errorType(NOT_SET_TYPE)
+                                        .message("uuid is required"));
+                    }
+
+                    if (contributor.getId() == null) {
+                        failures.add(
+                            new ValidationFailure()
+                                    .fieldId("contributor[%d].id".formatted(index))
+                                    .errorType(NOT_SET_TYPE)
+                                    .message("id is required"));
+                    }
+
+                    if (isBlank(contributor.getSchemaUri())) {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].schemaUri".formatted(index))
+                                        .errorType(NOT_SET_TYPE)
+                                        .message(NOT_SET_MESSAGE)
+                        );
+                    } else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d].schemaUri".formatted(index))
+                                .errorType(INVALID_VALUE_TYPE)
+                                .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
+                        );
+                    }
 
                     IntStream.range(0, contributor.getRole().size())
                             .forEach(roleIndex -> {
@@ -76,14 +239,21 @@ public class ContributorValidator {
                                 failures.addAll(roleValidationService.validate(role, index, roleIndex));
                             });
 
-                    IntStream.range(0, contributor.getPosition().size())
-                            .forEach(positionIndex -> {
-                                final var position = contributor.getPosition().get(positionIndex);
-                                failures.addAll(positionValidationService.validate(position, index, positionIndex));
-                            });
+                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d]".formatted(index))
+                                .errorType(NOT_SET_TYPE)
+                                .message("A contributor must have a position")
+                        );
+                    } else {
+                        IntStream.range(0, contributor.getPosition().size())
+                                .forEach(positionIndex -> {
+                                    final var position = contributor.getPosition().get(positionIndex);
+                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
+                                });
 
-                    failures.addAll(validatePositions(contributor.getPosition(), index));
-
+                        failures.addAll(validatePositions(contributor.getPosition(), index));
+                    }
                 });
 
         failures.addAll(validateLeader(contributors));
@@ -104,7 +274,7 @@ public class ContributorValidator {
         if (leaders.isEmpty()) {
             failures.add(new ValidationFailure().
                     fieldId("contributor").
-                    errorType(INVALID_VALUE_TYPE).
+                    errorType(NOT_SET_TYPE).
                     message("At least one contributor must be flagged as a project leader"));
         }
 
@@ -125,60 +295,6 @@ public class ContributorValidator {
                     fieldId("contributor").
                     errorType(NOT_SET_TYPE).
                     message("At least one contributor must be flagged as a project contact"));
-        }
-
-        return failures;
-    }
-
-    private List<ValidationFailure> validateLeadContributors(final List<Contributor> contributors) {
-        final var failures = new ArrayList<ValidationFailure>();
-
-        final List<Map<String, Object>> positions = new ArrayList<>();
-
-        for (int contributorIndex = 0; contributorIndex < contributors.size(); contributorIndex++) {
-            final var contributor = contributors.get(contributorIndex);
-
-            for (int positionIndex = 0; positionIndex < contributors.get(contributorIndex).getPosition().size(); positionIndex++) {
-                final var position = contributor.getPosition().get(positionIndex);
-
-                positions.add(Map.of(
-                        "contributorIndex", contributorIndex,
-                        "positionIndex", positionIndex,
-                        "leader", position.getId().equals(LEADER_POSITION),
-                        "startDate", DateUtil.parseDate(position.getStartDate()),
-                        "endDate", position.getEndDate() == null ? LocalDate.now() : DateUtil.parseDate(position.getEndDate())
-                ));
-            }
-        }
-
-        List<Map<String, Object>> leaders = positions.stream()
-                .filter(map -> (boolean) map.get("leader"))
-                .sorted((o1, o2) -> {
-                    if (o1.get("startDate").equals(o2.get("startDate"))) {
-                        return ((LocalDate) o1.get("endDate")).compareTo((LocalDate) o2.get("endDate"));
-                    }
-                    return ((LocalDate) o1.get("startDate")).compareTo((LocalDate) o2.get("startDate"));
-                })
-                .toList();
-
-        for (int i = 1; i < leaders.size(); i++) {
-            var previousEntry = leaders.get(i - 1);
-            var entry = leaders.get(i);
-
-            final var start = (LocalDate) entry.get("startDate");
-            final var previousEnd = (LocalDate) previousEntry.get("endDate");
-
-            if (start.isBefore(previousEnd)) {
-                failures.add(new ValidationFailure()
-                        .fieldId("contributor[%d].position[%d]".formatted(
-                                (int) entry.get("contributorIndex"), (int) entry.get("positionIndex")
-                        ))
-                        .errorType(INVALID_VALUE_TYPE)
-                        .message(String.format("There can only be one leader in any given period. The position at contributor[%d].position[%d] conflicts with this position."
-                                .formatted((int) previousEntry.get("contributorIndex"), (int) previousEntry.get("positionIndex")))
-                        )
-                );
-            }
         }
 
         return failures;

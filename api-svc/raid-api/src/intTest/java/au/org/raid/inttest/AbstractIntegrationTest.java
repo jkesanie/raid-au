@@ -2,16 +2,20 @@ package au.org.raid.inttest;
 
 import au.org.raid.idl.raidv2.api.RaidApi;
 import au.org.raid.idl.raidv2.model.*;
+import au.org.raid.inttest.client.keycloak.KeycloakClient;
 import au.org.raid.inttest.config.IntegrationTestConfig;
-import au.org.raid.inttest.service.RaidUpdateRequestFactory;
+import au.org.raid.inttest.dto.UserContext;
+import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
+import au.org.raid.inttest.service.RaidApiValidationException;
 import au.org.raid.inttest.service.TestClient;
 import au.org.raid.inttest.service.TokenService;
+import au.org.raid.inttest.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Contract;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -21,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static au.org.raid.inttest.service.TestConstants.*;
+import static org.assertj.core.api.Assertions.fail;
 
 @SpringBootTest(classes = IntegrationTestConfig.class)
 public class AbstractIntegrationTest {
@@ -30,27 +35,13 @@ public class AbstractIntegrationTest {
 
     protected RaidApi raidApi;
 
-    @Value("${raid.test.auth.admin.user}")
-    protected String adminUser;
+    @Autowired
+    protected UserService userService;
 
-    @Value("${raid.test.auth.admin.password}")
-    protected String adminPassword;
+    @Autowired
+    protected KeycloakClient keycloakClient;
 
-    @Value("${raid.test.auth.raid-au.user}")
-    protected String raidAuUser;
-
-    @Value("${raid.test.auth.raid-au.password}")
-    protected String raidAuPassword;
-
-    @Value("${raid.test.auth.uq.user}")
-    private String uqUser;
-
-    @Value("${raid.test.auth.uq.password}")
-    private String uqPassword;
-    protected String raidAuToken;
-
-    protected String adminToken;
-    protected String uqToken;
+    protected UserContext userContext;
 
     @Autowired
     protected TestClient testClient;
@@ -62,16 +53,20 @@ public class AbstractIntegrationTest {
     protected RaidUpdateRequestFactory raidUpdateRequestFactory;
 
     @Autowired
-    private TokenService tokenService;
+    protected TokenService tokenService;
     private TestInfo testInfo;
 
     @BeforeEach
     public void setupTestToken() {
-        adminToken = tokenService.getToken(adminUser, adminPassword);
-        raidAuToken = tokenService.getToken(raidAuUser, raidAuPassword);
-        uqToken = tokenService.getToken(uqUser, uqPassword);
         createRequest = newCreateRequest();
-        raidApi = testClient.raidApi(raidAuToken);
+
+        userContext = userService.createUser("raid-au", "service-point-user");
+        raidApi = testClient.raidApi(userContext.getToken());
+    }
+
+    @AfterEach
+    void tearDown() {
+        userService.deleteUser(userContext.getId());
     }
 
     @BeforeEach
@@ -114,7 +109,7 @@ public class AbstractIntegrationTest {
                 .description(descriptions)
 
                 .contributor(List.of(contributor(
-                        REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today)))
+                        REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)))
                 .organisation(List.of(organisation(
                         REAL_TEST_ROR, LEAD_RESEARCH_ORGANISATION, today)))
                 .access(new Access()
@@ -143,27 +138,21 @@ public class AbstractIntegrationTest {
                                         .language(new Language()
                                                 .id("eng")
                                                 .schemaUri("https://www.iso.org/standard/74575.html"))
-                                                .text("ENES")
-                                ))))
-                .traditionalKnowledgeLabel(List.of(
-                        new TraditionalKnowledgeLabel()
-                                .id("https://localcontexts.org/label/tk-attribution/")
-                                .schemaUri("https://localcontexts.org/labels/traditional-knowledge-labels/"),
-                        new TraditionalKnowledgeLabel()
-                                .id("https://localcontexts.org/label/bc-provenance/")
-                                .schemaUri("https://localcontexts.org/labels/biocultural-labels/")
-                ));
+                                        .text("ENES")
+                                ))));
     }
     public Contributor contributor(
             final String orcid,
             final String position,
-            String role,
-            LocalDate startDate
+            final String role,
+            final LocalDate startDate,
+            final String email
     ) {
         return new Contributor()
                 .id(orcid)
                 .contact(true)
                 .leader(true)
+//                .email(email)
                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                 .position(List.of(new ContributorPosition()
                         .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
@@ -188,5 +177,21 @@ public class AbstractIntegrationTest {
                                 .schemaUri(ORGANISATION_ROLE_SCHEMA_URI)
                                 .id(role)
                                 .startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE))));
+    }
+
+    protected void failOnError(final Exception e) {
+        if (e instanceof RaidApiValidationException) {
+            final var responseBody = ((RaidApiValidationException) e).getBadRequest().responseBody()
+                    .map(byteBuffer -> {
+                        if (byteBuffer.hasArray()) {
+                            return new String(byteBuffer.array());
+                        }
+                        return "";
+                    }).orElse("");
+
+            fail(responseBody);
+        } else {
+            fail(e.getMessage());
+        }
     }
 }

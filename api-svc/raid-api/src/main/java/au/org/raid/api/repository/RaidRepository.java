@@ -11,8 +11,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static au.org.raid.db.jooq.tables.Contributor.CONTRIBUTOR;
+import static au.org.raid.db.jooq.tables.Organisation.ORGANISATION;
 import static au.org.raid.db.jooq.tables.Raid.RAID;
+import static au.org.raid.db.jooq.tables.RaidContributor.RAID_CONTRIBUTOR;
 import static au.org.raid.db.jooq.tables.RaidHistory.RAID_HISTORY;
+import static au.org.raid.db.jooq.tables.RaidOrganisation.RAID_ORGANISATION;
 
 @Repository
 @RequiredArgsConstructor
@@ -82,6 +86,16 @@ public class RaidRepository {
                 .fetch();
     }
 
+    public List<RaidRecord> findAllByServicePointIdOrHandleIn(final Long servicePointId, List<String> handles) {
+        return dslContext.selectFrom(RAID)
+                .where(RAID.SERVICE_POINT_ID.eq(servicePointId))
+                .or(RAID.HANDLE.in(handles))
+                .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
+                .orderBy(RAID.DATE_CREATED.desc())
+                .limit(Constant.MAX_EXPERIMENTAL_RECORDS)
+                .fetch();
+    }
+
     public List<RaidRecord> findAllByServicePointIdOrNotConfidential(Long servicePointId) {
         return dslContext.selectFrom(RAID)
                 .where(
@@ -104,11 +118,51 @@ public class RaidRepository {
                 .fetchInto(RaidRecord.class);
     }
 
+    public List<RaidRecord> findAllByContributorOrcid(final String orcid) {
+        return dslContext.select()
+                .from(RAID)
+                .join(RAID_CONTRIBUTOR)
+                .on(RAID.HANDLE.eq(RAID_CONTRIBUTOR.HANDLE))
+                .join(CONTRIBUTOR)
+                .on(RAID_CONTRIBUTOR.CONTRIBUTOR_ID.eq(CONTRIBUTOR.ID))
+                .where(
+                        CONTRIBUTOR.PID.eq(orcid).and(RAID.ACCESS_TYPE_ID.in(1, 4))
+                )
+                .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
+                .fetchInto(RaidRecord.class);
+    }
+
+
+    public List<RaidRecord> findAllByOrganisationId(final String ror) {
+        return dslContext.select()
+                .from(RAID)
+                .join(RAID_ORGANISATION)
+                .on(RAID.HANDLE.eq(RAID_ORGANISATION.HANDLE))
+                .join(ORGANISATION)
+                .on(RAID_ORGANISATION.ORGANISATION_ID.eq(ORGANISATION.ID))
+                .where(
+                        ORGANISATION.PID.eq(ror)
+                )
+                .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
+                .fetchInto(RaidRecord.class);
+    }
+
     public List<RaidRecord> findAllV2() {
         return dslContext.select()
                 .distinctOn(RAID.HANDLE)
                 .from(RAID)
                 .where(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
+                )
+                .fetchInto(RaidRecord.class);
+    }
+
+    public List<RaidRecord> findAllPublic() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .join(RAID_HISTORY).on(RAID_HISTORY.HANDLE.eq(RAID.HANDLE))
+                .where(RAID.ACCESS_TYPE_ID.in(1, 4)
+                        .and(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1, Metaschema.raido_metadata_schema_v1))
                 )
                 .fetchInto(RaidRecord.class);
     }

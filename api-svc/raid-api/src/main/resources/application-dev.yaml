@@ -1,6 +1,6 @@
 raid:
   identifier:
-    name-prefix: http://raid.local/
+    name-prefix: http://localhost:8080/
   db:
     user: postgres
     password: supersecret
@@ -10,6 +10,9 @@ raid:
     encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
   iam:
     realm-uri: http://localhost:8001/realms/raid
+  raid-permissions:
+    client-id: raid-permissions-admin
+    client-secret: 07ATOSG9hYs8oATcz5wcQAdRuoEsLzEY
 spring:
   flyway:
     locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/dev

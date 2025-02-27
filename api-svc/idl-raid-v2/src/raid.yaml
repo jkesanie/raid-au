@@ -40,11 +40,6 @@ paths:
       operationId: findAllRaids
       summary: List raids
       parameters:
-        - name: servicePointId
-          in: query
-          schema:
-            type: integer
-            format: int64
         - name: includeFields
           description: The top level fields to include in each RAiD in the response body. Excludes all other fields.
           example: identifier,title,date
@@ -53,6 +48,18 @@ paths:
             type: array
             items:
               type: string
+        - name: contributor.id
+          description: Only show RAiDs that include a contributor with the given id
+          example: https://orcid.org/0009-0006-4129-5257
+          in: query
+          schema:
+            type: string
+        - name: organisation.id
+          description: Only show RAiDs that include an organisation with the given id
+          example: https://ror.org/038sjwq14
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: success
@@ -77,13 +84,6 @@ paths:
         schema:
           type: string
     get:
-      parameters:
-        - name: version
-          in: query
-          required: false
-          description: The version of the raid
-          schema:
-            type: integer
       security:
         - bearerAuth: [ ]
       tags:
@@ -129,6 +129,72 @@ paths:
             application/json:
               schema:
                 $ref: 'shared.yaml#/components/schemas/ValidationFailureResponse'
+    patch:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - raid
+      operationId: patchRaid
+      summary: Patch a raid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RaidPatchRequest'
+      responses:
+        200:
+          description: The Raid was successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaidDto'
+        400:
+          description: Bad request. There was a problem with the message sent to the server.
+          content:
+            application/json:
+              schema:
+                $ref: 'shared.yaml#/components/schemas/ValidationFailureResponse'
+  /raid/{prefix}/{suffix}/{version}:
+    parameters:
+      - name: prefix
+        in: path
+        required: true
+        description: Prefix of the raid handle
+        schema:
+          type: string
+      - name: suffix
+        in: path
+        required: true
+        description: Suffix of the raid handle
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        description: The version of the raid
+        schema:
+          type: integer
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - raid
+      operationId: findRaidByNameAndVersion
+      summary: Read a raid with a specified version
+      responses:
+        200:
+          description: data
+          content:
+            application/json:
+              schema:
+                type: object
+        403:
+          description: Closed or Embargoed raids return a 403 response with an access statement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClosedRaid'
   /raid/{prefix}/{suffix}/history:
     parameters:
       - name: prefix
@@ -165,6 +231,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClosedRaid'
+
+  /raid/all-public:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - raid
+      operationId: findAllPublicRaids
+      summary: List raids
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaidDto'
+
 components:
   schemas:
     RaidCreateRequest:
@@ -212,9 +297,6 @@ components:
         spatialCoverage:
           type: array
           items: { $ref: '#/components/schemas/SpatialCoverage' }
-        traditionalKnowledgeLabel:
-          type: array
-          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
     RaidUpdateRequest:
       type: object
       required:
@@ -225,8 +307,7 @@ components:
         - contributors
         - access
       properties:
-        metadata:
-          $ref: '#/components/schemas/Metadata'
+        metadata: { $ref: '#/components/schemas/Metadata' }
         identifier: { $ref: '#/components/schemas/Id' }
         title:
           type: array
@@ -260,12 +341,20 @@ components:
         spatialCoverage:
           type: array
           items: { $ref: '#/components/schemas/SpatialCoverage' }
-        traditionalKnowledgeLabel:
+    RaidPatchRequest:
+      type: object
+      properties:
+        contributor:
           type: array
-          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
+          items: { $ref: '#/components/schemas/Contributor'}
     RaidDto:
       allOf:
         - $ref: '#/components/schemas/RaidUpdateRequest'
+      type: object
+      properties:
+        traditionalKnowledgeLabel:
+          type: array
+          items: { $ref: '#/components/schemas/TraditionalKnowledgeLabel' }
     Metadata:
       type: object
       properties:
@@ -440,19 +529,20 @@ components:
       properties:
         id:
           type: string
-        status:
-          description: 'Read only. Whether the contributor has confirmed they are a part of the project. One of PENDING, VERIFIED, UNVERIFIED, FAILED. For V2 this will always be UNVERIFIED'
-          type: string
-        statusMessage:
-          description: 'Read only. If there is an error when attempting to verify the contributor the failure message will appear here. This is only relevant to V3'
-          type: string
-        uuid:
-          description: 'Read only. An internal id generated by the API.'
-          type: string
         schemaUri: {
           type: string,
           example: https://orcid.org/
         }
+        status:
+          description: 'Read only. Whether the contributor has confirmed they are a part of the project. One of PENDING_AUTHENTICATION, AUTHENTICATED, UNAUTHENTICATED, FAILED'
+          type: string
+        statusMessage:
+          description: 'Read only. If there is an error when attempting to verify the contributor the failure message will appear here'
+          type: string
+        email:
+          type: string
+        uuid:
+          type: string
         position:
           type: array
           items:

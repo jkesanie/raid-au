@@ -35,8 +35,6 @@ class RaidoStableV1ValidatorTest {
     @Mock
     private SpatialCoverageValidator spatialCoverageValidationService;
     @Mock
-    private TraditionalKnowledgeLabelValidator traditionalKnowledgeLabelValidatorService;
-    @Mock
     private AccessValidator accessValidationService;
     @Mock
     private DateValidator dateValidator;
@@ -187,33 +185,5 @@ class RaidoStableV1ValidatorTest {
 
         validationService.validateForUpdate(handle, raid);
         verify(spatialCoverageValidationService).validate(spatialCoverages);
-    }
-
-    @Test
-    void validatesTraditionalKnowledgeLabelsOnCreate() {
-        final var handle = "test-handle";
-        final var traditionalKnowledgeLabels =
-                Collections.singletonList(new TraditionalKnowledgeLabel());
-
-        final var raid = new RaidCreateRequest()
-                .identifier(new Id())
-                .traditionalKnowledgeLabel(traditionalKnowledgeLabels);
-
-        validationService.validateForCreate(raid);
-        verify(traditionalKnowledgeLabelValidatorService).validate(traditionalKnowledgeLabels);
-    }
-
-    @Test
-    void validatesTraditionalKnowledgeLabelsOnUpdate() {
-        final var handle = "test-handle";
-        final var traditionalKnowledgeLabels =
-                Collections.singletonList(new TraditionalKnowledgeLabel());
-
-        final var raid = new RaidUpdateRequest()
-                .identifier(new Id())
-                .traditionalKnowledgeLabel(traditionalKnowledgeLabels);
-
-        validationService.validateForUpdate(handle, raid);
-        verify(traditionalKnowledgeLabelValidatorService).validate(traditionalKnowledgeLabels);
     }
 }

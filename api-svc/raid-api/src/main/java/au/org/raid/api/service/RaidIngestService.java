@@ -4,6 +4,7 @@ import au.org.raid.api.exception.ResourceNotFoundException;
 import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.RaidRecordFactory;
 import au.org.raid.api.repository.RaidRepository;
+import au.org.raid.api.util.TokenUtil;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,10 @@ public class RaidIngestService {
     private final LanguageService languageService;
     private final HandleFactory handleFactory;
     private final CacheableRaidService cacheableRaidService;
+
+    private final RaidHistoryService raidHistoryService;
+
+
     public void create(final RaidDto raid) {
         final var handle = handleFactory.create(raid.getIdentifier().getId()).toString();
 
@@ -68,7 +73,6 @@ public class RaidIngestService {
         alternateUrlService.create(raid.getAlternateUrl(), handle);
         relatedRaidService.create(raid.getRelatedRaid(), handle);
         subjectService.create(raid.getSubject(), handle);
-        traditionalKnowledgeLabelService.create(raid.getTraditionalKnowledgeLabel(), handle);
         spatialCoverageService.create(raid.getSpatialCoverage(), handle);
     }
 
@@ -77,7 +81,10 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByServicePointIdOrNotConfidential(servicePointId);
 
         for (final var record : records) {
-            raids.add(cacheableRaidService.build(record));
+            final var raid = raidHistoryService.findByHandle(record.getHandle())
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+
+            raids.add(raid);
         }
 
         return raids;
@@ -88,18 +95,46 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByServicePointId(servicePointId);
 
         for (final var record : records) {
-            raids.add(cacheableRaidService.build(record));
+            final var raid = raidHistoryService.findByHandle(record.getHandle())
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+
+            raids.add(raid);
+        }
+
+        return raids;
+    }
+
+    public List<RaidDto> findAllByContributor(final String contributorId) {
+        final var raids = new ArrayList<RaidDto>();
+        final var records = raidRepository.findAllByContributorOrcid(contributorId);
+
+        for (final var record : records) {
+            final var raid = raidHistoryService.findByHandle(record.getHandle())
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+
+            raids.add(raid);
+        }
+
+        return raids;
+    }
+
+    public List<RaidDto> findAllByOrganisation(final String organisationId) {
+        final var raids = new ArrayList<RaidDto>();
+        final var records = raidRepository.findAllByOrganisationId(organisationId);
+
+        for (final var record : records) {
+            final var raid = raidHistoryService.findByHandle(record.getHandle())
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+
+            raids.add(raid);
         }
 
         return raids;
     }
 
     public Optional<RaidDto> findByHandle(final String handle) {
-        return raidRepository.findByHandle(handle)
-                .map(cacheableRaidService::build)
+        return raidHistoryService.findByHandle(handle)
                 .or(Optional::empty);
-
-
     }
 
     public RaidDto update(final RaidDto raid) {
@@ -140,9 +175,29 @@ public class RaidIngestService {
         alternateUrlService.update(raid.getAlternateUrl(), handle);
         relatedRaidService.update(raid.getRelatedRaid(), handle);
         subjectService.update(raid.getSubject(), handle);
-        traditionalKnowledgeLabelService.update(raid.getTraditionalKnowledgeLabel(), handle);
         spatialCoverageService.update(raid.getSpatialCoverage(), handle);
 
         return raid;
+    }
+
+    public List<RaidDto> findAllByServicePointIdOrHandleIn(final Long servicePointId) {
+        final var handles = new ArrayList<>(TokenUtil.getAdminRaids());
+        handles.addAll(TokenUtil.getUserRaids());
+
+        final var raids = new ArrayList<RaidDto>();
+        final var records = raidRepository.findAllByServicePointIdOrHandleIn(servicePointId, handles);
+
+        for (final var record : records) {
+            final var raid = raidHistoryService.findByHandle(record.getHandle())
+                    .orElse(cacheableRaidService.build(record))
+                    ;
+
+
+//                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+
+            raids.add(raid);
+        }
+
+        return raids;
     }
 }

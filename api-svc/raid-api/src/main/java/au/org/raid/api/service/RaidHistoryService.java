@@ -10,6 +10,7 @@ import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.db.jooq.tables.records.RaidHistoryRecord;
 import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -60,7 +63,6 @@ public class RaidHistoryService {
 
         if (metadata == null) {
             final var handle = new Handle(raid.getIdentifier().getId());
-
             final var existing = raidRepository.findByHandle(handle.toString())
                     .orElseThrow(() -> new ResourceNotFoundException(handle.toString()));
 
@@ -104,6 +106,55 @@ public class RaidHistoryService {
     }
 
     @SneakyThrows
+    public RaidDto save(final RaidDto raid) {
+        final var now = new BigDecimal(LocalDateTime.now().atOffset(ZoneOffset.UTC).toEpochSecond());
+
+        Metadata metadata =  raid.getMetadata();
+
+        if (metadata == null) {
+            final var handle = new Handle(raid.getIdentifier().getId());
+            final var existing = raidRepository.findByHandle(handle.toString())
+                    .orElseThrow(() -> new ResourceNotFoundException(handle.toString()));
+
+            metadata = new Metadata().created(
+                    BigDecimal.valueOf(existing.getDateCreated().toEpochSecond(ZoneOffset.UTC)));
+        }
+        raid.metadata(metadata.updated(now));
+        final var version = raid.getIdentifier().getVersion();
+        final var newVersion = version + 1;
+        raid.getIdentifier().setVersion(newVersion);
+
+        final var raidString = objectMapper.writeValueAsString(raid);
+
+        final var handle = handleFactory.create(raid.getIdentifier().getId());
+
+        final var history = raidHistoryRepository.findAllByHandle(handle.toString()).stream()
+                .map(RaidHistoryRecord::getDiff)
+                .map(jsonValueFactory::create)
+                .toList();
+
+        final var diff = jsonPatchFactory.create(jsonValueFactory.create(history).toString(), raidString);
+
+        final var recordsUpdated = raidHistoryRepository.insert(
+                raidHistoryRecordFactory.create(handle, newVersion, ChangeType.PATCH, diff)
+        );
+
+        if (recordsUpdated < 1) {
+            throw new InvalidVersionException(version);
+        }
+
+        if (newVersion % properties.getBaselineInterval() == 0) {
+            final var baselineDiff = jsonPatchFactory.create(EMPTY_JSON, raidString);
+
+            raidHistoryRepository.insert(
+                    raidHistoryRecordFactory.create(handle, newVersion, ChangeType.BASELINE, baselineDiff)
+            );
+        }
+
+        return objectMapper.readValue(jsonValueFactory.create(history, diff).toString(), RaidDto.class);
+    }
+
+    @SneakyThrows
     public Optional<RaidDto> findByHandleAndVersion(final String handle, final Integer version) {
         final var history = raidHistoryRepository.findAllByHandleAndVersion(handle, version).stream()
                 .map(RaidHistoryRecord::getDiff)
@@ -127,8 +178,23 @@ public class RaidHistoryService {
         if (history.isEmpty()) {
             return Optional.empty();
         }
+        try {
+            return Optional.of(objectMapper.readValue(jsonValueFactory.create(history).toString(), RaidDto.class));
+        } catch (MismatchedInputException e) {
+            if (e.getMessage().contains("Cannot deserialize value of type `java.util.ArrayList<au.org.raid.idl.raidv2.model.RelatedObjectCategory>`")) {
+                final var raid = objectMapper.readValue(jsonValueFactory.create(history).toString(), Map.class);
+                final var relatedObject = ((List<?>) raid.get("relatedObject")).get(0);
 
-        return Optional.of(objectMapper.readValue(jsonValueFactory.create(history).toString(), RaidDto.class));
+                final var category = ((LinkedHashMap) relatedObject).get("category");
+
+                 ((LinkedHashMap) relatedObject).put("category", List.of(category));
+
+                final var fixedRaid = objectMapper.readValue(objectMapper.writeValueAsString(raid), RaidDto.class);
+
+                return Optional.of(this.save(fixedRaid));
+            }
+        }
+        return Optional.empty();
     }
 
     public List<RaidChange> findAllChangesByHandle(final String handle) {

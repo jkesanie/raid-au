@@ -13,7 +13,15 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{\"data\":{\"id\":\"10.1234/example.doi\",\"type\":\"dois\",\"attributes\":{\"doi\":\"10.1234/example.doi\"}}}"
+      "body": {
+        "data": {
+          "id": "10.1234/example.doi",
+          "type": "dois",
+          "attributes": {
+            "doi": "10.1234/example.doi"
+          }
+        }
+      }
     }
   },
   {
@@ -30,7 +38,115 @@
       "headers": {
         "Content-Type": ["application/json"]
       },
-      "body": "{\"data\":{\"id\":\"10.1234/example.doi\",\"type\":\"dois\",\"attributes\":{\"doi\":\"10.1234/example.doi\"}}}"
+      "body": {
+        "data": {
+          "id": "10.1234/example.doi",
+          "type":"dois",
+          "attributes": {
+            "doi":"10.1234/example.doi"
+          }
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/raid-update"
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "headers": {
+        "Content-Type": ["application/json"]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/find-contributor-by-email",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "authenticated@test.raid.org.au"
+        },
+        "matchType": "STRICT"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AUTHENTICATED",
+        "uuid": "04742bfa-0e91-4339-b878-a4b850724f7b",
+        "SK": "METADATA", "PK": "CONTRIBUTOR#authenticated@test.raid.org.au",
+        "orcid": {
+          "access_token": "156f7934-40bb-4f7e-93ff-1fefa33275ca",
+          "expires_in": "631138518",
+          "name": "David Smith",
+          "orcid": "0000-0002-1474-3214",
+          "refresh_token": "1b0741dd-ab12-41de-8eb2-0dec9731d3cf",
+          "scope": "/read-limited /activities/update /person/update",
+          "token_type": "bearer"
+        }
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/find-contributor-by-email",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "awaiting-authentication@test.raid.org.au"
+        },
+        "matchType": "STRING"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AWAITING_AUTHENTICATION",
+        "uuid": "4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb",
+        "SK": "METADATA",
+        "PK": "CONTRIBUTOR#awaiting-authentication@test.raid.org.au"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/find-contributor-by-email",
+      "body": {
+        "type": "JSON",
+        "json": {
+          "email": "authentication-failed@test.raid.org.au"
+        },
+        "matchType": "STRICT"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": {
+        "updatedAt": "2025-01-30T23:40:16.568Z",
+        "orcidStatus": "AUTHENTICATION_FAILED",
+        "uuid": "de8cb78e-3cb6-424d-9537-3b6a0b15604c",
+        "SK": "METADATA",
+        "PK": "CONTRIBUTOR#authentication-failed@test.raid.org.au"
+      }
     }
   }
 ]

@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class ContributorService {
                     .orElseThrow(() -> new ContributorSchemaNotFoundException(contributor.getSchemaUri()));
 
             final var contributorRecord = contributorRecordFactory.create(contributor, contributorSchema.getId());
-            final var contributorId = contributorRepository.findOrCreate(contributorRecord).getId();
+            final var contributorId = contributorRepository.updateOrCreate(contributorRecord).getId();
 
             final var raidContributorRecord = raidContributorRecordFactory.create(contributor, contributorId, handle);
             final var raidContributorId = raidContributorRepository.create(raidContributorRecord).getId();
@@ -93,33 +95,35 @@ public class ContributorService {
 
         contributors.forEach(contributor -> {
             var updateContributorRecord = false;
-            final var orcid = contributor.getId().substring(contributor.getId().lastIndexOf('/') + 1);
-            final var optional = contributorRepository.findByPid(orcid);
-            if (optional.isPresent()) {
-                final var contributorRecord = optional.get();
-                if (contributorRecord.getStatus() == null) {
+            if (!isBlank(contributor.getId())) {
+                final var orcid = contributor.getId().substring(contributor.getId().lastIndexOf('/') + 1);
+                final var optional = contributorRepository.findByPid(orcid);
+                if (optional.isPresent()) {
+                    final var contributorRecord = optional.get();
+                    if (contributorRecord.getStatus() == null) {
+                        contributor.status(UNAUTHENTICATED_STATUS);
+                        contributorRecord.setStatus(UNAUTHENTICATED_STATUS);
+                        updateContributorRecord = true;
+                    } else {
+                        contributor.status(contributorRecord.getStatus());
+                    }
+
+                    if (contributorRecord.getUuid() == null){
+                        final var uuid = UUID.randomUUID().toString();
+                        contributor.uuid(uuid);
+                        contributorRecord.setUuid(uuid);
+                        updateContributorRecord = true;
+                    } else {
+                        contributor.uuid(contributorRecord.getUuid());
+                    }
+
+                    if (updateContributorRecord) {
+                        contributorRepository.update(contributorRecord);
+                    }
+                } else {
+                    contributor.uuid(UUID.randomUUID().toString());
                     contributor.status(UNAUTHENTICATED_STATUS);
-                    contributorRecord.setStatus(UNAUTHENTICATED_STATUS);
-                    updateContributorRecord = true;
-                } else {
-                    contributor.status(contributorRecord.getStatus());
                 }
-
-                if (contributorRecord.getUuid() == null){
-                    final var uuid = UUID.randomUUID().toString();
-                    contributor.uuid(uuid);
-                    contributorRecord.setUuid(uuid);
-                    updateContributorRecord = true;
-                } else {
-                    contributor.uuid(contributorRecord.getUuid());
-                }
-
-                if (updateContributorRecord) {
-                    contributorRepository.update(contributorRecord);
-                }
-            } else {
-                contributor.uuid(UUID.randomUUID().toString());
-                contributor.status(UNAUTHENTICATED_STATUS);
             }
         });
     }
