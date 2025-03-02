@@ -75,7 +75,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
     const initKeycloak = async () => {
       try {
         const authenticated = await keycloakInstance.init({
-          onLoad: "check-sso",
+          onLoad: "login-required",
         });
 
         if (authenticated) {
