@@ -22,11 +22,9 @@ import { useKeycloak } from "@/contexts/keycloak-context";
 import { sendInvite } from "@/services/invite";
 
 export default function InviteDialog({
-  title,
   open,
   setOpen,
 }: {
-  title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {

@@ -78,7 +78,6 @@ export default function InviteDialog({
     event.preventDefault();
     setIsLoading(true);
     sendInviteMutation.mutate({
-      title,
       email: inviteMethod === "email" ? email : "",
       orcid: inviteMethod === "orcid" ? orcid : "",
       handle: `${prefix}/${suffix}`,
