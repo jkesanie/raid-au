@@ -1,5 +1,5 @@
 import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { ServicePointUsersList } from "@/components/service-point-users/ServicePointUsersList";
+import { ServicePointUsers } from "@/components/service-point-users";
 import { ServicePointsTable } from "@/components/service-points-table";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
@@ -30,7 +30,7 @@ export const ServicePointsOperatorView = () => {
   }
 
   if (query.isError) {
-    return <ErrorAlertComponent error="Service point could not be fetched" />;
+    return <ErrorAlertComponent error={query.error} />;
   }
 
   return (
@@ -48,13 +48,13 @@ export const ServicePointsOperatorView = () => {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader title="Members (All service points)" />
+        <CardHeader title="Service points members" />
         <CardContent>
           <Stack direction="column" gap={2}>
             {query.data
               .filter((sp) => sp.members.length > 0)
               .map((servicePoint) => (
-                <ServicePointUsersList
+                <ServicePointUsers
                   key={servicePoint.id}
                   servicePointWithMembers={servicePoint}
                 />

@@ -1,5 +1,6 @@
 package au.org.raid.inttest;
 
+import au.org.raid.idl.raidv2.api.RaidApi;
 import au.org.raid.idl.raidv2.model.*;
 import au.org.raid.inttest.service.Handle;
 import au.org.raid.inttest.service.RaidApiValidationException;
@@ -28,19 +29,24 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Mint a raid")
     void mintRaid() {
-        final var mintedRaid = raidApi.mintRaid(createRequest).getBody();
-        assert mintedRaid != null;
+        try {
+            final var mintedRaid = raidApi.mintRaid(createRequest).getBody();
+            assert mintedRaid != null;
 
-        final var handle = new Handle(mintedRaid.getIdentifier().getId());
-        
-        final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
+            final var handle = new Handle(mintedRaid.getIdentifier().getId());
 
-        assertThat(result.getTitle()).isEqualTo(createRequest.getTitle());
-        assertThat(result.getDescription()).isEqualTo(createRequest.getDescription());
-        assertThat(result.getAccess()).isEqualTo(createRequest.getAccess());
-//        assertThat(result.getContributor()).isEqualTo(createRequest.getContributor());
-        assertThat(result.getOrganisation()).isEqualTo(createRequest.getOrganisation());
-        assertThat(result.getDate()).isEqualTo(createRequest.getDate());
+            final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
+
+            assertThat(result.getTitle()).isEqualTo(createRequest.getTitle());
+            assertThat(result.getDescription()).isEqualTo(createRequest.getDescription());
+            assertThat(result.getAccess()).isEqualTo(createRequest.getAccess());
+            //        assertThat(result.getContributor().get(0).getId()).isEqualTo(createRequest.getContributor().get(0).getId());
+            //        assertThat(result.getContributor()).isEqualTo(createRequest.getContributor());
+            assertThat(result.getOrganisation()).isEqualTo(createRequest.getOrganisation());
+            assertThat(result.getDate()).isEqualTo(createRequest.getDate());
+        } catch (final RaidApiValidationException e) {
+            failOnError(e);
+        }
     }
 
     @Test
@@ -65,8 +71,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
             assertThat(updateResult.getTitle().get(0).getText()).isEqualTo(title);
             assertThat(updateResult.getIdentifier().getVersion()).isEqualTo(2);
         } catch (final Exception e) {
-            fail("Update failed");
-            throw new RuntimeException(e);
+            failOnError(e);
         }
 
         final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
@@ -97,8 +102,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
             assert raid != null;
             assertThat(raid.getContributor().get(0).getId()).isEqualTo(REAL_TEST_ORCID);
         } catch (final Exception e) {
-            fail("Update failed");
-            throw new RuntimeException(e);
+            failOnError(e);
         }
 
         final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
@@ -121,7 +125,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
             final var updateResult = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest).getBody();
             assertThat(updateResult.getIdentifier().getVersion()).isEqualTo(1);
         } catch (final Exception e) {
-            fail("Update failed");
+            failOnError(e);
         }
 
         final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
@@ -144,7 +148,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
             final var updateResult = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest).getBody();
             assertThat(updateResult.getIdentifier().getVersion()).isEqualTo(1);
         } catch (final Exception e) {
-            fail("Update failed");
+            failOnError(e);
         }
 
         final var result = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix()).getBody();
@@ -167,6 +171,8 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
             fail("Access to embargoed raid should be forbidden from different service point");
         } catch (final FeignException e) {
             assertThat(e.status()).isEqualTo(403);
+        } catch (final Exception e) {
+            failOnError(e);
         } finally {
             userService.deleteUser(uqUserContext.getId());
         }
@@ -391,6 +397,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
 
     private RaidUpdateRequest mapReadToUpdate(RaidDto read) {
         return new RaidUpdateRequest()
+                .metadata(read.getMetadata())
                 .identifier(read.getIdentifier())
                 .title(read.getTitle())
                 .date(read.getDate())

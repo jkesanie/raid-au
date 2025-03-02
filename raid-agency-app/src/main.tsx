@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { App } from "./App";
 import { otherRoutes, raidPageRoutes, servicePointRoutes } from "./routes";
-import { ErrorAlertComponent } from "./components/error-alert-component";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,7 +17,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    errorElement: <ErrorAlertComponent error="An error occurred" />,
+    errorElement: <p>Error...</p>,
     children: [
       ...servicePointRoutes,
       ...raidPageRoutes,

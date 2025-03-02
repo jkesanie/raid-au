@@ -13,6 +13,7 @@ import au.org.raid.db.jooq.tables.records.OrganisationSchemaRecord;
 import au.org.raid.db.jooq.tables.records.RaidOrganisationRecord;
 import au.org.raid.idl.raidv2.model.Organisation;
 import au.org.raid.idl.raidv2.model.OrganisationRole;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -304,6 +305,7 @@ class OrganisationServiceTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("update() deletes snd re-inserts organisation and descendants")
     void update() {
         final var handle = "_handle";

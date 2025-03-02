@@ -41,23 +41,37 @@ public class ContributorValidator {
                 .forEach(index -> {
                     final var contributor = contributors.get(index);
 
+                    if (!isBlank(contributor.getEmail())) {
+                        //TODO: uuid and id should not be present
+                    }
+                    if(!isBlank(contributor.getUuid())) {
+                        //TODO: email should be blank
+                        //TODO: id can be present
+                    }
+                    if(!isBlank(contributor.getId())) {
+                        //TODO: email should be blank
+                        //TODO: uuid can be present
+                    }
+
                     if (isBlank(contributor.getEmail())) {
                         // uuid must be present
-//                        if (!isBlank(contributor.getId()) && !isBlank(contributor.getUuid())) {
-//                            final var contributorOptional = contributorRepository.findByPidAndUuid(
-//                                    contributor.getId(), contributor.getUuid()
-//                            );
-//
-//                            if (contributorOptional.isEmpty()) {
-//                                failures.add(
-//                                        new ValidationFailure()
-//                                                .fieldId("contributor[%d]".formatted(index))
-//                                                .errorType(NOT_FOUND_TYPE)
-//                                                .message("Contributor not found with PID (%s) and UUID (%s)"
-//                                                        .formatted(contributor.getId(), contributor.getUuid())));
-//
-//                            }
-//                        } else
+                        if (!isBlank(contributor.getId()) && !isBlank(contributor.getUuid())) {
+                            final var orcid = contributor.getId().replace("https://orcid.org/", "");
+
+                            final var contributorOptional = contributorRepository.findByPidAndUuid(
+                                    orcid, contributor.getUuid()
+                            );
+
+                            if (contributorOptional.isEmpty()) {
+                                failures.add(
+                                        new ValidationFailure()
+                                                .fieldId("contributor[%d]".formatted(index))
+                                                .errorType(NOT_FOUND_TYPE)
+                                                .message("Contributor not found with PID (%s) and UUID (%s)"
+                                                        .formatted(contributor.getId(), contributor.getUuid())));
+
+                            }
+                        } else
                         if (!isBlank(contributor.getUuid())) {
                             final var contributorOptional = contributorRepository.findByUuid(
                                     contributor.getUuid()
@@ -72,6 +86,8 @@ public class ContributorValidator {
                                                         .formatted(contributor.getUuid())));
 
                             }
+                        } else if (!isBlank(contributor.getId())) {
+                            //TODO: validate new contributor with orcid
                         } else {
                             failures.add(
                                     new ValidationFailure()
@@ -79,8 +95,8 @@ public class ContributorValidator {
                                             .errorType(NOT_SET_TYPE)
                                             .message("email or uuid is required"));
                         }
-                    } else {
-                        if (contributor.getUuid() != null) {
+                    }  else {
+                        if (!isBlank(contributor.getUuid())) {
                             failures.add(
                                     new ValidationFailure()
                                             .fieldId("contributor[%d]".formatted(index))

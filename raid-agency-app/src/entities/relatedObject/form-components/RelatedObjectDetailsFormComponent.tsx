@@ -25,7 +25,7 @@ function FieldGrid({
   );
   return (
     <Grid container spacing={2} className={isRowHighlighted ? "remove" : ""}>
-      <TextInputField name={`relatedObject.${index}.id`} label="DOI URL" />
+      <TextInputField name={`relatedObject.${index}.id`} label="ID" />
       <TextSelectField
         options={relatedObjectTypeOptions}
         name={`relatedObject.${index}.type.id`}

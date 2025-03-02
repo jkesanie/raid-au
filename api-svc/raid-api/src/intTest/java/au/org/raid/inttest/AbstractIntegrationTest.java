@@ -6,6 +6,7 @@ import au.org.raid.inttest.client.keycloak.KeycloakClient;
 import au.org.raid.inttest.config.IntegrationTestConfig;
 import au.org.raid.inttest.dto.UserContext;
 import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
+import au.org.raid.inttest.service.RaidApiValidationException;
 import au.org.raid.inttest.service.TestClient;
 import au.org.raid.inttest.service.TokenService;
 import au.org.raid.inttest.service.UserService;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static au.org.raid.inttest.service.TestConstants.*;
+import static org.assertj.core.api.Assertions.fail;
 
 @SpringBootTest(classes = IntegrationTestConfig.class)
 public class AbstractIntegrationTest {
@@ -147,10 +149,10 @@ public class AbstractIntegrationTest {
             final String email
     ) {
         return new Contributor()
-//                .id(orcid)
+                .id(orcid)
                 .contact(true)
                 .leader(true)
-                .email(email)
+//                .email(email)
                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                 .position(List.of(new ContributorPosition()
                         .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
@@ -175,5 +177,21 @@ public class AbstractIntegrationTest {
                                 .schemaUri(ORGANISATION_ROLE_SCHEMA_URI)
                                 .id(role)
                                 .startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE))));
+    }
+
+    protected void failOnError(final Exception e) {
+        if (e instanceof RaidApiValidationException) {
+            final var responseBody = ((RaidApiValidationException) e).getBadRequest().responseBody()
+                    .map(byteBuffer -> {
+                        if (byteBuffer.hasArray()) {
+                            return new String(byteBuffer.array());
+                        }
+                        return "";
+                    }).orElse("");
+
+            fail(responseBody);
+        } else {
+            fail(e.getMessage());
+        }
     }
 }

@@ -1,4 +1,3 @@
-import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useSnackbar } from "@/components/snackbar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
@@ -74,7 +73,7 @@ export default function UserDropdown() {
   }
 
   if (keycloakGroupsQuery.isError) {
-    return <ErrorAlertComponent error="Keycloak groups could not be fetched" />;
+    return <div>Error...</div>;
   }
 
   return (

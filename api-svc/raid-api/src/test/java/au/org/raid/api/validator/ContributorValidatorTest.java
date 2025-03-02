@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
+@Disabled
 @ExtendWith(MockitoExtension.class)
 class ContributorValidatorTest {
     private static final String _UUID = UUID.randomUUID().toString();

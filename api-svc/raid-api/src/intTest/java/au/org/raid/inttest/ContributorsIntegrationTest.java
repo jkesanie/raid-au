@@ -47,7 +47,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
                 assertThat(raidDto.getContributor().get(0).getEmail()).isNull();
             } catch (Exception e) {
-                fail("Raid create failed");
+                failOnError(e);
             }
         }
 
@@ -69,7 +69,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -91,7 +91,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -130,7 +130,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -170,7 +170,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -209,7 +209,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -249,7 +249,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("field must be set")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -282,7 +282,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("A contributor must have a position")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -316,7 +316,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("A contributor must have a position")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -353,7 +353,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("At least one contributor must be flagged as a project contact")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -390,7 +390,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .message("At least one contributor must be flagged as a project leader")
                 );
             } catch (Exception e) {
-                fail("Expected RaidApiValidationException");
+                failOnError(e);
             }
         }
 
@@ -431,7 +431,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("has invalid/unsupported value - should match ^https://orcid\\.org/[\\d]{4}-[\\d]{4}-[\\d]{4}-[\\d]{3}[\\d|X]{1}$")
                     ));
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -470,7 +470,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("failed checksum, last digit should be `1`")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -509,7 +509,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("uri not found")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
         }
@@ -550,7 +550,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("field must be set")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -588,7 +588,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("field must be set")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -627,7 +627,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("schema is unknown/unsupported")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -666,7 +666,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("id does not exist within the given schema")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -709,7 +709,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("Contributors can only hold one position at any given time. This position conflicts with contributor[0].position[0]")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
         }
@@ -752,7 +752,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("field must be set")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -790,7 +790,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("field must be set")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -829,7 +829,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("schema is unknown/unsupported")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
 
@@ -868,7 +868,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("id does not exist within the given schema")
                     );
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             }
         }
@@ -903,10 +903,10 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     );
                     
                 } catch (Exception e) {
-                    fail("Expected RaidApiValidationException");
+                    failOnError(e);
                 }
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -915,6 +915,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void updateStatus() {
             try {
                 createRequest.getContributor().get(0).email("awaiting-authentication@test.raid.org.au");
+                createRequest.getContributor().get(0).id(null);
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var raidDto = createResponse.getBody();
@@ -926,10 +927,10 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
                     assertThat(updateResponse.getBody().getContributor().get(0).getStatus()).isEqualTo("AWAITING_AUTHENTICATION");
                 } catch (Exception e) {
-                    fail("Update failed");
+                    failOnError(e);
                 }
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -1482,6 +1483,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void authenticatedContributor() {
             try {
                 createRequest.getContributor().get(0).setEmail("authenticated@test.raid.org.au");
+                createRequest.getContributor().get(0).setId(null);
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1493,7 +1495,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0000-0002-1474-3214");
                 assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("04742bfa-0e91-4339-b878-a4b850724f7b");
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -1502,6 +1504,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void awaitingAuthenticationContributor() {
             try {
                 createRequest.getContributor().get(0).setEmail("awaiting-authentication@test.raid.org.au");
+                createRequest.getContributor().get(0).setId(null);
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1513,7 +1516,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(raidDto.getContributor().get(0).getId()).isNull();
                 assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb");
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -1522,6 +1525,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void authenticationFailedContributor() {
             try {
                 createRequest.getContributor().get(0).setEmail("authentication-failed@test.raid.org.au");
+                createRequest.getContributor().get(0).setId(null);
 
                 final var createResponse = raidApi.mintRaid(createRequest);
                 final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
@@ -1533,7 +1537,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(raidDto.getContributor().get(0).getId()).isNull();
                 assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("de8cb78e-3cb6-424d-9537-3b6a0b15604c");
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -1555,13 +1559,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     try {
                         raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
                     } catch (Exception e) {
-                        fail("Raid update failed");
+                        failOnError(e);
                     }
                 } catch (Exception e) {
-                    fail("Raid patch failed");
+                    failOnError(e);
                 }
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
 
@@ -1589,10 +1593,10 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                     .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED")
                     );
                 } catch (Exception e) {
-                    fail("Raid patch failed");
+                    failOnError(e);
                 }
             } catch (Exception e) {
-                fail("An unexpected error occurred when trying to create Raid in test");
+                failOnError(e);
             }
         }
     }

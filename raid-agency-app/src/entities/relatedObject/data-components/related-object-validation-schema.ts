@@ -1,12 +1,9 @@
 import { z } from "zod";
 import { relatedObjectCategoryValidationSchema } from "../category/data-components/related-object-category-validation-schema";
 
-const doiUrlSchema = z.string().url().startsWith("https://doi.org", {
-  message: "URL must be a DOI link starting with https://doi.org",
-});
 export const relatedObjectValidationSchema = z.array(
   z.object({
-    id: doiUrlSchema,
+    id: z.string().min(1),
     schemaUri: z.string().min(1),
     type: z.object({
       id: z.string(),

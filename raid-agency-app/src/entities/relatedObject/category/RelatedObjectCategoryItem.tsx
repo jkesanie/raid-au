@@ -19,7 +19,7 @@ const RelatedObjectCategoryItem = memo(
     return (
       <Grid container spacing={2}>
         <DisplayItem
-          label="Category"
+          label="Position"
           value={relatedObjectCategoryMappedValue}
           width={6}
         />

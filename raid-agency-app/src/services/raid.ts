@@ -1,129 +1,145 @@
 import packageJson from "@/../package.json";
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
+import { fetchServicePoints } from "@/services/service-points";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 
 const endpoint = getApiEndpoint();
 const API_ENDPOINT = `${endpoint}/raid`;
 
-const getDefaultHeaders = (token: string) => ({
-  "Content-Type": "application/json",
-  "X-Raid-Api-Version": packageJson.apiVersion,
-  Authorization: `Bearer ${token}`,
-});
-
-export const fetchAllRaids = async ({
+export const fetchRaids = async ({
   fields,
   token,
 }: {
   fields?: string[];
   token: string;
 }): Promise<RaidDto[]> => {
-  // the trailing slash is required for the API to work
   const url = new URL(`${API_ENDPOINT}/`);
 
-  if (fields?.length) {
-    url.searchParams.set("includeFields", fields.join(","));
+  if (fields && fields.length > 0) {
+    const fieldsQuery = fields.join(",");
+    url.searchParams.set("includeFields", fieldsQuery);
   }
 
   const response = await fetch(url, {
-    headers: getDefaultHeaders(token),
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "X-Raid-Api-Version": packageJson.apiVersion,
+    },
   });
-
-  if (!response.ok) {
-    throw new Error(`RAiDs could not be fetched`);
-  }
-
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return response.json();
+  return await response.json();
 };
 
-export const fetchOneRaid = async ({
+export const fetchRaid = async ({
   handle,
   token,
 }: {
   handle: string;
   token: string;
 }): Promise<RaidDto> => {
-  const url = `${API_ENDPOINT}/${handle}`;
-  const response = await fetch(url, {
+  const response = await fetch(`${API_ENDPOINT}/${handle}`, {
     method: "GET",
-    headers: getDefaultHeaders(token),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "X-Raid-Api-Version": packageJson.apiVersion,
+    },
   });
-
-  if (!response.ok) {
-    throw new Error(`RAiD could not be fetched`);
-  }
-
   return await response.json();
 };
 
-export const fetchOneRaidHistory = async ({
-  handle,
+export const fetchRaidHistory = async ({
+  id,
   token,
 }: {
-  handle: string;
+  id: string;
   token: string;
 }): Promise<RaidHistoryType[]> => {
-  const url = `${API_ENDPOINT}/${handle}/history`;
-  const response = await fetch(url, {
+  const response = await fetch(`${API_ENDPOINT}/${id}/history`, {
     method: "GET",
-    headers: getDefaultHeaders(token),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "X-Raid-Api-Version": packageJson.apiVersion,
+    },
   });
-
-  if (!response.ok) {
-    throw new Error(`RAiD history could not be fetched`);
-  }
-
   return await response.json();
 };
 
-export const createOneRaid = async ({
-  raid,
-  token,
-}: {
-  raid: RaidDto;
-  token: string;
-}): Promise<RaidDto> => {
-  const url = `${API_ENDPOINT}/`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: getDefaultHeaders(token),
-    body: JSON.stringify(raid),
-  });
-
-  if (!response.ok) {
-    throw new Error(`RAiD could not be created`);
-  }
-
-  return await response.json();
-};
-
-export const updateOneRaid = async ({
+export const createRaid = async ({
   data,
-  handle,
   token,
 }: {
   data: RaidDto;
-  handle: string;
   token: string;
 }): Promise<RaidDto> => {
-  const raidToBeUpdated = transformBeforeUpdate(data);
-  const url = `${API_ENDPOINT}/${handle}`;
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: getDefaultHeaders(token),
-    body: JSON.stringify(raidToBeUpdated),
-  });
+  try {
+    const response = await fetch(`${API_ENDPOINT}/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Raid-Api-Version": packageJson.apiVersion,
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!response.ok) {
-    throw new Error(`RAiD could not be created`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData) || "Failed to create raid");
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    let errorMessage = "Failed to create raid";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    throw new Error(errorMessage);
   }
-
-  return await response.json();
 };
 
-export const transformBeforeUpdate = (raid: RaidDto): RaidDto => {
+export const updateRaid = async ({
+  id,
+  data,
+  token,
+}: {
+  id: string;
+  data: RaidDto;
+  token: string;
+}): Promise<RaidDto> => {
+  try {
+    const raidToBeUpdated = beforeRaidUpdate(data);
+    const response = await fetch(`${API_ENDPOINT}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Raid-Api-Version": packageJson.apiVersion,
+      },
+      body: JSON.stringify(raidToBeUpdated),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData) || "Failed to create raid");
+    }
+
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    let errorMessage = "Failed to create raid";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    throw new Error(errorMessage);
+  }
+};
+
+export const beforeRaidUpdate = (raid: RaidDto): RaidDto => {
   // set all endDates to `undefined` if the value is an empty string
   if (raid?.date?.endDate === "") {
     raid.date.endDate = undefined;

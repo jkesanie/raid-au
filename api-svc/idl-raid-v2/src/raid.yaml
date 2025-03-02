@@ -534,13 +534,11 @@ components:
           example: https://orcid.org/
         }
         status:
-          description: 'Read only. Whether the contributor has confirmed they are a part of the project. One of PENDING, VERIFIED, UNVERIFIED, FAILED'
+          description: 'Read only. Whether the contributor has confirmed they are a part of the project. One of PENDING_AUTHENTICATION, AUTHENTICATED, UNAUTHENTICATED, FAILED'
           type: string
         statusMessage:
           description: 'Read only. If there is an error when attempting to verify the contributor the failure message will appear here'
           type: string
-
-
         email:
           type: string
         uuid:

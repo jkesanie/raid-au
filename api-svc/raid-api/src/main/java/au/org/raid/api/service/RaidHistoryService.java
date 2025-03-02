@@ -42,7 +42,6 @@ public class RaidHistoryService {
     @SneakyThrows
     public RaidDto save(final RaidCreateRequest request) {
         final var now = new BigDecimal(LocalDateTime.now().atOffset(ZoneOffset.UTC).toEpochSecond());
-
         request.metadata(new Metadata().created(now).updated(now));
 
         final var raidString = objectMapper.writeValueAsString(request);
@@ -58,7 +57,6 @@ public class RaidHistoryService {
 
     @SneakyThrows
     public RaidDto save(final RaidUpdateRequest raid) {
-
         final var now = new BigDecimal(LocalDateTime.now().atOffset(ZoneOffset.UTC).toEpochSecond());
 
         Metadata metadata =  raid.getMetadata();

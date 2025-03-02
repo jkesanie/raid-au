@@ -32,9 +32,9 @@ const ContributorForm = ({
         <>
           {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
             <TextInputField
-              name={`contributor.${index}.id`}
-              label="ORCID ID"
-              placeholder="ORCID ID"
+              name={`contributor.${index}.email`}
+              label="Email"
+              placeholder="Email"
               width={12}
             />
           )}

@@ -9,6 +9,7 @@ import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.IdFactory;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.api.repository.ServicePointRepository;
+import au.org.raid.api.service.ContributorService;
 import au.org.raid.api.service.Handle;
 import au.org.raid.api.service.RaidHistoryService;
 import au.org.raid.api.service.RaidIngestService;
@@ -54,6 +55,7 @@ public class RaidService {
     private final RaidHistoryService raidHistoryService;
     private final RaidIngestService raidIngestService;
     private final HandleFactory handleFactory;
+    private final ContributorService contributorService;
     private final RaidListenerService raidListenerService;
     private final KeycloakService keycloakService;
 
@@ -67,6 +69,8 @@ public class RaidService {
         final var servicePointRecord =
                 servicePointRepository.findById(servicePointId).orElseThrow(() ->
                         new UnknownServicePointException(servicePointId));
+
+        contributorService.setStatusAndUuid(raid.getContributor());
 
         mintHandle(raid, servicePointRecord, 0);
 
@@ -121,6 +125,7 @@ public class RaidService {
             return existing;
         }
 
+        contributorService.setStatusAndUuid(raid.getContributor());
         mergeContributors(existing.getContributor(), raid.getContributor());
 
         raidListenerService.createOrUpdate(raid.getIdentifier().getId(), raid.getContributor());
@@ -154,7 +159,13 @@ public class RaidService {
 
     @Transactional(readOnly = true)
     public Optional<RaidDto> findByHandle(String handle) {
-        return raidHistoryService.findByHandle(handle);
+        final var optional = raidHistoryService.findByHandle(handle);
+
+        if (optional.isPresent()) {
+            return optional;
+        }
+
+        return raidIngestService.findByHandle(handle);
     }
 
     public Optional<RaidPermissionsDto> getPermissions(final String prefix, final String suffix) {

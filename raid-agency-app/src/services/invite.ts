@@ -5,16 +5,12 @@ const subDomain = "api2";
 export async function sendInvite({
   email,
   handle,
-  orcid,
-  title,
   token,
 }: {
-  email?: string;
+  email: string;
   handle: string;
-  orcid?: string;
-  title: string;
   token: string;
-} & ({ email: string } | { orcid: string })) {
+}) {
   const response = await fetch(
     `https://${subDomain}.${environment}.raid.org.au/invite`,
     {
@@ -24,18 +20,11 @@ export async function sendInvite({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        inviteeEmail: email || "",
-        inviteeOrcid: orcid || "",
-        title,
+        inviteeEmail: email,
         handle,
       }),
     }
   );
-
-  if (!response.ok) {
-    throw new Error("Failed to send invite");
-  }
-
   return await response.json();
 }
 

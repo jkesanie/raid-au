@@ -1,6 +1,5 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
-import { ErrorAlertComponent } from "@/components/error-alert-component";
 import ContributorPositionItem from "@/entities/contributor/position/ContributorPositionItem";
 import ContributorRoleItem from "@/entities/contributor/role/ContributorRoleItem";
 import { Contributor } from "@/generated/raid";
@@ -166,7 +165,11 @@ const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
   }
 
   if (orcidDataQuery.isError) {
-    return <ErrorAlertComponent error="Error loading contributor details" />;
+    return (
+      <Typography variant="body1" color="error" textAlign="center">
+        Error loading contributor details
+      </Typography>
+    );
   }
 
   const orcidData = orcidDataQuery.data;

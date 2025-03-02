@@ -1,6 +1,6 @@
 import { RaidDto } from "@/generated/raid";
 import { Loading } from "@/pages/loading";
-import { fetchAllRaids } from "@/services/raid";
+import { fetchRaids } from "@/services/raid";
 import {
   Alert,
   Card,
@@ -20,7 +20,6 @@ import { startDateColumn } from "./columns/startDateColumn";
 import { titleColumn } from "./columns/titleColumn";
 import { RaidTableRowContextMenu } from "./components";
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { ErrorAlertComponent } from "@/components/error-alert-component";
 
 export const RaidTable = ({ title }: { title?: string }) => {
   const { authenticated, token, isInitialized } = useKeycloak();
@@ -28,24 +27,21 @@ export const RaidTable = ({ title }: { title?: string }) => {
   const raidQuery = useQuery<RaidDto[]>({
     queryKey: ["listRaids"],
     queryFn: () =>
-      fetchAllRaids({
+      fetchRaids({
         fields: ["identifier", "title", "date"],
         token: token!,
       }),
     enabled: isInitialized && authenticated,
   });
 
+  const appWritesEnabled = true;
+
   if (raidQuery.isPending) {
     return <Loading />;
   }
 
   if (raidQuery.isError) {
-    return (
-      <ErrorAlertComponent
-        error="RAiDs could not be fetched. Try to reload the page to reauthenticate."
-        showButtons={true}
-      />
-    );
+    return <Typography variant="h6">No data.</Typography>;
   }
 
   const columns: GridColDef[] = [
@@ -69,6 +65,14 @@ export const RaidTable = ({ title }: { title?: string }) => {
 
   return (
     <>
+      {!appWritesEnabled ? (
+        <Alert severity="warning">
+          Editing is disabled for this service point.
+        </Alert>
+      ) : (
+        <></>
+      )}
+
       <Card>
         {title && <CardHeader title={title} />}
         <CardContent>

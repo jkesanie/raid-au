@@ -1,1 +1,1 @@
-export { ServicePointUsersList } from "./ServicePointUsersList";
+export { ServicePointUsers } from "./ServicePointUsers";

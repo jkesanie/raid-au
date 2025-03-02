@@ -22,7 +22,7 @@ export const ServicePoints = () => {
   ];
 
   return (
-    <Container sx={{ pb: 2 }}>
+    <Container>
       <Stack direction="column" gap={2}>
         <BreadcrumbsBar breadcrumbs={breadcrumbs} />
         {isOperator && <ServicePointsOperatorView />}

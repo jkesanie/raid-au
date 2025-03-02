@@ -4,7 +4,6 @@ import { AboutRaid } from "@/pages/about-raid";
 import { ApiKey } from "@/pages/api-key";
 import { CacheManager } from "@/pages/cache-manager";
 import { Home } from "@/pages/home";
-import { InviteRedirect } from "@/pages/invite-redirect";
 import { Invites } from "@/pages/invites";
 import { Login } from "@/pages/login";
 import { Privacy } from "@/pages/privacy";
@@ -86,16 +85,6 @@ export const otherRoutes: RouteObject[] = [
       {
         path: "",
         element: <CacheManager />,
-      },
-    ],
-  },
-  {
-    path: "/invite",
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "",
-        element: <InviteRedirect />,
       },
     ],
   },

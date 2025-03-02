@@ -1,9 +1,7 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
-import { ErrorAlertComponent } from "@/components/error-alert-component";
 import type { RelatedRaid } from "@/generated/raid";
 import { useMapping } from "@/mapping";
-import { Loading } from "@/pages/loading";
 import { fetchRelatedRaidTitle } from "@/services/related-raid";
 import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { Divider, Grid, Stack, Typography } from "@mui/material";
@@ -35,13 +33,25 @@ const RelatedRaidItem = memo(
       enabled: !!handle,
     });
 
+    if (raidQuery.isPending) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Loading...
+        </Typography>
+      );
+    }
+
+    if (raidQuery.isError) {
+      return (
+        <Typography variant="body2" color="text.secondary">
+          Error loading related RAiD
+        </Typography>
+      );
+    }
+
     return (
       <>
-        {raidQuery.isPending
-          ? "Loading..."
-          : raidQuery.isError
-          ? "Related RAiD"
-          : raidQuery.data}
+        {raidQuery.data}
 
         <Grid container spacing={2}>
           <DisplayItem

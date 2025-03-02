@@ -107,6 +107,17 @@ public class RaidRepository {
                 .fetch();
     }
 
+
+    public List<RaidRecord> findAll() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .join(RAID_HISTORY).on(RAID_HISTORY.HANDLE.eq(RAID.HANDLE))
+                .and(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
+                )
+                .fetchInto(RaidRecord.class);
+    }
+
     public List<RaidRecord> findAllByContributorOrcid(final String orcid) {
         return dslContext.select()
                 .from(RAID)
@@ -133,6 +144,15 @@ public class RaidRepository {
                         ORGANISATION.PID.eq(ror)
                 )
                 .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
+                .fetchInto(RaidRecord.class);
+    }
+
+    public List<RaidRecord> findAllV2() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .where(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
+                )
                 .fetchInto(RaidRecord.class);
     }
 

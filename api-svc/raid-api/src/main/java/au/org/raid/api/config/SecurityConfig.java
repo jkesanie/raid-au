@@ -52,6 +52,7 @@ public class SecurityConfig {
     private static final String GROUPS = "groups";
     private static final String REALM_ACCESS_CLAIM = "realm_access";
     private static final String ROLES_CLAIM = "roles";
+    private static final String RAID_UPGRADER_ROLE = "raid-upgrader";
     private static final String RAID_API = "/raid";
     private static final String SERVICE_POINT_API = "/service-point";
     private static final String ADMIN_RAIDS_CLAIM = "admin_raids";
@@ -71,13 +72,8 @@ public class SecurityConfig {
                                 .requestMatchers("/docs/**").permitAll()
                                 .requestMatchers("/actuator/**").permitAll()
                                 .requestMatchers("/error").permitAll()
-//                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/", "GET"))
-//                        //TODO: Any service point user but embargoed raids should only be visible to service point
-//                        // owners or raid users/admins with permissions for the raid
-//                        .access(AuthorizationManagers.anyOf(
-//                                hasAnyRole(SERVICE_POINT_USER_ROLE, RAID_ADMIN_ROLE)
-//                        ))
-                                //TODO: Available to any user on same service point unless embargoed then on service-point-owner
+                                .requestMatchers(new AntPathRequestMatcher("/upgradable/all", "GET")).hasRole(RAID_UPGRADER_ROLE)
+                                .requestMatchers(new AntPathRequestMatcher("/upgrade", "POST")).hasRole(RAID_UPGRADER_ROLE)
                                 .requestMatchers(new AntPathRequestMatcher(RAID_API + "/all-public", "GET"))
                                 .hasRole(RAID_DUMPER_ROLE)
                                 .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "GET"))
@@ -104,8 +100,6 @@ public class SecurityConfig {
                                 ))
                                 .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "POST"))
                                 .hasAnyRole(RAID_ADMIN_ROLE)
-//                        .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**"))
-//                        .hasRole(SERVICE_POINT_USER_ROLE)
                                 .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "PUT"))
                                 .hasRole(OPERATOR_ROLE)
                                 .requestMatchers(new AntPathRequestMatcher(SERVICE_POINT_API + "/**", "POST"))

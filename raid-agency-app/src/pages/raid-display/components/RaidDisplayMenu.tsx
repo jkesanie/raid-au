@@ -12,11 +12,9 @@ import { Link } from "react-router-dom";
 export const RaidDisplayMenu = ({
   prefix,
   suffix,
-  title,
 }: {
   prefix: string;
   suffix: string;
-  title: string;
 }) => {
   const { apiVersion } = packageJson;
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
@@ -58,7 +56,6 @@ export const RaidDisplayMenu = ({
           <>
             <InviteButton setOpen={setIsInviteDialogOpen} />
             <InviteDialog
-              title={title}
               open={isInviteDialogOpen}
               setOpen={setIsInviteDialogOpen}
             />

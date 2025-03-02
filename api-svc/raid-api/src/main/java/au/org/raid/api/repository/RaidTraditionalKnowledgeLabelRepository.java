@@ -20,6 +20,7 @@ public class RaidTraditionalKnowledgeLabelRepository {
                 .set(RAID_TRADITIONAL_KNOWLEDGE_LABEL.HANDLE, record.getHandle())
                 .set(RAID_TRADITIONAL_KNOWLEDGE_LABEL.TRADITIONAL_KNOWLEDGE_LABEL_ID, record.getTraditionalKnowledgeLabelId())
                 .set(RAID_TRADITIONAL_KNOWLEDGE_LABEL.TRADITIONAL_KNOWLEDGE_LABEL_SCHEMA_ID, record.getTraditionalKnowledgeLabelSchemaId())
+                .onConflictDoNothing()
                 .returning()
                 .fetchOne();
     }
