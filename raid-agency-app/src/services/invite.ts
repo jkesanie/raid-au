@@ -4,10 +4,12 @@ const subDomain = "api2";
 
 export async function sendInvite({
   email,
+  orcid,
   handle,
   token,
 }: {
   email: string;
+  orcid: string;
   handle: string;
   token: string;
 }) {
@@ -20,7 +22,8 @@ export async function sendInvite({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        inviteeEmail: email,
+        inviteeEmail: email || "",
+        orcid: orcid || "",
         handle,
       }),
     }

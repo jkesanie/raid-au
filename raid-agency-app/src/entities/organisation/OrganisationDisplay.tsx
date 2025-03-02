@@ -65,7 +65,10 @@ const OrganisationItem = memo(
           </Stack>
           <Stack gap={2} divider={<Divider />}>
             {organisation.role.map((role, i) => (
-              <OrganisationRoleItem key={organisation.id || i} item={role} />
+              <OrganisationRoleItem
+                key={`${organisation.id}-${role.id}-${i}` || i}
+                item={role}
+              />
             ))}
           </Stack>
         </Stack>
