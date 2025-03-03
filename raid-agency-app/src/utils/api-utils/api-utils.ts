@@ -29,8 +29,7 @@ export function getEnv() {
     ? "prod"
     : hostname.includes("stage")
     ? "stage"
-    : // : "dev";
-      "test";
+    : "dev";
 
   return environment;
 }

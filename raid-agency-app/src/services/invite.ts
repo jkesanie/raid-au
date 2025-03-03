@@ -1,6 +1,6 @@
 import { getEnv } from "@/utils/api-utils/api-utils";
 const environment = getEnv();
-const subDomain = "api2";
+const subDomain = "orcid";
 
 export async function sendInvite({
   email,
