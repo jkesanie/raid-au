@@ -1,8 +1,9 @@
+import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { fetchInvites } from "@/services/invite";
 import {
   Circle as CircleIcon,
-  RunningWithErrors as RunningWithErrorsIcon
+  RunningWithErrors as RunningWithErrorsIcon,
 } from "@mui/icons-material";
 import {
   Card,
@@ -19,6 +20,7 @@ import {
 
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Loading } from "../loading";
 
 interface Invite {
   invites: {
@@ -39,11 +41,11 @@ export const Invites = () => {
   });
 
   if (invitesQuery.isPending) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (invitesQuery.isError) {
-    return <div>Error...</div>;
+    return <ErrorAlertComponent error="Invites could not be fetched" />;
   }
 
   const { invites } = invitesQuery.data;

@@ -9,7 +9,7 @@ import {
   RaidDisplayMenu,
   RawDataDisplay,
 } from "@/pages/raid-display/components";
-import { fetchRaid } from "@/services/raid";
+import { fetchOneRaid } from "@/services/raid";
 import { displayItems } from "@/utils/data-utils/data-utils";
 import {
   DocumentScanner as DocumentScannerIcon,
@@ -31,7 +31,7 @@ export const RaidDisplay = () => {
   const readQuery = useQuery<RaidDto>({
     queryKey: ["raids", prefix, suffix],
     queryFn: () =>
-      fetchRaid({
+      fetchOneRaid({
         handle,
         token: token!,
       }),
@@ -47,7 +47,7 @@ export const RaidDisplay = () => {
   }
 
   if (readQuery.isError) {
-    return <ErrorAlertComponent error={readQuery.error} />;
+    return <ErrorAlertComponent error="RAiD could not be fetched" />;
   }
 
   const raidData = readQuery.data;
@@ -72,7 +72,11 @@ export const RaidDisplay = () => {
 
   return (
     <>
-      <RaidDisplayMenu prefix={prefix} suffix={suffix} />
+      <RaidDisplayMenu
+        prefix={prefix}
+        suffix={suffix}
+        title={raidData?.title?.map((el) => el.text).join("; ") || ""}
+      />
       <Container>
         <Stack direction="column" spacing={2}>
           <BreadcrumbsBar breadcrumbs={breadcrumbs} />

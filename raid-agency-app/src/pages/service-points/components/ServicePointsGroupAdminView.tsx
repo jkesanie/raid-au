@@ -39,7 +39,7 @@ export const ServicePointsGroupAdminView = () => {
   }
 
   if (fetchServicePointByIdQuery.isError) {
-    return <ErrorAlertComponent error={"An error has occurred"} />;
+    return <ErrorAlertComponent error="Service point could not be fetched" />;
   }
 
   return (
