@@ -642,7 +642,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.CONTINUES.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -660,7 +660,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.IS_CONTINUED_BY.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
     @Test
     @DisplayName("Create from related raid with 'IsPartOf' type")
@@ -677,7 +677,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.IS_PART_OF.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -695,7 +695,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.HAS_PART.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -713,7 +713,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.IS_DERIVED_FROM.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -731,7 +731,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.IS_SOURCE_OF.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -749,7 +749,7 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.OBSOLETES.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 
     @Test
@@ -767,6 +767,6 @@ public class DataciteRelatedIdentifierFactoryTest {
         assertThat(result.getRelatedIdentifier(), is(id));
         assertThat(result.getRelatedIdentifierType(), is(RelatedIdentifierType.DOI.getName()));
         assertThat(result.getRelationType(), is(RelationType.IS_OBSOLETED_BY.getName()));
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 }
