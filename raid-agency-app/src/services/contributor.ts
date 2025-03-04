@@ -17,7 +17,7 @@ export async function fetchOrcidContributors({ handle }: { handle: string }) {
     });
 
     // If response is not ok and it's a 404, try the alternative subdomain
-    if (!primaryResponse.ok && primaryResponse.status === 404) {
+    if (!primaryResponse.ok) {
       const alternativeUrl = `https://${subDomainAlt}.${environment}.raid.org.au`;
       const alternativeResponse = await fetch(
         `${alternativeUrl}/contributors`,
