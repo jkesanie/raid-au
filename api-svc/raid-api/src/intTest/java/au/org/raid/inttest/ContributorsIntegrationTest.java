@@ -96,12 +96,11 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("Minting a RAiD with missing schemaUri fails")
         void missingIdentifierSchemeUri() {
             createRequest.setContributor(List.of(
                     new Contributor()
-                            .email(CONTRIBUTOR_EMAIL)
+                            .id("https://orcid.org/0000-0000-0000-0001")
                             .contact(true)
                             .leader(true)
                             .position(List.of(
@@ -135,7 +134,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("Minting a RAiD with empty schemaUri fails")
         void emptyIdentifierSchemeUri() {
             createRequest.setContributor(List.of(
@@ -175,7 +173,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("Minting a RAiD with missing contributor id fails")
         void missingId() {
             createRequest.setContributor(List.of(
@@ -204,9 +201,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(failures).hasSize(1);
                 assertThat(failures).contains(
                         new ValidationFailure()
-                                .fieldId("contributor[0].id")
+                                .fieldId("contributor[0]")
                                 .errorType("notSet")
-                                .message("field must be set")
+                                .message("email, uuid or id is required")
                 );
             } catch (Exception e) {
                 failOnError(e);
@@ -214,7 +211,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("Minting a RAiD with empty contributor id fails")
         void emptyId() {
             createRequest.setContributor(List.of(
@@ -244,9 +240,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(failures).hasSize(1);
                 assertThat(failures).contains(
                         new ValidationFailure()
-                                .fieldId("contributor[0].id")
+                                .fieldId("contributor[0]")
                                 .errorType("notSet")
-                                .message("field must be set")
+                                .message("email, uuid or id is required")
                 );
             } catch (Exception e) {
                 failOnError(e);
@@ -395,7 +391,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Nested
-        @Disabled
         @DisplayName("Orcid tests...")
         class OrcidTests {
             @Test

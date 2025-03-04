@@ -96,8 +96,7 @@ public class ContributorService {
         contributors.forEach(contributor -> {
             var updateContributorRecord = false;
             if (!isBlank(contributor.getId())) {
-                final var orcid = contributor.getId().substring(contributor.getId().lastIndexOf('/') + 1);
-                final var optional = contributorRepository.findByPid(orcid);
+                final var optional = contributorRepository.findByPid(contributor.getId());
                 if (optional.isPresent()) {
                     final var contributorRecord = optional.get();
                     if (contributorRecord.getStatus() == null) {

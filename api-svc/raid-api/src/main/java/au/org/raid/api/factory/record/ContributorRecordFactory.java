@@ -9,16 +9,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Component
 public class ContributorRecordFactory {
     public ContributorRecord create(final Contributor contributor, final int schemaId) {
-        var pid = contributor.getId();
-
-        if (!isBlank(pid)) {
-            pid = pid.replace("https://orcid.org/", "");
-        }
-
         return new ContributorRecord()
                 .setUuid(contributor.getUuid())
                 .setStatus(contributor.getStatus())
-                .setPid(pid)
+                .setPid(contributor.getId())
                 .setSchemaId(schemaId);
     }
 }
