@@ -5,17 +5,16 @@ import { TextInputField } from "@/fields/TextInputField";
 import { Contributor } from "@/generated/raid";
 import { Grid } from "@mui/material";
 
+interface ContributorWithStatus extends Contributor {
+  status?: string;
+}
+
 const ContributorForm = ({
   index,
   data,
 }: {
   index: number;
-  data:
-    | (Contributor &
-        {
-          status?: string;
-        }[])
-    | Contributor[];
+  data: ContributorWithStatus[];
 }) => {
   return (
     <Grid container spacing={2}>
@@ -32,9 +31,9 @@ const ContributorForm = ({
         <>
           {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
             <TextInputField
-              name={`contributor.${index}.email`}
-              label="Email"
-              placeholder="Email"
+              name={`contributor.${index}.id`}
+              label="ORCID ID"
+              placeholder="ORCID ID"
               width={12}
             />
           )}
