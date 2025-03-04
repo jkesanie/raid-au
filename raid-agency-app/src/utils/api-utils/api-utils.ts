@@ -21,7 +21,7 @@ export function getApiEndpoint() {
 export function getEnv() {
   const hostname = window.location.hostname;
 
-  const environment = hostname.includes("test")
+  let environment = hostname.includes("test")
     ? "test"
     : hostname.includes("demo")
     ? "demo"
@@ -29,7 +29,8 @@ export function getEnv() {
     ? "prod"
     : hostname.includes("stage")
     ? "stage"
-    : "dev";
+    : // : "dev";
+      "test";
 
   return environment;
 }
