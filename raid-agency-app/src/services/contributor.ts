@@ -3,8 +3,7 @@ import { getEnv } from "@/utils/api-utils/api-utils";
 export async function fetchOrcidContributors({ handle }: { handle: string }) {
   let environment = getEnv();
   environment = environment === "dev" ? "test" : environment;
-  // const subDomain = "orcid";
-  const subDomain = "api2";
+  const subDomain = "orcid";
   try {
     const url = `https://${subDomain}.${environment}.raid.org.au`;
     const response = await fetch(`${url}/contributors`, {

@@ -33,7 +33,7 @@ const ContributorForm = ({
             <TextInputField
               name={`contributor.${index}.id`}
               label="ORCID ID"
-              placeholder="ORCID ID"
+              placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
               width={12}
             />
           )}

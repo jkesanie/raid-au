@@ -71,16 +71,14 @@ function OrcidButton({
       }
       sx={{ textTransform: "none" }}
     >
-      {(isAuthenticated && orcidData.name) || extractOrcidId(contributor.id)}
+      {isAuthenticated && orcidData.name && `+++ ${contributor.id} +++`}
 
-      {isUnAuthenticated &&
-        `${extractOrcidId(contributor.id)}  (unauthenticated) `}
+      {isUnAuthenticated && `${contributor.id}  (unauthenticated) `}
 
       {isAwaitingAuthentication &&
-        `${extractOrcidId(contributor.id)} (awaiting authentication)`}
+        `${contributor.id} (awaiting authentication)`}
 
-      {isAuthenticationFailed &&
-        `${extractOrcidId(contributor.id)} (authentication failed)`}
+      {isAuthenticationFailed && `${contributor.id} (authentication failed)`}
     </Button>
   );
 }
