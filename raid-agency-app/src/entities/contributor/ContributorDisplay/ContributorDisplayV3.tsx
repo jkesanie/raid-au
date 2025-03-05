@@ -4,6 +4,7 @@ import ContributorPositionItem from "@/entities/contributor/position/Contributor
 import ContributorRoleItem from "@/entities/contributor/role/ContributorRoleItem";
 import { Contributor } from "@/generated/raid";
 import { fetchOrcidContributors } from "@/services/contributor";
+import { extractOrcidId } from "@/utils/string-utils/string-utils";
 import {
   Button,
   Divider,
@@ -16,23 +17,45 @@ import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
 import { useParams } from "react-router-dom";
 
+interface ContributorWithStatus extends Contributor {
+  status: string;
+}
+
 function OrcidButton({
   contributor,
   orcidData,
 }: {
-  contributor: Contributor;
+  contributor: ContributorWithStatus;
   orcidData: any;
 }) {
+  const orcidUrl = "https://sandbox.orcid.org";
+  // set status based on lambda data
+  // const isAuthenticated =
+  //   orcidData &&
+  //   orcidData.hasOwnProperty("status") &&
+  //   orcidData.status === "AUTHENTICATED";
+
   const isAuthenticated =
-    orcidData &&
-    orcidData.hasOwnProperty("status") &&
-    orcidData.status === "AUTHENTICATED";
+    contributor.hasOwnProperty("status") &&
+    contributor.status === "AUTHENTICATED";
+
+  const isUnAuthenticated =
+    contributor.hasOwnProperty("status") &&
+    contributor.status === "UNAUTHENTICATED";
+
+  const isAwaitingAuthentication =
+    contributor.hasOwnProperty("status") &&
+    contributor.status === "AWAITING_AUTHENTICATION";
+
+  const isAuthenticationFailed =
+    contributor.hasOwnProperty("status") &&
+    contributor.status === "AUTHENTICATION_FAILED";
 
   return (
     <Button
       variant="contained"
       color="inherit"
-      href={contributor.id ? `https://sandbox.orcid.org/${contributor.id}` : ""}
+      href={contributor.id ? `${contributor.id}` : ""}
       target="_blank"
       startIcon={
         <img
@@ -48,11 +71,14 @@ function OrcidButton({
       }
       sx={{ textTransform: "none" }}
     >
-      {isAuthenticated
-        ? orcidData.name
-        : `${
-            orcidData?.email ? orcidData?.email : ""
-          } (awaiting authentication)`}
+      {isAuthenticated && orcidData.name && `+++ ${contributor.id} +++`}
+
+      {isUnAuthenticated && `${contributor.id}  (unauthenticated) `}
+
+      {isAwaitingAuthentication &&
+        `${contributor.id} (awaiting authentication)`}
+
+      {isAuthenticationFailed && `${contributor.id} (authentication failed)`}
     </Button>
   );
 }
@@ -69,7 +95,7 @@ const ContributorItem = memo(
     orcidData,
     i,
   }: {
-    contributor: Contributor;
+    contributor: ContributorWithStatus;
     orcidData?: any;
     i: number;
   }) => {
@@ -82,13 +108,8 @@ const ContributorItem = memo(
         </Stack>
 
         <Grid container spacing={2}>
-          {orcidData && orcidData.orcid && (
-            <DisplayItem
-              label="ORCID"
-              value={orcidData ? orcidData.orcid : <Skeleton width={150} />}
-              width={6}
-            />
-          )}
+          <DisplayItem label="ORCID" value={contributor.id} width={6} />
+
           <DisplayItem
             label="Leader"
             value={contributor.leader ? "Yes" : "No"}
@@ -153,56 +174,58 @@ const ContributorItem = memo(
   }
 );
 
-const ContributorDisplay = memo(({ data }: { data: Contributor[] }) => {
-  const { prefix, suffix } = useParams<{ prefix: string; suffix: string }>();
-  const orcidDataQuery = useQuery({
-    queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
-    queryKey: ["orcid-contributors"],
-  });
+const ContributorDisplay = memo(
+  ({ data }: { data: ContributorWithStatus[] }) => {
+    const { prefix, suffix } = useParams<{ prefix: string; suffix: string }>();
+    const orcidDataQuery = useQuery({
+      queryFn: () => fetchOrcidContributors({ handle: `${prefix}/${suffix}` }),
+      queryKey: ["orcid-contributors"],
+    });
 
-  if (orcidDataQuery.isPending) {
-    return <Skeleton variant="rectangular" height={200} />;
-  }
+    if (orcidDataQuery.isPending) {
+      return <Skeleton variant="rectangular" height={200} />;
+    }
 
-  if (orcidDataQuery.isError) {
+    if (orcidDataQuery.isError) {
+      return (
+        <Typography variant="body1" color="error" textAlign="center">
+          Error loading contributor details
+        </Typography>
+      );
+    }
+
+    const orcidData = orcidDataQuery.data;
+
+    const fetchCurrentOrcidData = ({
+      contributor,
+    }: {
+      contributor: ContributorWithStatus;
+    }) => {
+      return "uuid" in contributor
+        ? orcidData?.find((orcid: any) => orcid?.uuid === contributor.uuid)
+        : null;
+    };
+
     return (
-      <Typography variant="body1" color="error" textAlign="center">
-        Error loading contributor details
-      </Typography>
+      <DisplayCard data={data} labelPlural="Contributors">
+        {data.length === 0 ? (
+          <NoItemsMessage />
+        ) : (
+          <Stack gap={2} divider={<Divider />}>
+            {data?.map((contributor, i) => (
+              <ContributorItem
+                contributor={contributor}
+                orcidData={fetchCurrentOrcidData({ contributor })}
+                key={contributor.id || i}
+                i={i}
+              />
+            ))}
+          </Stack>
+        )}
+      </DisplayCard>
     );
   }
-
-  const orcidData = orcidDataQuery.data;
-
-  const fetchCurrentOrcidData = ({
-    contributor,
-  }: {
-    contributor: Contributor;
-  }) => {
-    return "uuid" in contributor
-      ? orcidData?.find((orcid: any) => orcid?.uuid === contributor.uuid)
-      : null;
-  };
-
-  return (
-    <DisplayCard data={data} labelPlural="Contributors">
-      {data.length === 0 ? (
-        <NoItemsMessage />
-      ) : (
-        <Stack gap={2} divider={<Divider />}>
-          {data?.map((contributor, i) => (
-            <ContributorItem
-              contributor={contributor}
-              orcidData={fetchCurrentOrcidData({ contributor })}
-              key={contributor.id || i}
-              i={i}
-            />
-          ))}
-        </Stack>
-      )}
-    </DisplayCard>
-  );
-});
+);
 
 NoItemsMessage.displayName = "NoItemsMessage";
 ContributorItem.displayName = "ContributorItem";
