@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 import java.util.Optional;
 
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class OrcidIntegrationClient {
         final var httpEntity = httpEntityFactory.create(Map.of("email", email));
 
         try {
-            final var response = restTemplate.exchange(properties.getContributorLookup().getUri(), HttpMethod.POST, httpEntity, ContributorLookupResponse.class);
+            final var response = restTemplate.exchange(properties.getContributorEmailLookup().getUri(), HttpMethod.POST, httpEntity, ContributorLookupResponse.class);
             log.debug("Response from Raid Listener: {} {}", response.getStatusCode(), response.getBody());
             return Optional.ofNullable(response.getBody());
         } catch (HttpClientErrorException e) {
@@ -45,6 +44,21 @@ public class OrcidIntegrationClient {
         }
 
         return Optional.empty();
+    }
 
+    public Optional<ContributorLookupResponse> findById(final String id) {
+        final var httpEntity = httpEntityFactory.create(Map.of("id", id));
+
+        try {
+            final var response = restTemplate.exchange(properties.getContributorIdLookup().getUri(), HttpMethod.POST, httpEntity, ContributorLookupResponse.class);
+            log.debug("Response from Raid Listener: {} {}", response.getStatusCode(), response.getBody());
+            return Optional.ofNullable(response.getBody());
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() != HttpStatusCode.valueOf(404)) {
+                throw e;
+            }
+        }
+
+        return Optional.empty();
     }
 }

@@ -22,7 +22,37 @@ public class RaidListenerService {
     public void createOrUpdate(final String handle, final List<Contributor> contributors) {
 
         for (final var contributor : contributors) {
-            if (!isBlank(contributor.getEmail())) {
+
+            if (!isBlank(contributor.getId())) {
+                log.debug("Looking up contributor by id {}", contributor.getId());
+
+                final var response = orcidIntegrationClient.findById(contributor.getId());
+
+                if (response.isPresent()) {
+
+                    final var lookupResponse = response.get();
+
+                    log.debug("Received look up response: {uuid: {}, status: {}", lookupResponse.getUuid(), lookupResponse.getOrcidStatus());
+
+                    if (lookupResponse.getOrcidStatus().equalsIgnoreCase("AUTHENTICATED")) {
+                        contributor.uuid(lookupResponse.getUuid())
+                                .status(lookupResponse.getOrcidStatus());
+                    } else {
+                        contributor.uuid(lookupResponse.getUuid())
+                                .status(lookupResponse.getOrcidStatus());
+                    }
+                } else {
+                    contributor.uuid(UUID.randomUUID().toString())
+                            .status(ContributorStatus.AWAITING_AUTHENTICATION.name());
+                }
+
+                final var message = raidListenerMessageFactory.create(
+                        handle,
+                        contributor
+                );
+                orcidIntegrationClient.post(message);
+            }
+            else if (!isBlank(contributor.getEmail())) {
                 log.debug("Looking up contributor by email {}", contributor.getEmail());
 
                 final var response = orcidIntegrationClient.findByEmail(contributor.getEmail());

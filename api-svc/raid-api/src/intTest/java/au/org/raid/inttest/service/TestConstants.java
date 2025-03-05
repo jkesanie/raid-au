@@ -1,7 +1,7 @@
 package au.org.raid.inttest.service;
 
 public class TestConstants {
-    public static final String REAL_TEST_ORCID = "https://orcid.org/0009-0006-4129-5257";
+    public static final String REAL_TEST_ORCID = "https://orcid.org/0009-0000-9306-3120";
     public static final String REAL_TEST_ROR = "https://ror.org/038sjwq14";
 
     public static final String INPUT_RELATED_OBJECT_CATEGORY =
