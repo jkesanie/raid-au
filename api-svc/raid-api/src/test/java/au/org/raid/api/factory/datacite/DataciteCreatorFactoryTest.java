@@ -22,7 +22,6 @@ public class DataciteCreatorFactoryTest {
 
         final var result = dataciteCreatorFactory.create(contributor);
 
-        assertThat(result.getName(), is(id));
         assertThat(result.getNameType(), is("Personal"));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ORCID"));
@@ -39,7 +38,6 @@ public class DataciteCreatorFactoryTest {
 
         final var result = dataciteCreatorFactory.create(contributor);
 
-        assertThat(result.getName(), is(id));
         assertThat(result.getNameType(), is("Personal"));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ISNI"));

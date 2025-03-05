@@ -17,7 +17,6 @@ public class DataciteCreatorFactory {
     );
     public DataciteCreator create(final Contributor contributor) {
         return new DataciteCreator()
-                .setName(contributor.getId())
                 .setNameType("Personal")
                 .setNameIdentifiers(List.of(
                         new NameIdentifier()
