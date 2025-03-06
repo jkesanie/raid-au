@@ -1,6 +1,7 @@
 import {
   ContactSupport as ContactSupportIcon,
   Home as HomeIcon,
+  Refresh as RefreshIcon,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -35,8 +36,12 @@ export const ErrorAlertComponent = memo(
           <CardHeader title="Error" subheader="An error occured" />
           <CardContent>
             <Alert severity="error">
-              {(error && JSON.stringify(error, null, 2)) ||
+              {(error &&
+                error instanceof Object &&
+                JSON.stringify(error, null, 2)) ||
                 "Something went wrong."}
+
+              {error && typeof error === "string" && error}
             </Alert>
           </CardContent>
           {showButtons && (
@@ -49,6 +54,15 @@ export const ErrorAlertComponent = memo(
                 startIcon={<HomeIcon />}
               >
                 Back to home
+              </Button>
+              <Button
+                color="error"
+                size="small"
+                variant="outlined"
+                onClick={() => window.location.reload()}
+                startIcon={<RefreshIcon />}
+              >
+                Try again
               </Button>
               <Button
                 color="error"

@@ -1,14 +1,21 @@
 import { getEnv } from "@/utils/api-utils/api-utils";
 
-let environment = getEnv();
-environment = environment === "dev" ? "demo" : environment;
-const subDomain = "api2"
-const BASE_URL = `https://${subDomain}.${environment}.raid.org.au`;
 export async function fetchOrcidContributors({ handle }: { handle: string }) {
-  const response = await fetch(`${BASE_URL}/contributors`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ handle }),
-  });
-  return response.json();
+  let environment = getEnv();
+  environment = environment === "dev" ? "test" : environment;
+  const subDomain = "orcid";
+  try {
+    const url = `https://${subDomain}.${environment}.raid.org.au`;
+    const response = await fetch(`${url}/contributors`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ handle }),
+    });
+
+    return response.json();
+  } catch (error) {
+    // Handle any other errors
+    console.error("Error fetching contributors:", error);
+    throw error;
+  }
 }

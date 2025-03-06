@@ -6,6 +6,8 @@ import {
   useState,
 } from "react";
 import { keycloakInstance } from "../../keycloak";
+import { ErrorAlertComponent } from "@/components/error-alert-component";
+import { Loading } from "@/pages/loading";
 
 interface LoginOptions {
   idpHint?: string;
@@ -34,6 +36,7 @@ interface KeycloakContextType {
   tokenParsed?: Record<string, string>;
   refreshToken?: string;
   updateToken: (minValidity: number) => Promise<boolean>;
+  error: Error | null; // Added error to the context
 }
 
 const KeycloakContext = createContext<KeycloakContextType | undefined>(
@@ -44,6 +47,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<KeycloakUser | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const login = async (options?: LoginOptions) => {
     try {
@@ -69,6 +73,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
     tokenParsed: keycloakInstance.tokenParsed,
     refreshToken: keycloakInstance.refreshToken,
     updateToken: keycloakInstance.updateToken,
+    error, // Add error to the context value
   };
 
   useEffect(() => {
@@ -81,7 +86,6 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
         if (authenticated) {
           const userProfile = await keycloakInstance.loadUserProfile();
           const roles = keycloakInstance.realmAccess?.roles || [];
-
           setUser({
             id: keycloakInstance.subject,
             username: userProfile.username,
@@ -91,10 +95,11 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
             roles,
           });
         }
-
         setIsInitialized(true);
       } catch (error) {
         console.error("Keycloak init error:", error);
+        setError(error instanceof Error ? error : new Error(String(error)));
+        setIsInitialized(true); // Still set initialized to true so we render something
       } finally {
         setIsLoading(false);
       }
@@ -103,11 +108,27 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
     initKeycloak();
   }, []);
 
-  return isInitialized ? (
+  // Show error UI when authentication fails
+  if (error) {
+    return (
+      <ErrorAlertComponent
+        error="We couldn't connect to the authentication service."
+        showButtons={true}
+      />
+    );
+  }
+
+  // Show loading state when initializing
+  if (!isInitialized) {
+    return <Loading cardTitle="Initialising Authentication" />;
+  }
+
+  // Normal rendering when everything is okay
+  return (
     <KeycloakContext.Provider value={value}>
       {children}
     </KeycloakContext.Provider>
-  ) : null;
+  );
 }
 
 export const useKeycloak = () => {

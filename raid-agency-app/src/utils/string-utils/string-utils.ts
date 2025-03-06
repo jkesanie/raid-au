@@ -13,3 +13,10 @@ export function getLastTwoUrlSegments(url: string): string | null {
   }
   return parts.slice(-2).join("/");
 }
+
+export function extractOrcidId(url: string): string | null {
+  const regex =
+    /(?:https?:\/\/(?:sandbox\.)?orcid\.org\/)?(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
