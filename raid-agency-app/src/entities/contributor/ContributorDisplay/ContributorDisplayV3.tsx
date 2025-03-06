@@ -28,28 +28,30 @@ function OrcidButton({
   contributor: ContributorWithStatus;
   orcidData: any;
 }) {
-  const orcidUrl = "https://sandbox.orcid.org";
-  // set status based on lambda data
-  // const isAuthenticated =
-  //   orcidData &&
-  //   orcidData.hasOwnProperty("status") &&
-  //   orcidData.status === "AUTHENTICATED";
+  // Define status constants
+  const STATUS = {
+    AUTHENTICATED: "AUTHENTICATED",
+    UNAUTHENTICATED: "UNAUTHENTICATED",
+    AWAITING_AUTHENTICATION: "AWAITING_AUTHENTICATION",
+    AUTHENTICATION_FAILED: "AUTHENTICATION_FAILED",
+  };
 
-  const isAuthenticated =
-    contributor.hasOwnProperty("status") &&
-    contributor.status === "AUTHENTICATED";
+  // Get status directly
+  const status = contributor.status || "";
+  const isAuthenticated = status === STATUS.AUTHENTICATED;
 
-  const isUnAuthenticated =
-    contributor.hasOwnProperty("status") &&
-    contributor.status === "UNAUTHENTICATED";
+  // Create a mapping for status display texts
+  const statusDisplayText = {
+    [STATUS.UNAUTHENTICATED]: `${contributor.id} (unauthenticated)`,
+    [STATUS.AWAITING_AUTHENTICATION]: `${contributor.id} (awaiting authentication)`,
+    [STATUS.AUTHENTICATION_FAILED]: `${contributor.id} (authentication failed)`,
+  };
 
-  const isAwaitingAuthentication =
-    contributor.hasOwnProperty("status") &&
-    contributor.status === "AWAITING_AUTHENTICATION";
-
-  const isAuthenticationFailed =
-    contributor.hasOwnProperty("status") &&
-    contributor.status === "AUTHENTICATION_FAILED";
+  // Determine button label based on authentication status
+  const buttonLabel =
+    isAuthenticated && orcidData?.name
+      ? orcidData.name
+      : statusDisplayText[status] || "";
 
   return (
     <Button
@@ -71,18 +73,10 @@ function OrcidButton({
       }
       sx={{ textTransform: "none" }}
     >
-      {isAuthenticated && orcidData.name && `+++ ${contributor.id} +++`}
-
-      {isUnAuthenticated && `${contributor.id}  (unauthenticated) `}
-
-      {isAwaitingAuthentication &&
-        `${contributor.id} (awaiting authentication)`}
-
-      {isAuthenticationFailed && `${contributor.id} (authentication failed)`}
+      {buttonLabel}
     </Button>
   );
 }
-
 const NoItemsMessage = memo(() => (
   <Typography variant="body2" color="text.secondary" textAlign="center">
     No contributors defined
