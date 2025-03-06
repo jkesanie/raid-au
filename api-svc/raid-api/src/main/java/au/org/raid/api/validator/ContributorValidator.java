@@ -69,13 +69,14 @@ public class ContributorValidator {
                                             .errorType(NOT_SET_TYPE)
                                             .message(NOT_SET_MESSAGE)
                             );
-                        } else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
-                            failures.add(new ValidationFailure()
-                                    .fieldId("contributor[%d].schemaUri".formatted(index))
-                                    .errorType(INVALID_VALUE_TYPE)
-                                    .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
-                            );
                         }
+//                        else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
+//                            failures.add(new ValidationFailure()
+//                                    .fieldId("contributor[%d].schemaUri".formatted(index))
+//                                    .errorType(INVALID_VALUE_TYPE)
+//                                    .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
+//                            );
+//                        }
 
                         failures.addAll(orcidValidator.validate(contributor.getId(), index));
                     }
