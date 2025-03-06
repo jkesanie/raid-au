@@ -1,6 +1,6 @@
 The OpenAPI definition files are in the [`/src directory`](./src).
 
-The OpenAPI defintion is used to generate Java code for the 
+The OpenAPI definition is used to generate Java code for the 
 `/api-svc/raid-api` project.
 
 Swagger UI can be found at https://api.prod.raid.org.au/swagger-ui/index.html 
