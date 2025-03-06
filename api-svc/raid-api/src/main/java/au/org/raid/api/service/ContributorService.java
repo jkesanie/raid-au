@@ -92,36 +92,13 @@ public class ContributorService {
     }
 
     public void setStatusAndUuid(final List<Contributor> contributors) {
-
         contributors.forEach(contributor -> {
-            var updateContributorRecord = false;
             if (!isBlank(contributor.getId())) {
                 final var optional = contributorRepository.findByPid(contributor.getId());
                 if (optional.isPresent()) {
                     final var contributorRecord = optional.get();
-                    if (contributorRecord.getStatus() == null) {
-                        contributor.status(UNAUTHENTICATED_STATUS);
-                        contributorRecord.setStatus(UNAUTHENTICATED_STATUS);
-                        updateContributorRecord = true;
-                    } else {
-                        contributor.status(contributorRecord.getStatus());
-                    }
-
-                    if (contributorRecord.getUuid() == null){
-                        final var uuid = UUID.randomUUID().toString();
-                        contributor.uuid(uuid);
-                        contributorRecord.setUuid(uuid);
-                        updateContributorRecord = true;
-                    } else {
-                        contributor.uuid(contributorRecord.getUuid());
-                    }
-
-                    if (updateContributorRecord) {
-                        contributorRepository.update(contributorRecord);
-                    }
-                } else {
-                    contributor.uuid(UUID.randomUUID().toString());
-                    contributor.status(UNAUTHENTICATED_STATUS);
+                    contributor.status(contributorRecord.getStatus());
+                    contributor.uuid(contributorRecord.getUuid());
                 }
             }
         });
