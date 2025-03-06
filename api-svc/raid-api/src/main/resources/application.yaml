@@ -6,7 +6,7 @@ raid:
     contributor-email-lookup:
       uri: ${raid.orcid-integration.host}/find-contributor-by-email
     contributor-id-lookup:
-      uri: ${raid.orcid-integration.host}/find-contributor-by-id
+      uri: ${raid.orcid-integration.host}/find-contributor-by-orcid
   stub:
     geo-names:
       enabled: true

@@ -24,33 +24,29 @@ public class RaidListenerService {
         for (final var contributor : contributors) {
 
             if (!isBlank(contributor.getId())) {
-                log.debug("Looking up contributor by id {}", contributor.getId());
+                if (isBlank(contributor.getStatus()) || contributor.getStatus().equals("UNAUTHENTICATED")) {
+                    log.debug("Looking up contributor by id {}", contributor.getId());
 
-                final var response = orcidIntegrationClient.findById(contributor.getId());
+                    final var response = orcidIntegrationClient.findByOrcid(contributor.getId());
 
-                if (response.isPresent()) {
+                    if (response.isPresent()) {
 
-                    final var lookupResponse = response.get();
+                        final var lookupResponse = response.get();
 
-                    log.debug("Received look up response: {uuid: {}, status: {}", lookupResponse.getUuid(), lookupResponse.getOrcidStatus());
+                        log.debug("Received look up response: {uuid: {}, status: {}", lookupResponse.getUuid(), lookupResponse.getOrcidStatus());
 
-                    if (lookupResponse.getOrcidStatus().equalsIgnoreCase("AUTHENTICATED")) {
-                        contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getOrcidStatus());
+                        contributor.uuid(lookupResponse.getUuid()).status(lookupResponse.getOrcidStatus());
                     } else {
-                        contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getOrcidStatus());
+                        contributor.uuid(UUID.randomUUID().toString())
+                                .status(ContributorStatus.AWAITING_AUTHENTICATION.name());
                     }
-                } else {
-                    contributor.uuid(UUID.randomUUID().toString())
-                            .status(ContributorStatus.AWAITING_AUTHENTICATION.name());
-                }
 
-                final var message = raidListenerMessageFactory.create(
-                        handle,
-                        contributor
-                );
-                orcidIntegrationClient.post(message);
+                    final var message = raidListenerMessageFactory.create(
+                            handle,
+                            contributor
+                    );
+                    orcidIntegrationClient.post(message);
+                }
             }
             else if (!isBlank(contributor.getEmail())) {
                 log.debug("Looking up contributor by email {}", contributor.getEmail());

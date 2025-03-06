@@ -149,20 +149,10 @@
       }
     }
   },
-
-
-
-
-
-
-
-
-
-
   {
     "httpRequest": {
       "method": "POST",
-      "path": "/find-contributor-by-id",
+      "path": "/find-contributor-by-orcid",
       "body": {
         "type": "JSON",
         "json": {
@@ -196,7 +186,7 @@
   {
     "httpRequest": {
       "method": "POST",
-      "path": "/find-contributor-by-id",
+      "path": "/find-contributor-by-orcid",
       "body": {
         "type": "JSON",
         "json": {
@@ -222,7 +212,7 @@
   {
     "httpRequest": {
       "method": "POST",
-      "path": "/find-contributor-by-id",
+      "path": "/find-contributor-by-orcid",
       "body": {
         "type": "JSON",
         "json": {

@@ -46,8 +46,8 @@ public class OrcidIntegrationClient {
         return Optional.empty();
     }
 
-    public Optional<ContributorLookupResponse> findById(final String id) {
-        final var httpEntity = httpEntityFactory.create(Map.of("id", id));
+    public Optional<ContributorLookupResponse> findByOrcid(final String orcid) {
+        final var httpEntity = httpEntityFactory.create(Map.of("orcid", orcid));
 
         try {
             final var response = restTemplate.exchange(properties.getContributorIdLookup().getUri(), HttpMethod.POST, httpEntity, ContributorLookupResponse.class);

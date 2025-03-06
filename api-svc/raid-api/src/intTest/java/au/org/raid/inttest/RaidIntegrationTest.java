@@ -93,6 +93,7 @@ public class RaidIntegrationTest extends AbstractIntegrationTest {
 
         final var contributor = readResult.getContributor().get(0);
         contributor.setId(REAL_TEST_ORCID);
+        contributor.setStatus("AUTHENTICATED");
 
         final var patchRequest = new RaidPatchRequest().addContributorItem(contributor);
         try {
