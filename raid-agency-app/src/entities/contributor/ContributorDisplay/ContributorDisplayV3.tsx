@@ -4,7 +4,6 @@ import ContributorPositionItem from "@/entities/contributor/position/Contributor
 import ContributorRoleItem from "@/entities/contributor/role/ContributorRoleItem";
 import { Contributor } from "@/generated/raid";
 import { fetchOrcidContributors } from "@/services/contributor";
-import { extractOrcidId } from "@/utils/string-utils/string-utils";
 import {
   Button,
   Divider,
