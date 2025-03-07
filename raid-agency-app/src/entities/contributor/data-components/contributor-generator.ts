@@ -1,4 +1,3 @@
-import packageJson from "@/../package.json";
 import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
 import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
 import { Contributor } from "@/generated/raid";
@@ -20,17 +19,10 @@ const contributorGenerator = (): ContributorExtended => {
     role: [contributorRoleGenerator(), contributorRoleGenerator()],
   };
 
-  if (packageJson.apiVersion === "3") {
-    return {
-      ...baseData,
-      id: "",
-    } as unknown as ContributorExtended;
-  } else {
-    return {
-      ...baseData,
-      email: "",
-    } as unknown as ContributorExtended;
-  }
+  return {
+    ...baseData,
+    id: "",
+  } as unknown as ContributorExtended;
 };
 
 export default contributorGenerator;

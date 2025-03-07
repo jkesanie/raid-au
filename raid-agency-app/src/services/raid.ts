@@ -1,4 +1,3 @@
-import packageJson from "@/../package.json";
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
@@ -25,7 +24,6 @@ export const fetchRaids = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      // "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
@@ -43,7 +41,6 @@ export const fetchRaid = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      // "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
@@ -61,7 +58,6 @@ export const fetchRaidHistory = async ({
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      // "X-Raid-Api-Version": packageJson.apiVersion,
     },
   });
   return await response.json();
@@ -80,7 +76,6 @@ export const createRaid = async ({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        // "X-Raid-Api-Version": packageJson.apiVersion,
       },
       body: JSON.stringify(data),
     });
@@ -117,7 +112,6 @@ export const updateRaid = async ({
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        // "X-Raid-Api-Version": packageJson.apiVersion,
       },
       body: JSON.stringify(raidToBeUpdated),
     });
