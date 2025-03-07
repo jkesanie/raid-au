@@ -40,12 +40,6 @@ public class RaidListenerService {
                         contributor.uuid(UUID.randomUUID().toString())
                                 .status(ContributorStatus.AWAITING_AUTHENTICATION.name());
                     }
-
-                    final var message = raidListenerMessageFactory.create(
-                            handle,
-                            contributor
-                    );
-                    orcidIntegrationClient.post(message);
                 }
             }
             else if (!isBlank(contributor.getEmail())) {
@@ -72,15 +66,14 @@ public class RaidListenerService {
                             .status(ContributorStatus.AWAITING_AUTHENTICATION.name())
                             .id(null);
                 }
-
-                final var message = raidListenerMessageFactory.create(
-                        handle,
-                        contributor
-                );
-                orcidIntegrationClient.post(message);
-
-                contributor.email(null);
             }
+            final var message = raidListenerMessageFactory.create(
+                    handle,
+                    contributor
+            );
+            orcidIntegrationClient.post(message);
+
+            contributor.email(null);
         }
     }
 }
