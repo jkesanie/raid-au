@@ -47,18 +47,21 @@ AWS RDS maintenance window:
 
 # Running for local development
 
-* setup the postgres DB as described in [db/readme.md](./db/readme.md)
-* create the database schemas
-  * in the root directory of the git repo 
-  * run `./gradlew flywayMigrate`
-    * this command will create the schema for two schemata: 
-    `api_svc` and `raid_v1_import`
-    * the schema creation will also have created a user named `api_user`, using 
-    the password being set from the value you previously configured in 
-    `api-svc-db.gradle` as `apiSvcRolePassword`
-  * run `./gradlew flywayInfo` to see the results of the migration tasks
-* see [spring/readme.md](./spring/readme.md) for instructions on running the
-  actual server, including configuring the password for the `api_user`
+## Installation
+### Clone the repository
+```bash
+git clone  https://github.com/au-research/raid-au.git
+```
+### Build the API
+```bash
+cd raid-au
+./gradlew build
+```
+## Running the Application
+### Start the API
+```bash
+./gradlew dockerComposeUp bootRun
+```
 
 # Signing in to the app when doing local dev
 
