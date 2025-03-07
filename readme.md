@@ -16,11 +16,11 @@ To get started you'll need the following tools installed in your machine:
 ## Installation
 1. Clone the repository
 ```bash
-git clone  https://github.com/au-research/raido.git
+git clone  https://github.com/au-research/raid-au.git
 ```
 2. Build the API
 ```bash
-cd raido
+cd raid-au
 ./gradlew build
 ```
 3. Install dependencies for the app
