@@ -187,7 +187,48 @@ const ContributorDisplay = memo(
       );
     }
 
-    const orcidData = orcidDataQuery.data;
+    // const orcidData = orcidDataQuery.data;
+    const orcidData = [
+      {
+        email: "0009-0007-7956-4018",
+        handle: "10.82841/d4760cb4",
+        orcid: "0009-0007-7956-4018",
+        updatedAt: "2025-03-07T03:05:06.174Z",
+        uuid: "520d3b91-c2ec-493a-92f3-f085b160a113",
+      },
+      {
+        contact: true,
+        email: "undefined",
+        handle: "10.82841/d4760cb4",
+        leader: true,
+        name: "Jane Orphelia Doe-Winterbottom",
+        orcid: "0009-0007-7956-4018",
+        position: [
+          {
+            schemaUri:
+              "https://vocabulary.raid.org/contributor.position.schema/305",
+            id: "https://vocabulary.raid.org/contributor.position.schema/307",
+            endDate: "2026-03-07",
+            startDate: "2025-03-07",
+          },
+        ],
+        putCode: 74741,
+        role: [
+          {
+            schemaUri: "https://credit.niso.org/",
+            id: "https://credit.niso.org/contributor-roles/investigation/",
+          },
+          {
+            schemaUri: "https://credit.niso.org/",
+            id: "https://credit.niso.org/contributor-roles/methodology/",
+          },
+        ],
+        schemaUri: "https://orcid.org/",
+        status: "AUTHENTICATED",
+        updatedAt: "2025-03-07T03:05:37.523Z",
+        uuid: "520d3b91-c2ec-493a-92f3-f085b160a113",
+      },
+    ];
 
     const fetchCurrentOrcidData = ({
       contributor,
@@ -195,7 +236,9 @@ const ContributorDisplay = memo(
       contributor: ContributorWithStatus;
     }) => {
       return "uuid" in contributor
-        ? orcidData?.find((orcid: any) => orcid?.uuid === contributor.uuid)
+        ? orcidData?.find(
+            (orcid: any) => orcid?.uuid === contributor.uuid && "name" in orcid
+          )
         : null;
     };
 

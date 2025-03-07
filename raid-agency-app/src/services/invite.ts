@@ -1,9 +1,9 @@
 import { getEnv } from "@/utils/api-utils/api-utils";
 
 let currentEnv = getEnv();
-  if (currentEnv === "dev") {
-    currentEnv = "test";
-  }
+if (currentEnv === "dev") {
+  currentEnv = "test";
+}
 const subDomain = "invite";
 
 export async function sendInvite({
@@ -17,7 +17,6 @@ export async function sendInvite({
   handle: string;
   token: string;
 }) {
-  
   const response = await fetch(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite`,
     {
@@ -59,8 +58,6 @@ export async function acceptInvite({
   token: string;
   handle: string;
 }) {
-  console.log("code", code);
-  console.log("token", token);
   const response = await fetch(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite/accept`,
     {
