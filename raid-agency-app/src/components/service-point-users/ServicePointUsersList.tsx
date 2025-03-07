@@ -25,7 +25,6 @@ export const ServicePointUsersList = ({
 }: {
   servicePointWithMembers?: ServicePointWithMembers;
 }) => {
-  console.log("+++ servicePointWithMembers", servicePointWithMembers);
   const { token } = useKeycloak();
 
   const queryClient = useQueryClient();
