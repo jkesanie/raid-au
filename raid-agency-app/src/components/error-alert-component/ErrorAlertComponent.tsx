@@ -39,7 +39,7 @@ export const ErrorAlertComponent = memo(
               {(error &&
                 error instanceof Object &&
                 JSON.stringify(error, null, 2)) ||
-                "Something went wrong."}
+                "Something went wrong. "}
 
               {error && typeof error === "string" && error}
             </Alert>
