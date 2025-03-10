@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "raid.orcid-integration")
 public class OrcidIntegrationProperties {
+    private String orcidUrlPrefix;
     private RaidListener raidListener;
     private ContributorIdLookup contributorIdLookup;
     private ContributorEmailLookup contributorEmailLookup;

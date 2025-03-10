@@ -1,5 +1,6 @@
 raid:
   orcid-integration:
+    orcid-url-prefix: https://sandbox.orcid.org/
     host: http://localhost:1080
     raid-listener:
       uri: ${raid.orcid-integration.host}/raid-update

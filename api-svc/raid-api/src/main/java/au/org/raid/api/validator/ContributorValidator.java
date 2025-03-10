@@ -1,5 +1,6 @@
 package au.org.raid.api.validator;
 
+import au.org.raid.api.config.properties.OrcidIntegrationProperties;
 import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.DateUtil;
@@ -23,11 +24,15 @@ import static au.org.raid.api.util.StringUtil.isBlank;
 @Component
 @RequiredArgsConstructor
 public class ContributorValidator {
-    private static final String ORCID_ORG = "https://orcid.org/";
+//    private static final String ORCID_ORG = "https://orcid.org/";
+
+    private static final String ORCID_URL_PREFIX_PATTERN = "https:\\/\\/(sandbox\\.)?orcid.org\\/.*";
+
     private final ContributorPositionValidator positionValidationService;
     private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
     private final OrcidValidator orcidValidator;
+    private final OrcidIntegrationProperties orcidIntegrationProperties;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -70,13 +75,13 @@ public class ContributorValidator {
                                             .message(NOT_SET_MESSAGE)
                             );
                         }
-//                        else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
-//                            failures.add(new ValidationFailure()
-//                                    .fieldId("contributor[%d].schemaUri".formatted(index))
-//                                    .errorType(INVALID_VALUE_TYPE)
-//                                    .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
-//                            );
-//                        }
+                        else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
+                            failures.add(new ValidationFailure()
+                                    .fieldId("contributor[%d].schemaUri".formatted(index))
+                                    .errorType(INVALID_VALUE_TYPE)
+                                    .message(INVALID_VALUE_MESSAGE + " - should match " + ORCID_URL_PREFIX_PATTERN)
+                            );
+                        }
 
                         failures.addAll(orcidValidator.validate(contributor.getId(), index));
                     }
@@ -216,11 +221,11 @@ public class ContributorValidator {
                                         .errorType(NOT_SET_TYPE)
                                         .message(NOT_SET_MESSAGE)
                         );
-                    } else if (!contributor.getSchemaUri().equals(ORCID_ORG)) {
+                    } else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)
-                                .message(INVALID_VALUE_MESSAGE + " - should be " + ORCID_ORG)
+                                .message(INVALID_VALUE_MESSAGE + " - should match " + ORCID_URL_PREFIX_PATTERN)
                         );
                     }
 
