@@ -1,4 +1,3 @@
-import packageJson from "@/../package.json";
 import { Home as HomeIcon } from "@mui/icons-material";
 import {
   AppBar,
@@ -24,7 +23,6 @@ const AuthenticatedNavbarContent = () => {
         color="error"
         size="small"
         sx={{ mr: 2 }}
-        title={`Version: ${packageJson.apiVersion}`}
       />
       <NavigationDrawer />
     </Stack>

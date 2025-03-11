@@ -1,4 +1,3 @@
-import packageJson from "@/../package.json";
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
@@ -101,26 +100,20 @@ export const RaidEdit = () => {
 
   let contributors: (Contributor & { email?: string | undefined })[] = [];
 
-  if (packageJson.apiVersion === "3") {
-    for (const contributor of query.data?.contributor ?? []) {
-      const updatedContributor = {
-        ...contributor,
-        email: (contributor as { email?: string }).email || "",
-      };
-      contributors.push(updatedContributor);
-    }
+  for (const contributor of query.data?.contributor ?? []) {
+    const updatedContributor = {
+      ...contributor,
+      email: (contributor as { email?: string }).email || "",
+    };
+    contributors.push(updatedContributor);
   }
 
   let raidData: RaidDto | RaidCreateRequest;
 
-  if (packageJson.apiVersion === "3") {
-    raidData = {
-      ...query.data,
-      contributor: contributors,
-    };
-  } else {
-    raidData = query.data;
-  }
+  raidData = {
+    ...query.data,
+    contributor: contributors,
+  };
 
   return (
     <Container

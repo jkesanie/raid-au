@@ -1,4 +1,3 @@
-import packageJson from "@/../package.json";
 import { DisplayItem } from "@/components/display-item";
 import { CheckboxField } from "@/fields/CheckboxField";
 import { TextInputField } from "@/fields/TextInputField";
@@ -9,7 +8,7 @@ interface ContributorWithStatus extends Contributor {
   status?: string;
 }
 
-const ContributorForm = ({
+export const ContributorForm = ({
   index,
   data,
 }: {
@@ -18,33 +17,20 @@ const ContributorForm = ({
 }) => {
   return (
     <Grid container spacing={2}>
-      {packageJson.apiVersion === "2" && (
+      {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
         <TextInputField
           name={`contributor.${index}.id`}
-          label="ORCID URL"
-          placeholder="ORCID URL"
-          required={true}
+          label="ORCID ID"
+          placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
           width={12}
         />
       )}
-      {packageJson.apiVersion === "3" && (
-        <>
-          {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
-            <TextInputField
-              name={`contributor.${index}.id`}
-              label="ORCID ID"
-              placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
-              width={12}
-            />
-          )}
-          {data[index] && Object.hasOwn(data[index], "status") && (
-            <DisplayItem
-              label="Contributor Status"
-              value={"status" in data[index] ? data[index].status : ""}
-              width={12}
-            />
-          )}
-        </>
+      {data[index] && Object.hasOwn(data[index], "status") && (
+        <DisplayItem
+          label="Contributor Status"
+          value={"status" in data[index] ? data[index].status : ""}
+          width={12}
+        />
       )}
 
       <CheckboxField
@@ -62,4 +48,3 @@ const ContributorForm = ({
 };
 
 ContributorForm.displayName = "ContributorDetailsFormComponent";
-export default ContributorForm;

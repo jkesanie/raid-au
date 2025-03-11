@@ -112,7 +112,7 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
   if (error) {
     return (
       <ErrorAlertComponent
-        error="We couldn't connect to the authentication service."
+        error="We couldn't connect to the authentication service. Administrator: Is the `web-origins` client scope set?"
         showButtons={true}
       />
     );
