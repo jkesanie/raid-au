@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrcidData {
     private String orcid;
+    private String name;
 }

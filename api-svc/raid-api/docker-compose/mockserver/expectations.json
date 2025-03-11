@@ -156,7 +156,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "id": "https://orcid.org/0009-0000-9306-3120"
+          "orcid": "https://orcid.org/0009-0000-9306-3120"
         },
         "matchType": "STRICT"
       }
@@ -170,7 +170,8 @@
         "updatedAt": "2025-01-30T23:40:16.568Z",
         "orcidStatus": "AUTHENTICATED",
         "uuid": "59a67c6b-8685-4854-bae5-0514b076be74",
-        "SK": "METADATA", "PK": "CONTRIBUTOR#authenticated@test.raid.org.au",
+        "SK": "METADATA",
+        "PK": "CONTRIBUTOR#authenticated@test.raid.org.au",
         "orcid": {
           "access_token": "156f7934-40bb-4f7e-93ff-1fefa33275ca",
           "expires_in": "631138518",
@@ -190,7 +191,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "id": "https://orcid.org/0009-0006-4129-5257"
+          "orcid": "https://orcid.org/0009-0006-4129-5257"
         },
         "matchType": "STRING"
       }
@@ -216,7 +217,7 @@
       "body": {
         "type": "JSON",
         "json": {
-          "id": "https://orcid.org/0000-0002-6492-9025"
+          "orcid": "https://orcid.org/0000-0002-6492-9025"
         },
         "matchType": "STRICT"
       }

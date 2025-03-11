@@ -90,6 +90,7 @@ public class DataciteAttributesDtoFactory {
         }
 
         final var creators = request.getContributor().stream()
+                .filter(contributor -> contributor.getStatus() != null && contributor.getStatus().equals("AUTHENTICATED"))
                 .map(creatorFactory::create)
                 .toList();
 
@@ -214,6 +215,7 @@ public class DataciteAttributesDtoFactory {
         }
 
         final var creators = request.getContributor().stream()
+                .filter(contributor -> contributor.getStatus().equals("AUTHENTICATED"))
                 .map(creatorFactory::create)
                 .toList();
 
@@ -338,6 +340,7 @@ public class DataciteAttributesDtoFactory {
         }
 
         final var creators = request.getContributor().stream()
+                .filter(contributor -> contributor.getStatus().equals("AUTHENTICATED"))
                 .map(creatorFactory::create)
                 .toList();
 
