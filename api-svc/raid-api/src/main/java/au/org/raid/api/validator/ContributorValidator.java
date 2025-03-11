@@ -24,15 +24,11 @@ import static au.org.raid.api.util.StringUtil.isBlank;
 @Component
 @RequiredArgsConstructor
 public class ContributorValidator {
-//    private static final String ORCID_ORG = "https://orcid.org/";
-
-    private static final String ORCID_URL_PREFIX_PATTERN = "https:\\/\\/(sandbox\\.)?orcid.org\\/.*";
+    private static final String ORCID_URL_PREFIX_PATTERN = "^https:\\/\\/(sandbox\\.)?orcid.org\\/.*";
 
     private final ContributorPositionValidator positionValidationService;
     private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
-    private final OrcidValidator orcidValidator;
-    private final OrcidIntegrationProperties orcidIntegrationProperties;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -82,8 +78,6 @@ public class ContributorValidator {
                                     .message(INVALID_VALUE_MESSAGE + " - should match " + ORCID_URL_PREFIX_PATTERN)
                             );
                         }
-
-                        failures.addAll(orcidValidator.validate(contributor.getId(), index));
                     }
 
                     if (!isBlank(contributor.getUuid())) {

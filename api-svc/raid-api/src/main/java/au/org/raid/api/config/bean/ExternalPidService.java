@@ -32,21 +32,6 @@ public class ExternalPidService {
 
     @Bean
     @Primary
-    public OrcidService orcidService(
-            StubProperties stubProperties,
-            RestTemplate rest
-    ) {
-        if (stubProperties.getOrcid().isEnabled()) {
-            log.with("orcidInMemoryStubDelay", stubProperties.getOrcid().getDelay()).
-                    warn("using the in-memory ORCID service");
-            return new OrcidServiceStub(stubProperties.getOrcid().getDelay());
-        }
-
-        return new OrcidService(rest);
-    }
-
-    @Bean
-    @Primary
     public RorService rorService(
             StubProperties stubProperties,
             RestTemplate restTemplate

@@ -44,9 +44,6 @@ class ContributorValidatorTest {
     @Mock
     private ContributorRepository contributorRepository;
 
-    @Mock
-    private OrcidValidator orcidValidator;
-
     @InjectMocks
     private ContributorValidator validationService;
 
@@ -203,11 +200,6 @@ class ContributorValidatorTest {
                 .position(List.of(position))
                 .leader(true)
                 .contact(true);
-
-        final var orcidError = new ValidationFailure()
-                .fieldId("contributor[0].id")
-                .errorType(NOT_SET_TYPE)
-                .message(NOT_SET_MESSAGE);
 
         final var roleError = new ValidationFailure()
                 .fieldId("contributor[0].roles[0].role")
