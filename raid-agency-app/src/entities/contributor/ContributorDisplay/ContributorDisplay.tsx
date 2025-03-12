@@ -1,3 +1,4 @@
+import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import ContributorPositionItem from "@/entities/contributor/position/ContributorPositionItem";
@@ -204,16 +205,22 @@ export const ContributorDisplay = memo(
 
     // Render contributors
     return (
-      <Stack gap={4} divider={<Divider />}>
-        {data.map((contributor, index) => (
-          <ContributorItem
-            key={contributor.uuid || contributor.id || index}
-            contributor={contributor}
-            orcidData={fetchCurrentOrcidData(contributor)}
-            i={index}
-          />
-        ))}
-      </Stack>
+      <DisplayCard
+        data={data}
+        labelPlural="Contributors"
+        children={
+          <Stack gap={4} divider={<Divider />}>
+            {data.map((contributor, index) => (
+              <ContributorItem
+                key={contributor.uuid || contributor.id || index}
+                contributor={contributor}
+                orcidData={fetchCurrentOrcidData(contributor)}
+                i={index}
+              />
+            ))}
+          </Stack>
+        }
+      />
     );
   }
 );
