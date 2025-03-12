@@ -39,12 +39,15 @@ export default function InviteDialog({
   const [orcid, setOrcid] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const isValidOrcid = (orcid: string) =>
-    /^\d{4}-\d{4}-\d{4}-\d{4}$/.test(orcid);
+  const isValidOrcidUrl = (orcidUrl: string): boolean => {
+    return /^https:\/\/(orcid\.org|sandbox\.orcid\.org)\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(
+      orcidUrl
+    );
+  };
 
   const isValidForm = useMemo(() => {
     if (inviteMethod === "orcid") {
-      return isValidOrcid(orcid);
+      return isValidOrcidUrl(orcid);
     }
     return false;
   }, [inviteMethod, orcid]);
@@ -127,11 +130,16 @@ export default function InviteDialog({
                     fullWidth
                     value={orcid}
                     onChange={(e) => setOrcid(e.target.value)}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const pastedText = e.clipboardData.getData("text");
+                      setOrcid(pastedText.trim());
+                    }}
                     disabled={inviteMethod !== "orcid"}
-                    error={inviteMethod === "orcid" && !isValidOrcid(orcid)}
+                    error={inviteMethod === "orcid" && !isValidOrcidUrl(orcid)}
                     helperText={
                       inviteMethod === "orcid"
-                        ? "Format: 0000-0000-0000-0000"
+                        ? "Enter full ORCID URL (e.g., https://orcid.org/0000-0000-0000-0000)"
                         : ""
                     }
                   />
