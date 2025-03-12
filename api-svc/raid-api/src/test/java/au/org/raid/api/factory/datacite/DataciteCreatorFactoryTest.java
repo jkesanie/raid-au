@@ -70,9 +70,9 @@ public class DataciteCreatorFactoryTest {
                         .build())
                 .build();
 
-        assertThat(result.getNameType(), is("Personal"));
-        assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
-        assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ORCID"));
+        when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.of(contributorLookupResponse));
+
+        assertThrows(IllegalStateException.class, () -> dataciteCreatorFactory.create(contributor));
     }
 
     @Test
@@ -113,6 +113,7 @@ public class DataciteCreatorFactoryTest {
 
         final var result = dataciteCreatorFactory.create(contributor);
 
+        assertThat(result.getName(), is(name));
         assertThat(result.getNameType(), is("Personal"));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ISNI"));

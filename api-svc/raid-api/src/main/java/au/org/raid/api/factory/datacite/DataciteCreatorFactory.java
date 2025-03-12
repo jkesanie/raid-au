@@ -31,13 +31,18 @@ public class DataciteCreatorFactory {
         final var response = orcidIntegrationClient.findByOrcid(contributor.getId())
                 .orElseThrow(() -> new IllegalStateException("No contributor found with id %s".formatted(contributor.getId())));
 
-        final var name = response.getOrcid().getName();
+        String name = null;
+
+        if (response.getOrcid() != null && response.getOrcid().getName() != null) {
+            name = response.getOrcid().getName();
+        }
 
         if (isBlank(name)) {
             throw new IllegalStateException("Name is missing for contributor %s".formatted(contributor.getId()));
         }
 
         return new DataciteCreator()
+                .setName(name)
                 .setNameType("Personal")
                 .setNameIdentifiers(List.of(
                         new NameIdentifier()
