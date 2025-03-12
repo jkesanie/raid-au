@@ -27,6 +27,7 @@ public enum ResourceTypeGeneral {
     PEER_REVIEW("PeerReview"),
     PHYSICAL_OBJECT("PhysicalObject"),
     PREPRINT("Preprint"),
+    PROJECT("Project"),
     REPORT("Report"),
     SERVICE("Service"),
     SOFTWARE("Software"),

@@ -8,15 +8,17 @@ const subDomain = "invite";
 
 export async function sendInvite({
   email,
-  orcid,
   handle,
+  orcid,
+  title,
   token,
 }: {
-  email: string;
-  orcid: string;
+  email?: string;
   handle: string;
+  orcid?: string;
+  title: string;
   token: string;
-}) {
+} & ({ email: string } | { orcid: string })) {
   const response = await fetch(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite`,
     {
@@ -27,11 +29,17 @@ export async function sendInvite({
       },
       body: JSON.stringify({
         inviteeEmail: email || "",
-        orcid: orcid || "",
+        inviteeOrcid: orcid || "",
+        title,
         handle,
       }),
     }
   );
+
+  if (!response.ok) {
+    throw new Error("Failed to send invite");
+  }
+
   return await response.json();
 }
 
@@ -59,7 +67,7 @@ export async function acceptInvite({
   handle: string;
 }) {
   const response = await fetch(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite/accept`,
+    `https://orcid.${currentEnv}.raid.org.au/invite/accept`,
     {
       method: "POST",
       headers: {
@@ -85,7 +93,7 @@ export async function rejectInvite({
   handle: string;
 }) {
   const response = await fetch(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite/reject`,
+    `https://orcid.${currentEnv}.raid.org.au/invite/reject`,
     {
       method: "POST",
       headers: {

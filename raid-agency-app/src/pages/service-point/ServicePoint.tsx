@@ -1,18 +1,18 @@
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { ServicePointUsers } from "@/components/service-point-users";
 import { useAuthHelper } from "@/keycloak";
 import { Loading } from "@/pages/loading";
 import { fetchServicePointWithMembers } from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
 import { Home as HomeIcon, Hub as HubIcon } from "@mui/icons-material";
-import { Alert, Card, CardContent, CardHeader, Container } from "@mui/material";
+import { Alert, Card, CardContent, CardHeader, Container, Stack } from "@mui/material";
 
+import { ServicePointUsersList } from "@/components/service-point-users/ServicePointUsersList";
+import { useKeycloak } from "@/contexts/keycloak-context";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ServicePointUpdateForm } from "./";
-import { useKeycloak } from "@/contexts/keycloak-context";
 
 export const ServicePoint = () => {
   const { isOperator } = useAuthHelper();
@@ -37,7 +37,7 @@ export const ServicePoint = () => {
   }
 
   if (servicePointQuery.isError) {
-    return <ErrorAlertComponent error={servicePointQuery.error} />;
+    return <ErrorAlertComponent error="Service point could not be fetched" />;
   }
 
   // Use spaces as decimal separator for thousands
@@ -67,31 +67,33 @@ export const ServicePoint = () => {
   ];
 
   return (
-    <Container>
-      <BreadcrumbsBar breadcrumbs={breadcrumbs} />
-      <Card hidden={!isOperator} variant="outlined" sx={{ mt: 2 }}>
-        <CardHeader title="Update service point" />
-        <CardContent>
-          <ServicePointUpdateForm servicePoint={servicePointQuery.data!} />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title="Service point users" />
-        <CardContent>
-          {(servicePointQuery.data.groupId &&
-            (isOperator ||
-              tokenParsed?.service_point_group_id ===
-                servicePointQuery.data.groupId) && (
-              <ServicePointUsers
-                servicePointWithMembers={servicePointQuery.data}
-              />
-            )) || (
-            <Alert severity="warning">
-              No group id set or access not allowed
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
+    <Container sx={{pb:2}}>
+      <Stack direction="column" gap={2}>
+        <BreadcrumbsBar breadcrumbs={breadcrumbs} />
+        <Card hidden={!isOperator} variant="outlined" sx={{ mt: 2 }}>
+          <CardHeader title="Update service point" />
+          <CardContent>
+            <ServicePointUpdateForm servicePoint={servicePointQuery.data!} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader title="Service point users" />
+          <CardContent>
+            {(servicePointQuery.data.groupId &&
+              (isOperator ||
+                tokenParsed?.service_point_group_id ===
+                  servicePointQuery.data.groupId) && (
+                <ServicePointUsersList
+                  servicePointWithMembers={servicePointQuery.data}
+                />
+              )) || (
+              <Alert severity="warning">
+                No group id set or access not allowed
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      </Stack>
     </Container>
   );
 };

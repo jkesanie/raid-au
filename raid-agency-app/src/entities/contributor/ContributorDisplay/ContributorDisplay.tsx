@@ -1,5 +1,6 @@
 import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
+import { ErrorAlertComponent } from "@/components/error-alert-component";
 import ContributorPositionItem from "@/entities/contributor/position/ContributorPositionItem";
 import ContributorRoleItem from "@/entities/contributor/role/ContributorRoleItem";
 import { Contributor } from "@/generated/raid";
@@ -201,24 +202,8 @@ export const ContributorDisplay = memo(
         : null;
     };
 
-    return (
-      <DisplayCard data={data} labelPlural="Contributors">
-        {data.length === 0 ? (
-          <NoItemsMessage />
-        ) : (
-          <Stack gap={2} divider={<Divider />}>
-            {data?.map((contributor, i) => (
-              <ContributorItem
-                contributor={contributor}
-                orcidData={fetchCurrentOrcidData({ contributor })}
-                key={contributor.id || i}
-                i={i}
-              />
-            ))}
-          </Stack>
-        )}
-      </DisplayCard>
-    );
+  if (orcidDataQuery.isError) {
+    return <ErrorAlertComponent error="Error loading contributor details" />;
   }
 );
 

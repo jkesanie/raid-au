@@ -4,7 +4,12 @@ import { raids } from "@/store/raids";
 
 export async function getStaticPaths() {
   return raids.map((el: RaidDto) => {
-    const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
+    const urlParts = new URL(el.identifier.id).pathname
+      .split("/")
+      .filter(Boolean);
+    const prefix = urlParts[0];
+    const suffix = urlParts[1];
+
     return {
       params: {
         prefix,
@@ -20,25 +25,18 @@ export async function getStaticPaths() {
 const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
 const { raid }: { raid: RaidDto } = Astro.props;
 
-const handles = new Set();
-for (const raid in raids) {
-  const pathname = new URL(raids[raid].identifier.id).pathname;
-  const [, prefix, suffix] = pathname.split("/");
-  handles.add(`${prefix}/${suffix}`);
-}
-
-const headers = new Headers({
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-});
-
 return new Response(
   JSON.stringify({
     raid,
     handle: `${prefix}/${suffix}`,
   }),
   {
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
   }
 );
 ---

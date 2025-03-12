@@ -1,8 +1,4 @@
-import {
-  ContactSupport as ContactSupportIcon,
-  Home as HomeIcon,
-  Refresh as RefreshIcon,
-} from "@mui/icons-material";
+import { ContactSupport, Home, Refresh } from "@mui/icons-material";
 import {
   Alert,
   Button,
@@ -10,48 +6,48 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Container,
+  Stack,
 } from "@mui/material";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const ErrorAlertComponent = memo(
-  ({
-    error,
-    showButtons,
-  }: {
-    error?: Error | string;
-    showButtons?: boolean;
-  }) => {
-    const navigate = useNavigate();
-    return (
-      <Container>
-        <Card
-          sx={{
-            borderLeft: "solid",
-            borderLeftColor: "error.main",
-            borderLeftWidth: 3,
-          }}
-        >
-          <CardHeader title="Error" subheader="An error occured" />
-          <CardContent>
-            <Alert severity="error">
-              {(error &&
-                error instanceof Object &&
-                JSON.stringify(error, null, 2)) ||
-                "Something went wrong. "}
+interface ErrorAlertProps {
+  error?: Error | string;
+  showButtons?: boolean;
+}
 
-              {error && typeof error === "string" && error}
-            </Alert>
-          </CardContent>
-          {showButtons && (
-            <CardActions>
+export const ErrorAlertComponent = memo(
+  ({ error, showButtons }: ErrorAlertProps) => {
+    const navigate = useNavigate();
+    const supportEmail =
+      import.meta.env.VITE_SUPPORT_EMAIL || "contact@raid.org";
+
+    const handleContactSupport = () => {
+      location.href = `mailto:${supportEmail}`;
+    };
+
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : error
+        ? JSON.stringify(error, null, 2)
+        : "Something went wrong.";
+
+    return (
+      <Card sx={{ borderLeft: "solid 3px", borderLeftColor: "error.main" }}>
+        <CardHeader title="Error" subheader="An error occured" />
+        <CardContent>
+          <Alert severity="error">{errorMessage}</Alert>
+        </CardContent>
+        {showButtons && (
+          <CardActions sx={{ justifyContent: "space-between" }}>
+            <Stack direction="row" spacing={1}>
               <Button
                 color="error"
                 size="small"
                 variant="outlined"
                 onClick={() => navigate("/home")}
-                startIcon={<HomeIcon />}
+                startIcon={<Home />}
               >
                 Back to home
               </Button>
@@ -60,27 +56,23 @@ export const ErrorAlertComponent = memo(
                 size="small"
                 variant="outlined"
                 onClick={() => window.location.reload()}
-                startIcon={<RefreshIcon />}
+                startIcon={<Refresh />}
               >
-                Try again
+                Reload
               </Button>
-              <Button
-                color="error"
-                size="small"
-                variant="outlined"
-                onClick={() =>
-                  (location.href = `mailto:${
-                    import.meta.env.VITE_SUPPORT_EMAIL || "contact@raid.org"
-                  }`)
-                }
-                startIcon={<ContactSupportIcon />}
-              >
-                Contact Support
-              </Button>
-            </CardActions>
-          )}
-        </Card>
-      </Container>
+            </Stack>
+            <Button
+              color="error"
+              size="small"
+              variant="outlined"
+              onClick={handleContactSupport}
+              startIcon={<ContactSupport />}
+            >
+              Contact Support
+            </Button>
+          </CardActions>
+        )}
+      </Card>
     );
   }
 );

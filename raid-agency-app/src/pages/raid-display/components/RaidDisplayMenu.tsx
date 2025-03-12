@@ -11,9 +11,11 @@ import { Link } from "react-router-dom";
 export const RaidDisplayMenu = ({
   prefix,
   suffix,
+  title,
 }: {
   prefix: string;
   suffix: string;
+  title: string;
 }) => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   return (
@@ -50,13 +52,12 @@ export const RaidDisplayMenu = ({
           </Fab>
         </Tooltip>
 
-        <>
-          <InviteButton setOpen={setIsInviteDialogOpen} />
-          <InviteDialog
-            open={isInviteDialogOpen}
-            setOpen={setIsInviteDialogOpen}
-          />
-        </>
+        <InviteButton setOpen={setIsInviteDialogOpen} />
+        <InviteDialog
+          title={title}
+          open={isInviteDialogOpen}
+          setOpen={setIsInviteDialogOpen}
+        />
       </Stack>
     </>
   );

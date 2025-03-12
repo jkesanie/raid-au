@@ -93,7 +93,7 @@ public class DataciteRelatedIdentifierFactory {
                 .setRelatedIdentifier(relatedRaid.getId())
                 .setRelatedIdentifierType(RelatedIdentifierType.DOI.getName())
                 .setRelationType(RELATION_TYPE_MAP.get(relatedRaid.getType().getId()))
-                .setResourceTypeGeneral(ResourceTypeGeneral.OTHER.getName());
+                .setResourceTypeGeneral(ResourceTypeGeneral.PROJECT.getName());
     }
 
 }

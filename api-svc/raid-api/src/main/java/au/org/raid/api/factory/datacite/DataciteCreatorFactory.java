@@ -38,7 +38,6 @@ public class DataciteCreatorFactory {
         }
 
         return new DataciteCreator()
-                .setName(name)
                 .setNameType("Personal")
                 .setNameIdentifiers(List.of(
                         new NameIdentifier()

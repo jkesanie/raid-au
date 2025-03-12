@@ -8,7 +8,17 @@ const iamEndpoint = import.meta.env.IAM_ENDPOINT;
 const iamClientId = import.meta.env.IAM_CLIENT_ID;
 const iamClientSecret = import.meta.env.IAM_CLIENT_SECRET;
 
+const iamClientUsername = import.meta.env.IAM_CLIENT_USERNAME;
+const iamClientPassword = import.meta.env.IAM_CLIENT_PASSWORD;
+
 async function getAuthToken(): Promise<string> {
+  // const TOKEN_PARAMS = {
+  //   grant_type: "password",
+  //   client_id: iamClientId,
+  //   username: iamClientUsername,
+  //   password: iamClientPassword,
+  // };
+
   const TOKEN_PARAMS = {
     grant_type: "client_credentials",
     client_id: iamClientId,
@@ -55,48 +65,31 @@ export async function fetchRaids(): Promise<RaidDto[]> {
     const servicePoints = await fetchServicePoints({ token });
     const ids = servicePoints.map((sp) => sp.id);
 
-    let data: RaidDto[] = [];
+    const raidsFromAllSps: RaidDto[] = [];
 
-    if (apiEndpoint.includes(".test.")) {
-      const response = await fetch(`${apiEndpoint}/raid/all-public`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          "X-Raid-Api-Version": "3",
-        },
-      });
+    for (const id of ids) {
+      console.log(
+        `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
+      );
+      const response = await fetch(
+        `${apiEndpoint}/raid/?servicePointId=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      data = (await response.json()) as RaidDto[];
-    } else {
-      for (const id of ids) {
-        console.log(
-          `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
-        );
-        const response = await fetch(
-          `${apiEndpoint}/raid/?servicePointId=${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = (await response.json()) as RaidDto[];
-        console.log(`SP ${id}: ${data.length} raids`);
-        data.push(...data);
-      }
+      const data = (await response.json()) as RaidDto[];
+      console.log(`SP ${id}: ${data.length} raids`);
+      raidsFromAllSps.push(...data);
     }
-
-    return data;
+    return raidsFromAllSps;
   } catch (error) {
     console.error("There was a problem fetching the raids:", error);
     throw error;

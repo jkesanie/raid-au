@@ -1,6 +1,5 @@
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { RaidDto } from "@/generated/raid";
-import { fetchCurrentUserRor } from "@/services/keycloak-groups";
 import { AddBox } from "@mui/icons-material";
 import {
   Button,
@@ -12,14 +11,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import {
   Control,
   FieldErrors,
   UseFormTrigger,
-  useFieldArray,
-  useFormContext,
+  useFieldArray
 } from "react-hook-form";
 import organisationGenerator from "../data-components/organisation-generator";
 import OrganisationRolesFormComponent from "../role/form-components/OrganisationRolesFormComponent";
