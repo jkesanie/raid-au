@@ -7,7 +7,10 @@ describe("getApiEndpoint", () => {
 
   afterEach(() => {
     // Reset the window.location.hostname to its original value after each test
-    window.location = originalLocation;
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: originalLocation,
+    });
   });
 
   it("should return the dev endpoint for unknown hostnames", () => {

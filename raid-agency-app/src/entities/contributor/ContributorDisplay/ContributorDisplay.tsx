@@ -1,4 +1,3 @@
-import { DisplayCard } from "@/components/display-card";
 import { DisplayItem } from "@/components/display-item";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import ContributorPositionItem from "@/entities/contributor/position/ContributorPositionItem";
@@ -18,6 +17,7 @@ import { memo } from "react";
 import { useParams } from "react-router-dom";
 
 interface ContributorWithStatus extends Contributor {
+  uuid: string;
   status: string;
 }
 
@@ -26,6 +26,7 @@ function OrcidButton({
   orcidData,
 }: {
   contributor: ContributorWithStatus;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   orcidData: any;
 }) {
   // Define status constants
@@ -90,6 +91,7 @@ const ContributorItem = memo(
     i,
   }: {
     contributor: ContributorWithStatus;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     orcidData?: any;
     i: number;
   }) => {
@@ -181,29 +183,38 @@ export const ContributorDisplay = memo(
     }
 
     if (orcidDataQuery.isError) {
-      return (
-        <Typography variant="body1" color="error" textAlign="center">
-          Error loading contributor details
-        </Typography>
-      );
+      return <ErrorAlertComponent error="Error loading contributor details" />;
     }
 
     const orcidData = orcidDataQuery.data;
 
-    const fetchCurrentOrcidData = ({
-      contributor,
-    }: {
-      contributor: ContributorWithStatus;
-    }) => {
+    const fetchCurrentOrcidData = (contributor: ContributorWithStatus) => {
       return "uuid" in contributor
         ? orcidData?.find(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (orcid: any) => orcid?.uuid === contributor.uuid && "name" in orcid
           )
         : null;
     };
 
-  if (orcidDataQuery.isError) {
-    return <ErrorAlertComponent error="Error loading contributor details" />;
+    // Display a message if no contributors available
+    if (!data || data.length === 0) {
+      return <NoItemsMessage />;
+    }
+
+    // Render contributors
+    return (
+      <Stack gap={4} divider={<Divider />}>
+        {data.map((contributor, index) => (
+          <ContributorItem
+            key={contributor.uuid || contributor.id || index}
+            contributor={contributor}
+            orcidData={fetchCurrentOrcidData(contributor)}
+            i={index}
+          />
+        ))}
+      </Stack>
+    );
   }
 );
 
