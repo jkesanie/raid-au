@@ -34,7 +34,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("id does not exist within the given schema")
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            failOnError(e);
         }
     }
 
@@ -55,7 +55,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("schema is unknown/unsupported")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -76,7 +76,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -139,7 +139,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
         try {
             raidApi.mintRaid(createRequest);
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -173,9 +173,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
         try {
             raidApi.mintRaid(createRequest);
         } catch (Exception e) {
-            log.error("Error: ", e);
-
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -200,7 +198,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -230,7 +228,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("Creating closed Raids is no longer supported")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -254,7 +252,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -278,7 +276,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -301,7 +299,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 
@@ -325,7 +323,7 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
                             .message("field must be set")
             );
         } catch (Exception e) {
-            fail("Mint should be successful");
+            failOnError(e);
         }
     }
 }

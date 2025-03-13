@@ -8,7 +8,9 @@ import au.org.raid.idl.raidv2.model.RaidCreateRequest;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import au.org.raid.idl.raidv2.model.RaidUpdateRequest;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -24,11 +26,16 @@ public class DataciteService {
     private final RestTemplate restTemplate;
     private final DataciteRequestFactory dataciteRequestFactory;
     private final HttpEntityFactory httpEntityFactory;
+    private final ObjectMapper objectMapper;
 
+    @SneakyThrows
     public void mint(final RaidCreateRequest request, final String handle,
                      String repositoryId, String password ){
 
         final DataciteRequest dataciteRequest = dataciteRequestFactory.create(request, handle);
+
+        log.debug("POSTing Datacite request: {}", objectMapper.writeValueAsString(dataciteRequest));
+
         final HttpEntity<DataciteRequest> entity = httpEntityFactory.create(dataciteRequest, repositoryId, password);
         log.debug("Making POST request to Datacite: {}", properties.getEndpoint());
 
@@ -39,12 +46,16 @@ public class DataciteService {
         }
     }
 
+    @SneakyThrows
     public void update(RaidUpdateRequest request, String handle,
                        final String repositoryId, final String password) {
 
         final var endpoint = "%s/%s".formatted(properties.getEndpoint(), handle);
 
         final DataciteRequest dataciteRequest = dataciteRequestFactory.create(request, handle);
+
+        log.debug("PUTting Datacite request: {}", objectMapper.writeValueAsString(dataciteRequest));
+
         final HttpEntity<DataciteRequest> entity = httpEntityFactory.create(dataciteRequest, repositoryId, password);
 
         try {
