@@ -6,6 +6,7 @@ import au.org.raid.api.factory.datacite.DataciteRequestFactory;
 import au.org.raid.api.model.datacite.DataciteRequest;
 import au.org.raid.idl.raidv2.model.RaidCreateRequest;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,8 @@ public class DataciteServiceTest {
     private DataciteRequestFactory dataciteRequestFactory;
     @Mock
     private HttpEntityFactory httpEntityFactory;
+    @Mock
+    private ObjectMapper objectMapper;
     @InjectMocks
     private DataciteService dataciteService;
 
