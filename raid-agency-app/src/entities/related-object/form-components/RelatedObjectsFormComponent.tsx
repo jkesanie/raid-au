@@ -1,4 +1,4 @@
-import { Contributor, RaidDto } from "@/generated/raid";
+import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
   Button,
@@ -17,27 +17,24 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import contributorGenerator from "../data-components/contributor-generator";
-import ContributorDetailsFormComponent from "./ContributorDetailsFormComponent";
-import ContributorPositionsFormComponent from "../../contributor-position/form-components/ContributorPositionsFormComponent";
-import ContributorRolesFormComponent from "../../contributor-role/form-components/ContributorRolesFormComponent";
+import relatedObjectGenerator from "../data-components/related-object-generator";
+import RelatedObjectDetailsFormComponent from "./RelatedObjectDetailsFormComponent";
+import RelatedObjectCategoriesFormComponent from "../../related-object-category/form-components/RelatedObjectCategoriesFormComponent";
 
-export default function ContributorsFormComponent({
+export default function RelatedObjectsFormComponent({
   control,
   errors,
   trigger,
-  data,
 }: {
   control: Control<RaidDto>;
   errors: FieldErrors<RaidDto>;
   trigger: UseFormTrigger<RaidDto>;
-  data: Contributor[];
 }) {
-  const key = "contributor";
-  const label = "Contributor";
-  const labelPlural = "Contributors";
-  const generator = contributorGenerator;
-  const DetailsFormComponent = ContributorDetailsFormComponent;
+  const key = "relatedObject";
+  const label = "Related Object";
+  const labelPlural = "Related Objects";
+  const generator = relatedObjectGenerator;
+  const DetailsFormComponent = RelatedObjectDetailsFormComponent;
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
@@ -81,15 +78,8 @@ export default function ContributorsFormComponent({
                   key={field.id}
                   handleRemoveItem={() => remove(index)}
                   index={index}
-                  data={data}
                 />
-                <ContributorPositionsFormComponent
-                  control={control}
-                  errors={errors}
-                  trigger={trigger}
-                  parentIndex={index}
-                />
-                <ContributorRolesFormComponent
+                <RelatedObjectCategoriesFormComponent
                   control={control}
                   errors={errors}
                   trigger={trigger}

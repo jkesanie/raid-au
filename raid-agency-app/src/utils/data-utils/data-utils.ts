@@ -20,19 +20,18 @@ import {
   Title,
 } from "@/generated/raid";
 
-import AccessDisplay from "@/entities/access/AccessDisplay";
-import AlternateIdentifiersDisplay from "@/entities/alternateIdentifier/AlternateIdentifiersDisplay";
-import AlternateUrlDisplay from "@/entities/alternateUrl/AlternateUrlDisplay";
-import { ContributorDisplay } from "@/entities/contributor/ContributorDisplay";
-import DateDisplay from "@/entities/date/DateDisplay";
-import DescriptionDisplay from "@/entities/description/DescriptionDisplay";
-import organisationGenerator from "@/entities/organisation/data-components/organisation-generator";
-import OrganisationDisplay from "@/entities/organisation/OrganisationDisplay";
-import RelatedObjectsDisplay from "@/entities/relatedObject/RelatedObjectsDisplay";
-import RelatedRaidDisplay from "@/entities/relatedRaid/RelatedRaidDisplay";
-import SpatialCoverageDisplay from "@/entities/spatialCoverage/SpatialCoverageDisplay";
-import SubjectDisplay from "@/entities/subject/SubjectDisplay";
-import TitleDisplay from "@/entities/title/display-components/TitleDisplay";
+import { AccessDisplay } from "@/entities/access/display-components/access-display";
+import { AlternateIdentifiersDisplay } from "@/entities/alternate-identifier/display-components/alternate-identifiers-display";
+import { AlternateUrlsDisplay } from "@/entities/alternate-url/display-components/alternate-urls-display";
+import { ContributorsDisplay } from "@/entities/contributor/display-components/contributors-display";
+import { DateDisplay } from "@/entities/date/display-components/date-display";
+import { DescriptionsDisplay } from "@/entities/description/display-components/descriptions-display";
+import { OrganisationsDisplay } from "@/entities/organisation/display-component/organisations-display";
+import { RelatedObjectsDisplay } from "@/entities/related-object/display-components/related-objects-display";
+import { RelatedRaidsDisplay } from "@/entities/related-raid/display-components/related-raids-display";
+import { SpatialCoveragesDisplay } from "@/entities/spatial-coverage/display-components/spatial-coverages-display";
+import { SubjectsDisplay } from "@/entities/subject/display-components/subjects-display";
+import { TitlesDisplay } from "@/entities/title/display-components/titles-display";
 
 export const displayItems = [
   {
@@ -44,25 +43,25 @@ export const displayItems = [
   {
     itemKey: "title",
     label: "Titles",
-    Component: TitleDisplay,
+    Component: TitlesDisplay,
     emptyValue: [],
   },
   {
     itemKey: "description",
     label: "Descriptions",
-    Component: DescriptionDisplay,
+    Component: DescriptionsDisplay,
     emptyValue: [],
   },
   {
     itemKey: "contributor",
     label: "Contributors",
-    Component: ContributorDisplay,
+    Component: ContributorsDisplay,
     emptyValue: [],
   },
   {
     itemKey: "organisation",
     label: "Organisations",
-    Component: OrganisationDisplay,
+    Component: OrganisationsDisplay,
     emptyValue: [],
   },
   {
@@ -80,13 +79,13 @@ export const displayItems = [
   {
     itemKey: "alternateUrl",
     label: "Alternate URLs",
-    Component: AlternateUrlDisplay,
+    Component: AlternateUrlsDisplay,
     emptyValue: [],
   },
   {
     itemKey: "relatedRaid",
     label: "Related RAiDs",
-    Component: RelatedRaidDisplay,
+    Component: RelatedRaidsDisplay,
     emptyValue: [],
   },
   {
@@ -98,13 +97,13 @@ export const displayItems = [
   {
     itemKey: "subject",
     label: "Subjects",
-    Component: SubjectDisplay,
+    Component: SubjectsDisplay,
     emptyValue: [],
   },
   {
     itemKey: "spatialCoverage",
     label: "Spatial Coverages",
-    Component: SpatialCoverageDisplay,
+    Component: SpatialCoveragesDisplay,
     emptyValue: [],
   },
 ];

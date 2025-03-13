@@ -19,7 +19,7 @@ import {
   useFieldArray
 } from "react-hook-form";
 import organisationGenerator from "../data-components/organisation-generator";
-import OrganisationRolesFormComponent from "../role/form-components/OrganisationRolesFormComponent";
+import OrganisationRolesFormComponent from "../../organisation-role/form-components/OrganisationRolesFormComponent";
 import OrganisationDetailsFormComponent from "./OrganisationDetailsFormComponent";
 
 export default function OrganisationsFormComponent({

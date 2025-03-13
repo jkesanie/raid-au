@@ -1,0 +1,1 @@
+export { AlternateIdentifiersDisplay } from "./AlternateIdentifiersDisplay";

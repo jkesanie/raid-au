@@ -1,4 +1,4 @@
-import { Contributor, RaidDto } from "@/generated/raid";
+import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
   Button,
@@ -17,27 +17,25 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import contributorGenerator from "../data-components/contributor-generator";
-import ContributorDetailsFormComponent from "./ContributorDetailsFormComponent";
-import ContributorPositionsFormComponent from "../../contributor-position/form-components/ContributorPositionsFormComponent";
-import ContributorRolesFormComponent from "../../contributor-role/form-components/ContributorRolesFormComponent";
+import SpatialCoveragePlacesFormComponent from "../../spatial-coverage-place/form-components/SpatialCoveragePlacesFormComponent";
+import spatialCoverageGenerator from "../data-components/spatial-coverage-generator";
+import SpatialCoverageDetailsFormComponent from "./SpatialCoverageDetailsFormComponent";
 
-export default function ContributorsFormComponent({
+export default function SpatialCoveragesFormComponent({
   control,
   errors,
   trigger,
-  data,
 }: {
   control: Control<RaidDto>;
   errors: FieldErrors<RaidDto>;
   trigger: UseFormTrigger<RaidDto>;
-  data: Contributor[];
 }) {
-  const key = "contributor";
-  const label = "Contributor";
-  const labelPlural = "Contributors";
-  const generator = contributorGenerator;
-  const DetailsFormComponent = ContributorDetailsFormComponent;
+  const key = "spatialCoverage";
+  const label = "Spatial Coverage";
+  const labelPlural = "Spatial Coverages";
+  const generator = spatialCoverageGenerator;
+  const DetailsFormComponent = SpatialCoverageDetailsFormComponent;
+  const ChildComponent = SpatialCoveragePlacesFormComponent;
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
@@ -81,15 +79,8 @@ export default function ContributorsFormComponent({
                   key={field.id}
                   handleRemoveItem={() => remove(index)}
                   index={index}
-                  data={data}
                 />
-                <ContributorPositionsFormComponent
-                  control={control}
-                  errors={errors}
-                  trigger={trigger}
-                  parentIndex={index}
-                />
-                <ContributorRolesFormComponent
+                <ChildComponent
                   control={control}
                   errors={errors}
                   trigger={trigger}

@@ -1,5 +1,5 @@
 import { Organisation } from "@/generated/raid";
-import organisationRoleGenerator from "@/entities/organisation/role/data-components/organisation-role-generator";
+import organisationRoleGenerator from "@/entities/organisation-role/data-components/organisation-role-generator";
 import organisations from "@/references/organisation.json";
 import organisationSchemas from "@/references/organisation_schema.json";
 import { fetchCurrentUserRor } from "@/services/keycloak-groups";

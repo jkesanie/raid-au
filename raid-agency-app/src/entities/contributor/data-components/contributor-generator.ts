@@ -1,5 +1,5 @@
-import contributorPositionGenerator from "@/entities/contributor/position/data-components/contributor-position-generator";
-import contributorRoleGenerator from "@/entities/contributor/role/data-components/contributor-role-generator";
+import contributorPositionGenerator from "@/entities/contributor-position/data-components/contributor-position-generator";
+import contributorRoleGenerator from "@/entities/contributor-role/data-components/contributor-role-generator";
 import { Contributor } from "@/generated/raid";
 
 type ContributorExtended = Contributor &

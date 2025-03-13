@@ -1,0 +1,1 @@
+export { RelatedObjectItem } from "./RelatedObjectItem";
