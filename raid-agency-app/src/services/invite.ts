@@ -67,7 +67,7 @@ export async function acceptInvite({
   handle: string;
 }) {
   const response = await fetch(
-    `https://orcid.${currentEnv}.raid.org.au/invite/accept`,
+    `https://${subDomain}.${currentEnv}.raid.org.au/invite/accept`,
     {
       method: "POST",
       headers: {
@@ -93,7 +93,7 @@ export async function rejectInvite({
   handle: string;
 }) {
   const response = await fetch(
-    `https://orcid.${currentEnv}.raid.org.au/invite/reject`,
+    `https://${subDomain}.${currentEnv}.raid.org.au/invite/reject`,
     {
       method: "POST",
       headers: {
