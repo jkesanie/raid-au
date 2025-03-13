@@ -12,6 +12,7 @@ import au.org.raid.inttest.service.TokenService;
 import au.org.raid.inttest.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Contract;
+import feign.RetryableException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -190,6 +191,18 @@ public class AbstractIntegrationTest {
                     }).orElse("");
 
             fail(responseBody);
+        } else if (e instanceof RetryableException) {
+            final var status = ((RetryableException) e).status();
+
+            final var responseBody = ((RetryableException) e).responseBody()
+                    .map(byteBuffer -> {
+                        if (byteBuffer.hasArray()) {
+                            return new String(byteBuffer.array());
+                        }
+                        return "";
+                    }).orElse("");
+
+            fail("status: %s: %s".formatted(status, responseBody));
         } else {
             fail(e.getMessage());
         }
