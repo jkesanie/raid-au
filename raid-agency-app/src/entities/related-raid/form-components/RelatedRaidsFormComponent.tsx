@@ -1,3 +1,4 @@
+import { relatedRaidGenerator } from "@/entities/related-raid/data-components/related-raid-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,8 +18,6 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-
-import relatedRaidGenerator from "../data-components/related-raid-generator";
 import RelatedRaidDetailsFormComponent from "./RelatedRaidDetailsFormComponent";
 
 export default function RelatedRaidsFormComponent({

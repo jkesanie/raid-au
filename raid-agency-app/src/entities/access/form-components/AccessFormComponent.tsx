@@ -11,24 +11,19 @@ import {
   UseFormTrigger,
   useWatch,
 } from "react-hook-form";
-import accessGenerator from "../data-components/access-generator";
 
 const AccessFormComponent = memo(
   ({
     control,
     errors,
-    trigger,
   }: {
     control: Control<RaidDto>;
     errors: FieldErrors<RaidDto>;
     trigger: UseFormTrigger<RaidDto>;
   }) => {
-
     const key = "access";
-    const label = "Access";
     const labelPlural = "Access";
-    const generator = accessGenerator
-    // Watch for changes in the access type ID
+
     const accessTypeId = useWatch({
       control,
       name: "access.type.id",
@@ -58,7 +53,7 @@ const AccessFormComponent = memo(
               required={true}
               width={6}
             />
-            {/* Show embargo related fields only if access type is c_f1cf (embargoed) */}
+            {/* Only whow embargo related fields if access type is c_f1cf (embargoed) */}
             {accessTypeId?.includes("c_f1cf/") && (
               <>
                 <TextInputField

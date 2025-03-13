@@ -1,5 +1,5 @@
-import contributorPositionGenerator from "@/entities/contributor-position/data-components/contributor-position-generator";
-import contributorRoleGenerator from "@/entities/contributor-role/data-components/contributor-role-generator";
+import { contributorPositionGenerator } from "@/entities/contributor-position/data-components/contributor-position-generator";
+import { contributorRoleGenerator } from "@/entities/contributor-role/data-components/contributor-role-generator";
 import { Contributor } from "@/generated/raid";
 
 type ContributorExtended = Contributor &
@@ -9,8 +9,7 @@ type ContributorExtended = Contributor &
     | { email: string; uuid?: never; id?: never }
   );
 
-const contributorGenerator = (): ContributorExtended => {
-  // Create a base object with all required Contributor properties
+export const contributorGenerator = (): ContributorExtended => {
   const baseData: Omit<Contributor, "id" | "email" | "uuid"> = {
     leader: true,
     contact: true,
@@ -24,5 +23,3 @@ const contributorGenerator = (): ContributorExtended => {
     id: "",
   } as unknown as ContributorExtended;
 };
-
-export default contributorGenerator;

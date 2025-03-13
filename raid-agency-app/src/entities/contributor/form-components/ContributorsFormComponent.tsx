@@ -1,3 +1,4 @@
+import { contributorGenerator } from "@/entities/contributor/data-components/contributor-generator";
 import { Contributor, RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,10 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import contributorGenerator from "../data-components/contributor-generator";
-import ContributorDetailsFormComponent from "./ContributorDetailsFormComponent";
 import ContributorPositionsFormComponent from "../../contributor-position/form-components/ContributorPositionsFormComponent";
 import ContributorRolesFormComponent from "../../contributor-role/form-components/ContributorRolesFormComponent";
+import ContributorDetailsFormComponent from "./ContributorDetailsFormComponent";
 
 export default function ContributorsFormComponent({
   control,

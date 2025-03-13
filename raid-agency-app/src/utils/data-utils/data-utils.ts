@@ -1,7 +1,7 @@
-import accessGenerator from "@/entities/access/data-components/access-generator";
-import dateCleaner from "@/entities/date/data-components/date-cleaner";
-import dateGenerator from "@/entities/date/data-components/date-generator";
-import titleGenerator from "@/entities/title/data-components/title-generator";
+import { accessGenerator } from "@/entities/access/data-components/access-generator";
+import { dateCleaner } from "@/entities/date/data-components/date-cleaner";
+import { dateGenerator } from "@/entities/date/data-components/date-generator";
+import { titleGenerator } from "@/entities/title/data-components/title-generator";
 import {
   Access,
   AlternateIdentifier,
@@ -142,12 +142,7 @@ export const newRaid: RaidCreateRequest = {
   //   relatedObjectGenerator(),
   //   relatedObjectGenerator(),
   //   relatedObjectGenerator(),
-  // ],
-  // alternateIdentifier: [
-  //   alternateIdentifierGenerator(),
-  //   alternateIdentifierGenerator(),
-  //   alternateIdentifierGenerator(),
-  // ],
+  // ]
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,5 +1,5 @@
 import { DisplayItem } from "@/components/display-item";
-import { SubjectKeywordItem } from "@/entities/subject/keyword/display-components/subject-keyword-item/SubjectKeywordItem";
+import { SubjectKeywordItem } from "@/entities/subject-keyword/display-components/subject-keyword-item/SubjectKeywordItem";
 import { Subject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
 import { Divider, Grid, Stack, Typography } from "@mui/material";

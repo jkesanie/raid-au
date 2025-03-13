@@ -1,9 +1,9 @@
-import { SpatialCoveragePlace } from "@/generated/raid";
+import { SubjectKeyword } from "@/generated/raid";
 import languageSchema from "@/references/language_schema.json";
 
-export const spatialCoveragePlaceGenerator = (): SpatialCoveragePlace => {
+export const subjectKeywordGenerator = (): SubjectKeyword => {
   return {
-    text: "Canberra",
+    text: "",
     language: {
       id: "eng",
       schemaUri: languageSchema[0].uri,

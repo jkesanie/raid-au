@@ -1,3 +1,4 @@
+import { contributorRoleGenerator } from "@/entities/contributor-role/data-components/contributor-role-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,7 +18,6 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import contributorRoleGenerator from "../data-components/contributor-role-generator";
 import ContributorRoleDetailsFormComponent from "./ContributorRoleDetailsFormComponent";
 
 export default function ContributorRolesFormComponent({

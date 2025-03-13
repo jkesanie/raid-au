@@ -17,7 +17,7 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import contributorPositionGenerator from "../data-components/contributor-position-generator";
+import { contributorPositionGenerator } from "@/entities/contributor-position/data-components/contributor-position-generator";
 import ContributorPositionDetailsFormComponent from "./ContributorPositionDetailsFormComponent";
 
 export default function ContributorPositionsFormComponent({

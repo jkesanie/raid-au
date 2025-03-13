@@ -1,3 +1,4 @@
+import { descriptionGenerator } from "@/entities/description/data-components/description-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,7 +18,6 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import descriptionGenerator from "../data-components/description-generator";
 import DescriptionDetailsFormComponent from "./DescriptionDetailsFormComponent";
 
 export default function DescriptionsFormComponent({

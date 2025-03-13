@@ -1,3 +1,4 @@
+import { organisationRoleGenerator } from "@/entities/organisation-role/data-components/organisation-role-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,7 +18,6 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import organisationRoleGenerator from "../data-components/organisation-role-generator";
 import OrganisationRoleDetailsFormComponent from "./OrganisationRoleDetailsFormComponent";
 
 export default function OrganisationRolesFormComponent({

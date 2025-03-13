@@ -1,4 +1,5 @@
 import { useKeycloak } from "@/contexts/keycloak-context";
+import { organisationGenerator } from "@/entities/organisation/data-components/organisation-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -16,9 +17,8 @@ import {
   Control,
   FieldErrors,
   UseFormTrigger,
-  useFieldArray
+  useFieldArray,
 } from "react-hook-form";
-import organisationGenerator from "../data-components/organisation-generator";
 import OrganisationRolesFormComponent from "../../organisation-role/form-components/OrganisationRolesFormComponent";
 import OrganisationDetailsFormComponent from "./OrganisationDetailsFormComponent";
 

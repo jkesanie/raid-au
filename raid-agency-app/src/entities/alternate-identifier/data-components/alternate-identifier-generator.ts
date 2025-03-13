@@ -1,10 +1,8 @@
 import { AlternateIdentifier } from "@/generated/raid";
 
-const alternateIdentifierGenerator = (): AlternateIdentifier => {
+export const alternateIdentifierGenerator = (): AlternateIdentifier => {
   return {
-    id: "Alternate identifier id...",
-    type: "Alternate identifier type...",
+    id: "",
+    type: "",
   };
 };
-
-export default alternateIdentifierGenerator;

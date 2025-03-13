@@ -1,24 +1,8 @@
-import { Language, Subject, SubjectKeyword } from "@/generated/raid";
-
-import languageSchema from "@/references/language_schema.json";
-
+import { subjectKeywordGenerator } from "@/entities/subject-keyword/data-components/subject-keyword-generator";
+import { Subject } from "@/generated/raid";
 import subjectType from "@/references/subject_type.json";
 
-const subjectKeywordLanguageGenerator = (): Language => {
-  return {
-    id: "eng",
-    schemaUri: languageSchema[0].uri,
-  };
-};
-
-export const subjectKeywordGenerator = (): SubjectKeyword => {
-  return {
-    text: `Subject keyword example text...`,
-    language: subjectKeywordLanguageGenerator(),
-  };
-};
-
-const subjectGenerator = (): Subject => {
+export const subjectGenerator = (): Subject => {
   const randomIndex = Math.floor(Math.random() * subjectType.length);
   return {
     id: `https://linked.data.gov.au/def/anzsrc-for/2020/${subjectType[randomIndex].id}`,
@@ -26,5 +10,3 @@ const subjectGenerator = (): Subject => {
     keyword: [subjectKeywordGenerator()],
   };
 };
-
-export default subjectGenerator;

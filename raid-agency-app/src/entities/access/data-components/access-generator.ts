@@ -1,40 +1,23 @@
 import {
-  Access,
-  AccessStatement,
-  AccessType,
-  Language,
+  Access
 } from "@/generated/raid";
 import accessType from "@/references/access_type.json";
 import accessTypeSchema from "@/references/access_type_schema.json";
 import languageSchema from "@/references/language_schema.json";
 
-const accessTypeGenerator = (): AccessType => {
+export function accessGenerator(): Access {
   return {
-    id: accessType[0].uri,
-    schemaUri: accessTypeSchema[0].uri,
-  };
-};
-
-const accessStatementLanguageGenerator = (): Language => {
-  return {
-    id: "eng",
-    schemaUri: languageSchema.filter((el) => el.status === "active")[0].uri,
-  };
-};
-
-const accessStatementGenerator = (): AccessStatement => {
-  return {
-    text: `Access statement example text...`,
-    language: accessStatementLanguageGenerator(),
-  };
-};
-
-const accessGenerator = (): Access => {
-  return {
-    type: accessTypeGenerator(),
-    statement: accessStatementGenerator(),
+    type: {
+      id: accessType[0].uri,
+      schemaUri: accessTypeSchema[0].uri,
+    },
+    statement: {
+      text: "",
+      language: {
+        id: "eng",
+        schemaUri: languageSchema.find((el) => el.status === "active")?.uri || "",
+      },
+    },
     embargoExpiry: undefined,
   };
-};
-
-export default accessGenerator;
+}
