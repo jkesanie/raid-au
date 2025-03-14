@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +29,18 @@ public class DataciteAttributesDtoFactory {
     private final DatacitePublisherFactory publisherFactory;
     private final DataciteFundingReferenceFactory fundingReferenceFactory;
     private final IdentifierProperties identifierProperties;
+
+    private List<DataciteCreator> addCreators(final List<Contributor> contributors) {
+
+        final var creators = contributors.stream()
+                .map(creatorFactory::create)
+                .filter(Objects::nonNull)
+                .filter(creator -> !isBlank(creator.getName()))
+                .toList();
+
+        return creators.isEmpty() ? List.of(new DataciteCreator()) : creators;
+
+    }
 
     @SneakyThrows
     public DataciteAttributesDto create(RaidCreateRequest request, String handle) {
@@ -89,10 +104,7 @@ public class DataciteAttributesDtoFactory {
                     .toList());
         }
 
-        final var creators = request.getContributor().stream()
-                .filter(contributor -> contributor.getStatus() != null && contributor.getStatus().equals("AUTHENTICATED"))
-                .map(creatorFactory::create)
-                .toList();
+        final var creators = addCreators(request.getContributor());
 
         final var relatedIdentifiers = new ArrayList<DataciteRelatedIdentifier>();
 
@@ -214,10 +226,7 @@ public class DataciteAttributesDtoFactory {
                     .toList());
         }
 
-        final var creators = request.getContributor().stream()
-                .filter(contributor -> contributor.getStatus().equals("AUTHENTICATED"))
-                .map(creatorFactory::create)
-                .toList();
+        final var creators = addCreators(request.getContributor());
 
         final var relatedIdentifiers = new ArrayList<DataciteRelatedIdentifier>();
 
@@ -339,10 +348,7 @@ public class DataciteAttributesDtoFactory {
                     .toList());
         }
 
-        final var creators = request.getContributor().stream()
-                .filter(contributor -> contributor.getStatus().equals("AUTHENTICATED"))
-                .map(creatorFactory::create)
-                .toList();
+        final var creators = addCreators(request.getContributor());
 
         final var relatedIdentifiers = new ArrayList<DataciteRelatedIdentifier>();
 

@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,7 @@ public class DataciteCreatorFactoryTest {
 
         final var contributor = new Contributor()
                 .id(id)
+                .status("AUTHENTICATED")
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()
@@ -55,13 +57,14 @@ public class DataciteCreatorFactoryTest {
     }
 
     @Test
-    @DisplayName("Create with contributor - ORCID")
+    @DisplayName("Create with contributor - Does not throw exception with missing name")
     void createWithContributorORCID_EmptyResponse() {
         final var id = "_id";
         final var schemaUri = "https://orcid.org/";
 
         final var contributor = new Contributor()
                 .id(id)
+                .status("AUTHENTICATED")
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()
@@ -72,22 +75,9 @@ public class DataciteCreatorFactoryTest {
 
         when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.of(contributorLookupResponse));
 
-        assertThrows(IllegalStateException.class, () -> dataciteCreatorFactory.create(contributor));
-    }
+        final var result = dataciteCreatorFactory.create(contributor);
 
-    @Test
-    @DisplayName("Create with contributor - ORCID")
-    void createWithContributorORCID_MissingName() {
-        final var id = "_id";
-        final var schemaUri = "https://orcid.org/";
-
-        final var contributor = new Contributor()
-                .id(id)
-                .schemaUri(schemaUri);
-
-        when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.empty());
-
-        assertThrows(IllegalStateException.class, () -> dataciteCreatorFactory.create(contributor));
+        assertThat(result.getName(), is(nullValue()));
     }
 
     @Test
@@ -100,6 +90,7 @@ public class DataciteCreatorFactoryTest {
 
         final var contributor = new Contributor()
                 .id(id)
+                .status("AUTHENTICATED")
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()

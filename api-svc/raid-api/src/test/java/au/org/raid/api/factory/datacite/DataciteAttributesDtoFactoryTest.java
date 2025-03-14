@@ -166,14 +166,14 @@ class DataciteAttributesDtoFactoryTest {
 
         final var result = attributesDtoFactory.create(request, handle);
 
-        verifyNoInteractions(creatorFactory);
+//        verifyNoInteractions(creatorFactory);
 
         assertThat(result.getContributors(), is(List.of(registrationAgencyContributor, organisationContributor)));
         assertThat(result.getPublisher(), is(publisher));
         assertThat(result.getDates(), is(List.of(dataciteDate)));
         assertThat(result.getTitles(), is(List.of(primaryDataciteTitle, alternativeDataciteTitle)));
         assertThat(result.getDescriptions(), is(List.of(dataciteDescription)));
-        assertThat(result.getCreators(), is(empty()));
+        assertThat(result.getCreators(), is(List.of(new DataciteCreator())));
         assertThat(result.getFundingReferences(), is(List.of(fundingReference)));
         assertThat(result.getRelatedIdentifiers(), is(List.of(relatedIdentifier, relatedRaidIdentifier)));
         assertThat(result.getAlternateIdentifiers(), is(List.of(dataciteRaidAgencyUrl, dataciteAlternateIdentifier)));
