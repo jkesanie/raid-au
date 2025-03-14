@@ -1,4 +1,5 @@
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 buildscript {
   repositories {
@@ -184,4 +185,14 @@ tasks.register('dockerComposeUp', Exec) {
 
 tasks.register('dockerComposeDown', Exec) {
   commandLine 'docker', 'compose', 'down', '-v'
+}
+
+tasks.withType(Test) {
+  testLogging {
+    events "passed", "skipped", "failed", "standardOut", "standardError"
+    showExceptions = true
+    exceptionFormat = TestExceptionFormat.FULL
+    showCauses = true
+    showStackTraces = true
+  }
 }
