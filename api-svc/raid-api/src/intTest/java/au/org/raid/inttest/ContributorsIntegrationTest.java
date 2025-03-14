@@ -8,7 +8,6 @@ import au.org.raid.inttest.factory.RaidPatchRequestFactory;
 import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
 import au.org.raid.inttest.service.Handle;
 import au.org.raid.inttest.service.RaidApiValidationException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static au.org.raid.inttest.service.TestConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 // TODO: Test that pre-existing contributors have UNVERIFIED status
@@ -45,7 +45,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getEmail()).isNull();
+                assertThat(raidDto.getContributor().get(0).getEmail(), is(nullValue()));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -61,13 +61,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with no contributors");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor")
                                 .errorType("notSet")
                                 .message("field must be set")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -83,13 +83,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with empty contributor");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures.size(), is(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor")
                                 .errorType("notSet")
                                 .message("field must be set")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -121,13 +121,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with missing schemaUri");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures.size(), is(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0].schemaUri")
                                 .errorType("notSet")
                                 .message("field must be set")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -160,13 +160,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with empty schemaUri");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0].schemaUri")
                                 .errorType("notSet")
                                 .message("field must be set")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -198,13 +198,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with missing contributor id");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0]")
                                 .errorType("notSet")
                                 .message("email, uuid or id is required")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -237,13 +237,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with empty contributor id");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0]")
                                 .errorType("notSet")
                                 .message("email, uuid or id is required")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -270,13 +270,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with null position");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0]")
                                 .errorType("notSet")
                                 .message("A contributor must have a position")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -304,13 +304,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with empty position");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor[0]")
                                 .errorType("notSet")
                                 .message("A contributor must have a position")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -341,13 +341,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with missing leader position");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor")
                                 .errorType("notSet")
                                 .message("At least one contributor must be flagged as a project contact")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -378,13 +378,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 fail("No exception thrown with missing leader");
             } catch (RaidApiValidationException e) {
                 final var failures = e.getFailures();
-                assertThat(failures).hasSize(1);
-                assertThat(failures).contains(
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
                         new ValidationFailure()
                                 .fieldId("contributor")
                                 .errorType("notSet")
                                 .message("At least one contributor must be flagged as a project leader")
-                );
+                ));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -418,13 +418,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing contributor schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].position[0].schemaUri")
                                     .errorType("notSet")
                                     .message("field must be set")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -456,13 +456,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing contributor schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].position[0].id")
                                     .errorType("notSet")
                                     .message("field must be set")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -495,13 +495,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing contributor schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].position[0].schemaUri")
                                     .errorType("invalidValue")
                                     .message("schema is unknown/unsupported")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -534,13 +534,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing contributor schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].position[0].id")
                                     .errorType("invalidValue")
                                     .message("id does not exist within the given schema")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -577,13 +577,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing contributor schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].position[1].startDate")
                                     .errorType("invalidValue")
                                     .message("Contributors can only hold one position at any given time. This position conflicts with contributor[0].position[0]")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -620,13 +620,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing role schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].role[0].schemaUri")
                                     .errorType("notSet")
                                     .message("field must be set")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -658,13 +658,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing role type");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].role[0].id")
                                     .errorType("notSet")
                                     .message("field must be set")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -697,13 +697,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with invalid role schemaUri");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].role[0].schemaUri")
                                     .errorType("invalidValue")
                                     .message("schema is unknown/unsupported")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -736,13 +736,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with invalid type for role schema");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].role[0].id")
                                     .errorType("invalidValue")
                                     .message("id does not exist within the given schema")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
@@ -770,15 +770,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures)
-                            .as("should be 1 failure")
-                            .hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0]")
                                     .errorType("notFound")
                                     .message("Contributor not found with PID (%s) and UUID (%s)".formatted(REAL_TEST_ORCID, uuid))
-                    );
+                    ));
                     
                 } catch (Exception e) {
                     failOnError(e);
@@ -802,9 +800,12 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 raidDto.getContributor().get(0).setStatus("AUTHENTICATED");
 
                 final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
-                assertThat(updateResponse.getBody().getContributor().get(0).getStatus())
-                        .as("should have correct status")
-                        .isEqualTo("AWAITING_AUTHENTICATION");
+                assertThat(updateResponse.getBody().getContributor().get(0).getStatus(), is("AWAITING_AUTHENTICATION"));
+
+
+
+
+
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -825,13 +826,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with no contributors");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor")
                                     .errorType("notSet")
                                     .message("field must be set")
-                    );
+                    ));
                 } catch (Exception e) {
                     fail("Expected RaidApiValidationException");
                 }
@@ -857,13 +858,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing leader position");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor")
                                     .errorType("notSet")
                                     .message("At least one contributor must be flagged as a project contact")
-                    );
+                    ));
                 } catch (Exception e) {
                     fail("Expected RaidApiValidationException");
                 }
@@ -890,13 +891,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with missing leader position");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor")
                                     .errorType("notSet")
                                     .message("At least one contributor must be flagged as a project leader")
-                    );
+                    ));
                 } catch (Exception e) {
                     fail("Expected RaidApiValidationException");
                 }
@@ -923,13 +924,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with empty position");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0]")
                                     .errorType("notSet")
                                     .message("A contributor must have a position")
-                    );
+                    ));
                 } catch (Exception e) {
                     fail("Expected RaidApiValidationException");
                 }
@@ -955,13 +956,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("No exception thrown with empty position");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0]")
                                     .errorType("notSet")
                                     .message("A contributor must have a position")
-                    );
+                    ));
                 } catch (Exception e) {
                     fail("Expected RaidApiValidationException");
                 }
@@ -988,13 +989,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[0].schemaUri")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1018,13 +1019,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[0].id")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1048,13 +1049,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[0].id")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1079,13 +1080,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[0].schemaUri")
                                         .errorType("invalidValue")
                                         .message("schema is unknown/unsupported")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1110,13 +1111,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[0].id")
                                         .errorType("invalidValue")
                                         .message("id does not exist within the given schema")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1149,13 +1150,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing contributor schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position[1].startDate")
                                         .errorType("invalidValue")
                                         .message("Contributors can only hold one position at any given time. This position conflicts with contributor[0].position[0]")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1183,13 +1184,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing role schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].schemaUri")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1213,13 +1214,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing role schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].schemaUri")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1243,13 +1244,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing role type");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].id")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1273,13 +1274,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing role type");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].id")
                                         .errorType("notSet")
                                         .message("field must be set")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1303,13 +1304,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with missing role type");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].id")
                                         .errorType("invalidValue")
                                         .message("id does not exist within the given schema")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1333,13 +1334,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         fail("No exception thrown with invalid role schemaUri");
                     } catch (RaidApiValidationException e) {
                         final var failures = e.getFailures();
-                        assertThat(failures).hasSize(1);
-                        assertThat(failures).contains(
+                        assertThat(failures, hasSize(1));
+                        assertThat(failures, contains(
                                 new ValidationFailure()
                                         .fieldId("contributor[0].role[0].schemaUri")
                                         .errorType("invalidValue")
                                         .message("schema is unknown/unsupported")
-                        );
+                        ));
                     } catch (Exception e) {
                         fail("Expected RaidApiValidationException");
                     }
@@ -1367,9 +1368,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AUTHENTICATED");
-                assertThat(raidDto.getContributor().get(0).getId()).isEqualTo("https://orcid.org/0000-0002-1474-3214");
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("04742bfa-0e91-4339-b878-a4b850724f7b");
+                assertThat(raidDto.getContributor().get(0).getStatus(), is("AUTHENTICATED"));
+                assertThat(raidDto.getContributor().get(0).getId(), is("https://orcid.org/0000-0002-1474-3214"));
+                assertThat(raidDto.getContributor().get(0).getUuid(), is("04742bfa-0e91-4339-b878-a4b850724f7b"));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -1388,17 +1389,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getStatus())
-                        .as("should have correct status")
-                        .isEqualTo("AWAITING_AUTHENTICATION");
-
-                assertThat(raidDto.getContributor().get(0).getId())
-                        .as("contributor id should be null")
-                        .isNull();
-
-                assertThat(raidDto.getContributor().get(0).getUuid())
-                        .as("should have correct UUID")
-                        .isEqualTo("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb");
+                assertThat(raidDto.getContributor().get(0).getStatus(), is("AWAITING_AUTHENTICATION"));
+                assertThat(raidDto.getContributor().get(0).getId(), is(nullValue()));
+                assertThat(raidDto.getContributor().get(0).getUuid(), is("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb"));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -1417,17 +1410,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getStatus())
-                        .as("should have correct status")
-                        .isEqualTo("AUTHENTICATION_FAILED");
-
-                assertThat(raidDto.getContributor().get(0).getId())
-                        .as("contributor id should be null")
-                        .isNull();
-
-                assertThat(raidDto.getContributor().get(0).getUuid())
-                        .as("should have correct UUID")
-                        .isEqualTo("de8cb78e-3cb6-424d-9537-3b6a0b15604c");
+                assertThat(raidDto.getContributor().get(0).getStatus(), is("AUTHENTICATION_FAILED"));
+                assertThat(raidDto.getContributor().get(0).getId(), is(nullValue()));
+                assertThat(raidDto.getContributor().get(0).getUuid(), is("de8cb78e-3cb6-424d-9537-3b6a0b15604c"));
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -1477,13 +1462,13 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     fail("Patch should fail with invalid status");
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
-                    assertThat(failures).contains(
+                    assertThat(failures, hasSize(1));
+                    assertThat(failures, contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0].status")
                                     .errorType("invalidValue")
                                     .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED")
-                    );
+                    ));
                 } catch (Exception e) {
                     failOnError(e);
                 }
