@@ -1,0 +1,1 @@
+export { AlternateIdentifiersFormComponent } from "./AlternateIdentifiersFormComponent";
