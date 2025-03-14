@@ -770,7 +770,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
                 } catch (RaidApiValidationException e) {
                     final var failures = e.getFailures();
-                    assertThat(failures).hasSize(1);
+                    assertThat(failures)
+                            .as("should be 1 failure")
+                            .hasSize(1);
                     assertThat(failures).contains(
                             new ValidationFailure()
                                     .fieldId("contributor[0]")
@@ -799,12 +801,10 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
                 raidDto.getContributor().get(0).setStatus("AUTHENTICATED");
 
-                try {
-                    final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
-                    assertThat(updateResponse.getBody().getContributor().get(0).getStatus()).isEqualTo("AWAITING_AUTHENTICATION");
-                } catch (Exception e) {
-                    failOnError(e);
-                }
+                final var updateResponse = raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), raidUpdateRequestFactory.create(raidDto));
+                assertThat(updateResponse.getBody().getContributor().get(0).getStatus())
+                        .as("should have correct status")
+                        .isEqualTo("AWAITING_AUTHENTICATION");
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -1388,9 +1388,17 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AWAITING_AUTHENTICATION");
-                assertThat(raidDto.getContributor().get(0).getId()).isNull();
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb");
+                assertThat(raidDto.getContributor().get(0).getStatus())
+                        .as("should have correct status")
+                        .isEqualTo("AWAITING_AUTHENTICATION");
+
+                assertThat(raidDto.getContributor().get(0).getId())
+                        .as("contributor id should be null")
+                        .isNull();
+
+                assertThat(raidDto.getContributor().get(0).getUuid())
+                        .as("should have correct UUID")
+                        .isEqualTo("4b932e7c-f7c2-4bd6-93d0-0244f47bdbcb");
             } catch (Exception e) {
                 failOnError(e);
             }
@@ -1409,9 +1417,17 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
                 final var raidDto = readResponse.getBody();
 
-                assertThat(raidDto.getContributor().get(0).getStatus()).isEqualTo("AUTHENTICATION_FAILED");
-                assertThat(raidDto.getContributor().get(0).getId()).isNull();
-                assertThat(raidDto.getContributor().get(0).getUuid()).isEqualTo("de8cb78e-3cb6-424d-9537-3b6a0b15604c");
+                assertThat(raidDto.getContributor().get(0).getStatus())
+                        .as("should have correct status")
+                        .isEqualTo("AUTHENTICATION_FAILED");
+
+                assertThat(raidDto.getContributor().get(0).getId())
+                        .as("contributor id should be null")
+                        .isNull();
+
+                assertThat(raidDto.getContributor().get(0).getUuid())
+                        .as("should have correct UUID")
+                        .isEqualTo("de8cb78e-3cb6-424d-9537-3b6a0b15604c");
             } catch (Exception e) {
                 failOnError(e);
             }
