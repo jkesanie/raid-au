@@ -18,9 +18,9 @@ import {
   useFieldArray,
 } from "react-hook-form";
 import { spatialCoveragePlaceGenerator } from "@/entities/spatial-coverage-place/data-components/spatial-coverage-place-generator";
-import SpatialCoveragePlaceDetailsFormComponent from "./SpatialCoveragePlaceDetailsFormComponent";
+import { SpatialCoveragePlaceDetailsFormComponent } from "./SpatialCoveragePlaceDetailsFormComponent";
 
-export default function SpatialCoveragePlacesFormComponent({
+export function SpatialCoveragePlacesFormComponent({
   control,
   errors,
   trigger,

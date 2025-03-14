@@ -18,20 +18,21 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import ContributorPositionsFormComponent from "../../contributor-position/form-components/ContributorPositionsFormComponent";
-import ContributorRolesFormComponent from "../../contributor-role/form-components/ContributorRolesFormComponent";
-import ContributorDetailsFormComponent from "./ContributorDetailsFormComponent";
 
-export default function ContributorsFormComponent({
+import { ContributorPositionsFormComponent } from "@/entities/contributor-position/form-components/ContributorPositionsFormComponent";
+import { ContributorRolesFormComponent } from "@/entities/contributor-role/form-components/ContributorRolesFormComponent";
+import { ContributorDetailsFormComponent } from "@/entities/contributor/form-components/ContributorDetailsFormComponent";
+
+export function ContributorsFormComponent({
   control,
+  data,
   errors,
   trigger,
-  data,
 }: {
   control: Control<RaidDto>;
+  data: Contributor[];
   errors: FieldErrors<RaidDto>;
   trigger: UseFormTrigger<RaidDto>;
-  data: Contributor[];
 }) {
   const key = "contributor";
   const label = "Contributor";

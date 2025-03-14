@@ -123,7 +123,7 @@ function CombinedMenu() {
   );
 }
 
-export default function NavigationDrawer() {
+export function NavigationDrawer() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {

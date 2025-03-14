@@ -19,10 +19,10 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import OrganisationRolesFormComponent from "../../organisation-role/form-components/OrganisationRolesFormComponent";
-import OrganisationDetailsFormComponent from "./OrganisationDetailsFormComponent";
+import { OrganisationRolesFormComponent } from "@/entities/organisation-role/form-components/OrganisationRolesFormComponent";
+import { OrganisationDetailsFormComponent } from "./OrganisationDetailsFormComponent";
 
-export default function OrganisationsFormComponent({
+export function OrganisationsFormComponent({
   control,
   errors,
   trigger,

@@ -18,9 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import ContributorRoleDetailsFormComponent from "./ContributorRoleDetailsFormComponent";
+import { ContributorRoleDetailsFormComponent } from "./ContributorRoleDetailsFormComponent";
 
-export default function ContributorRolesFormComponent({
+export function ContributorRolesFormComponent({
   control,
   errors,
   trigger,

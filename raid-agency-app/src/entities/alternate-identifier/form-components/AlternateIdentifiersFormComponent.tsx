@@ -17,10 +17,10 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import { alternateIdentifierGenerator } from "../data-components/alternate-identifier-generator";
-import AlternateIdentifierDetailsFormComponent from "./AlternateIdentifierDetailsFormComponent";
+import { alternateIdentifierGenerator } from "@/entities/alternate-identifier/data-components/alternate-identifier-generator";
+import { AlternateIdentifierDetailsFormComponent } from "@/entities/alternate-identifier/form-components/AlternateIdentifierDetailsFormComponent";
 
-export default function AlternateIdentifiersFormComponent({
+export function AlternateIdentifiersFormComponent({
   control,
   errors,
   trigger,

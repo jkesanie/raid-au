@@ -1,5 +1,5 @@
+import { spatialCoveragePlaceValidationSchema } from "@/entities/spatial-coverage-place/data-components/spatial-coverage-validation-schema";
 import { z } from "zod";
-import { spatialCoveragePlaceValidationSchema } from "../../spatial-coverage-place/data-components/spatial-coverage-validation-schema";
 
 export const spatialCoverageValidationSchema = z
   .array(

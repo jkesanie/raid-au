@@ -18,9 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import RelatedRaidDetailsFormComponent from "./RelatedRaidDetailsFormComponent";
+import { RelatedRaidDetailsFormComponent } from "./RelatedRaidDetailsFormComponent";
 
-export default function RelatedRaidsFormComponent({
+export function RelatedRaidsFormComponent({
   control,
   errors,
   trigger,

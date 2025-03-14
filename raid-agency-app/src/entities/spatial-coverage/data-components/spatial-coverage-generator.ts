@@ -1,5 +1,5 @@
+import { spatialCoveragePlaceGenerator } from "@/entities/spatial-coverage-place/data-components/spatial-coverage-place-generator";
 import { SpatialCoverage } from "@/generated/raid";
-import { spatialCoveragePlaceGenerator } from "../../spatial-coverage-place/data-components/spatial-coverage-place-generator";
 
 export const spatialCoverageGenerator = (): SpatialCoverage => {
   return {

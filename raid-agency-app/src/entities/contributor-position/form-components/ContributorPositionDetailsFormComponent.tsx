@@ -50,7 +50,7 @@ function FieldGrid({
   );
 }
 
-export default function ContributorPositionDetailsFormComponent({
+export function ContributorPositionDetailsFormComponent({
   parentIndex,
   index,
   handleRemoveItem,

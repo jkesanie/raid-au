@@ -1,25 +1,21 @@
 import { AnchorButtons } from "@/components/anchor-buttons";
 import { RaidValidationSchema } from "@/components/validation";
-import AccessFormComponent from "@/entities/access/form-components/AccessFormComponent";
-import AlternateIdentifiersFormComponent from "@/entities/alternate-identifier/form-components/AlternateIdentifiersFormComponent";
-import AlternateUrlsFormComponent from "@/entities/alternate-url/form-components/AlternateUrlsFormComponent";
-import ContributorsFormComponent from "@/entities/contributor/form-components/ContributorsFormComponent";
-import DateFormComponent from "@/entities/date/form-components/DateFormComponent";
-import DescriptionsFormComponent from "@/entities/description/form-components/DescriptionsFormComponent";
-import OrganisationsFormComponent from "@/entities/organisation/form-components/OrganisationsFormComponent";
-import RelatedObjectsFormComponent from "@/entities/related-object/form-components/RelatedObjectsFormComponent";
-import RelatedRaidsFormComponent from "@/entities/related-raid/form-components/RelatedRaidsFormComponent";
-import SpatialCoveragesFormComponent from "@/entities/spatial-coverage/form-components/SpatialCoveragesFormComponent";
-import SubjectsFormComponent from "@/entities/subject/form-components/SubjectsFormComponent";
-import TitlesFormComponent from "@/entities/title/form-components/TitlesFormComponent";
+import { AccessFormComponent } from "@/entities/access/form-components/AccessFormComponent";
+import { AlternateIdentifiersFormComponent } from "@/entities/alternate-identifier/form-components/AlternateIdentifiersFormComponent";
+import { AlternateUrlsFormComponent } from "@/entities/alternate-url/form-components/AlternateUrlsFormComponent";
+import { ContributorsFormComponent } from "@/entities/contributor/form-components/ContributorsFormComponent";
+import { DateFormComponent } from "@/entities/date/form-components/DateFormComponent";
+import { DescriptionsFormComponent } from "@/entities/description/form-components/DescriptionsFormComponent";
+import { OrganisationsFormComponent } from "@/entities/organisation/form-components/OrganisationsFormComponent";
+import { RelatedObjectsFormComponent } from "@/entities/related-object/form-components/RelatedObjectsFormComponent";
+import { RelatedRaidsFormComponent } from "@/entities/related-raid/form-components/RelatedRaidsFormComponent";
+import { SpatialCoveragesFormComponent } from "@/entities/spatial-coverage/form-components/SpatialCoveragesFormComponent";
+import { SubjectsFormComponent } from "@/entities/subject/form-components/SubjectsFormComponent";
+import { TitlesFormComponent } from "@/entities/title/form-components/TitlesFormComponent";
 import { RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Close as CloseIcon, Save as SaveIcon } from "@mui/icons-material";
-import {
-  Fab,
-  Stack,
-  Tooltip
-} from "@mui/material";
+import { Fab, Stack, Tooltip } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";

@@ -21,7 +21,7 @@ import { useParams } from "react-router-dom";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { sendInvite } from "@/services/invite";
 
-export default function InviteDialog({
+export function InviteDialog({
   title,
   open,
   setOpen,

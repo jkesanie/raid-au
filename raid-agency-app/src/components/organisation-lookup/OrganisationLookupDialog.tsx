@@ -26,7 +26,7 @@ const searchAPI = async (query: string) => {
   return response.json();
 };
 
-export default function OrganisationLookupDialog({
+export function OrganisationLookupDialog({
   open,
   setOpen,
   setSelectedValue,

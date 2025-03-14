@@ -54,7 +54,7 @@ function FieldGrid({
   );
 }
 
-export default function OrganisationRoleDetailsFormComponent({
+export function OrganisationRoleDetailsFormComponent({
   parentIndex,
   index,
   handleRemoveItem,

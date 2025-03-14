@@ -1,1 +1,0 @@
-export { ContributorForm } from "./ContributorForm";

@@ -24,7 +24,7 @@ function FieldGrid({
   );
 }
 
-export default function SpatialCoverageDetailsFormComponent({
+export function SpatialCoverageDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

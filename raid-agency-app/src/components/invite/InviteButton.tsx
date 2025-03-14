@@ -3,7 +3,7 @@ import { PersonAdd as PersonAddIcon } from "@mui/icons-material";
 import { Fab, Tooltip } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 
-export default function InviteButton({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
+export function InviteButton({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
   const { hasServicePointGroup, isServicePointUser } = useAuthHelper();
 
   return (

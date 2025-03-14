@@ -38,7 +38,7 @@ function FieldGrid({
   );
 }
 
-export default function RelatedObjectCategoryDetailsFormComponent({
+export function RelatedObjectCategoryDetailsFormComponent({
   parentIndex,
   index,
   handleRemoveItem,
