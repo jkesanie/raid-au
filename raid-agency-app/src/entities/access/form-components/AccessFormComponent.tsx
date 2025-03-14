@@ -84,4 +84,4 @@ const AccessFormComponent = memo(
 );
 
 AccessFormComponent.displayName = "AccessFormComponent";
-export default AccessFormComponent;
+export { AccessFormComponent };

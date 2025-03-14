@@ -41,7 +41,7 @@ function getRolesFromToken({
   );
 }
 
-export default function UserDropdown() {
+export function UserDropdown() {
   const { isInitialized, tokenParsed, token, authenticated, logout } =
     useKeycloak();
   const snackbar = useSnackbar();

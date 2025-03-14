@@ -37,7 +37,7 @@ function FieldGrid({
   );
 }
 
-export default function ContributorRoleDetailsFormComponent({
+export function ContributorRoleDetailsFormComponent({
   parentIndex,
   index,
   handleRemoveItem,

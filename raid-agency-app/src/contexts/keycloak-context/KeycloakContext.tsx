@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { keycloakInstance } from "../../keycloak";
+import { keycloakInstance } from "@/keycloak";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
 import { Loading } from "@/pages/loading";
 

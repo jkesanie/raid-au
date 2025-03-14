@@ -18,9 +18,9 @@ import {
   useFieldArray,
 } from "react-hook-form";
 import { alternateUrlGenerator } from "@/entities/alternate-url/data-components/alternate-url-generator";
-import AlternateUrlDetailsFormComponent from "./AlternateUrlDetailsFormComponent";
+import { AlternateUrlDetailsFormComponent } from "./AlternateUrlDetailsFormComponent";
 
-export default function AlternateUrlsFormComponent({
+export function AlternateUrlsFormComponent({
   control,
   errors,
   trigger,

@@ -1,3 +1,4 @@
+import { RelatedObjectCategoriesFormComponent } from "@/entities/related-object-category/form-components/RelatedObjectCategoriesFormComponent";
 import { relatedObjectGenerator } from "@/entities/related-object/data-components/related-object-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
@@ -18,10 +19,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import RelatedObjectCategoriesFormComponent from "../../related-object-category/form-components/RelatedObjectCategoriesFormComponent";
-import RelatedObjectDetailsFormComponent from "./RelatedObjectDetailsFormComponent";
+import { RelatedObjectDetailsFormComponent } from "./RelatedObjectDetailsFormComponent";
 
-export default function RelatedObjectsFormComponent({
+export function RelatedObjectsFormComponent({
   control,
   errors,
   trigger,

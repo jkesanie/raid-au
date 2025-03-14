@@ -4,7 +4,6 @@ import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import SubjectKeywordsFormComponent from "../../subject-keyword/form-components/SubjectKeywordsFormComponent";
 
 function FieldGrid({
   index,
@@ -32,7 +31,7 @@ function FieldGrid({
   );
 }
 
-export default function SubjectDetailsFormComponent({
+export function SubjectDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

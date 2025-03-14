@@ -18,9 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import SubjectKeywordDetailsFormComponent from "./SubjectKeywordDetailsFormComponent";
+import { SubjectKeywordDetailsFormComponent } from "./SubjectKeywordDetailsFormComponent";
 
-export default function SubjectKeywordsFormComponent({
+export function SubjectKeywordsFormComponent({
   control,
   errors,
   trigger,

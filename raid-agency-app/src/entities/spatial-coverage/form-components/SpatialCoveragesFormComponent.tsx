@@ -1,3 +1,4 @@
+import { SpatialCoveragePlacesFormComponent } from "@/entities/spatial-coverage-place/form-components/SpatialCoveragePlacesFormComponent";
 import { spatialCoverageGenerator } from "@/entities/spatial-coverage/data-components/spatial-coverage-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
@@ -18,10 +19,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import SpatialCoveragePlacesFormComponent from "../../spatial-coverage-place/form-components/SpatialCoveragePlacesFormComponent";
-import SpatialCoverageDetailsFormComponent from "./SpatialCoverageDetailsFormComponent";
+import { SpatialCoverageDetailsFormComponent } from "./SpatialCoverageDetailsFormComponent";
 
-export default function SpatialCoveragesFormComponent({
+export function SpatialCoveragesFormComponent({
   control,
   errors,
   trigger,

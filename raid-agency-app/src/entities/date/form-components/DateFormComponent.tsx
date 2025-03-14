@@ -45,4 +45,4 @@ const DateFormComponent = memo(
 );
 
 DateFormComponent.displayName = "DateFormComponent";
-export default DateFormComponent;
+export { DateFormComponent };

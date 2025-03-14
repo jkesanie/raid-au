@@ -18,9 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import RelatedObjectCategoryDetailsFormComponent from "./RelatedObjectCategoryDetailsFormComponent";
+import { RelatedObjectCategoryDetailsFormComponent } from "./RelatedObjectCategoryDetailsFormComponent";
 
-export default function RelatedObjectCategoriesFormComponent({
+export function RelatedObjectCategoriesFormComponent({
   control,
   errors,
   trigger,

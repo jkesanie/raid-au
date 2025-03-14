@@ -1,16 +1,14 @@
 import { TextInputField } from "@/fields/TextInputField";
 import { TextSelectField } from "@/fields/TextSelectField";
-import { RelatedRaid, Title } from "@/generated/raid";
+import { RelatedRaid } from "@/generated/raid";
 import generalMapping from "@/mapping/data/general-mapping.json";
 import { fetchRelatedRaidTitle } from "@/services/related-raid";
 import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { get } from "http";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { useParams } from "react-router-dom";
 
 function FieldGrid({
   index,
@@ -48,7 +46,7 @@ function FieldGrid({
   );
 }
 
-export default function RelatedRaidDetailsFormComponent({
+export function RelatedRaidDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

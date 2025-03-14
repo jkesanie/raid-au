@@ -8,7 +8,7 @@ type ErrorType =
   | Merge<FieldError, (Merge<FieldError, FieldErrorsImpl<any>> | undefined)[]>
   | undefined;
 
-const useErrorCardStyles = (error: ErrorType) => {
+export const useErrorCardStyles = (error: ErrorType) => {
   return useMemo(
     () => ({
       borderLeftStyle: error ? "solid" : "none",
@@ -18,5 +18,3 @@ const useErrorCardStyles = (error: ErrorType) => {
     [error]
   );
 };
-
-export default useErrorCardStyles;

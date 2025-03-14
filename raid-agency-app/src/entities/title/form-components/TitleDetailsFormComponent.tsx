@@ -59,7 +59,7 @@ function FieldGrid({
   );
 }
 
-export default function TitleDetailsFormComponent({
+export function TitleDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

@@ -18,9 +18,9 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import DescriptionDetailsFormComponent from "./DescriptionDetailsFormComponent";
+import { DescriptionDetailsFormComponent } from "./DescriptionDetailsFormComponent";
 
-export default function DescriptionsFormComponent({
+export function DescriptionsFormComponent({
   control,
   errors,
   trigger,

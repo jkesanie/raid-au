@@ -48,7 +48,7 @@ function FieldGrid({
   );
 }
 
-export default function DescriptionDetailsFormComponent({
+export function DescriptionDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

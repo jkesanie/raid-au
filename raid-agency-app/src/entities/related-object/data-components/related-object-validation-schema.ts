@@ -1,5 +1,5 @@
+import { relatedObjectCategoryValidationSchema } from "@/entities/related-object-category/data-components/related-object-category-validation-schema";
 import { z } from "zod";
-import { relatedObjectCategoryValidationSchema } from "../../related-object-category/data-components/related-object-category-validation-schema";
 
 const doiUrlSchema = z.string().url().startsWith("https://doi.org", {
   message: "URL must be a DOI link starting with https://doi.org",

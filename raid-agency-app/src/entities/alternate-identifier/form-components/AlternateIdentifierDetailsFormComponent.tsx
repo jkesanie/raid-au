@@ -31,7 +31,7 @@ function FieldGrid({
   );
 }
 
-export default function AlternateIdentifierDetailsFormComponent({
+export function AlternateIdentifierDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

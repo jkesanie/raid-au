@@ -24,7 +24,7 @@ function FieldGrid({
   );
 }
 
-export default function AlternateUrlDetailsFormComponent({
+export function AlternateUrlDetailsFormComponent({
   index,
   handleRemoveItem,
 }: {

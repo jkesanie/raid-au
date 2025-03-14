@@ -1,5 +1,5 @@
-import InviteButton from "@/components/invite/InviteButton";
-import InviteDialog from "@/components/invite/InviteDialog";
+import { InviteButton } from "@/components/invite/InviteButton";
+import { InviteDialog } from "@/components/invite/InviteDialog";
 import {
   Edit as EditIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,

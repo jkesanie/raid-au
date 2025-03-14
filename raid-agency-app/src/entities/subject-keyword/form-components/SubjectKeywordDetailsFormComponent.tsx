@@ -1,7 +1,5 @@
 import LanguageSelector from "@/fields/LanguageSelector";
 import { TextInputField } from "@/fields/TextInputField";
-import { TextSelectField } from "@/fields/TextSelectField";
-import subjectMapping from "@/mapping/data/subject-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
@@ -33,7 +31,7 @@ function FieldGrid({
   );
 }
 
-export default function SubjectKeywordDetailsFormComponent({
+export function SubjectKeywordDetailsFormComponent({
   parentIndex,
   index,
   handleRemoveItem,
