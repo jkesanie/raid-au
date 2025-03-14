@@ -8,6 +8,7 @@ import au.org.raid.inttest.factory.RaidPatchRequestFactory;
 import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
 import au.org.raid.inttest.service.Handle;
 import au.org.raid.inttest.service.RaidApiValidationException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -738,6 +739,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
+        @Disabled("Email not currently supported")
         @DisplayName("Should not be able to update status of contributor with PUT request")
         void updateStatus() {
             createRequest.getContributor().get(0).email("awaiting-authentication@test.raid.org.au");
@@ -1211,6 +1213,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
+        @Disabled("Email not currently supported")
         @DisplayName("Should set awaiting-authentication contributor")
         void awaitingAuthenticationContributor() {
             createRequest.getContributor().get(0).setEmail("awaiting-authentication@test.raid.org.au");
@@ -1228,6 +1231,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         }
 
         @Test
+        @Disabled("Email not currently supported")
         @DisplayName("Should set authentication-failed contributor")
         void authenticationFailedContributor() {
             createRequest.getContributor().get(0).setEmail("authentication-failed@test.raid.org.au");
