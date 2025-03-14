@@ -1,17 +1,17 @@
 import { AnchorButtons } from "@/components/anchor-buttons";
 import { RaidValidationSchema } from "@/components/validation";
-import { AccessFormComponent } from "@/entities/access/form-components/access-form-component";
-import { AlternateIdentifiersFormComponent } from "@/entities/alternate-identifier/form-components/alternate-identifiers-form-component";
-import { AlternateUrlsFormComponent } from "@/entities/alternate-url/form-components/alternate-urls-form-component";
-import { ContributorsFormComponent } from "@/entities/contributor/form-components/contributors-form-component";
-import { DateFormComponent } from "@/entities/date/form-components/date-form-component";
-import { DescriptionsFormComponent } from "@/entities/description/form-components/descriptions-form-component";
-import { OrganisationsFormComponent } from "@/entities/organisation/form-components/organisations-form-component";
-import { RelatedObjectsFormComponent } from "@/entities/related-object/form-components/related-objects-form-component";
-import { RelatedRaidsFormComponent } from "@/entities/related-raid/form-components/related-raids-form-component";
-import { SpatialCoveragesFormComponent } from "@/entities/spatial-coverage/form-components/spatial-coverages-form-component";
-import { SubjectsFormComponent } from "@/entities/subject/form-components/subjects-form-component";
-import { TitlesFormComponent } from "@/entities/title/form-components/titles-form-component";
+import { AccessForm } from "@/entities/access/forms/access-form";
+import { AlternateIdentifiersForm } from "@/entities/alternate-identifier/forms/alternate-identifiers-form";
+import { AlternateUrlsForm } from "@/entities/alternate-url/forms/alternate-urls-form";
+import { ContributorsForm } from "@/entities/contributor/forms/contributors-form";
+import { DateForm } from "@/entities/date/forms/date-form";
+import { DescriptionsForm } from "@/entities/description/forms/descriptions-form";
+import { OrganisationsForm } from "@/entities/organisation/forms/organisations-form";
+import { RelatedObjectsForm } from "@/entities/related-object/forms/related-objects-form";
+import { RelatedRaidsForm } from "@/entities/related-raid/forms/related-raids-form";
+import { SpatialCoveragesForm } from "@/entities/spatial-coverage/forms/spatial-coverages-form";
+import { SubjectsForm } from "@/entities/subject/forms/subjects-form";
+import { TitlesForm } from "@/entities/title/forms/titles-form";
 import { RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Close as CloseIcon, Save as SaveIcon } from "@mui/icons-material";
@@ -109,74 +109,74 @@ export const RaidForm = memo(
           <Stack spacing={2} data-testid="raid-form">
             <AnchorButtons raidData={raidData} errors={formState.errors} />
             <Stack spacing={2}>
-              <DateFormComponent
+              <DateForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <TitlesFormComponent
+              <TitlesForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <DescriptionsFormComponent
+              <DescriptionsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <ContributorsFormComponent
+              <ContributorsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
                 data={raidData.contributor || []}
               />
 
-              <OrganisationsFormComponent
+              <OrganisationsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <RelatedObjectsFormComponent
+              <RelatedObjectsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <AlternateIdentifiersFormComponent
+              <AlternateIdentifiersForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <AlternateUrlsFormComponent
+              <AlternateUrlsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <RelatedRaidsFormComponent
+              <RelatedRaidsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <AccessFormComponent
+              <AccessForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <SubjectsFormComponent
+              <SubjectsForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}
               />
 
-              <SpatialCoveragesFormComponent
+              <SpatialCoveragesForm
                 control={control}
                 errors={formState.errors}
                 trigger={trigger}

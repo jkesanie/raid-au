@@ -1,1 +1,0 @@
-export { DescriptionsDisplay } from "./DescriptionsDisplay";

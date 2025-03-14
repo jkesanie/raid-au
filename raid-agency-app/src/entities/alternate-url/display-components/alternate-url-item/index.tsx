@@ -1,1 +1,0 @@
-export { AlternateUrlItem } from "./AlternateUrlItem";

@@ -1,0 +1,1 @@
+export { SpatialCoveragesView } from "./SpatialCoveragesView";

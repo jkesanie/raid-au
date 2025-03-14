@@ -1,0 +1,1 @@
+export { SubjectDetailsForm } from "./SubjectDetailsForm";

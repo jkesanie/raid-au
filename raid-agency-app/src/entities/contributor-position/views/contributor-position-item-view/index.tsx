@@ -1,0 +1,1 @@
+export { ContributorPositionItemView } from "./ContributorPositionItemView";

@@ -1,0 +1,1 @@
+export { ContributorRoleItemView } from "./ContributorRoleItemView";

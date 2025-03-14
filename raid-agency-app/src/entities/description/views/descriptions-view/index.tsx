@@ -1,0 +1,1 @@
+export { DescriptionsView } from "./DescriptionsView";

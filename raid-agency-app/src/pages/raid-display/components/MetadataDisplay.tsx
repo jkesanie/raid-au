@@ -14,7 +14,11 @@ export const MetadataDisplay = ({
             label="RAiD created on"
             value={
               metadata.created && metadata.created !== null
-                ? new Date(metadata.created * 1000).toLocaleString()
+                ? new Date(metadata.created * 1000).toLocaleString(undefined, {
+                    timeZone: Intl.DateTimeFormat(undefined, {
+                      timeZone: "UTC",
+                    }).resolvedOptions().timeZone,
+                  })
                 : "Unknown"
             }
             width={3}
@@ -23,7 +27,11 @@ export const MetadataDisplay = ({
             label="RAiD updated on"
             value={
               metadata.updated && metadata.updated !== null
-                ? new Date(metadata.updated * 1000).toLocaleString()
+                ? new Date(metadata.updated * 1000).toLocaleString(undefined, {
+                    timeZone: Intl.DateTimeFormat(undefined, {
+                      timeZone: "UTC",
+                    }).resolvedOptions().timeZone,
+                  })
                 : "Unknown"
             }
           />

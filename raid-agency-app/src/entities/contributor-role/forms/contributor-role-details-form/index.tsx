@@ -1,0 +1,1 @@
+export { ContributorRoleDetailsForm } from "./ContributorRoleDetailsForm";

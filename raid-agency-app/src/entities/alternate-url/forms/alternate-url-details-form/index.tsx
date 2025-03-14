@@ -1,0 +1,1 @@
+export { AlternateUrlDetailsForm } from "./AlternateUrlDetailsForm";

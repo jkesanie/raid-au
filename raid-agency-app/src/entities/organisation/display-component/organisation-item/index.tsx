@@ -1,1 +1,0 @@
-export { OrganisationItem } from "./OrganisationItem";

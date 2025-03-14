@@ -1,0 +1,1 @@
+export { OrganisationItemView } from "./OrganisationItemView";

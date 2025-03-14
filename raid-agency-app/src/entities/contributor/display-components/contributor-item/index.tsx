@@ -1,1 +1,0 @@
-export { ContributorItem } from "./ContributorItem";

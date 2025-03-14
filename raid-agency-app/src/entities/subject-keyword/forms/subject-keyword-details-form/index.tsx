@@ -1,0 +1,1 @@
+export { SubjectKeywordDetailsForm } from "./SubjectKeywordDetailsForm";

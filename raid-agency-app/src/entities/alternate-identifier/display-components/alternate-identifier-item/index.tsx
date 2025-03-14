@@ -1,1 +1,0 @@
-export { AlternateIdentifierItem } from "./AlternateIdentifierItem";

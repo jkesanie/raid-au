@@ -1,0 +1,1 @@
+export { AlternateIdentifierDetailsForm } from "./AlternateIdentifierDetailsForm";

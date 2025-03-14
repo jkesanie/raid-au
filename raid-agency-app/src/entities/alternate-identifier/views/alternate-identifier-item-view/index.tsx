@@ -1,0 +1,1 @@
+export { AlternateIdentifierItemView } from "./AlternateIdentifierItemView";

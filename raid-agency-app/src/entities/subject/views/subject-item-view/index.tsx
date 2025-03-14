@@ -1,0 +1,1 @@
+export { SubjectItemiew } from "./SubjectItemView";

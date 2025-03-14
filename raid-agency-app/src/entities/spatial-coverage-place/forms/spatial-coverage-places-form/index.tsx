@@ -1,0 +1,1 @@
+export { SpatialCoveragePlacesForm } from "./SpatialCoveragePlacesForm";

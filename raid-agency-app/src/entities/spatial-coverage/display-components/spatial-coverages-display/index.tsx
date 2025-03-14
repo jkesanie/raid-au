@@ -1,1 +1,0 @@
-export { SpatialCoveragesDisplay } from "./SpatialCoveragesDisplay";

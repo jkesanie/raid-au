@@ -1,0 +1,1 @@
+export { TitleDetailsForm } from "./TitleDetailsForm";

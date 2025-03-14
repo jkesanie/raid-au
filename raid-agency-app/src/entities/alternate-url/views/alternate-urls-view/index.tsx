@@ -1,0 +1,1 @@
+export { AlternateUrlsView } from "./AlternateUrlsView";

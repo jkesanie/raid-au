@@ -1,0 +1,1 @@
+export { RelatedObjectCategoryItemView } from "./RelatedObjectCategoryItemView";

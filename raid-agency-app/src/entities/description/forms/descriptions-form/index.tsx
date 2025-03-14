@@ -1,0 +1,1 @@
+export { DescriptionsForm } from "./DescriptionsForm";

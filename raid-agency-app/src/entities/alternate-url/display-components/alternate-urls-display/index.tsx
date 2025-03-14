@@ -1,1 +1,0 @@
-export { AlternateUrlsDisplay } from "./AlternateUrlsDisplay";

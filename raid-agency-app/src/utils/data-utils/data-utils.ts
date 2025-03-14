@@ -1,7 +1,7 @@
-import { accessGenerator } from "@/entities/access/data-components/access-generator";
-import { dateCleaner } from "@/entities/date/data-components/date-cleaner";
-import { dateGenerator } from "@/entities/date/data-components/date-generator";
-import { titleGenerator } from "@/entities/title/data-components/title-generator";
+import { accessDataGenerator } from "@/entities/access/data-generator/access-data-generator";
+import { dateCleaner } from "@/utils/date-cleaner";
+import { dateDataGenerator } from "@/entities/date/data-generator/date-data-generator";
+import { titleDataGenerator } from "@/entities/title/data-generator/title-data-generator";
 import {
   Access,
   AlternateIdentifier,
@@ -20,90 +20,90 @@ import {
   Title,
 } from "@/generated/raid";
 
-import { AccessDisplay } from "@/entities/access/display-components/access-display";
-import { AlternateIdentifiersDisplay } from "@/entities/alternate-identifier/display-components/alternate-identifiers-display";
-import { AlternateUrlsDisplay } from "@/entities/alternate-url/display-components/alternate-urls-display";
-import { ContributorsDisplay } from "@/entities/contributor/display-components/contributors-display";
-import { DateDisplay } from "@/entities/date/display-components/date-display";
-import { DescriptionsDisplay } from "@/entities/description/display-components/descriptions-display";
-import { OrganisationsDisplay } from "@/entities/organisation/display-component/organisations-display";
-import { RelatedObjectsDisplay } from "@/entities/related-object/display-components/related-objects-display";
-import { RelatedRaidsDisplay } from "@/entities/related-raid/display-components/related-raids-display";
-import { SpatialCoveragesDisplay } from "@/entities/spatial-coverage/display-components/spatial-coverages-display";
-import { SubjectsDisplay } from "@/entities/subject/display-components/subjects-display";
-import { TitlesDisplay } from "@/entities/title/display-components/titles-display";
+import { AccessView } from "@/entities/access/views/access-view";
+import { AlternateIdentifiersView } from "@/entities/alternate-identifier/views/alternate-identifiers-view";
+import { AlternateUrlsView } from "@/entities/alternate-url/views/alternate-urls-view";
+import { ContributorsView } from "@/entities/contributor/views/contributors-view";
+import { DateView } from "@/entities/date/views/date-view";
+import { DescriptionsView } from "@/entities/description/views/descriptions-view";
+import { OrganisationsView } from "@/entities/organisation/views/organisations-view";
+import { RelatedObjectsView } from "@/entities/related-object/views/related-objects-view";
+import { RelatedRaidsView } from "@/entities/related-raid/views/related-raids-view";
+import { SpatialCoveragesView } from "@/entities/spatial-coverage/views/spatial-coverages-view";
+import { SubjectsView } from "@/entities/subject/views/subjects-view";
+import { TitlesView } from "@/entities/title/views/titles-view";
 
 export const displayItems = [
   {
     itemKey: "date",
     label: "Dates",
-    Component: DateDisplay,
+    Component: DateView,
     emptyValue: {},
   },
   {
     itemKey: "title",
     label: "Titles",
-    Component: TitlesDisplay,
+    Component: TitlesView,
     emptyValue: [],
   },
   {
     itemKey: "description",
     label: "Descriptions",
-    Component: DescriptionsDisplay,
+    Component: DescriptionsView,
     emptyValue: [],
   },
   {
     itemKey: "contributor",
     label: "Contributors",
-    Component: ContributorsDisplay,
+    Component: ContributorsView,
     emptyValue: [],
   },
   {
     itemKey: "organisation",
     label: "Organisations",
-    Component: OrganisationsDisplay,
+    Component: OrganisationsView,
     emptyValue: [],
   },
   {
     itemKey: "relatedObject",
     label: "Related Objects",
-    Component: RelatedObjectsDisplay,
+    Component: RelatedObjectsView,
     emptyValue: [],
   },
   {
     itemKey: "alternateIdentifier",
     label: "Alternate Identifiers",
-    Component: AlternateIdentifiersDisplay,
+    Component: AlternateIdentifiersView,
     emptyValue: [],
   },
   {
     itemKey: "alternateUrl",
     label: "Alternate URLs",
-    Component: AlternateUrlsDisplay,
+    Component: AlternateUrlsView,
     emptyValue: [],
   },
   {
     itemKey: "relatedRaid",
     label: "Related RAiDs",
-    Component: RelatedRaidsDisplay,
+    Component: RelatedRaidsView,
     emptyValue: [],
   },
   {
     itemKey: "access",
     label: "Access",
-    Component: AccessDisplay,
+    Component: AccessView,
     emptyValue: {},
   },
   {
     itemKey: "subject",
     label: "Subjects",
-    Component: SubjectsDisplay,
+    Component: SubjectsView,
     emptyValue: [],
   },
   {
     itemKey: "spatialCoverage",
     label: "Spatial Coverages",
-    Component: SpatialCoveragesDisplay,
+    Component: SpatialCoveragesView,
     emptyValue: [],
   },
 ];
@@ -128,21 +128,12 @@ export const raidRequest = (data: RaidDto): RaidDto => {
 };
 
 export const newRaid: RaidCreateRequest = {
-  title: [titleGenerator()],
-  // description: [descriptionGenerator()],
-  date: dateGenerator(),
-  access: accessGenerator(),
+  title: [titleDataGenerator()],
+  date: dateDataGenerator(),
+  access: accessDataGenerator(),
   organisation: [],
   contributor: [],
-  // subject: [subjectGenerator()],
-  // relatedRaid: [],
   alternateUrl: [],
-  // spatialCoverage: [spatialCoverageGenerator()],
-  // relatedObject: [
-  //   relatedObjectGenerator(),
-  //   relatedObjectGenerator(),
-  //   relatedObjectGenerator(),
-  // ]
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

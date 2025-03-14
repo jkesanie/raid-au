@@ -1,1 +1,0 @@
-export { SubjectKeywordDetailsFormComponent } from "./SubjectKeywordDetailsFormComponent";

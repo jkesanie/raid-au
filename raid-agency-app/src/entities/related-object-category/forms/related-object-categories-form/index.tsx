@@ -1,0 +1,1 @@
+export { RelatedObjectCategoriesForm } from "./RelatedObjectCategoriesForm";

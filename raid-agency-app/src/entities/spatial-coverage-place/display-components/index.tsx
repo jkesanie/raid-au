@@ -1,1 +1,0 @@
-export { SpatialCoveragePlaceItem } from "./SpatialCoveragePlaceItem";
