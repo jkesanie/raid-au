@@ -1,4 +1,4 @@
-import titleGenerator from "@/entities/title/data-components/title-generator";
+import { titleGenerator } from "@/entities/title/data-components/title-generator";
 import TitleDetailsFormComponent from "@/entities/title/form-components/TitleDetailsFormComponent";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";

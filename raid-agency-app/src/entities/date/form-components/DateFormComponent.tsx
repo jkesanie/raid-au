@@ -2,27 +2,18 @@ import { TextInputField } from "@/fields/TextInputField";
 import { RaidDto } from "@/generated/raid";
 import { Card, CardContent, CardHeader, Grid } from "@mui/material";
 import { memo } from "react";
-import {
-  Control,
-  FieldErrors,
-  UseFormTrigger
-} from "react-hook-form";
-import dateGenerator from "../data-components/date-generator";
+import { Control, FieldErrors, UseFormTrigger } from "react-hook-form";
 
 const DateFormComponent = memo(
   ({
-    control,
     errors,
-    trigger,
   }: {
     control: Control<RaidDto>;
     errors: FieldErrors<RaidDto>;
     trigger: UseFormTrigger<RaidDto>;
   }) => {
     const key = "date";
-    const label = "Date";
     const labelPlural = "Dates";
-    const generator = dateGenerator;
 
     return (
       <Card

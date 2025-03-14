@@ -1,3 +1,4 @@
+import { subjectGenerator } from "@/entities/subject/data-components/subject-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
@@ -17,9 +18,8 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-import subjectGenerator from "../data-components/subject-generator";
+import SubjectKeywordsFormComponent from "../../subject-keyword/form-components/SubjectKeywordsFormComponent";
 import SubjectDetailsFormComponent from "./SubjectDetailsFormComponent";
-import SubjectKeywordsFormComponent from "../keyword/form-components/SubjectKeywordsFormComponent";
 
 export default function SubjectsFormComponent({
   control,

@@ -1,0 +1,1 @@
+export { AlternateIdentifierItem } from "./AlternateIdentifierItem";

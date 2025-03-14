@@ -1,0 +1,1 @@
+export { OrcidButton } from "./OrcidButton";

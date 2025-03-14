@@ -10,28 +10,20 @@ const primaryTitleReferenceUri = titleTypeReference.find(
   (el) => el.uri === PRIMARY_TITLE_URI
 )?.uri;
 
-const titleTypeGenerator = (): TitleType => {
-  return {
-    id: primaryTitleReferenceUri,
-    schemaUri: titleTypeSchemaReference[0].uri,
-  };
-};
+const titleTypeGenerator = (): TitleType => ({
+  id: primaryTitleReferenceUri,
+  schemaUri: titleTypeSchemaReference[0].uri,
+});
 
-const titleLanguageGenerator = (): Language => {
-  return {
-    id: "eng",
-    schemaUri: languageSchema[0].uri,
-  };
-};
+const titleLanguageGenerator = (): Language => ({
+  id: "eng",
+  schemaUri: languageSchema[0].uri,
+});
 
-const titleGenerator = (): Title => {
-  return {
-    text: `Example title... ${new Date().toLocaleTimeString()}`,
-    type: titleTypeGenerator(),
-    language: titleLanguageGenerator(),
-    startDate: dayjs(new Date()).format("YYYY-MM-DD"),
-    endDate: dayjs(new Date()).add(1, "year").format("YYYY-MM-DD"),
-  };
-};
-
-export default titleGenerator;
+export const titleGenerator = (): Title => ({
+  text: "",
+  type: titleTypeGenerator(),
+  language: titleLanguageGenerator(),
+  startDate: dayjs(new Date()).format("YYYY-MM-DD"),
+  endDate: dayjs(new Date()).add(1, "year").format("YYYY-MM-DD"),
+});

@@ -1,0 +1,1 @@
+export { ContributorsDisplay } from "./ContributorsDisplay";
