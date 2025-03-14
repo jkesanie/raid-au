@@ -1,0 +1,1 @@
+export { AlternateUrlsFormComponent } from "./AlternateUrlsFormComponent";

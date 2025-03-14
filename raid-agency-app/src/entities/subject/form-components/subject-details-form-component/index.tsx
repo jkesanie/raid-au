@@ -1,0 +1,1 @@
+export { SubjectDetailsFormComponent } from "./SubjectDetailsFormComponent";
