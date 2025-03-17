@@ -1,6 +1,9 @@
 /// <reference types="astro/client" />
 
 import type { RaidDto, ServicePoint } from "@/generated/raid";
+import fs from "fs";
+import path from "path";
+import { diff, detailedDiff } from "deep-object-diff";
 
 const apiEndpoint = import.meta.env.API_ENDPOINT;
 const iamEndpoint = import.meta.env.IAM_ENDPOINT;
@@ -8,17 +11,9 @@ const iamEndpoint = import.meta.env.IAM_ENDPOINT;
 const iamClientId = import.meta.env.IAM_CLIENT_ID;
 const iamClientSecret = import.meta.env.IAM_CLIENT_SECRET;
 
-const iamClientUsername = import.meta.env.IAM_CLIENT_USERNAME;
-const iamClientPassword = import.meta.env.IAM_CLIENT_PASSWORD;
+import { raids as storedRaids } from "@/store/raids";
 
 async function getAuthToken(): Promise<string> {
-  // const TOKEN_PARAMS = {
-  //   grant_type: "password",
-  //   client_id: iamClientId,
-  //   username: iamClientUsername,
-  //   password: iamClientPassword,
-  // };
-
   const TOKEN_PARAMS = {
     grant_type: "client_credentials",
     client_id: iamClientId,
@@ -60,6 +55,27 @@ async function getAuthToken(): Promise<string> {
 
 export async function fetchRaids(): Promise<RaidDto[]> {
   try {
+    const response = await fetch(
+      `https://static.${import.meta.env.RAID_ENV}.raid.org.au/api/raids.json/`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    fs.writeFileSync(
+      "src/temp/before.json",
+      JSON.stringify(data, null, 2),
+      "utf-8"
+    );
+
     const token = await getAuthToken();
 
     const servicePoints = await fetchServicePoints({ token });
@@ -89,6 +105,22 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       console.log(`SP ${id}: ${data.length} raids`);
       raidsFromAllSps.push(...data);
     }
+
+    fs.writeFileSync(
+      "src/temp/after.json",
+      JSON.stringify(raidsFromAllSps, null, 2),
+      "utf-8"
+    );
+
+    const before = fs.readFileSync("src/temp/before.json", "utf-8");
+    const after = fs.readFileSync("src/temp/after.json", "utf-8");
+
+    const diffResult = detailedDiff(JSON.parse(before), JSON.parse(after));
+    fs.writeFileSync(
+      "src/temp/diff.json",
+      JSON.stringify(diffResult, null, 2),
+      "utf-8"
+    );
     return raidsFromAllSps;
   } catch (error) {
     console.error("There was a problem fetching the raids:", error);
