@@ -122,6 +122,8 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       }
     );
 
+    console.log(`✅ ${new Date().toISOString()}: customDiff has been written`, JSON.stringify(customDiff, null, 2));
+
     fs.writeFileSync(
       "src/temp/diff.json",
       JSON.stringify(customDiff, null, 2),
