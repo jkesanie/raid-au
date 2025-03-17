@@ -1,5 +1,5 @@
 // import { detailedDiff } from "deep-object-diff";
-import jsonpatch from "fast-json-patch";
+import {type Operation, compare} from "fast-json-patch";
 
 // Define types for your key mapper function
 type KeyMapperFn = (index: number, item: any, parent: any) => string;
@@ -11,9 +11,9 @@ export function createCustomKeyDiff<T extends object | any[]>(
   obj1: T,
   obj2: T,
   keyMapper: KeyMapperFn
-): jsonpatch.Operation[] {
+): Operation[] {
   // Generate standard JSON Patch operations
-  const operations = jsonpatch.compare(obj1, obj2);
+  const operations = compare(obj1, obj2);
 
   // Transform the paths to use custom keys
   return operations.map((op) => {
