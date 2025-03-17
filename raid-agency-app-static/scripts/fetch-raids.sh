@@ -91,13 +91,13 @@ if [ "$RAID_ENV" = "prod" ]; then
   # Parse the JSON response into an array that can be iterated over
   echo "Processing service points..."
 
-  # Save the service points to a temporary file (only need to do this once)
+  # Save the service points to a temporary file
   echo "$SERVICEPOINTS_RESPONSE" >temp_servicepoints.json
 
-  # Initialize empty combined file
+  # Initialize empty combined file - start with empty array
   echo "[]" >combined_raids.json
 
-  # Iterate through each service point in the response using a traditional file input
+  # Iterate through each service point in the response
   jq -c '.[]' temp_servicepoints.json | while read -r servicepoint; do
     # Extract values from each service point
     id=$(echo $servicepoint | jq -r '.id')
@@ -115,21 +115,21 @@ if [ "$RAID_ENV" = "prod" ]; then
 
   # Now build the combined response after the loop
   for temp_file in temp_response_*.json; do
-    # Extract the ID from the filename
-    id=$(echo $temp_file | sed 's/temp_response_\(.*\)\.json/\1/')
-
-    # Instead of building one big command, use temporary files
-    jq -c '.[0] + .[1]' combined_raids.json $temp_file >temp_combined.json
-    mv temp_combined.json combined_raids.json
+    # Check if the temporary file has valid content
+    if [ -s "$temp_file" ]; then
+      # Use jq slurp mode to combine arrays correctly
+      jq -s '.[0] + .[1]' combined_raids.json "$temp_file" >temp_combined.json
+      mv temp_combined.json combined_raids.json
+    fi
 
     # Remove the temporary file
-    rm $temp_file
+    rm "$temp_file"
   done
 
   # Clean up the service points temporary file
   rm temp_servicepoints.json
 
-  # Move the final combined array to a file
+  # Move the final combined array to the output file
   mv combined_raids.json "$OUTPUT_FILE"
 else
   # Code to execute if RAID_ENV is not "prod"
