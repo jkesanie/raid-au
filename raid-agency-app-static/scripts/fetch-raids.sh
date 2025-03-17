@@ -82,19 +82,20 @@ echo "Token acquired successfully."
 if [ "$RAID_ENV" = "prod" ]; then
   # Code to execute if RAID_ENV is set to "prod"
   echo "Running in production environment"
+
+  # Get service points
   SERVICEPOINTS_RESPONSE=$(curl -s -X GET $API_ENDPOINT/service-point/ \
     -H "Authorization: Bearer $BEARER_TOKEN" \
     -H "Content-Type: application/json")
 
   # Parse the JSON response into an array that can be iterated over
   echo "Processing service points..."
-  echo $SERVICEPOINTS_RESPONSE >temp_servicepoints.json
 
-  # Initialize an empty array to store all responses
-  ALL_RESPONSES="[]"
-
-  # Save the service points to a temporary file
+  # Save the service points to a temporary file (only need to do this once)
   echo "$SERVICEPOINTS_RESPONSE" >temp_servicepoints.json
+
+  # Initialize empty combined file
+  echo "[]" >combined_raids.json
 
   # Iterate through each service point in the response using a traditional file input
   jq -c '.[]' temp_servicepoints.json | while read -r servicepoint; do
@@ -117,13 +118,9 @@ if [ "$RAID_ENV" = "prod" ]; then
     # Extract the ID from the filename
     id=$(echo $temp_file | sed 's/temp_response_\(.*\)\.json/\1/')
 
-    # Get the name for this ID
-    name=$(jq -r ".[] | select(.id == \"$id\") | .name" temp_servicepoints.json)
-
-    # Add this response to our array
-    response_data=$(cat $temp_file)
-    ALL_RESPONSES=$(jq -c --argjson data "$response_data" \
-      '. += $data' <<<"$ALL_RESPONSES")
+    # Instead of building one big command, use temporary files
+    jq -c '.[0] + .[1]' combined_raids.json $temp_file >temp_combined.json
+    mv temp_combined.json combined_raids.json
 
     # Remove the temporary file
     rm $temp_file
@@ -132,8 +129,8 @@ if [ "$RAID_ENV" = "prod" ]; then
   # Clean up the service points temporary file
   rm temp_servicepoints.json
 
-  # Write the final combined array to a file
-  echo "$ALL_RESPONSES" >"$OUTPUT_FILE"
+  # Move the final combined array to a file
+  mv combined_raids.json "$OUTPUT_FILE"
 else
   # Code to execute if RAID_ENV is not "prod"
   echo "Running in non-production environment"
