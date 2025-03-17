@@ -54,7 +54,7 @@ async function getAuthToken(): Promise<string> {
 export async function fetchRaids(): Promise<RaidDto[]> {
   try {
     const response = await fetch(
-      `https://static.${import.meta.env.RAID_ENV}.raid.org.au/api/raids.json/`,
+      `https://static.${import.meta.env.RAID_ENV || "test"}.raid.org.au/api/raids.json/`,
       {
         headers: {
           "Content-Type": "application/json",

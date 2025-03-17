@@ -1,5 +1,5 @@
 // import { detailedDiff } from "deep-object-diff";
-import * as jsonpatch from "fast-json-patch";
+import jsonpatch from "fast-json-patch";
 
 // Define types for your key mapper function
 type KeyMapperFn = (index: number, item: any, parent: any) => string;
