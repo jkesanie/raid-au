@@ -122,7 +122,10 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       }
     );
 
-    console.log(`✅ ${new Date().toISOString()}: customDiff has been written`, JSON.stringify(customDiff, null, 2));
+    console.log(
+      `✅ ${new Date().toISOString()}: customDiff has been written`,
+      JSON.stringify(customDiff, null, 2)
+    );
 
     fs.writeFileSync(
       "src/temp/diff.json",
@@ -130,6 +133,91 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       "utf-8"
     );
     return raidsFromAllSps;
+  } catch (error) {
+    console.error("There was a problem fetching the raids:", error);
+    throw error;
+  }
+}
+
+export async function downloadRaidsViaServicePoints(): Promise<RaidDto[]> {
+  try {
+    const token = await getAuthToken();
+    const servicePoints = await fetchServicePoints({ token });
+    const ids = servicePoints.map((sp) => sp.id);
+
+    const raidsFromAllSps: RaidDto[] = [];
+
+    for (const id of ids) {
+      console.log(
+        `Fetching data from ${apiEndpoint}/raid/?servicePointId=${id}`
+      );
+      const response = await fetch(
+        `${apiEndpoint}/raid/?servicePointId=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = (await response.json()) as RaidDto[];
+
+      console.log(`SP ${id}: ${data.length} raids`);
+      raidsFromAllSps.push(...data);
+    }
+
+    fs.writeFileSync(
+      "src/temp/after.json",
+      JSON.stringify(raidsFromAllSps, null, 2),
+      "utf-8"
+    );
+
+    const before = fs.readFileSync("src/temp/before.json", "utf-8");
+    const after = fs.readFileSync("src/temp/after.json", "utf-8");
+
+    const customDiff = createCustomKeyDiff(
+      JSON.parse(before),
+      JSON.parse(after),
+      (index, item, _) => {
+        return item?.id || `${index === 0 ? index : item?.identifier?.id}`;
+      }
+    );
+
+    console.log(
+      `✅ ${new Date().toISOString()}: customDiff has been written`,
+      JSON.stringify(customDiff, null, 2)
+    );
+
+    fs.writeFileSync(
+      "src/temp/diff.json",
+      JSON.stringify(customDiff, null, 2),
+      "utf-8"
+    );
+    return raidsFromAllSps;
+  } catch (error) {
+    console.error("There was a problem fetching the raids:", error);
+    throw error;
+  }
+}
+
+export async function downloadRaidsViaRaidDumper(): Promise<RaidDto[]> {
+  try {
+    const token = await getAuthToken();
+    const raidsFromAllSps: RaidDto[] = [];
+
+    const response = await fetch(`${apiEndpoint}/raid/all-public`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
   } catch (error) {
     console.error("There was a problem fetching the raids:", error);
     throw error;
