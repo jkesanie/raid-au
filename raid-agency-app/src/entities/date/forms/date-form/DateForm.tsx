@@ -21,6 +21,7 @@ const DateForm = memo(
           borderLeft: errors[key] ? "3px solid" : "none",
           borderLeftColor: "error.main",
         }}
+        id={key}
       >
         <CardHeader title={labelPlural} />
         <CardContent>

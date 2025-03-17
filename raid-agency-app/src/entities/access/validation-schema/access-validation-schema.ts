@@ -25,7 +25,7 @@ const accessStatementLanguageValidationSchema = z.object({
 });
 
 const accessStatementValidationSchema = z.object({
-  text: z.string().min(1),
+  text: z.string().optional(),
   language: accessStatementLanguageValidationSchema,
 });
 

@@ -10,7 +10,7 @@ export function accessDataGenerator(): Access {
       schemaUri: accessTypeSchema[0].uri,
     },
     statement: {
-      text: "",
+      text: "_",
       language: {
         id: "eng",
         schemaUri:

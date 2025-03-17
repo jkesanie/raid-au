@@ -12,7 +12,10 @@ const orcidErrorMsg =
 const baseContributorSchema = z.object({
   contact: z.boolean(),
   email: z.string().optional(),
-  id: z.string().regex(new RegExp(orcidPattern), { message: orcidErrorMsg }),
+  id: z
+    .string()
+    .regex(new RegExp(orcidPattern), { message: orcidErrorMsg })
+    .optional(),
   leader: z.boolean(),
   position: contributorPositionValidationSchema,
   role: contributorRoleValidationSchema,

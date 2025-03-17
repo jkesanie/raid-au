@@ -1,7 +1,5 @@
 import { Contributor } from "@/generated/raid";
-import {
-    Button
-} from "@mui/material";
+import { Button } from "@mui/material";
 
 interface ContributorWithStatus extends Contributor {
   uuid: string;
@@ -36,10 +34,11 @@ export function OrcidButton({
   };
 
   // Determine button label based on authentication status
-  const buttonLabel =
-    isAuthenticated && orcidData?.name
+  const buttonLabel = isAuthenticated
+    ? orcidData?.name
       ? orcidData.name
-      : statusDisplayText[status] || "";
+      : contributor.id
+    : statusDisplayText[status] || "";
 
   return (
     <Button
