@@ -2,8 +2,6 @@
 
 import type { RaidDto, ServicePoint } from "@/generated/raid";
 import fs from "fs";
-import path from "path";
-import { diff, detailedDiff } from "deep-object-diff";
 
 const apiEndpoint = import.meta.env.API_ENDPOINT;
 const iamEndpoint = import.meta.env.IAM_ENDPOINT;
@@ -11,7 +9,7 @@ const iamEndpoint = import.meta.env.IAM_ENDPOINT;
 const iamClientId = import.meta.env.IAM_CLIENT_ID;
 const iamClientSecret = import.meta.env.IAM_CLIENT_SECRET;
 
-import { raids as storedRaids } from "@/store/raids";
+import { createCustomKeyDiff } from "@/utils/diff-utils";
 
 async function getAuthToken(): Promise<string> {
   const TOKEN_PARAMS = {
@@ -70,16 +68,9 @@ export async function fetchRaids(): Promise<RaidDto[]> {
 
     const data = await response.json();
 
-    const beforeWithKeys = [];
-    for (const el of data) {
-      beforeWithKeys.push({
-        [el.identifier.id]: el,
-      });
-    }
-
     fs.writeFileSync(
       "src/temp/before.json",
-      JSON.stringify(beforeWithKeys, null, 2),
+      JSON.stringify(data, null, 2),
       "utf-8"
     );
 
@@ -109,15 +100,9 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       }
 
       const data = (await response.json()) as RaidDto[];
+
       console.log(`SP ${id}: ${data.length} raids`);
       raidsFromAllSps.push(...data);
-    }
-
-    const afterWithKeys = [];
-    for (const el of raidsFromAllSps) {
-      afterWithKeys.push({
-        [el.identifier.id]: el,
-      });
     }
 
     fs.writeFileSync(
@@ -129,10 +114,17 @@ export async function fetchRaids(): Promise<RaidDto[]> {
     const before = fs.readFileSync("src/temp/before.json", "utf-8");
     const after = fs.readFileSync("src/temp/after.json", "utf-8");
 
-    const diffResult = detailedDiff(JSON.parse(before), JSON.parse(after));
+    const customDiff = createCustomKeyDiff(
+      JSON.parse(before),
+      JSON.parse(after),
+      (index, item, _) => {
+        return item?.id || `${index === 0 ? index : item?.identifier?.id}`;
+      }
+    );
+
     fs.writeFileSync(
       "src/temp/diff.json",
-      JSON.stringify(diffResult, null, 2),
+      JSON.stringify(customDiff, null, 2),
       "utf-8"
     );
     return raidsFromAllSps;
