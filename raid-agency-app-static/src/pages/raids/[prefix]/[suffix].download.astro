@@ -3,8 +3,8 @@ import type { RaidDto } from "@/generated/raid";
 import { raids } from "@/store/raids";
 
 export async function getStaticPaths() {
-  return raids.map((el: RaidDto) => {
-    const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
+  return raids.map((el) => {
+    const [_, prefix, suffix] = new URL(el?.identifier?.id).pathname.split("/");
     return {
       params: {
         prefix,
@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 }
 
 const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
-const { raid }: { raid: RaidDto } = Astro.props;
+const { raid } = Astro.props as unknown as { raid: Partial<RaidDto> };
 
 return new Response(JSON.stringify(raid), {
   status: 200,

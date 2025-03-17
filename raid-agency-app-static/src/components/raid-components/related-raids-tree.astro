@@ -1,8 +1,8 @@
 ---
-import { raids } from "@/store/raids";
-import type { RaidDto, RelatedRaid } from "@/generated/raid";
 import InfoField from "@/components/info-field.astro";
+import type { RelatedRaid } from "@/generated/raid";
 import mapping from "@/mapping/data/general-mapping.json";
+import { raids } from "@/store/raids";
 
 interface Props {
   relatedRaids: RelatedRaid[];
@@ -70,7 +70,7 @@ function findReverseRelations(
 
   const reverseRelations: RelatedRaidWithLevel[] = [];
 
-  raids.forEach((raid: RaidDto) => {
+  raids.forEach((raid) => {
     if (!raid.identifier.id) return;
 
     const raidLastSegments = raid.identifier.id.split("/").slice(-2).join("/");
@@ -82,7 +82,7 @@ function findReverseRelations(
     if (matchingRelation) {
       reverseRelations.push({
         id: raid.identifier.id,
-        type: matchingRelation.type, // Use the exact matching relation's type
+        type: matchingRelation.type,
         level: level,
         title: raid.title?.map((el) => el.text).join(" | "),
       });

@@ -109,17 +109,31 @@ if [ "$RAID_ENV" = "prod" ]; then
       -H "Authorization: Bearer $BEARER_TOKEN" \
       -H "Content-Type: application/json")
 
-    # Save this response to a temporary file with the ID
-    echo "$SP_RESPONSE" >"temp_response_$id.json"
+    # Validate and clean the JSON before saving
+    echo "$SP_RESPONSE" | jq '.' >"temp_response_$id.json" 2>/dev/null || {
+      echo "Warning: Invalid JSON received for $name (ID: $id), skipping..."
+      echo "[]" >"temp_response_$id.json"
+    }
   done
 
   # Now build the combined response after the loop
   for temp_file in temp_response_*.json; do
     # Check if the temporary file has valid content
     if [ -s "$temp_file" ]; then
+      # Try to sanitize the JSON before combining
+      jq '.' "$temp_file" >"clean_$temp_file" 2>/dev/null || {
+        echo "Warning: Could not parse $temp_file, skipping..."
+        continue
+      }
+
       # Use jq slurp mode to combine arrays correctly
-      jq -s '.[0] + .[1]' combined_raids.json "$temp_file" >temp_combined.json
+      jq -s '.[0] + .[1]' combined_raids.json "clean_$temp_file" >temp_combined.json 2>/dev/null || {
+        echo "Warning: Could not combine $temp_file, skipping..."
+        continue
+      }
+
       mv temp_combined.json combined_raids.json
+      rm "clean_$temp_file"
     fi
 
     # Remove the temporary file

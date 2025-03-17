@@ -2,7 +2,7 @@
 import type { RaidDto } from "@/generated/raid";
 
 interface Props {
-  raid: RaidDto;
+  raid: Partial<RaidDto>;
 }
 
 const { raid } = Astro.props as Props;

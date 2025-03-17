@@ -8,18 +8,17 @@ import Contributors from "@/components/raid-components/contributors.astro";
 import Dates from "@/components/raid-components/dates.astro";
 import Descriptions from "@/components/raid-components/descriptions.astro";
 import Organisations from "@/components/raid-components/organisations.astro";
+import Raw from "@/components/raid-components/raw.astro";
 import RelatedObjects from "@/components/raid-components/related-objects.astro";
-import RelatedRaids from "@/components/raid-components/related-raids.astro";
 import RelatedRaidsTree from "@/components/raid-components/related-raids-tree.astro";
 import Subjects from "@/components/raid-components/subjects.astro";
-import Raw from "@/components/raid-components/raw.astro";
 import Titles from "@/components/raid-components/titles.astro";
 import type { ModelDate, RaidDto } from "@/generated/raid";
 import Layout from "@/layouts/main.astro";
 import { raids } from "@/store/raids";
 
 export async function getStaticPaths() {
-  return raids.map((el: RaidDto) => {
+  return raids.map((el) => {
     const [_, prefix, suffix] = new URL(el.identifier.id).pathname.split("/");
     return {
       params: {
@@ -34,7 +33,7 @@ export async function getStaticPaths() {
 }
 
 const { prefix, suffix }: { prefix: string; suffix: string } = Astro.params;
-const { raid }: { raid: RaidDto } = Astro.props;
+const { raid } = Astro.props as unknown as { raid: Partial<RaidDto> };
 ---
 
 <Layout title={`RAiD ${prefix}/${suffix}`}>
@@ -69,7 +68,7 @@ const { raid }: { raid: RaidDto } = Astro.props;
           relatedRaids={raid?.relatedRaid || []}
           currentRaidId={`${prefix}/${suffix}`}
         />
-        <Access access={raid?.access} />
+        {raid?.access && <Access access={raid?.access} />}
         <Subjects subjects={raid?.subject || []} />
         <Raw raid={raid} />
       </div>
