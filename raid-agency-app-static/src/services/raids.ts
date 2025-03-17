@@ -70,9 +70,16 @@ export async function fetchRaids(): Promise<RaidDto[]> {
 
     const data = await response.json();
 
+    const beforeWithKeys = [];
+    for (const el of data) {
+      beforeWithKeys.push({
+        [el.identifier.id]: el,
+      });
+    }
+
     fs.writeFileSync(
       "src/temp/before.json",
-      JSON.stringify(data, null, 2),
+      JSON.stringify(beforeWithKeys, null, 2),
       "utf-8"
     );
 
@@ -104,6 +111,13 @@ export async function fetchRaids(): Promise<RaidDto[]> {
       const data = (await response.json()) as RaidDto[];
       console.log(`SP ${id}: ${data.length} raids`);
       raidsFromAllSps.push(...data);
+    }
+
+    const afterWithKeys = [];
+    for (const el of raidsFromAllSps) {
+      afterWithKeys.push({
+        [el.identifier.id]: el,
+      });
     }
 
     fs.writeFileSync(
