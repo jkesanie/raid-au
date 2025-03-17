@@ -164,6 +164,6 @@ else
   fi
 
   # Delete files older than 7 days
-  find "$DATA_DIR" -name "raids_*.json" -type f -mtime +7d -delete
+  find "$DATA_DIR" -name "raids_*.json" -type f -mtime +7 -delete
 
 fi
