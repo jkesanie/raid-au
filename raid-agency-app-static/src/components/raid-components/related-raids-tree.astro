@@ -1,6 +1,6 @@
 ---
 import InfoField from "@/components/info-field.astro";
-import type { RelatedRaid } from "@/generated/raid";
+import type { RaidDto, RelatedRaid } from "@/generated/raid";
 import mapping from "@/mapping/data/general-mapping.json";
 import { raids } from "@/store/raids";
 
@@ -74,15 +74,18 @@ function findReverseRelations(
     if (!raid.identifier.id) return;
 
     const raidLastSegments = raid.identifier.id.split("/").slice(-2).join("/");
-    const matchingRelation = raid.relatedRaid?.find((related) => {
-      const relatedLastSegments = related.id?.split("/").slice(-2).join("/");
-      return relatedLastSegments === currentLastSegments;
-    });
+    const matchingRelation: any = raid.relatedRaid?.find(
+      (related: RelatedRaid) => {
+        const relatedLastSegments =
+          "id" in related ? related.id?.split("/").slice(-2).join("/") : "";
+        return relatedLastSegments === currentLastSegments;
+      }
+    );
 
-    if (matchingRelation) {
+    if (matchingRelation && "type" in matchingRelation) {
       reverseRelations.push({
         id: raid.identifier.id,
-        type: matchingRelation.type,
+        type: matchingRelation?.type,
         level: level,
         title: raid.title?.map((el) => el.text).join(" | "),
       });

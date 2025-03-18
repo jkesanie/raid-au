@@ -85,9 +85,9 @@ echo "Token acquired successfully."
 
 # The following should only run in the "prod" environment
 
-if [ "$RAID_ENV" = "prod" ]; then
-  # Code to execute if RAID_ENV is set to "prod"
-  echo "Running in production environment"
+if [ "$RAID_ENV" = "prod" ] || [ "$RAID_ENV" = "stage" ]; then
+  # Code to execute if RAID_ENV is set to "prod" or "stage"
+  echo "Running in ${RAID_ENV} environment"
 
   # Get service points
   SERVICEPOINTS_RESPONSE=$(curl -s -X GET $API_ENDPOINT/service-point/ \
