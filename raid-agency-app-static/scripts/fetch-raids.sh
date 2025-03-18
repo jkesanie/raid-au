@@ -167,3 +167,15 @@ else
   find "$DATA_DIR" -name "raids_*.json" -type f -mtime +7 -delete
 
 fi
+
+output_file="src/raw-data/handles.json"
+
+# Use jq to extract the handles and create a JSON array directly
+jq -r '.[].identifier.id' $OUTPUT_FILE |
+  sed -E 's|http://[^/]*/([^/]+/[^/]+).*|\1|' |
+  sort |
+  uniq |
+  jq -R . |
+  jq -s . >"$output_file"
+
+echo "Unique handles have been saved to $output_file as a JSON array"
