@@ -47,6 +47,12 @@ fi
 
 DATA_DIR="./src/raw-data"
 
+# Create the data directory if it doesn't exist
+if [ ! -d "$DATA_DIR" ]; then
+  echo "Creating directory $DATA_DIR"
+  mkdir -p "$DATA_DIR"
+fi
+
 CURRENT_DATE=$(date +"%Y-%m-%d")
 YESTERDAY_DATE=$(date -v-1d +"%Y-%m-%d")
 
@@ -166,6 +172,13 @@ else
   # Delete files older than 7 days
   find "$DATA_DIR" -name "raids_*.json" -type f -mtime +7 -delete
 
+fi
+
+# Make sure the data directory exists for handles.json as well
+output_dir=$(dirname "src/raw-data/handles.json")
+if [ ! -d "$output_dir" ]; then
+  echo "Creating directory $output_dir"
+  mkdir -p "$output_dir"
 fi
 
 output_file="src/raw-data/handles.json"
