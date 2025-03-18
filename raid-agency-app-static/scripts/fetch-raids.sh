@@ -35,9 +35,6 @@ for var in "${required_vars[@]}"; do
   fi
 done
 
-echo "IAM_CLIENT_ID: $IAM_CLIENT_ID"
-echo "IAM_CLIENT_SECRET: $IAM_CLIENT_SECRET"
-
 # If any variables are missing, show error and exit
 if [ ${#missing_vars[@]} -ne 0 ]; then
   echo "Error: The following required environment variables are not set:"
