@@ -1,6 +1,31 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.2.0
+## App-client UI
+* Enhanced contributor management with ORCID integration
+* Improved invite functionality with ORCID notifications
+* Refactored form components for better maintainability
+* Enhanced error handling and validation messages
+* Improved loading states and error feedback
+* Enhanced related RAiD components with validation for URLs
+* Added cache manager for improved performance
+* UI/UX improvements in forms and displays
+
+## API
+* Added contributor status and UUID fields
+* Implemented ORCID integration for contributors
+* Enhanced error handling in Datacite requests
+* Improved validation for contributors and access statements
+* Added more detailed logging
+* Fixed RAID resource type in Datacite mapping
+
+## Static Landing Pages
+* Added JSON endpoints for raid data
+* Improved CORS support for API endpoints
+* Added related RAID tree visualization
+* Enhanced data fetching with support for multiple service points
+
 # 2.1.3
 ## API
 • Update Datacite mapping to set resource type of RAiDs to 'project'
