@@ -18,7 +18,7 @@
 #
 
 if [ -f ".env" ]; then
-  echo "Loading environment variables from ../.env file"
+  echo "Loading environment variables from .env file"
   export $(grep -v '^#' .env | xargs)
 else
   echo "No .env file found"
@@ -34,6 +34,9 @@ for var in "${required_vars[@]}"; do
     missing_vars+=("$var")
   fi
 done
+
+echo "IAM_CLIENT_ID: $IAM_CLIENT_ID"
+echo "IAM_CLIENT_SECRET: $IAM_CLIENT_SECRET"
 
 # If any variables are missing, show error and exit
 if [ ${#missing_vars[@]} -ne 0 ]; then
