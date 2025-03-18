@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Output file
-OUTPUT_FILE="src/raw-data/combined_handles.json"
+OUTPUT_FILE="src/raw-data/all-handles.json"
 
 # Temporary files for processing
 TEMP_FILE=$(mktemp)
