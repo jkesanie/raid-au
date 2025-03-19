@@ -1,6 +1,8 @@
 package au.org.raid.iam.provider.group;
 
 import au.org.raid.iam.provider.group.dto.Grant;
+import au.org.raid.iam.provider.group.dto.AddGroupAdminRequest;
+import au.org.raid.iam.provider.group.dto.RemoveGroupAdminRequest;
 import au.org.raid.iam.provider.group.dto.GroupJoinRequest;
 import au.org.raid.iam.provider.group.dto.GroupLeaveRequest;
 import au.org.raid.iam.provider.group.dto.SetActiveGroupRequest;
@@ -273,6 +275,84 @@ public class GroupController {
                 .orElseThrow(() -> new RoleNotFoundException(SERVICE_POINT_USER_ROLE));
 
         groupUser.deleteRoleMapping(servicePointUserRole);
+
+        return buildCorsResponse("PUT",
+                Response.ok().entity("{}"));
+    }
+
+    @OPTIONS
+    @Path("/group-admin")
+    public Response grantGroupAdminPreflight() {
+        return buildOptionsResponse("PUT", "DELETE");
+    }
+
+    @DELETE
+    @Path("/group-admin")
+    @SneakyThrows
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response grant(final RemoveGroupAdminRequest grant) {
+        if (this.auth == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        final var user = auth.getSession().getUser();
+        if (user == null) {
+            throw new NotAuthorizedException("Bearer");
+        }
+
+        if (!isGroupAdmin(user) && !isOperator(user)) {
+            throw new NotAuthorizedException("Permission denied - not a group admin");
+        }
+
+        if (!isGroupMember(user, grant.getGroupId()) && !isOperator(user)) {
+            throw new NotAuthorizedException("Permission denied - not a group member");
+        }
+
+        final var realm = session.getContext().getRealm();
+        final var groupUser = session.users().getUserById(realm, grant.getUserId());
+        final var groupAdminUserRole = session.roles()
+                .getRealmRolesStream(realm, null, null)
+                .filter(r -> r.getName().equals(GROUP_ADMIN_ROLE_NAME))
+                .findFirst()
+                .orElseThrow(() -> new RoleNotFoundException(GROUP_ADMIN_ROLE_NAME));
+
+        groupUser.deleteRoleMapping(groupAdminUserRole);
+
+        return buildCorsResponse("PUT",
+                Response.ok().entity("{}"));
+    }
+
+    @PUT
+    @Path("/group-admin")
+    @SneakyThrows
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response grant(final AddGroupAdminRequest grant) {
+        if (this.auth == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        final var user = auth.getSession().getUser();
+        if (user == null) {
+            throw new NotAuthorizedException("Bearer");
+        }
+
+        if (!isGroupAdmin(user) && !isOperator(user)) {
+            throw new NotAuthorizedException("Permission denied - not a group admin");
+        }
+
+        if (!isGroupMember(user, grant.getGroupId()) && !isOperator(user)) {
+            throw new NotAuthorizedException("Permission denied - not a group member");
+        }
+
+        final var realm = session.getContext().getRealm();
+        final var groupUser = session.users().getUserById(realm, grant.getUserId());
+        final var groupAdminUserRole = session.roles()
+                .getRealmRolesStream(realm, null, null)
+                .filter(r -> r.getName().equals(GROUP_ADMIN_ROLE_NAME))
+                .findFirst()
+                .orElseThrow(() -> new RoleNotFoundException(GROUP_ADMIN_ROLE_NAME));
+
+        groupUser.grantRole(groupAdminUserRole);
 
         return buildCorsResponse("PUT",
                 Response.ok().entity("{}"));

@@ -234,6 +234,58 @@ export const updateUserServicePointUserRole = async ({
   return response.json();
 };
 
+export const addUserToGroupAdmins = async ({
+  userId,
+  groupId,
+  token,
+}: {
+  userId: string;
+  groupId: string;
+  token: string;
+}): Promise<ServicePoint> => {
+  const url = `${kcUrl}/realms/${kcRealm}/group`;
+
+  const response = await fetch(`${url}/group-admin`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, groupId }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to promote user to group admin`);
+  }
+  return response.json();
+};
+
+export const removeUserFromGroupAdmins = async ({
+  userId,
+  groupId,
+  token,
+}: {
+  userId: string;
+  groupId: string;
+  token: string;
+}): Promise<ServicePoint> => {
+  const url = `${kcUrl}/realms/${kcRealm}/group`;
+
+  const response = await fetch(`${url}/group-admin`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, groupId }),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to remove user from group admins`);
+  }
+  return response.json();
+};
+
 export const removeUserFromServicePoint = async ({
   userId,
   groupId,

@@ -1,10 +1,13 @@
 import { useSnackbar } from "@/components/snackbar";
 import {
+  addUserToGroupAdmins,
+  removeUserFromGroupAdmins,
   removeUserFromServicePoint,
   updateUserServicePointUserRole,
 } from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
 import {
+  Divider,
   IconButton,
   List,
   ListItem,
@@ -16,8 +19,9 @@ import {
 
 import {
   CheckCircleOutline as CheckCircleOutlineIcon,
-  HighlightOff as HighlightOffIcon,
   GroupRemove as GroupRemoveIcon,
+  HighlightOff as HighlightOffIcon,
+  ManageAccounts as ManageAccountsIcon
 } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 
@@ -62,6 +66,32 @@ export const ServicePointUsersList = ({
     },
   });
 
+  const removeUserFromGroupAdminsMutation = useMutation({
+    mutationFn: removeUserFromGroupAdmins,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["servicePoints"],
+      });
+      snackbar.openSnackbar(`✅ Success: Removed user from group admins`);
+    },
+  });
+
+  const addUserToGroupAdminsMutation = useMutation({
+    mutationFn: addUserToGroupAdmins,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["servicePoints"],
+      });
+      snackbar.openSnackbar(`✅ Success: Added user to group admins`);
+    },
+  });
+
   return (
     <>
       <Paper variant="outlined" sx={{ p: 2 }}>
@@ -82,7 +112,7 @@ export const ServicePointUsersList = ({
                 key={el.id}
                 secondaryAction={
                   <Stack direction={"row"} spacing={1}>
-                    <Tooltip title="Revoke" placement="top">
+                    <Tooltip title="Revoke membership" placement="top">
                       <span>
                         <IconButton
                           edge="end"
@@ -103,7 +133,7 @@ export const ServicePointUsersList = ({
                         </IconButton>
                       </span>
                     </Tooltip>
-                    <Tooltip title="Grant" placement="top">
+                    <Tooltip title="Grant membership" placement="top">
                       <span>
                         <IconButton
                           edge="end"
@@ -124,11 +154,12 @@ export const ServicePointUsersList = ({
                         </IconButton>
                       </span>
                     </Tooltip>
-                    <Tooltip title="Remove from SP" placement="top">
+                    <Divider />
+                    <Tooltip title="Permanently remove from SP" placement="top">
                       <span>
                         <IconButton
                           edge="end"
-                          aria-label="grant"
+                          aria-label="remove from sp"
                           color="error"
                           onClick={() => {
                             removeUserFromServicePointMutation.mutate({
@@ -140,6 +171,47 @@ export const ServicePointUsersList = ({
                           }}
                         >
                           <GroupRemoveIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <Divider />
+                    <Tooltip title="Revoke admin rights" placement="top">
+                      <span>
+                        <IconButton
+                          edge="end"
+                          aria-label="revoke admin rights"
+                          color="error"
+                          disabled={!el?.roles?.includes("group-admin")}
+                          onClick={() => {
+                            removeUserFromGroupAdminsMutation.mutate({
+                              userId: el.id,
+                              groupId:
+                                servicePointWithMembers?.groupId as string,
+                              token: token as string,
+                            });
+                          }}
+                        >
+                          <ManageAccountsIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title="Grant admin rights" placement="top">
+                      <span>
+                        <IconButton
+                          edge="end"
+                          aria-label="grant admin rights"
+                          color="success"
+                          disabled={el?.roles?.includes("group-admin")}
+                          onClick={() => {
+                            addUserToGroupAdminsMutation.mutate({
+                              userId: el.id,
+                              groupId:
+                                servicePointWithMembers?.groupId as string,
+                              token: token as string,
+                            });
+                          }}
+                        >
+                          <ManageAccountsIcon />
                         </IconButton>
                       </span>
                     </Tooltip>
