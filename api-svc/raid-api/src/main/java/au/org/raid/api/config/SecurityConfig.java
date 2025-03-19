@@ -335,11 +335,26 @@ public class SecurityConfig {
     }
 
     private Jwt getToken() {
-        return ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
+            return jwtAuth.getToken();
+        }
+        return null;
     }
 
     private boolean tokenContainsRole(final Jwt token, final String roleName) {
-        return ((List<?>) ((Map<?, ?>) token.getClaim(REALM_ACCESS_CLAIM)).get(ROLES_CLAIM)).contains(roleName);
+        if (token == null) {
+            return false;
+        }
+        Object realmAccess = token.getClaim(REALM_ACCESS_CLAIM);
+        if (realmAccess == null) {
+            return false;
+        }
+        Object roles = ((Map<?, ?>) realmAccess).get(ROLES_CLAIM);
+        if (roles == null) {
+            return false;
+        }
+        return ((List<?>) roles).contains(roleName);
     }
 
     private boolean isPidSearch(final RequestAuthorizationContext context) {
