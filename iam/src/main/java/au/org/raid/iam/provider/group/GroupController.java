@@ -140,45 +140,58 @@ public class GroupController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@QueryParam("groupId") String groupId) throws JsonProcessingException {
         log.debug("Getting members of group");
-
         if (this.auth == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-
         final var user = auth.getSession().getUser();
         if (user == null) {
             throw new NotAuthorizedException("Bearer");
         }
-
         if (!isGroupAdmin(user) && !isOperator(user)) {
             throw new NotAuthorizedException("Permission denied");
         }
-
+        
+        // Return error if groupId not provided
+        if (groupId == null || groupId.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("\"groupId parameter is required\"")
+                .build();
+        }
+        
         final var realm = session.getContext().getRealm();
-        var group = (groupId != null && isOperator(user))
-                ? session.groups().getGroupById(realm, groupId)
-                : user.getGroupsStream().toList().get(0);
-
+        var group = session.groups().getGroupById(realm, groupId);
+        
+        // Check if group exists
+        if (group == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("\"Group not found\"")
+                .build();
+        }
+        
+        // Check if user has access to this group
+        if (!isOperator(user) && !user.getGroupsStream().anyMatch(g -> g.getId().equals(groupId))) {
+            throw new NotAuthorizedException("Permission denied for accessing this group");
+        }
+        
         final var responseBody = new HashMap<String, Object>();
         responseBody.put("id", group.getId());
         responseBody.put("name", group.getName());
         responseBody.put("attributes", group.getAttributes());
-
+        
         final var members = session.users().getGroupMembersStream(realm, group)
-                .filter(u -> !u.getId().equals(user.getId()))
-                .map(u -> {
-                    final var map = new HashMap<String, Object>();
-                    map.put("id", u.getId());
-                    map.put("attributes", u.getAttributes());
-                    map.put("roles", u.getRoleMappingsStream().map(RoleModel::getName).toList());
-                    return map;
-                })
-                .toList();
-
+            .filter(u -> !u.getId().equals(user.getId()))
+            .map(u -> {
+                final var map = new HashMap<String, Object>();
+                map.put("id", u.getId());
+                map.put("attributes", u.getAttributes());
+                map.put("roles", u.getRoleMappingsStream().map(RoleModel::getName).toList());
+                return map;
+            })
+            .toList();
+            
         responseBody.put("members", members);
-
         return buildCorsResponse("GET",
-                Response.ok().entity(objectMapper.writeValueAsString(responseBody)));
+            Response.ok().entity(objectMapper.writeValueAsString(responseBody)));
     }
 
     @OPTIONS
@@ -301,8 +314,8 @@ public class GroupController {
         if (this.auth == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-
-        final var user = auth.getSession().users().getUserById(realm, request.getUserId());
+        final var realm = session.getContext().getRealm();
+        final var user = session.users().getUserById(realm, request.getUserId());
         user.leaveGroup(session.groups().getGroupById(session.getContext().getRealm(), request.getGroupId()));
 
         return buildCorsResponse("PUT",
@@ -312,7 +325,7 @@ public class GroupController {
     @OPTIONS
     @Path("/active-group")
     public Response setActiveGroupPreflight() {
-        return buildOptionsResponse("PUT DELETE");
+        return buildOptionsResponse("PUT", "DELETE");
     }
 
     @PUT
@@ -338,8 +351,9 @@ public class GroupController {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        final var user = auth.getSession().users().getUserById(realm, request.getUserId());
-        user.removeAttribute("activeGroupId", List.of(request.getActiveGroupId()));
+        final var realm = session.getContext().getRealm();
+        final var user = session.users().getUserById(realm, request.getUserId());
+        user.removeAttribute("activeGroupId");
 
         return buildCorsResponse("DELETE",
                 Response.ok().entity("{}"));

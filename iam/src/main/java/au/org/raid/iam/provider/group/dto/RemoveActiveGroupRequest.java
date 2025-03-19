@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class RemoveActiveGroupRequest {
-    private String activeGroupId;
     private String userId;
 }
