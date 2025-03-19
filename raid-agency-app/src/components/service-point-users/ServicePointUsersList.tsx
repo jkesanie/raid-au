@@ -1,5 +1,8 @@
 import { useSnackbar } from "@/components/snackbar";
-import { updateUserServicePointUserRole } from "@/services/service-points";
+import {
+  removeUserFromServicePoint,
+  updateUserServicePointUserRole,
+} from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
 import {
   IconButton,
@@ -14,6 +17,7 @@ import {
 import {
   CheckCircleOutline as CheckCircleOutlineIcon,
   HighlightOff as HighlightOffIcon,
+  GroupRemove as GroupRemoveIcon,
 } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 
@@ -42,6 +46,19 @@ export const ServicePointUsersList = ({
       snackbar.openSnackbar(
         `✅ Success: ${variables.operation} role service-point-user `
       );
+    },
+  });
+
+  const removeUserFromServicePointMutation = useMutation({
+    mutationFn: removeUserFromServicePoint,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["servicePoints"],
+      });
+      snackbar.openSnackbar(`✅ Success: Removed user from service point`);
     },
   });
 
@@ -104,6 +121,25 @@ export const ServicePointUsersList = ({
                           }}
                         >
                           <CheckCircleOutlineIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title="Remove from SP" placement="top">
+                      <span>
+                        <IconButton
+                          edge="end"
+                          aria-label="grant"
+                          color="error"
+                          onClick={() => {
+                            removeUserFromServicePointMutation.mutate({
+                              userId: el.id,
+                              groupId:
+                                servicePointWithMembers?.groupId as string,
+                              token: token as string,
+                            });
+                          }}
+                        >
+                          <GroupRemoveIcon />
                         </IconButton>
                       </span>
                     </Tooltip>

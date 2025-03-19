@@ -219,3 +219,43 @@ export const updateUserServicePointUserRole = async ({
   }
   return response.json();
 };
+
+export const removeUserFromServicePoint = async ({
+  userId,
+  groupId,
+  token,
+}: {
+  userId: string;
+  groupId: string;
+  token: string;
+}): Promise<void> => {
+  // remove active group attribute
+  const activeGroupUrl = `${kcUrl}/realms/${kcRealm}/active-group`;
+  const activeGroupResponse = await fetch(`${activeGroupUrl}`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, groupId }),
+  });
+  if (!activeGroupResponse.ok) {
+    throw new Error(`Failed to remove active group`);
+  }
+
+  // remove user from group
+  const removeFromGroupUrl = `${kcUrl}/realms/${kcRealm}/group/leave`;
+  const removeFromGroupResponse = await fetch(`${removeFromGroupUrl}`, {
+    method: "OUT",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId, groupId }),
+  });
+  if (!removeFromGroupResponse.ok) {
+    throw new Error(`Failed to remove user from SP`);
+  }
+};

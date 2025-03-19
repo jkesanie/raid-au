@@ -2,7 +2,9 @@ package au.org.raid.iam.provider.group;
 
 import au.org.raid.iam.provider.group.dto.Grant;
 import au.org.raid.iam.provider.group.dto.GroupJoinRequest;
+import au.org.raid.iam.provider.group.dto.GroupLeaveRequest;
 import au.org.raid.iam.provider.group.dto.SetActiveGroupRequest;
+import au.org.raid.iam.provider.group.dto.RemoveActiveGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.*;
@@ -286,9 +288,31 @@ public class GroupController {
     }
 
     @OPTIONS
+    @Path("/leave")
+    public Response leavePreflight() {
+        return buildOptionsResponse("PUT");
+    }
+
+    @PUT
+    @Path("/leave")
+    @SneakyThrows
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response leave(GroupLeaveRequest request) {
+        if (this.auth == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        final var user = auth.getSession().users().getUserById(realm, request.getUserId());
+        user.leaveGroup(session.groups().getGroupById(session.getContext().getRealm(), request.getGroupId()));
+
+        return buildCorsResponse("PUT",
+                Response.ok().entity("{}"));
+    }
+
+    @OPTIONS
     @Path("/active-group")
     public Response setActiveGroupPreflight() {
-        return buildOptionsResponse("PUT");
+        return buildOptionsResponse("PUT DELETE");
     }
 
     @PUT
@@ -303,6 +327,21 @@ public class GroupController {
         user.setAttribute("activeGroupId", List.of(request.getActiveGroupId()));
 
         return buildCorsResponse("PUT",
+                Response.ok().entity("{}"));
+    }
+
+    @DELETE
+    @Path("/active-group")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response removeActiveGroup(RemoveActiveGroupRequest request) {
+        if (this.auth == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        final var user = auth.getSession().users().getUserById(realm, request.getUserId());
+        user.removeAttribute("activeGroupId", List.of(request.getActiveGroupId()));
+
+        return buildCorsResponse("DELETE",
                 Response.ok().entity("{}"));
     }
 
