@@ -75,6 +75,10 @@ dependencies{
 
   implementation 'jakarta.json:jakarta.json-api:2.1.3'
   implementation 'org.eclipse.parsson:jakarta.json:1.1.5'
+  
+  // RDF libraries for content negotiation
+  implementation 'org.apache.jena:jena-core:4.8.0'
+  implementation 'org.apache.jena:jena-arq:4.8.0'
 
   testImplementation libs.bundles.springboot.test
 
