@@ -77,6 +77,10 @@ dependencies{
 
   implementation libs.jakarta.xml.bind.api
   implementation libs.jaxb.runtime
+  
+  // RDF libraries for content negotiation
+  implementation 'org.apache.jena:jena-core:4.8.0'
+  implementation 'org.apache.jena:jena-arq:4.8.0'
 
   testImplementation libs.bundles.springboot.test
 
