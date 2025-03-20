@@ -1,162 +1,138 @@
-# Task: Implement JSON-LD and RDF Format Support in RAID API
+# Task: Implement JSON-LD Format Support in RAID API
 
 **IMPORTANT: Update the OpenAPI schema at `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml` with NO BREAKING CHANGES**
-
-**Controller to update: `api-svc/raid-api/src/main/java/au/org/raid/api/controller/RaidController.java`**
 
 ## Overview
 We need to implement content negotiation in our Spring Boot RAID API to support Schema.org metadata via JSON-LD. This will allow clients to request data in JSON-LD format by using the Accept header.
 
-The controller to be updated is at `api-svc/raid-api/src/main/java/au/org/raid/api/controller/RaidController.java`.
-
 ## Requirements
 1. Update the OpenAPI specification at `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml` to include the new JSON-LD content type while ensuring **NO BREAKING CHANGES** to existing API contracts
-2. Support the following format:
-    - application/ld+json (JSON-LD format for Schema.org)
+2. Support the format:
+   - application/ld+json (JSON-LD format for Schema.org)
+3. Implement using Spring's content negotiation features and `HttpMessageConverter` pattern
+4. Maintain clean controller code by moving format conversion logic to separate classes
+5. Use Schema.org vocabulary for the JSON-LD format with direct mapping to appropriate Schema.org types
 
-2. Implement using Spring's content negotiation features and `HttpMessageConverter` pattern
-3. Maintain clean controller code by moving format conversion logic to separate classes
-4. Use Schema.org vocabulary for the JSON-LD format
+## Schema.org Mapping Requirements
+
+Use the following Schema.org mappings for RAID data:
+
+### Core Entity Type
+- Map RAIDs to `schema:ResearchProject` (not Dataset) as this better represents the nature of RAIDs
+
+### Property Mappings
+| RAID Data Element | Schema.org Property |
+|-------------------|---------------------|
+| Handle/ID | `@id` and `schema:identifier` |
+| Title | `schema:name` (primary) and `schema:alternateName` (additional) |
+| Description | `schema:description` (primary) and `schema:abstract` (additional) |
+| Start/End Date | `schema:startDate` and `schema:endDate` |
+| Contributors | `schema:contributor` as `schema:Person` objects |
+| Lead Contributors | Include as `schema:principalInvestigator` |
+| Organizations | `schema:sponsor` |
+| Funding Organizations | `schema:funder` |
+| Access Information | `schema:contentAccessMode` |
+| Related RAIDs | `schema:isRelatedTo` |
+| Related Objects | `schema:isPartOf` |
+| Subjects/Keywords | `schema:about` and `schema:keywords` |
+| Spatial Coverage | `schema:spatialCoverage` |
+| Alternate URLs | `schema:url` (single) or `schema:sameAs` (multiple) |
+| License | `schema:license` |
+| Registration Agency | `schema:publisher` |
+
+### JSON-LD Structure Requirements
+- Include a complete `@context` section with schema.org vocabulary
+- Use nested objects for complex properties (contributors, organizations, etc.)
+- Include proper type information with `@type` properties
+- Map temporal information (dates) correctly
+- Provide both human-readable values and URIs where appropriate
 
 ## Implementation Details
 
 ### 1. Update OpenAPI Schema
-Modify the OpenAPI schema at `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml` to include the application/ld+json content type in relevant endpoints. Make sure these changes don't break existing API contracts or require clients to update their integrations.
+Modify the OpenAPI schema at `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml` to include the application/ld+json content type in relevant endpoints, ensuring these changes don't break existing API contracts.
 
 ### 2. Create JSON-LD Converter
-Create a converter class for JSON-LD format:
+Create a `RaidJsonLdConverter` class that implements `HttpMessageConverter<RaidDto>` with the following core features:
+- Direct mapping to Schema.org using Jackson ObjectMapper
+- Proper @context declaration
+- Full structured mapping of all RAID properties
 
-- `RaidDtoToJsonLdConverter` for JSON-LD
+### 3. Configure Content Negotiation
+Update the WebConfig to:
+- Register the new converter
+- Configure content negotiation for the application/ld+json media type
 
-### 3. Implement Schema.org Mapping
-For the JSON-LD converter, implement a mapping from our RAID data model to Schema.org vocabulary. Choose appropriate Schema.org types for our research data (e.g., Dataset, ResearchProject).
+### 4. Implementation Approach
+For the JSON-LD converter:
+1. Create a structured, type-safe converter rather than using a general-purpose RDF library
+2. Build the JSON-LD structure directly using Jackson's ObjectNode/ArrayNode
+3. Create helper methods for mapping complex properties
+4. Include proper contextual information for Schema.org compatibility
 
-### 4. Configure Content Negotiation
-Configure Spring's content negotiation to recognize the JSON-LD MIME type and use the appropriate converter.
+## Example JSON-LD Output
+The output should follow this structure:
 
-### 5. Update Controller Method
-Update the `findRaidByName` method in `RaidController` at `api-svc/raid-api/src/main/java/au/org/raid/api/controller/RaidController.java` to use content negotiation based on the Accept header.
-
-## Examples
-
-### JSON-LD Converter Class
-```typescript
-@Component
-public class RaidDtoToJsonLdConverter implements HttpMessageConverter<RaidDto> {
-    
-    private static final MediaType JSON_LD = MediaType.valueOf("application/ld+json");
-    private final ObjectMapper objectMapper;
-    
-    public RaidDtoToJsonLdConverter(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+```json
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "raid": "https://raid.org/schema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "skos": "http://www.w3.org/2004/02/skos/core#"
+  },
+  "@type": "ResearchProject",
+  "@id": "https://raid.org/10.25.1.1/abcde",
+  "identifier": "https://raid.org/10.25.1.1/abcde",
+  "name": "Primary RAID Title",
+  "description": "Primary description of the RAID",
+  "startDate": "2023-01-01",
+  "endDate": "2025-12-31",
+  "contributor": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0000-0001-2345-6789",
+      "identifier": "https://orcid.org/0000-0001-2345-6789",
+      "email": "researcher@example.com",
+      "roleName": ["https://credit.niso.org/contributor-roles/investigation/"]
     }
-    
-    @Override
-    public boolean canRead(Class<?> clazz, MediaType mediaType) {
-        return false; // We only handle writing, not reading
+  ],
+  "sponsor": [
+    {
+      "@type": "Organization",
+      "@id": "https://ror.org/12345abcde",
+      "identifier": "https://ror.org/12345abcde"
     }
-    
-    @Override
-    public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-        return RaidDto.class.isAssignableFrom(clazz) && 
-               JSON_LD.isCompatibleWith(mediaType);
+  ],
+  "about": [
+    {
+      "@type": "DefinedTerm",
+      "termCode": "https://subject-id.org/123",
+      "inDefinedTermSet": "https://vocabulary.example.org/"
     }
-    
-    @Override
-    public List<MediaType> getSupportedMediaTypes() {
-        return List.of(JSON_LD);
-    }
-    
-    @Override
-    public RaidDto read(Class<? extends RaidDto> clazz, HttpInputMessage inputMessage) {
-        throw new UnsupportedOperationException("Reading not supported");
-    }
-    
-    @Override
-    public void write(RaidDto raidDto, MediaType contentType, HttpOutputMessage outputMessage) 
-            throws IOException {
-        // Convert RaidDto to JSON-LD format
-        Map<String, Object> jsonLdMap = convertToJsonLd(raidDto);
-        
-        // Set headers
-        outputMessage.getHeaders().setContentType(JSON_LD);
-        
-        // Write to output
-        try (OutputStream out = outputMessage.getBody()) {
-            objectMapper.writeValue(out, jsonLdMap);
-        }
-    }
-    
-    private Map<String, Object> convertToJsonLd(RaidDto raid) {
-        // Implement conversion logic here
-        // Example implementation stub included below
-    }
+  ],
+  "license": "CC-BY-4.0"
 }
 ```
 
-## WebConfig Example
-```typescript
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
-    
-    private final RaidDtoToJsonLdConverter jsonLdConverter;
-    
-    @Autowired
-    public WebConfig(RaidDtoToJsonLdConverter jsonLdConverter) {
-        this.jsonLdConverter = jsonLdConverter;
-    }
-    
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(jsonLdConverter);
-    }
-    
-    @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer
-            .mediaType("json", MediaType.APPLICATION_JSON)
-            .mediaType("jsonld", MediaType.valueOf("application/ld+json"))
-            .favorParameter(false)
-            .ignoreAcceptHeader(false)
-            .defaultContentType(MediaType.APPLICATION_JSON);
-    }
-}
-```
-
-## Schema.org Mapping Guide
-For the JSON-LD converter, consider these Schema.org types and properties:
-
-- `Dataset` or `ResearchProject` as the primary type
-- `name` for the title
-- `description` for description fields
-- `creator` for contributors
-- `dateCreated` and `dateModified` for dates
-- `funder` for organizations
-- `identifier` for various identifiers
-
-## OpenAPI Specification Update Example
-For the OpenAPI schema, ensure you're adding the new content type without breaking existing contracts:
-
-```yaml
-# Example update to /raid/{prefix}/{suffix} endpoint in the OpenAPI spec
-/raid/{prefix}/{suffix}:
-  get:
-    # ... existing configuration ...
-    responses:
-      200:
-        description: data
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RaidDto'
-          application/ld+json:  # Add this section
-            schema:
-              type: object      # Generic object for JSON-LD
-          # Note: text/turtle, application/n-triples, and application/rdf+xml are already implemented
-```
+## Implementation Strategy
+1. Implement a createJsonLdFromRaid method that builds the JSON-LD structure directly
+2. Create helper methods for each major component (contributors, organizations, etc.)
+3. Add proper type information with @type properties
+4. Build a comprehensive @context section
+5. Include detailed Schema.org mappings
+6. Implement unit tests to verify structure and content
 
 ## Testing
-Test the implementation by making requests with the JSON-LD Accept header:
+Create thorough tests that verify:
+1. The converter produces valid JSON-LD
+2. The output includes proper Schema.org mappings
+3. All required properties are correctly mapped
+4. The @context properly defines all used terms
+5. The structure meets Schema.org expectations
+
+Also test the API endpoint with the Accept header:
 
 ```
 GET /raid/10.25.1.1/abcde
@@ -164,8 +140,8 @@ Accept: application/ld+json
 ```
 
 ## Deliverables
-1. Updated OpenAPI schema in `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml` with no breaking changes
-2. JSON-LD HTTP message converter implementation
+1. Updated OpenAPI schema in `api-svc/idl-raid-v2/src/raido-openapi-3.0.yaml`
+2. RaidJsonLdConverter implementation with complete Schema.org mapping
 3. WebConfig for content negotiation configuration
-4. Updated controller code if needed
-5. Tests to verify JSON-LD content negotiation works as expected
+4. Unit tests for the JSON-LD converter
+5. Integration tests for the API endpoint
