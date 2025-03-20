@@ -6,9 +6,8 @@ import au.org.raid.idl.raidv2.model.RaidDto;
 import au.org.raid.idl.raidv2.model.Title;
 import au.org.raid.idl.raidv2.model.TitleType;
 import au.org.raid.idl.raidv2.model.Date;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,10 +69,6 @@ class RaidJsonLdConverterTest {
     void testWrite() throws IOException {
         // Prepare test data
         RaidDto raidDto = createSampleRaidDto();
-        Model mockRdfModel = ModelFactory.createDefaultModel();
-        
-        // Mock the RDF service
-        when(raidRdfService.toRdfModel(any(RaidDto.class))).thenReturn(mockRdfModel);
         
         // Mock the output stream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -85,13 +80,23 @@ class RaidJsonLdConverterTest {
         converter.write(raidDto, MediaType.valueOf("application/ld+json"), outputMessage);
         
         // Verify the results
-        verify(raidRdfService).toRdfModel(raidDto);
         assertEquals(MediaType.valueOf("application/ld+json"), headers.getContentType());
         assertTrue(baos.size() > 0);
         
-        // Verify output was written
+        // Verify output was written and contains JSON-LD required fields
         String response = baos.toString();
         assertTrue(baos.size() > 0, "Response should not be empty");
+        
+        // Parse JSON and verify key elements
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response);
+        
+        assertTrue(jsonNode.has("@context"), "Response should have @context property");
+        assertTrue(jsonNode.has("@type"), "Response should have @type property");
+        assertEquals("ResearchProject", jsonNode.get("@type").asText(), "Type should be ResearchProject");
+        assertTrue(jsonNode.has("@id"), "Response should have @id property");
+        assertTrue(jsonNode.has("name"), "Response should have name property");
+        assertEquals("Sample RAID Title", jsonNode.get("name").asText(), "Name should match the title");
     }
     
     private RaidDto createSampleRaidDto() {
