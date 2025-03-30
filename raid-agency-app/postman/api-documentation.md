@@ -40,7 +40,6 @@ pm.sendRequest(postRequest, (error, response) => {
     pm.expect(error).to.equal(null);
     pm.expect(response).to.have.property("code", 200);
     pm.expect(response).to.have.property("status", "OK");
-    console.log("Hello World...")
     pm.environment.set("access_token", response.json().access_token);
   });
 });
