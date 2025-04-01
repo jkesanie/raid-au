@@ -17,6 +17,12 @@
 # - Historical data: ./src/raw-data/raids_YYYY-MM-DD.json
 #
 
+# Check if jq is installed
+if ! command -v jq &>/dev/null; then
+  echo "Error: jq is not installed. Please install it with: sudo apt-get install jq"
+  exit 1
+fi
+
 if [ -f ".env" ]; then
   echo "Loading environment variables from .env file"
   export $(grep -v '^#' .env | xargs)
@@ -53,8 +59,9 @@ if [ ! -d "$DATA_DIR" ]; then
   mkdir -p "$DATA_DIR"
 fi
 
+# Use GNU date format for Debian Linux
 CURRENT_DATE=$(date +"%Y-%m-%d")
-YESTERDAY_DATE=$(date -v-1d +"%Y-%m-%d")
+YESTERDAY_DATE=$(date --date="-1 day" +"%Y-%m-%d")
 
 YESTERDAY_FILE="$DATA_DIR/raids_$YESTERDAY_DATE.json"
 
@@ -169,7 +176,7 @@ else
     exit 1
   fi
 
-  # Delete files older than 7 days
+  # Delete files older than 7 days - use Debian compatible find syntax
   find "$DATA_DIR" -name "raids_*.json" -type f -mtime +7 -delete
 
 fi

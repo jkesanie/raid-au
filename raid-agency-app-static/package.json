@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "scripts": "sh ./scripts/fetch-raids.sh && sh ./scripts/fetch-handles.sh",
+    "scripts": "./scripts/fetch-raids.sh && ./scripts/fetch-handles.sh",
     "predev": "npm run scripts",
     "dev": "astro dev",
     "start": "astro dev",
