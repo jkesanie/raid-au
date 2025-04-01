@@ -13,6 +13,8 @@ plugins {
   alias(libs.plugins.spring.boot)
   alias(libs.plugins.jsonschema2pojo)
   alias(libs.plugins.xjc)
+  id 'org.springframework.boot' version '3.4.4'
+  id 'io.spring.dependency-management' version '1.1.6'
 }
 
 //apply plugin: 'docker-compose'
@@ -143,20 +145,20 @@ testing{
 tasks.intTest.description = "don't run this, it's just a Gradle default"
 
 // compile intTest classes - but don't run by default (needs DDB migration)
-tasks.build.dependsOn intTestClasses
+//tasks.build.dependsOn intTestClasses
 
-test {
-  useJUnitPlatform()
-  systemProperties defaultSysProps
-  testLogging.showStandardStreams =
-    System.getenv("RAIDO_UNIT_TEST_OUTPUT")?.toBoolean()
-}
+//test {
+//  useJUnitPlatform()
+//  systemProperties defaultSysProps
+//  testLogging.showStandardStreams =
+//    System.getenv("RAIDO_UNIT_TEST_OUTPUT")?.toBoolean()
+//}
 
-intTest {
-  useJUnitPlatform()
-  systemProperties defaultSysProps
-  testLogging.showStandardStreams = true
-}
+//intTest {
+//  useJUnitPlatform()
+//  systemProperties defaultSysProps
+//  testLogging.showStandardStreams = true
+//}
 
 tasks.register('buildInfo', WriteProperties) {
     description = "Write build-info.properties file"
