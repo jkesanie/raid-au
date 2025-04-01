@@ -16,13 +16,18 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 dependencies {
     implementation 'org.keycloak:keycloak-server-spi:24.0.1'
     implementation 'org.keycloak:keycloak-server-spi-private:24.0.1'
     implementation 'org.keycloak:keycloak-core:24.0.1'
     implementation 'org.keycloak:keycloak-services:24.0.1'
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
     implementation 'jakarta.platform:jakarta.jakartaee-web-api:9.1.0'
     implementation 'org.slf4j:slf4j-simple:2.0.6'
@@ -45,5 +50,12 @@ tasks.named('test') {
 }
 
 jar {
-    baseName = 'raid-iam'
+    archiveBaseName = 'raid-iam'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    doFirst {
+        println "Compiling with sourceCompatibility: ${sourceCompatibility}"
+        println "Compiling with targetCompatibility: ${targetCompatibility}"
+    }
 }
