@@ -1,0 +1,54 @@
+id: https://raid.org/datamodel/api/raid/extended
+name: RAiD-extended
+imports:
+  - linkml:types
+  - shared
+  - extended-enums
+
+slots:
+  subject:
+    range: Subject
+    multivalued: true
+    inlined_as_list: true 
+  spatialCoverage:
+    range: SpatialCoverage
+    multivalued: true
+    inlined_as_list: true         
+classes:
+  Subject:
+    attributes:
+      id:
+        range: string
+      schemaUri:
+        range: SubjectSchemaURIEnum
+      keyword:
+        range: SubjectKeyword
+        multivalued: true
+        inlined_as_list: true
+  SpatialCoverage:
+    attributes:
+      id:
+        range: string
+        #any_of:
+        #  - pattern: "^https:\/\/nominatim\\.openstreetmap\\.org\/"
+        #  - pattern: "^https:\/\/www\\.geonames\\.org\/"
+      schemaUri:
+        range: SpatialCoverageSchemaUriEnum
+      place:
+        range: SpatialCoveragePlace
+        multivalued: true      
+        inlined_as_list: true
+  SubjectKeyword:
+    slots:
+      - text
+      - language
+  SpatialCoveragePlace:
+    slots:
+      - text
+      - language
+  TraditionalKnowledgeLabel:
+    attributes:
+      id:
+        range: string
+      schemaUri:
+        range: string

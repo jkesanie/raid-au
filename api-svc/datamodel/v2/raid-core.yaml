@@ -1,0 +1,312 @@
+id: https://raid.org/datamodel/api/raid/core
+name: RAiD-core
+prefixes:
+  linkml: https://w3id.org/linkml/
+  raidvoc: https://vocabulary.raid.org/
+  skos: http://www.w3.org/2004/02/skos/core#
+  schema: http://schema.org/
+imports:
+  - linkml:types
+  - shared
+  - core-enums
+  - raid-extended
+
+slots:
+  metadata:
+    range: Metadata  
+  identifier:
+    range: Id
+    multivalued: true
+    inlined_as_list: true
+  title:
+    range: Title
+    multivalued: true
+    inlined_as_list: true
+  date:
+    range: Date
+    multivalued: false    
+  description:
+    range: Description
+    multivalued: true
+    inlined_as_list: true
+  access:
+    range: Access
+    multivalued: false
+  alternateUrl:
+    range: AlternateUrl
+    multivalued: true
+    inlined_as_list: true    
+  contributor:
+    range: Contributor
+    multivalued: true
+    inlined_as_list: true      
+    slot_uri: schema:author
+  organisation:
+    range: Organisation
+    multivalued: true
+    inlined_as_list: true 
+  relatedRaid:
+    range: RelatedRaid
+    multivalued: true
+    inlined_as_list: true    
+  relatedObject:
+    range: RelatedObject
+    multivalued: true
+    inlined_as_list: true  
+  alternateIdentifier:
+    range: AlternateIdentifier
+    multivalued: true
+    inlined_as_list: true    
+  traditionalKnowledgeLabel:
+    range: TraditionalKnowledgeLabel
+    multivalued: true
+    inlined_as_list: true    
+
+classes:
+  RaidDto:
+    slots:
+      - metadata
+      - title
+      - date
+      - description
+      - access
+      - alternateUrl
+      - contributor
+      - organisation
+      - relatedRaid
+      - relatedObject
+      - alternateIdentifier     
+      - subject
+      - spatialCoverage
+      - traditionalKnowledgeLabel
+    attributes:
+      identifier:
+        range: Id
+  RaidCreateRequest:
+    is_a: RaidDto
+  RaidUpdateRequest:
+    is_a: RaidDto
+    slot_usage:
+      metadata:
+        required: true
+      title:
+        required: true
+      date:
+        required: true
+      contributor:
+        required: true
+      access:
+        required: true
+  RaidPatchRequest:
+    slots:
+      - contributor
+  ClosedRaid:
+    slots:
+      - id
+      - access
+  Id:   
+    attributes:
+      id:
+        range: string
+        description: The identifier of the raid, e.g. https://raid.org.au/102.100.100/zzz
+        examples:
+          - value: https://raid.org/xxx.yyy/zzz      
+      schemaUri:
+        range: RaidIdentifierSchemaURIEnum
+      registrationAgency:
+        range: RegistrationAgency
+      owner:
+        range: Owner
+      raidAgencyUrl:
+        range: string
+        description: >
+          The URL for the raid via the minting raid agency system
+      license:
+        range: string
+        description: The license under which the RAiD Metadata Record associated with this Identifier has been issued.
+        examples:
+          - value: Creative Commons CC-0
+      version:
+        range: integer
+        description: The version of the resource. Read-only. Increments automatically on update.
+  Date:
+    slots:
+      - startDate
+      - endDate
+  Title:
+    slots:
+      - text
+      - startDate
+      - endDate
+      - language
+    attributes:
+      type:
+        range: TitleType
+  Description:
+    attributes:
+      type:
+        range: DescriptionType
+    slots:
+      - text
+      - language
+  Access:
+    attributes:
+      type:
+        range: AccessType
+      statement:
+        range: AccessStatement
+      embargoExpiry:
+        range: date
+  Contributor:
+    slots:
+      - id
+    attributes:
+      status:
+        annotations:
+          readonly: true
+        range: string
+      statusMessage:
+        annotations:
+          readonly: true
+        range: string
+      uuid:
+        annotations:
+          readonly: true
+        range: string 
+      schemaUri:
+        range: ContributorSchenaUriEnum
+      position:
+        range: ContributorPosition
+        multivalued: true     
+      role:
+        range: ContributorRole
+        multivalued: true     
+      leader:
+        range: boolean
+      contact:
+        range: boolean
+      email:
+        range: string
+  AlternateUrl:
+    slots:
+      - url
+  Organisation:
+    slots:
+      - id
+    attributes:
+      schemaUri: 
+        range: OrganizationSchemaUriEnum
+      role:
+        range: OrganisationRole
+        multivalued: true
+  RelatedRaid:
+    slots:
+      - id
+    attributes:
+      type:
+        range: RelatedRaidType
+  RelatedObject:
+    slots:
+      - id      
+    attributes:
+      schemaUri:
+        range: RelatedObjectSchemaUriEnum
+      type:
+        range: RelatedObjectType
+      category:
+        multivalued: true
+        range: RelatedObjectCategory
+  AlternateIdentifier:
+    slots:
+      - id 
+      - type
+  Owner:
+    attributes:
+      id:    
+        range: string
+        pattern: "^https:\/\/ror\\.org\/"
+      schemaUri:
+        range: RegistrationAgencySchemaURIEnum
+      servicePoint:
+        range: string
+        examples:
+          - value: '20000003'
+  RegistrationAgency:
+    attributes:
+      id:
+        range: string
+        pattern: "^https:\/\/ror\\.org\/"
+      schemaUri:
+        range: RegistrationAgencySchemaURIEnum
+  TitleType:
+    attributes:
+      id:
+        range: TitleTypeIdEnum
+      schemaUri:
+        range: TitleTypeSchemaURIEnum
+  DescriptionType:
+    attributes:
+      id:
+        range: DescriptionTypeIdEnum
+      schemaUri:
+        range: DescriptionTypeSchemaURIEnum
+  AccessType:
+    attributes:
+      id:
+        range: AccessTypeIdEnum
+      schemaUri:
+        range: AccessTypeSchemaUriEnum  
+  AccessStatement:
+    slots:
+      - text
+      - language
+  ContributorPosition:
+    slots:
+      - startDate
+      - endDate
+    attributes:
+      schemaUri:
+        range: ContributorPositionSchemaUriEnum
+      id:
+        range: ContributorPositionIdEnum
+  ContributorRole:
+    attributes:
+      schemaUri:
+        range: ContributorRoleSchemaUriEnum
+      id:
+        range: ContributorRoleIdEnum
+  OrganisationRole:
+    slots:
+      - startDate
+      - endDate
+    attributes:
+      schemaUri:
+        range: OrganizationRoleSchemaUriEnum
+      id:
+        range: OrganizationRoleIdEnum
+  RelatedRaidType:
+    attributes:
+      id:
+        range: RelatedRaidTypeIdEnum
+      schemaUri:
+        range: RelatedRaidTypeSchemaUriEnum
+  RelatedObjectType:
+    attributes:
+      id:
+        range: RelatedObjectTypeIdEnum
+      schemaUri:
+        range: RelatedObjectTypeSchemaUriEnum    
+  RelatedObjectCategory:
+    attributes:
+      id:
+        range: RelatedObjectCategoryIdEnum
+      schemaUri:
+        range: RelatedObjectCategorySchemaUriEnum   
+  Metadata:
+    attributes:
+      created:
+        range: integer
+      updated:
+        range: integer
+      raidModelVersion:
+        range: string

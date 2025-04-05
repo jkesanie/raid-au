@@ -1,0 +1,36 @@
+plugins {
+  id 'java'
+}
+import org.gradle.logging.internal.*
+
+tasks.register('pullLinkMLImage', Exec) {  
+  commandLine '/usr/local/bin/docker', 'pull', 'linkml/linkml'
+}
+
+tasks.register('cleanupJSONSchema', Exec) {
+  //commandLine 'rm', './v2/generated/raid-core-gen.json'
+}
+tasks.register('generateJSONSchemaV2', Exec) {
+  dependsOn "pullLinkMLImage"
+  //dependsOn "cleanupJSONSchema"
+  commandLine '/usr/local/bin/docker', 'run', '-v', './v2:/work', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-json-schema', 'raid-core.yaml'
+}
+
+tasks.register('generateMarkdownV2', Exec) {
+  dependsOn "pullLinkMLImage"
+  commandLine '/usr/local/bin/docker', 'run', '-v', './v2:/work', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-doc', 'raid-core.yaml', '--directory', '/generated/v2/docs'
+}
+
+
+project.tasks.generateJSONSchemaV2.configure {
+    it.logging.addStandardOutputListener(new StandardOutputListener() {
+        @Override
+        void onOutput(CharSequence charSequence) {
+            charSequence = charSequence.replace(":api-svc:datamodel:generateJSONSchema", "")
+            project.file("/generated/v2/jsonschema/raid-core-gen.json") << charSequence
+        }
+    })
+}
+
+
+
