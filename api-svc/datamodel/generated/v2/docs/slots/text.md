@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:text](https://raid.org/datamodel/api/raid/extended/:text)
+URI: [https://raid.org/datamodel/api/raid/core/:text](https://raid.org/datamodel/api/raid/core/:text)
 
 
 
@@ -18,8 +18,11 @@ URI: [https://raid.org/datamodel/api/raid/extended/:text](https://raid.org/datam
 
 | Name | Description | Modifies Slot |
 | --- | --- | --- |
-| [SpatialCoveragePlace](../classes/SpatialCoveragePlace.md) |  |  no  |
 | [SubjectKeyword](../classes/SubjectKeyword.md) |  |  no  |
+| [AccessStatement](../classes/AccessStatement.md) |  |  no  |
+| [Title](../classes/Title.md) |  |  no  |
+| [SpatialCoveragePlace](../classes/SpatialCoveragePlace.md) |  |  no  |
+| [Description](../classes/Description.md) |  |  no  |
 
 
 
@@ -46,7 +49,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:text](https://raid.org/datam
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -55,8 +58,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:text](https://raid.org/datam
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:text |
-| native | https://raid.org/datamodel/api/raid/extended/:text |
+| self | https://raid.org/datamodel/api/raid/core/:text |
+| native | https://raid.org/datamodel/api/raid/core/:text |
 
 
 
@@ -66,10 +69,13 @@ URI: [https://raid.org/datamodel/api/raid/extended/:text](https://raid.org/datam
 <details>
 ```yaml
 name: text
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: text
 domain_of:
+- Title
+- Description
+- AccessStatement
 - SubjectKeyword
 - SpatialCoveragePlace
 range: string

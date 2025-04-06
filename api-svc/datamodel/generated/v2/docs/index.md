@@ -1,10 +1,10 @@
-# RAiD-extended
+# RAiD-core
 
 
 
-URI: https://raid.org/datamodel/api/raid/extended
+URI: https://raid.org/datamodel/api/raid/core
 
-Name: RAiD-extended
+Name: RAiD-core
 
 
 
@@ -12,11 +12,40 @@ Name: RAiD-extended
 
 | Class | Description |
 | --- | --- |
+| [Access](classes/Access.md) | None |
+| [AccessStatement](classes/AccessStatement.md) | None |
+| [AccessType](classes/AccessType.md) | None |
+| [AlternateIdentifier](classes/AlternateIdentifier.md) | None |
+| [AlternateUrl](classes/AlternateUrl.md) | None |
+| [ClosedRaid](classes/ClosedRaid.md) | None |
+| [Contributor](classes/Contributor.md) | None |
+| [ContributorPosition](classes/ContributorPosition.md) | None |
+| [ContributorRole](classes/ContributorRole.md) | None |
+| [Date](classes/Date.md) | None |
+| [Description](classes/Description.md) | None |
+| [DescriptionType](classes/DescriptionType.md) | None |
+| [Id](classes/Id.md) | None |
 | [Language](classes/Language.md) | None |
+| [Metadata](classes/Metadata.md) | None |
+| [Organisation](classes/Organisation.md) | None |
+| [OrganisationRole](classes/OrganisationRole.md) | None |
+| [Owner](classes/Owner.md) | None |
+| [RaidDto](classes/RaidDto.md) | None |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[RaidCreateRequest](classes/RaidCreateRequest.md) | None |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[RaidUpdateRequest](classes/RaidUpdateRequest.md) | None |
+| [RaidPatchRequest](classes/RaidPatchRequest.md) | None |
+| [RegistrationAgency](classes/RegistrationAgency.md) | None |
+| [RelatedObject](classes/RelatedObject.md) | None |
+| [RelatedObjectCategory](classes/RelatedObjectCategory.md) | None |
+| [RelatedObjectType](classes/RelatedObjectType.md) | None |
+| [RelatedRaid](classes/RelatedRaid.md) | None |
+| [RelatedRaidType](classes/RelatedRaidType.md) | None |
 | [SpatialCoverage](classes/SpatialCoverage.md) | None |
 | [SpatialCoveragePlace](classes/SpatialCoveragePlace.md) | None |
 | [Subject](classes/Subject.md) | None |
 | [SubjectKeyword](classes/SubjectKeyword.md) | None |
+| [Title](classes/Title.md) | None |
+| [TitleType](classes/TitleType.md) | None |
 | [TraditionalKnowledgeLabel](classes/TraditionalKnowledgeLabel.md) | None |
 
 
@@ -25,18 +54,51 @@ Name: RAiD-extended
 
 | Slot | Description |
 | --- | --- |
+| [access](slots/access.md) |  |
+| [alternateIdentifier](slots/alternateIdentifier.md) |  |
+| [alternateUrl](slots/alternateUrl.md) |  |
+| [category](slots/category.md) |  |
+| [contact](slots/contact.md) |  |
+| [contributor](slots/contributor.md) |  |
+| [created](slots/created.md) |  |
+| [date](slots/date.md) |  |
+| [description](slots/description.md) |  |
+| [email](slots/email.md) |  |
+| [embargoExpiry](slots/embargoExpiry.md) |  |
 | [endDate](slots/endDate.md) |  |
 | [id](slots/id.md) |  |
+| [identifier](slots/identifier.md) |  |
 | [keyword](slots/keyword.md) |  |
 | [language](slots/language.md) |  |
+| [leader](slots/leader.md) |  |
+| [license](slots/license.md) | The license under which the RAiD Metadata Record associated with this Identif... |
+| [metadata](slots/metadata.md) |  |
+| [organisation](slots/organisation.md) |  |
+| [owner](slots/owner.md) |  |
 | [place](slots/place.md) |  |
+| [position](slots/position.md) |  |
+| [raidAgencyUrl](slots/raidAgencyUrl.md) | The URL for the raid via the minting raid agency system |
+| [raidModelVersion](slots/raidModelVersion.md) |  |
+| [registrationAgency](slots/registrationAgency.md) |  |
+| [relatedObject](slots/relatedObject.md) |  |
+| [relatedRaid](slots/relatedRaid.md) |  |
+| [role](slots/role.md) |  |
 | [schemaUri](slots/schemaUri.md) |  |
+| [servicePoint](slots/servicePoint.md) |  |
 | [spatialCoverage](slots/spatialCoverage.md) |  |
 | [startDate](slots/startDate.md) |  |
+| [statement](slots/statement.md) |  |
+| [status](slots/status.md) |  |
+| [statusMessage](slots/statusMessage.md) |  |
 | [subject](slots/subject.md) |  |
 | [text](slots/text.md) |  |
+| [title](slots/title.md) |  |
+| [traditionalKnowledgeLabel](slots/traditionalKnowledgeLabel.md) |  |
 | [type](slots/type.md) |  |
+| [updated](slots/updated.md) |  |
 | [url](slots/url.md) |  |
+| [uuid](slots/uuid.md) |  |
+| [version](slots/version.md) | The version of the resource |
 
 
 ## Enumerations

@@ -32,7 +32,7 @@ URI: [xsd:double](http://www.w3.org/2001/XMLSchema#double)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -42,7 +42,7 @@ URI: [xsd:double](http://www.w3.org/2001/XMLSchema#double)
 | Mapping Type | Mapped Value |
 | ---  | ---  |
 | self | xsd:double |
-| native | https://raid.org/datamodel/api/raid/extended/:double |
+| native | https://raid.org/datamodel/api/raid/core/:double |
 | close | schema:Float |
 
 

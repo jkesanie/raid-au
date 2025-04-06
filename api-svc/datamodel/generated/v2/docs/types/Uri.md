@@ -37,7 +37,7 @@ URI: [xsd:anyURI](http://www.w3.org/2001/XMLSchema#anyURI)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -47,7 +47,7 @@ URI: [xsd:anyURI](http://www.w3.org/2001/XMLSchema#anyURI)
 | Mapping Type | Mapped Value |
 | ---  | ---  |
 | self | xsd:anyURI |
-| native | https://raid.org/datamodel/api/raid/extended/:uri |
+| native | https://raid.org/datamodel/api/raid/core/:uri |
 | close | schema:URL |
 
 

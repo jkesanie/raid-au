@@ -4,12 +4,23 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:subject](https://raid.org/datamodel/api/raid/extended/:subject)
+URI: [https://raid.org/datamodel/api/raid/core/:subject](https://raid.org/datamodel/api/raid/core/:subject)
 
 
 
 <!-- no inheritance hierarchy -->
 
+
+
+
+
+## Applicable Classes
+
+| Name | Description | Modifies Slot |
+| --- | --- | --- |
+| [RaidUpdateRequest](../classes/RaidUpdateRequest.md) |  |  no  |
+| [RaidDto](../classes/RaidDto.md) |  |  no  |
+| [RaidCreateRequest](../classes/RaidCreateRequest.md) |  |  no  |
 
 
 
@@ -38,7 +49,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:subject](https://raid.org/da
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -47,8 +58,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:subject](https://raid.org/da
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:subject |
-| native | https://raid.org/datamodel/api/raid/extended/:subject |
+| self | https://raid.org/datamodel/api/raid/core/:subject |
+| native | https://raid.org/datamodel/api/raid/core/:subject |
 
 
 
@@ -58,11 +69,14 @@ URI: [https://raid.org/datamodel/api/raid/extended/:subject](https://raid.org/da
 <details>
 ```yaml
 name: subject
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: subject
+domain_of:
+- RaidDto
 range: Subject
 multivalued: true
+inlined: true
 inlined_as_list: true
 
 ```

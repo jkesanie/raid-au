@@ -33,7 +33,7 @@ URI: [xsd:date](http://www.w3.org/2001/XMLSchema#date)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -42,9 +42,8 @@ URI: [xsd:date](http://www.w3.org/2001/XMLSchema#date)
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | xsd:date |
-| native | https://raid.org/datamodel/api/raid/extended/:date |
-| exact | schema:Date |
+| self | https://raid.org/datamodel/api/raid/core/:date |
+| native | https://raid.org/datamodel/api/raid/core/:date |
 
 
 

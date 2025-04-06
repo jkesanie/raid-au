@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:keyword](https://raid.org/datamodel/api/raid/extended/:keyword)
+URI: [https://raid.org/datamodel/api/raid/core/:keyword](https://raid.org/datamodel/api/raid/core/:keyword)
 
 
 
@@ -47,7 +47,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:keyword](https://raid.org/da
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -56,8 +56,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:keyword](https://raid.org/da
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:keyword |
-| native | https://raid.org/datamodel/api/raid/extended/:keyword |
+| self | https://raid.org/datamodel/api/raid/core/:keyword |
+| native | https://raid.org/datamodel/api/raid/core/:keyword |
 
 
 
@@ -67,7 +67,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:keyword](https://raid.org/da
 <details>
 ```yaml
 name: keyword
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: keyword
 owner: Subject

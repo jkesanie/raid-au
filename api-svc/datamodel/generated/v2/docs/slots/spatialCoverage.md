@@ -4,12 +4,23 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:spatialCoverage](https://raid.org/datamodel/api/raid/extended/:spatialCoverage)
+URI: [https://raid.org/datamodel/api/raid/core/:spatialCoverage](https://raid.org/datamodel/api/raid/core/:spatialCoverage)
 
 
 
 <!-- no inheritance hierarchy -->
 
+
+
+
+
+## Applicable Classes
+
+| Name | Description | Modifies Slot |
+| --- | --- | --- |
+| [RaidUpdateRequest](../classes/RaidUpdateRequest.md) |  |  no  |
+| [RaidDto](../classes/RaidDto.md) |  |  no  |
+| [RaidCreateRequest](../classes/RaidCreateRequest.md) |  |  no  |
 
 
 
@@ -38,7 +49,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:spatialCoverage](https://rai
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -47,8 +58,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:spatialCoverage](https://rai
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:spatialCoverage |
-| native | https://raid.org/datamodel/api/raid/extended/:spatialCoverage |
+| self | https://raid.org/datamodel/api/raid/core/:spatialCoverage |
+| native | https://raid.org/datamodel/api/raid/core/:spatialCoverage |
 
 
 
@@ -58,11 +69,14 @@ URI: [https://raid.org/datamodel/api/raid/extended/:spatialCoverage](https://rai
 <details>
 ```yaml
 name: spatialCoverage
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: spatialCoverage
+domain_of:
+- RaidDto
 range: SpatialCoverage
 multivalued: true
+inlined: true
 inlined_as_list: true
 
 ```

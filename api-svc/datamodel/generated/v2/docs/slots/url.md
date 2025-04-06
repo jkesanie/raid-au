@@ -4,12 +4,21 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:url](https://raid.org/datamodel/api/raid/extended/:url)
+URI: [https://raid.org/datamodel/api/raid/core/:url](https://raid.org/datamodel/api/raid/core/:url)
 
 
 
 <!-- no inheritance hierarchy -->
 
+
+
+
+
+## Applicable Classes
+
+| Name | Description | Modifies Slot |
+| --- | --- | --- |
+| [AlternateUrl](../classes/AlternateUrl.md) |  |  no  |
 
 
 
@@ -36,7 +45,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:url](https://raid.org/datamo
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -45,8 +54,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:url](https://raid.org/datamo
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:url |
-| native | https://raid.org/datamodel/api/raid/extended/:url |
+| self | https://raid.org/datamodel/api/raid/core/:url |
+| native | https://raid.org/datamodel/api/raid/core/:url |
 
 
 
@@ -56,9 +65,11 @@ URI: [https://raid.org/datamodel/api/raid/extended/:url](https://raid.org/datamo
 <details>
 ```yaml
 name: url
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: url
+domain_of:
+- AlternateUrl
 range: string
 
 ```

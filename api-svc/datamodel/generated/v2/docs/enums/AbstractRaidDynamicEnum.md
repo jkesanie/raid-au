@@ -37,7 +37,7 @@ Link to the vocabulary:
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -52,7 +52,7 @@ Link to the vocabulary:
 name: AbstractRaidDynamicEnum
 description: This dynamic enumeration is part of the Research Activity Identifier
   (RAiD) controlled lists available at https://vocabulary.raid.org/.
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 abstract: true
 

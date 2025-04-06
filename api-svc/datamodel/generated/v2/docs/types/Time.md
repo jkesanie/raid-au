@@ -33,7 +33,7 @@ URI: [xsd:time](http://www.w3.org/2001/XMLSchema#time)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -43,7 +43,7 @@ URI: [xsd:time](http://www.w3.org/2001/XMLSchema#time)
 | Mapping Type | Mapped Value |
 | ---  | ---  |
 | self | xsd:time |
-| native | https://raid.org/datamodel/api/raid/extended/:time |
+| native | https://raid.org/datamodel/api/raid/core/:time |
 | exact | schema:Time |
 
 

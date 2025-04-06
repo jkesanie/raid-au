@@ -32,7 +32,7 @@ URI: [xsd:float](http://www.w3.org/2001/XMLSchema#float)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -42,7 +42,7 @@ URI: [xsd:float](http://www.w3.org/2001/XMLSchema#float)
 | Mapping Type | Mapped Value |
 | ---  | ---  |
 | self | xsd:float |
-| native | https://raid.org/datamodel/api/raid/extended/:float |
+| native | https://raid.org/datamodel/api/raid/core/:float |
 | exact | schema:Float |
 
 

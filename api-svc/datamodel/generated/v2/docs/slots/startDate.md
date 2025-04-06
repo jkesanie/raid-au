@@ -4,12 +4,24 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:startDate](https://raid.org/datamodel/api/raid/extended/:startDate)
+URI: [https://raid.org/datamodel/api/raid/core/:startDate](https://raid.org/datamodel/api/raid/core/:startDate)
 
 
 
 <!-- no inheritance hierarchy -->
 
+
+
+
+
+## Applicable Classes
+
+| Name | Description | Modifies Slot |
+| --- | --- | --- |
+| [Date](../classes/Date.md) |  |  no  |
+| [OrganisationRole](../classes/OrganisationRole.md) |  |  no  |
+| [Title](../classes/Title.md) |  |  no  |
+| [ContributorPosition](../classes/ContributorPosition.md) |  |  no  |
 
 
 
@@ -38,7 +50,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:startDate](https://raid.org/
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -47,8 +59,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:startDate](https://raid.org/
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:startDate |
-| native | https://raid.org/datamodel/api/raid/extended/:startDate |
+| self | https://raid.org/datamodel/api/raid/core/:startDate |
+| native | https://raid.org/datamodel/api/raid/core/:startDate |
 
 
 
@@ -58,9 +70,14 @@ URI: [https://raid.org/datamodel/api/raid/extended/:startDate](https://raid.org/
 <details>
 ```yaml
 name: startDate
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: startDate
+domain_of:
+- Date
+- Title
+- ContributorPosition
+- OrganisationRole
 range: string
 required: true
 

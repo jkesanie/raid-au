@@ -33,7 +33,7 @@ URI: [xsd:dateTime](http://www.w3.org/2001/XMLSchema#dateTime)
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -43,7 +43,7 @@ URI: [xsd:dateTime](http://www.w3.org/2001/XMLSchema#dateTime)
 | Mapping Type | Mapped Value |
 | ---  | ---  |
 | self | xsd:dateTime |
-| native | https://raid.org/datamodel/api/raid/extended/:datetime |
+| native | https://raid.org/datamodel/api/raid/core/:datetime |
 | exact | schema:DateTime |
 
 
