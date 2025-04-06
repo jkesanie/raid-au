@@ -18,8 +18,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:language](https://raid.org/d
 
 | Name | Description | Modifies Slot |
 | --- | --- | --- |
-| [SubjectKeyword](../classes/SubjectKeyword.md) |  |  no  |
 | [SpatialCoveragePlace](../classes/SpatialCoveragePlace.md) |  |  no  |
+| [SubjectKeyword](../classes/SubjectKeyword.md) |  |  no  |
 
 
 
