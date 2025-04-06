@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:SubjectKeyword](https://raid.org/datamodel/api/raid/extended/:SubjectKeyword)
+URI: [https://raid.org/datamodel/api/raid/core/:SubjectKeyword](https://raid.org/datamodel/api/raid/core/:SubjectKeyword)
 
 
 
@@ -68,7 +68,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SubjectKeyword](https://raid
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -77,8 +77,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SubjectKeyword](https://raid
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:SubjectKeyword |
-| native | https://raid.org/datamodel/api/raid/extended/:SubjectKeyword |
+| self | https://raid.org/datamodel/api/raid/core/:SubjectKeyword |
+| native | https://raid.org/datamodel/api/raid/core/:SubjectKeyword |
 
 
 
@@ -95,7 +95,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SubjectKeyword](https://raid
 <details>
 ```yaml
 name: SubjectKeyword
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 slots:
 - text
 - language
@@ -108,25 +108,31 @@ slots:
 <details>
 ```yaml
 name: SubjectKeyword
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   text:
     name: text
-    from_schema: https://raid.org/datamodel/api/raid/extended
+    from_schema: https://raid.org/datamodel/api/raid/core
     rank: 1000
     alias: text
     owner: SubjectKeyword
     domain_of:
+    - Title
+    - Description
+    - AccessStatement
     - SubjectKeyword
     - SpatialCoveragePlace
     range: string
   language:
     name: language
-    from_schema: https://raid.org/datamodel/api/raid/extended
+    from_schema: https://raid.org/datamodel/api/raid/core
     rank: 1000
     alias: language
     owner: SubjectKeyword
     domain_of:
+    - Title
+    - Description
+    - AccessStatement
     - SubjectKeyword
     - SpatialCoveragePlace
     range: Language

@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel](https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel)
+URI: [https://raid.org/datamodel/api/raid/core/:TraditionalKnowledgeLabel](https://raid.org/datamodel/api/raid/core/:TraditionalKnowledgeLabel)
 
 
 
@@ -39,6 +39,15 @@ URI: [https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel](h
 
 
 
+## Usages
+
+| used by | used in | type | used |
+| ---  | --- | --- | --- |
+| [RaidDto](../classes/RaidDto.md) | [traditionalKnowledgeLabel](../slots/traditionalKnowledgeLabel.md) | range | [TraditionalKnowledgeLabel](../classes/TraditionalKnowledgeLabel.md) |
+| [RaidCreateRequest](../classes/RaidCreateRequest.md) | [traditionalKnowledgeLabel](../slots/traditionalKnowledgeLabel.md) | range | [TraditionalKnowledgeLabel](../classes/TraditionalKnowledgeLabel.md) |
+| [RaidUpdateRequest](../classes/RaidUpdateRequest.md) | [traditionalKnowledgeLabel](../slots/traditionalKnowledgeLabel.md) | range | [TraditionalKnowledgeLabel](../classes/TraditionalKnowledgeLabel.md) |
+
+
 
 
 
@@ -54,7 +63,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel](h
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -63,8 +72,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel](h
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel |
-| native | https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel |
+| self | https://raid.org/datamodel/api/raid/core/:TraditionalKnowledgeLabel |
+| native | https://raid.org/datamodel/api/raid/core/:TraditionalKnowledgeLabel |
 
 
 
@@ -81,25 +90,58 @@ URI: [https://raid.org/datamodel/api/raid/extended/:TraditionalKnowledgeLabel](h
 <details>
 ```yaml
 name: TraditionalKnowledgeLabel
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
     from_schema: https://raid.org/datamodel/api/raid/extended
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
     from_schema: https://raid.org/datamodel/api/raid/extended
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
 
 ```
@@ -110,7 +152,7 @@ attributes:
 <details>
 ```yaml
 name: TraditionalKnowledgeLabel
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
@@ -118,10 +160,28 @@ attributes:
     alias: id
     owner: TraditionalKnowledgeLabel
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
@@ -129,10 +189,25 @@ attributes:
     alias: schemaUri
     owner: TraditionalKnowledgeLabel
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
 
 ```

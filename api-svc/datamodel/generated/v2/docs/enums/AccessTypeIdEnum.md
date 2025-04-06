@@ -38,7 +38,7 @@ Link to the vocabulary:
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -52,7 +52,7 @@ Link to the vocabulary:
 ```yaml
 name: AccessTypeIdEnum
 title: Controlled list of RAiD access type id values.
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 is_a: AbstractRaidDynamicEnum
 reachable_from:

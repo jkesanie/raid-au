@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:Language](https://raid.org/datamodel/api/raid/extended/:Language)
+URI: [https://raid.org/datamodel/api/raid/core/:Language](https://raid.org/datamodel/api/raid/core/:Language)
 
 
 
@@ -50,6 +50,9 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Language](https://raid.org/d
 
 | used by | used in | type | used |
 | ---  | --- | --- | --- |
+| [Title](../classes/Title.md) | [language](../slots/language.md) | range | [Language](../classes/Language.md) |
+| [Description](../classes/Description.md) | [language](../slots/language.md) | range | [Language](../classes/Language.md) |
+| [AccessStatement](../classes/AccessStatement.md) | [language](../slots/language.md) | range | [Language](../classes/Language.md) |
 | [SubjectKeyword](../classes/SubjectKeyword.md) | [language](../slots/language.md) | range | [Language](../classes/Language.md) |
 | [SpatialCoveragePlace](../classes/SpatialCoveragePlace.md) | [language](../slots/language.md) | range | [Language](../classes/Language.md) |
 
@@ -69,7 +72,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Language](https://raid.org/d
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -78,8 +81,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Language](https://raid.org/d
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:Language |
-| native | https://raid.org/datamodel/api/raid/extended/:Language |
+| self | https://raid.org/datamodel/api/raid/core/:Language |
+| native | https://raid.org/datamodel/api/raid/core/:Language |
 
 
 
@@ -96,25 +99,58 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Language](https://raid.org/d
 <details>
 ```yaml
 name: Language
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
     from_schema: https://raid.org/datamodel/api/raid/shared
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
     from_schema: https://raid.org/datamodel/api/raid/shared
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: LanguageSchemaURIEnum
 
 ```
@@ -125,7 +161,7 @@ attributes:
 <details>
 ```yaml
 name: Language
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
@@ -133,10 +169,28 @@ attributes:
     alias: id
     owner: Language
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
@@ -144,10 +198,25 @@ attributes:
     alias: schemaUri
     owner: Language
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: LanguageSchemaURIEnum
 
 ```

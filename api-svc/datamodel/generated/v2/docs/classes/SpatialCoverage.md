@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoverage](https://raid.org/datamodel/api/raid/extended/:SpatialCoverage)
+URI: [https://raid.org/datamodel/api/raid/core/:SpatialCoverage](https://raid.org/datamodel/api/raid/core/:SpatialCoverage)
 
 
 
@@ -56,6 +56,15 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoverage](https://rai
 
 
 
+## Usages
+
+| used by | used in | type | used |
+| ---  | --- | --- | --- |
+| [RaidDto](../classes/RaidDto.md) | [spatialCoverage](../slots/spatialCoverage.md) | range | [SpatialCoverage](../classes/SpatialCoverage.md) |
+| [RaidCreateRequest](../classes/RaidCreateRequest.md) | [spatialCoverage](../slots/spatialCoverage.md) | range | [SpatialCoverage](../classes/SpatialCoverage.md) |
+| [RaidUpdateRequest](../classes/RaidUpdateRequest.md) | [spatialCoverage](../slots/spatialCoverage.md) | range | [SpatialCoverage](../classes/SpatialCoverage.md) |
+
+
 
 
 
@@ -71,7 +80,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoverage](https://rai
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -80,8 +89,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoverage](https://rai
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:SpatialCoverage |
-| native | https://raid.org/datamodel/api/raid/extended/:SpatialCoverage |
+| self | https://raid.org/datamodel/api/raid/core/:SpatialCoverage |
+| native | https://raid.org/datamodel/api/raid/core/:SpatialCoverage |
 
 
 
@@ -98,25 +107,58 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoverage](https://rai
 <details>
 ```yaml
 name: SpatialCoverage
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
     from_schema: https://raid.org/datamodel/api/raid/extended
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
     from_schema: https://raid.org/datamodel/api/raid/extended
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: SpatialCoverageSchemaUriEnum
   place:
     name: place
@@ -137,7 +179,7 @@ attributes:
 <details>
 ```yaml
 name: SpatialCoverage
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
@@ -145,10 +187,28 @@ attributes:
     alias: id
     owner: SpatialCoverage
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
@@ -156,10 +216,25 @@ attributes:
     alias: schemaUri
     owner: SpatialCoverage
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: SpatialCoverageSchemaUriEnum
   place:
     name: place

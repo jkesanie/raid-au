@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:Subject](https://raid.org/datamodel/api/raid/extended/:Subject)
+URI: [https://raid.org/datamodel/api/raid/core/:Subject](https://raid.org/datamodel/api/raid/core/:Subject)
 
 
 
@@ -56,6 +56,15 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Subject](https://raid.org/da
 
 
 
+## Usages
+
+| used by | used in | type | used |
+| ---  | --- | --- | --- |
+| [RaidDto](../classes/RaidDto.md) | [subject](../slots/subject.md) | range | [Subject](../classes/Subject.md) |
+| [RaidCreateRequest](../classes/RaidCreateRequest.md) | [subject](../slots/subject.md) | range | [Subject](../classes/Subject.md) |
+| [RaidUpdateRequest](../classes/RaidUpdateRequest.md) | [subject](../slots/subject.md) | range | [Subject](../classes/Subject.md) |
+
+
 
 
 
@@ -71,7 +80,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Subject](https://raid.org/da
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -80,8 +89,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Subject](https://raid.org/da
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:Subject |
-| native | https://raid.org/datamodel/api/raid/extended/:Subject |
+| self | https://raid.org/datamodel/api/raid/core/:Subject |
+| native | https://raid.org/datamodel/api/raid/core/:Subject |
 
 
 
@@ -98,26 +107,58 @@ URI: [https://raid.org/datamodel/api/raid/extended/:Subject](https://raid.org/da
 <details>
 ```yaml
 name: Subject
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
     from_schema: https://raid.org/datamodel/api/raid/extended
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
     from_schema: https://raid.org/datamodel/api/raid/extended
-    rank: 1000
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: SubjectSchemaURIEnum
   keyword:
     name: keyword
@@ -138,7 +179,7 @@ attributes:
 <details>
 ```yaml
 name: Subject
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   id:
     name: id
@@ -146,22 +187,54 @@ attributes:
     alias: id
     owner: Subject
     domain_of:
+    - ClosedRaid
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedRaid
+    - RelatedObject
+    - AlternateIdentifier
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: string
   schemaUri:
     name: schemaUri
     from_schema: https://raid.org/datamodel/api/raid/extended
-    rank: 1000
     alias: schemaUri
     owner: Subject
     domain_of:
+    - Id
+    - Contributor
+    - Organisation
+    - RelatedObject
+    - Owner
+    - RegistrationAgency
+    - TitleType
+    - DescriptionType
+    - AccessType
+    - ContributorPosition
+    - ContributorRole
+    - OrganisationRole
+    - RelatedRaidType
+    - RelatedObjectType
+    - RelatedObjectCategory
+    - Language
     - Subject
     - SpatialCoverage
     - TraditionalKnowledgeLabel
-    - Language
     range: SubjectSchemaURIEnum
   keyword:
     name: keyword
@@ -173,6 +246,7 @@ attributes:
     - Subject
     range: SubjectKeyword
     multivalued: true
+    inlined: true
     inlined_as_list: true
 
 ```

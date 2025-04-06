@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace](https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace)
+URI: [https://raid.org/datamodel/api/raid/core/:SpatialCoveragePlace](https://raid.org/datamodel/api/raid/core/:SpatialCoveragePlace)
 
 
 
@@ -68,7 +68,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace](https:
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -77,8 +77,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace](https:
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace |
-| native | https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace |
+| self | https://raid.org/datamodel/api/raid/core/:SpatialCoveragePlace |
+| native | https://raid.org/datamodel/api/raid/core/:SpatialCoveragePlace |
 
 
 
@@ -95,7 +95,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:SpatialCoveragePlace](https:
 <details>
 ```yaml
 name: SpatialCoveragePlace
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 slots:
 - text
 - language
@@ -108,25 +108,31 @@ slots:
 <details>
 ```yaml
 name: SpatialCoveragePlace
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 attributes:
   text:
     name: text
-    from_schema: https://raid.org/datamodel/api/raid/extended
+    from_schema: https://raid.org/datamodel/api/raid/core
     rank: 1000
     alias: text
     owner: SpatialCoveragePlace
     domain_of:
+    - Title
+    - Description
+    - AccessStatement
     - SubjectKeyword
     - SpatialCoveragePlace
     range: string
   language:
     name: language
-    from_schema: https://raid.org/datamodel/api/raid/extended
+    from_schema: https://raid.org/datamodel/api/raid/core
     rank: 1000
     alias: language
     owner: SpatialCoveragePlace
     domain_of:
+    - Title
+    - Description
+    - AccessStatement
     - SubjectKeyword
     - SpatialCoveragePlace
     range: Language

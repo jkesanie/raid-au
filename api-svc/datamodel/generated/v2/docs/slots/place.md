@@ -4,7 +4,7 @@
 
 
 
-URI: [https://raid.org/datamodel/api/raid/extended/:place](https://raid.org/datamodel/api/raid/extended/:place)
+URI: [https://raid.org/datamodel/api/raid/core/:place](https://raid.org/datamodel/api/raid/core/:place)
 
 
 
@@ -47,7 +47,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:place](https://raid.org/data
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -56,8 +56,8 @@ URI: [https://raid.org/datamodel/api/raid/extended/:place](https://raid.org/data
 
 | Mapping Type | Mapped Value |
 | ---  | ---  |
-| self | https://raid.org/datamodel/api/raid/extended/:place |
-| native | https://raid.org/datamodel/api/raid/extended/:place |
+| self | https://raid.org/datamodel/api/raid/core/:place |
+| native | https://raid.org/datamodel/api/raid/core/:place |
 
 
 
@@ -67,7 +67,7 @@ URI: [https://raid.org/datamodel/api/raid/extended/:place](https://raid.org/data
 <details>
 ```yaml
 name: place
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 alias: place
 owner: SpatialCoverage

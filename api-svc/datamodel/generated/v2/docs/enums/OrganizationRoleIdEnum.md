@@ -43,7 +43,7 @@ Link to the vocabulary:
 ### Schema Source
 
 
-* from schema: https://raid.org/datamodel/api/raid/extended
+* from schema: https://raid.org/datamodel/api/raid/core
 
 
 
@@ -56,7 +56,7 @@ Link to the vocabulary:
 <details>
 ```yaml
 name: OrganizationRoleIdEnum
-from_schema: https://raid.org/datamodel/api/raid/extended
+from_schema: https://raid.org/datamodel/api/raid/core
 rank: 1000
 reachable_from:
   source_ontology: https://vocabs.ardc.edu.au/repository/api/sparql/raid_research-activity-identifier-raid-controlled-lists_raid-cl-v1-1
