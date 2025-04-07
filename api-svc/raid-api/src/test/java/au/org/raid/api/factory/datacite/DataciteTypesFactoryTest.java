@@ -15,6 +15,6 @@ class DataciteTypesFactoryTest {
     void setsResourceTypeGeneral() {
         final var result = typesFactory.create();
 
-        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.OTHER.getName()));
+        assertThat(result.getResourceTypeGeneral(), is(ResourceTypeGeneral.PROJECT.getName()));
     }
 }
