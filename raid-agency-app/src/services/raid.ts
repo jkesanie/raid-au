@@ -1,15 +1,35 @@
+/**
+ * RAID API Service Module
+ *
+ * This module provides functions for interacting with the RAID (Research Activity Identifier) API.
+ * It handles fetching, creating, and updating RAIDs, as well as managing RAID history.
+ */
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 
+// Get the base API endpoint for the RAID service
 const endpoint = getApiEndpoint();
 const API_ENDPOINT = `${endpoint}/raid`;
 
+/**
+ * Generates default headers for API requests including authentication
+ * 
+ * @param token - The authentication token
+ * @returns Object containing headers with Content-Type and Authorization
+ */
 const getDefaultHeaders = (token: string) => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${token}`,
 });
 
+/**
+ * Fetches all RAIDs with optional field filtering
+ * 
+ * @param fields - Optional array of field names to include in the response
+ * @param token - Authentication token
+ * @returns Promise resolving to an array of RAID DTOs
+ */
 export const fetchAllRaids = async ({
   fields,
   token,
@@ -36,6 +56,13 @@ export const fetchAllRaids = async ({
   return response.json();
 };
 
+/**
+ * Fetches a single RAID by its handle
+ * 
+ * @param handle - The RAID handle (identifier)
+ * @param token - Authentication token
+ * @returns Promise resolving to a RAID DTO
+ */
 export const fetchOneRaid = async ({
   handle,
   token,
@@ -56,6 +83,13 @@ export const fetchOneRaid = async ({
   return await response.json();
 };
 
+/**
+ * Fetches the revision history of a RAID
+ * 
+ * @param handle - The RAID handle (identifier)
+ * @param token - Authentication token
+ * @returns Promise resolving to an array of RAID history entries
+ */
 export const fetchOneRaidHistory = async ({
   handle,
   token,
@@ -76,6 +110,13 @@ export const fetchOneRaidHistory = async ({
   return await response.json();
 };
 
+/**
+ * Creates a new RAID
+ * 
+ * @param raid - The RAID data to create
+ * @param token - Authentication token
+ * @returns Promise resolving to the created RAID DTO
+ */
 export const createOneRaid = async ({
   raid,
   token,
@@ -97,6 +138,14 @@ export const createOneRaid = async ({
   return await response.json();
 };
 
+/**
+ * Updates an existing RAID
+ * 
+ * @param data - The updated RAID data
+ * @param handle - The RAID handle (identifier)
+ * @param token - Authentication token
+ * @returns Promise resolving to the updated RAID DTO
+ */
 export const updateOneRaid = async ({
   data,
   handle,
@@ -115,12 +164,21 @@ export const updateOneRaid = async ({
   });
 
   if (!response.ok) {
-    throw new Error(`RAiD could not be created`);
+    throw new Error(`RAiD could not be updated`);
   }
 
   return await response.json();
 };
 
+/**
+ * Transforms RAID data before updates to handle empty date fields
+ * 
+ * This function converts empty string dates to undefined values,
+ * which is required by the API for proper handling of date fields.
+ * 
+ * @param raid - The RAID data to transform
+ * @returns The transformed RAID data ready for API submission
+ */
 export const transformBeforeUpdate = (raid: RaidDto): RaidDto => {
   // set all endDates to `undefined` if the value is an empty string
   if (raid?.date?.endDate === "") {
