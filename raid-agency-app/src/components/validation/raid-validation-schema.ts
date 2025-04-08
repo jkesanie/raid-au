@@ -1,3 +1,16 @@
+/**
+ * Central validation schema module for the RAID application
+ * 
+ * This module combines all entity-specific validation schemas into a single 
+ * comprehensive validation schema that matches the RAID data structure.
+ * The validation architecture follows these principles:
+ * 
+ * 1. Each entity has its own validation schema in a dedicated directory
+ * 2. The main RaidValidationSchema composes all entity schemas
+ * 3. Schemas use Zod for type-safe validation integrated with TypeScript
+ * 4. React Hook Form consumes these schemas via @hookform/resolvers/zod
+ */
+
 import { accessValidationSchema } from "@/entities/access/validation-schema/access-validation-schema";
 import { alternateIdentifierValidationSchema } from "@/entities/alternate-identifier/validation-schema/alternate-identifier-validation-schema";
 import { alternateUrlValidationSchema } from "@/entities/alternate-url/validation-schema/alternate-url-validation-schema";

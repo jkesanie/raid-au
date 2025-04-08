@@ -5,6 +5,15 @@ import { Box, Container } from "@mui/material";
 import { memo } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
+/**
+ * Protected route component for authentication-gated content
+ * 
+ * Ensures routes require authentication before access. Redirects to login
+ * when unauthenticated and preserves the attempted URL for post-login redirect.
+ * Shows loading state during authentication initialization.
+ * 
+ * @returns {JSX.Element} Authenticated content, loading indicator, or redirect to login
+ */
 export const ProtectedRoute = memo(() => {
   const { isInitialized, authenticated } = useKeycloak();
   const location = useLocation();

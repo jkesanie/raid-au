@@ -19,6 +19,17 @@ const copyJson = (data: any, snackbar: SnackbarContextInterface | null) => {
   snackbar?.openSnackbar(`✅ Copied raw JSON data to clipboard`);
 };
 
+/**
+ * Reusable card component for displaying data sections
+ * 
+ * Provides a consistent card layout with title and utility actions (copy/download)
+ * for any content. Typically used for displaying sections of RAID data.
+ * 
+ * @param {string} labelPlural - Title to display in the card header
+ * @param {any} data - Data object represented by this card (used for copy/download)
+ * @param {React.ReactNode} children - Content to render inside the card
+ * @returns {JSX.Element} Formatted card with header actions and content
+ */
 export const DisplayCard = memo(
   ({
     labelPlural,

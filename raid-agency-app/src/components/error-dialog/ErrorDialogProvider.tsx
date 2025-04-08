@@ -8,6 +8,15 @@ interface ErrorDialogStateInterface {
   duration?: number;
 }
 
+/**
+ * Context provider for displaying application-wide error dialogs
+ * 
+ * Provides methods to show error messages in a standardized dialog format
+ * throughout the application using React Context.
+ * 
+ * @param {React.ReactNode} children - Child components that will have access to error dialog context
+ * @returns {JSX.Element} Provider component with dialog UI and context
+ */
 export const ErrorDialogProvider: React.FC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
