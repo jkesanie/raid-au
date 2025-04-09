@@ -20,6 +20,19 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
+/**
+ * Main form component for creating and editing RAIDs
+ * 
+ * Coordinates multiple form sections into a cohesive form with validation
+ * across all fields. Uses React Hook Form for state management.
+ * 
+ * @param {RaidCreateRequest|RaidDto} raidData - Initial form data
+ * @param {Function} onSubmit - Handler called with validated form data
+ * @param {boolean} isSubmitting - Whether form submission is in progress
+ * @param {string} prefix - Prefix part of RAID identifier for routing
+ * @param {string} suffix - Suffix part of RAID identifier for routing
+ * @returns {JSX.Element} Complete RAID form with validation and submission handling
+ */
 export const RaidForm = memo(
   ({
     raidData,

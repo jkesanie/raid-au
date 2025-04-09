@@ -1,3 +1,10 @@
+/**
+ * Service Points API Module
+ *
+ * This module provides functions for interacting with the Service Points API.
+ * It handles fetching, creating, and updating service points, as well as managing
+ * users associated with service points through Keycloak integration.
+ */
 import { ServicePoint } from "@/generated/raid";
 import {
   CreateServicePointRequest,
@@ -7,11 +14,19 @@ import {
 } from "@/types";
 import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 
+// Keycloak configuration from environment variables
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
 
+// Base API endpoint for service point operations
 const endpoint = getApiEndpoint();
 
+/**
+ * Fetches all service points
+ * 
+ * @param token - Authentication token
+ * @returns Promise resolving to an array of ServicePoint objects
+ */
 export const fetchServicePoints = async ({
   token,
 }: {
@@ -29,6 +44,16 @@ export const fetchServicePoints = async ({
   return await response.json();
 };
 
+/**
+ * Fetches all service points with their associated members
+ * 
+ * This function makes multiple API calls to:
+ * 1. Fetch all service points
+ * 2. For each service point, fetch its members from Keycloak
+ * 
+ * @param token - Authentication token
+ * @returns Promise resolving to an array of ServicePointWithMembers objects
+ */
 export const fetchServicePointsWithMembers = async ({
   token,
 }: {
@@ -48,6 +73,7 @@ export const fetchServicePointsWithMembers = async ({
   });
   const servicePoints = await servicePointResponse.json();
 
+  // Fetch members for each service point that has a groupId
   for (const servicePoint of servicePoints) {
     if (servicePoint.groupId) {
       const servicePointMembersResponse = await fetch(
@@ -68,6 +94,7 @@ export const fetchServicePointsWithMembers = async ({
     }
   }
 
+  // Combine service points with their members
   const servicePointsWithMembers = servicePoints.map(
     (servicePoint: ServicePoint) => {
       return {
@@ -82,6 +109,13 @@ export const fetchServicePointsWithMembers = async ({
   return servicePointsWithMembers;
 };
 
+/**
+ * Fetches a single service point with its members
+ * 
+ * @param id - The service point ID
+ * @param token - Authentication token
+ * @returns Promise resolving to a ServicePointWithMembers object
+ */
 export const fetchServicePointWithMembers = async ({
   id,
   token,
@@ -109,6 +143,7 @@ export const fetchServicePointWithMembers = async ({
 
   const servicePoint = await servicePointResponse.json();
 
+  // Fetch members if the service point has a groupId
   if (servicePoint.groupId) {
     const servicePointMembersResponse = await fetch(
       `${servicePointMembersUrl}?groupId=${servicePoint.groupId}`,
@@ -134,6 +169,7 @@ export const fetchServicePointWithMembers = async ({
     );
   }
 
+  // Combine service point with its members
   const servicePointWithMembers = {
     ...servicePoint,
     members:
@@ -145,6 +181,13 @@ export const fetchServicePointWithMembers = async ({
   return servicePointWithMembers;
 };
 
+/**
+ * Fetches a single service point by ID
+ * 
+ * @param id - The service point ID
+ * @param token - Authentication token
+ * @returns Promise resolving to a ServicePoint object
+ */
 export const fetchServicePoint = async ({
   id,
   token,
@@ -164,6 +207,13 @@ export const fetchServicePoint = async ({
   return await response.json();
 };
 
+/**
+ * Creates a new service point
+ * 
+ * @param data - The service point creation request data
+ * @param token - Authentication token
+ * @returns Promise resolving to the created ServicePoint
+ */
 export const createServicePoint = async ({
   data,
   token,
@@ -184,6 +234,14 @@ export const createServicePoint = async ({
   return await response.json();
 };
 
+/**
+ * Updates an existing service point
+ * 
+ * @param id - The service point ID
+ * @param data - The service point update request data
+ * @param token - Authentication token
+ * @returns Promise resolving to the updated ServicePoint
+ */
 export const updateServicePoint = async ({
   id,
   data,
@@ -206,6 +264,15 @@ export const updateServicePoint = async ({
   return await response.json();
 };
 
+/**
+ * Updates a user's role in a service point
+ * 
+ * @param userId - The user ID
+ * @param userGroupId - The group ID representing the service point
+ * @param operation - The operation to perform (grant or revoke)
+ * @param token - Authentication token
+ * @returns Promise resolving to the updated ServicePoint
+ */
 export const updateUserServicePointUserRole = async ({
   userId,
   userGroupId,
@@ -234,6 +301,14 @@ export const updateUserServicePointUserRole = async ({
   return response.json();
 };
 
+/**
+ * Adds a user to the group admins for a service point
+ * 
+ * @param userId - The user ID
+ * @param groupId - The group ID representing the service point
+ * @param token - Authentication token
+ * @returns Promise resolving to the updated ServicePoint
+ */
 export const addUserToGroupAdmins = async ({
   userId,
   groupId,
@@ -260,6 +335,14 @@ export const addUserToGroupAdmins = async ({
   return response.json();
 };
 
+/**
+ * Removes a user from the group admins for a service point
+ * 
+ * @param userId - The user ID
+ * @param groupId - The group ID representing the service point
+ * @param token - Authentication token
+ * @returns Promise resolving to the updated ServicePoint
+ */
 export const removeUserFromGroupAdmins = async ({
   userId,
   groupId,
@@ -286,6 +369,18 @@ export const removeUserFromGroupAdmins = async ({
   return response.json();
 };
 
+/**
+ * Completely removes a user from a service point
+ * 
+ * This function performs two operations:
+ * 1. Removes the active group attribute from the user
+ * 2. Removes the user from the service point group in Keycloak
+ * 
+ * @param userId - The user ID
+ * @param groupId - The group ID representing the service point
+ * @param token - Authentication token
+ * @returns Promise resolving when the operations are complete
+ */
 export const removeUserFromServicePoint = async ({
   userId,
   groupId,
@@ -295,7 +390,7 @@ export const removeUserFromServicePoint = async ({
   groupId: string;
   token: string;
 }): Promise<void> => {
-  // remove active group attribute
+  // Step 1: Remove active group attribute
   const activeGroupUrl = `${kcUrl}/realms/${kcRealm}/group/active-group`;
   const activeGroupResponse = await fetch(`${activeGroupUrl}`, {
     method: "DELETE",
@@ -310,7 +405,7 @@ export const removeUserFromServicePoint = async ({
     throw new Error(`Failed to remove active group`);
   }
 
-  // remove user from group
+  // Step 2: Remove user from group
   const removeFromGroupUrl = `${kcUrl}/realms/${kcRealm}/group/leave`;
   const removeFromGroupResponse = await fetch(`${removeFromGroupUrl}`, {
     method: "PUT",
@@ -324,6 +419,4 @@ export const removeUserFromServicePoint = async ({
   if (!removeFromGroupResponse.ok) {
     throw new Error(`Failed to remove user from SP`);
   }
-
-  console.log("✅ User removed from SP");
 };

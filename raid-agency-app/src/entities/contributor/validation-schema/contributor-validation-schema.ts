@@ -1,3 +1,17 @@
+/**
+ * Validation schema for RAID contributors
+ * 
+ * This module defines validation rules for contributors in the RAID system.
+ * Contributors are validated with specific rules for ORCID identifiers,
+ * position, role, and contact information.
+ * 
+ * The validation supports three contributor formats:
+ * 1. Contributors with ORCID identifiers
+ * 2. Contributors with UUIDs (typically system-generated)
+ * 3. Contributors with email addresses
+ * 
+ * The schema ensures that at least one contributor exists in the RAID.
+ */
 import { contributorPositionValidationSchema } from "@/entities/contributor-position/validation-schema/contributor-position-validation-schema";
 import { contributorRoleValidationSchema } from "@/entities/contributor-role/validation-schema/contributor-role-validation-schema";
 import { z } from "zod";

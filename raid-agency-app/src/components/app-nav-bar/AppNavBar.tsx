@@ -29,6 +29,15 @@ const AuthenticatedNavbarContent = () => {
   );
 };
 
+/**
+ * Main application navigation bar
+ * 
+ * Provides consistent navigation across the application with authentication-aware
+ * display of user controls, service point switcher, and navigation options.
+ * 
+ * @param {boolean} authenticated - Whether a user is currently authenticated
+ * @returns {JSX.Element} Navigation bar with appropriate controls based on auth state
+ */
 export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
   const theme = useTheme();
 

@@ -8,6 +8,15 @@ interface SnackbarStateInterface {
   duration?: number;
 }
 
+/**
+ * Context provider for displaying toast notifications
+ * 
+ * Provides methods to show temporary notifications with customizable duration
+ * throughout the application using React Context.
+ * 
+ * @param {React.ReactNode} children - Child components that will have access to snackbar context
+ * @returns {JSX.Element} Provider component with snackbar UI and context
+ */
 export const SnackbarProvider: React.FC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
