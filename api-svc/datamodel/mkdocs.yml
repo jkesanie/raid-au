@@ -1,14 +1,16 @@
-site_name: RAiD metadata model
+site_name: RAiD metadata schema
 theme:
   name: material
-docs_dir: generated/v2/docs
+  features:
+    - navigation.expand 
+    - navigation.path
+docs_dir: generated/v2/schema-docs
+plugins:
+  - search
+  - awesome-nav
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format  
-extra:
-  version:
-    provider: mike
-    default: 2.0.0
+          format: !!python/name:pymdownx.superfences.fence_code_format    

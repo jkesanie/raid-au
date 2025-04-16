@@ -1,0 +1,30 @@
+title: RAiD core
+sort:
+  direction: asc
+  by: title  
+ignore:
+  - AccessStatement.md
+  - AccessType.md
+  - ClosedRaid.md
+  - ContributorPosition.md
+  - ContributorRole.md
+  - DescriptionType.md
+  - Language.md
+  - Metadata.md
+  - OrganizationRole.md
+  - Owner.md
+  - RaidCreateRequest.md
+  - RaidDto.md
+  - RaidPatchRequest.md
+  - RaidUpdateRequest.md
+  - OrganisationRole.md
+  - RegistrationAgency.md
+  - RelatedObjectCategory.md
+  - RelatedObjectType.md
+  - RelatedRaidType.md
+  - SpatialCoverage.md
+  - SpatialCoveragePlace.md
+  - Subject.md
+  - SubjectKeyword.md
+  - TitleType.md
+  - TraditionalKnowledgeLabel.md
