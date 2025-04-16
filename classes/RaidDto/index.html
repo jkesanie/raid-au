@@ -1,0 +1,2829 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.11">
+    
+    
+      
+        <title>. RaidDto - RAiD metadata schema</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#raiddto" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="RAiD metadata schema" class="md-header__button md-logo" aria-label="RAiD metadata schema" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            RAiD metadata schema
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              . RaidDto
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="RAiD metadata schema" class="md-nav__button md-logo" aria-label="RAiD metadata schema" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    RAiD metadata schema
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    RAiD core
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            RAiD core
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Id/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    1. Id
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Date/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    2. Date
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Title/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    3. Title
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Description/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    4. Description
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Contributor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    5. Contributor
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Organisation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    6. Organisation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RelatedObject/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    7. RelatedObject
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AlternateIdentifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    8. AlternateIdentifier
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AlternateUrl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    9. AlternateUrl
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RelatedRaid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    10. RelatedRaid
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    11. Access
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtometadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Metadata
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Metadata">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtometadatacreated" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Metadata.created
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtometadataupdated" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Metadata.updated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtometadataraidmodelversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Metadata.raidModelVersion
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtotitle" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Title">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitletext" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitlestartdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.startDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitleenddate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.endDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitlelanguage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.Language
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Title.Language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitlelanguageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.Language.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitlelanguageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.Language.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitletitletype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.TitleType
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Title.TitleType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitletitletypeid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.TitleType.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotitletitletypeschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Title.TitleType.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtodate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Date
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Date">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodatestartdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Date.startDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodateenddate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Date.endDate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtodescription" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptiontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptionlanguage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.Language
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Description.Language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptionlanguageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.Language.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptionlanguageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.Language.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptiondescriptiontype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.DescriptionType
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Description.DescriptionType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptiondescriptiontypeid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.DescriptionType.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtodescriptiondescriptiontypeschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Description.DescriptionType.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtoaccess" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccesstype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessType
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Access.AccessType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccesstypeid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessType.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccesstypeschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessType.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccessstatement" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessStatement
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Access.AccessStatement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccessstatementtext" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessStatement.text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccessstatementlanguage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessStatement.Language
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Access.AccessStatement.Language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccessstatementlanguageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessStatement.Language.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessaccessstatementlanguageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.AccessStatement.Language.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoaccessembargoexpiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Access.embargoExpiry
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtoalternateurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.AlternateUrl
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.AlternateUrl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoalternateurlurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.AlternateUrl.url
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtocontributor" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Contributor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorstatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorstatusmessage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.statusMessage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributoruuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.uuid
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorPosition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Contributor.ContributorPosition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorpositionstartdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorPosition.startDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorpositionenddate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorPosition.endDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorpositionschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorPosition.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorpositionid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorPosition.id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorRole
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Contributor.ContributorRole">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorroleschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorRole.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontributorroleid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.ContributorRole.id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorleader" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.leader
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributorcontact" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.contact
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtocontributoremail" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Contributor.email
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtoorganisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Organisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationorganisationrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.OrganisationRole
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Organisation.OrganisationRole">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationorganisationrolestartdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.OrganisationRole.startDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationorganisationroleenddate" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.OrganisationRole.endDate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationorganisationroleschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.OrganisationRole.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoorganisationorganisationroleid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Organisation.OrganisationRole.id
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtorelatedraid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedRaid
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.RelatedRaid">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedraidid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedRaid.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedraidrelatedraidtype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedRaid.RelatedRaidType
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.RelatedRaid.RelatedRaidType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedraidrelatedraidtypeid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedRaid.RelatedRaidType.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedraidrelatedraidtypeschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedRaid.RelatedRaidType.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtorelatedobject" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.RelatedObject">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjecttype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectType
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.RelatedObject.RelatedObjectType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjecttypeid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectType.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjecttypeschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectType.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjectcategory" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectCategory
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.RelatedObject.RelatedObjectCategory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjectcategoryid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectCategory.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtorelatedobjectrelatedobjectcategoryschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.RelatedObject.RelatedObjectCategory.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtoalternateidentifier" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.AlternateIdentifier
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.AlternateIdentifier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoalternateidentifierid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.AlternateIdentifier.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoalternateidentifiertype" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.AlternateIdentifier.type
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtosubject" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Subject">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectsubjectkeyword" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.SubjectKeyword
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Subject.SubjectKeyword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectsubjectkeywordtext" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.SubjectKeyword.text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectsubjectkeywordlanguage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.SubjectKeyword.Language
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Subject.SubjectKeyword.Language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectsubjectkeywordlanguageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.SubjectKeyword.Language.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtosubjectsubjectkeywordlanguageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Subject.SubjectKeyword.Language.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtospatialcoverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.SpatialCoverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoverageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoverageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoveragespatialcoverageplace" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.SpatialCoveragePlace
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.SpatialCoverage.SpatialCoveragePlace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoveragespatialcoverageplacetext" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.SpatialCoveragePlace.text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoveragespatialcoverageplacelanguage" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.SpatialCoveragePlace.Language
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.SpatialCoverage.SpatialCoveragePlace.Language">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoveragespatialcoverageplacelanguageid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.SpatialCoveragePlace.Language.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtospatialcoveragespatialcoverageplacelanguageschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.SpatialCoverage.SpatialCoveragePlace.Language.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtotraditionalknowledgelabel" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.TraditionalKnowledgeLabel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.TraditionalKnowledgeLabel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotraditionalknowledgelabelid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.TraditionalKnowledgeLabel.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtotraditionalknowledgelabelschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.TraditionalKnowledgeLabel.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raiddtoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Id">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Slots
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Slots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidregistrationagency" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.RegistrationAgency
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Id.RegistrationAgency">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidregistrationagencyid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.RegistrationAgency.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidregistrationagencyschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.RegistrationAgency.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidowner" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.Owner
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RaidDto.Id.Owner">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidownerid" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.Owner.id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidownerschemauri" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.Owner.schemaUri
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidownerservicepoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.Owner.servicePoint
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidraidagencyurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.raidAgencyUrl
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidlicense" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.license
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raiddtoidversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      RaidDto.Id.version
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="raiddto">RaidDto</h1>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="raiddtometadata">RaidDto.Metadata</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtometadatacreated">RaidDto.Metadata.created</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtometadataupdated">RaidDto.Metadata.updated</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtometadataraidmodelversion">RaidDto.Metadata.raidModelVersion</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="raiddtotitle">RaidDto.Title</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+*</p>
+<h3 id="raiddtotitletext">RaidDto.Title.text</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtotitlestartdate">RaidDto.Title.startDate</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtotitleenddate">RaidDto.Title.endDate</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p>Language</p>
+<h3 id="raiddtotitlelanguage">RaidDto.Title.Language</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h4 id="raiddtotitlelanguageid">RaidDto.Title.Language.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h4 id="raiddtotitlelanguageschemauri">RaidDto.Title.Language.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://www.iso.org/standard/74575.html</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.language.schemaUri/240">https://vocabulary.raid.org/description.language.schemaUri/240</a></p>
+<p>TitleType</p>
+<h3 id="raiddtotitletitletype">RaidDto.Title.TitleType</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtotitletitletypeid">RaidDto.Title.TitleType.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/title.type.schema/156</li>
+<li>https://vocabulary.raid.org/title.type.schema/157</li>
+<li>https://vocabulary.raid.org/title.type.schema/4</li>
+<li>https://vocabulary.raid.org/title.type.schema/5</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/title.type.schemaUri/382">https://vocabulary.raid.org/title.type.schemaUri/382</a></p>
+<h4 id="raiddtotitletitletypeschemauri">RaidDto.Title.TitleType.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/title.type.schema/376</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/title.type.schemaUri/377">https://vocabulary.raid.org/title.type.schemaUri/377</a></p>
+<h2 id="raiddtodate">RaidDto.Date</h2>
+<p><strong>Description</strong>:</p>
+<p>Metadata schema block containing the start and end date of the RAiD.</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Examples</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;startDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2009&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;endDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-08-28&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h3 id="raiddtodatestartdate">RaidDto.Date.startDate</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtodateenddate">RaidDto.Date.endDate</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="raiddtodescription">RaidDto.Description</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+*</p>
+<h3 id="raiddtodescriptiontext">RaidDto.Description.text</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<p>Language</p>
+<h3 id="raiddtodescriptionlanguage">RaidDto.Description.Language</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h4 id="raiddtodescriptionlanguageid">RaidDto.Description.Language.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h4 id="raiddtodescriptionlanguageschemauri">RaidDto.Description.Language.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://www.iso.org/standard/74575.html</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.language.schemaUri/240">https://vocabulary.raid.org/description.language.schemaUri/240</a></p>
+<p>DescriptionType</p>
+<h3 id="raiddtodescriptiondescriptiontype">RaidDto.Description.DescriptionType</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtodescriptiondescriptiontypeid">RaidDto.Description.DescriptionType.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/description.type.schema/3</li>
+<li>https://vocabulary.raid.org/description.type.schema/318</li>
+<li>https://vocabulary.raid.org/description.type.schema/319</li>
+<li>https://vocabulary.raid.org/description.type.schema/6</li>
+<li>https://vocabulary.raid.org/description.type.schema/7</li>
+<li>https://vocabulary.raid.org/description.type.schema/8</li>
+<li>https://vocabulary.raid.org/description.type.schema/9</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.type.schemaUri/276">https://vocabulary.raid.org/description.type.schemaUri/276</a></p>
+<h4 id="raiddtodescriptiondescriptiontypeschemauri">RaidDto.Description.DescriptionType.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/description.type.schema/320</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.type.schemaUri/275">https://vocabulary.raid.org/description.type.schemaUri/275</a></p>
+<h2 id="raiddtoaccess">RaidDto.Access</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<p>AccessType</p>
+<h3 id="raiddtoaccessaccesstype">RaidDto.Access.AccessType</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoaccessaccesstypeid">RaidDto.Access.AccessType.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabularies.coar-repositories.org/access_rights/c_abf2/</li>
+<li>https://vocabularies.coar-repositories.org/access_rights/c_f1cf/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/access.type.schemaUri/208">https://vocabulary.raid.org/access.type.schemaUri/208</a></p>
+<h4 id="raiddtoaccessaccesstypeschemauri">RaidDto.Access.AccessType.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabularies.coar-repositories.org/access_rights/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/access.type.schemaUri/207">https://vocabulary.raid.org/access.type.schemaUri/207</a></p>
+<p>AccessStatement</p>
+<h3 id="raiddtoaccessaccessstatement">RaidDto.Access.AccessStatement</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoaccessaccessstatementtext">RaidDto.Access.AccessStatement.text</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<p>Language</p>
+<h4 id="raiddtoaccessaccessstatementlanguage">RaidDto.Access.AccessStatement.Language</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h5 id="raiddtoaccessaccessstatementlanguageid">RaidDto.Access.AccessStatement.Language.id</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h5 id="raiddtoaccessaccessstatementlanguageschemauri">RaidDto.Access.AccessStatement.Language.schemaUri</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://www.iso.org/standard/74575.html</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.language.schemaUri/240">https://vocabulary.raid.org/description.language.schemaUri/240</a></p>
+<h3 id="raiddtoaccessembargoexpiry">RaidDto.Access.embargoExpiry</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="raiddtoalternateurl">RaidDto.AlternateUrl</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtoalternateurlurl">RaidDto.AlternateUrl.url</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h2 id="raiddtocontributor">RaidDto.Contributor</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+*</p>
+<h3 id="raiddtocontributorid">RaidDto.Contributor.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtocontributorstatus">RaidDto.Contributor.status</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtocontributorstatusmessage">RaidDto.Contributor.statusMessage</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtocontributoruuid">RaidDto.Contributor.uuid</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtocontributorschemauri">RaidDto.Contributor.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://isni.org/</li>
+<li>https://orcid.org/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/contributor.schemaUri/215">https://vocabulary.raid.org/contributor.schemaUri/215</a></p>
+<p>ContributorPosition</p>
+<h3 id="raiddtocontributorcontributorposition">RaidDto.Contributor.ContributorPosition</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtocontributorcontributorpositionstartdate">RaidDto.Contributor.ContributorPosition.startDate</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtocontributorcontributorpositionenddate">RaidDto.Contributor.ContributorPosition.endDate</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtocontributorcontributorpositionschemauri">RaidDto.Contributor.ContributorPosition.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/contributor.position.schema/305</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/contributor.position.schemaUri/277">https://vocabulary.raid.org/contributor.position.schemaUri/277</a></p>
+<h4 id="raiddtocontributorcontributorpositionid">RaidDto.Contributor.ContributorPosition.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/contributor.position.schema/307</li>
+<li>https://vocabulary.raid.org/contributor.position.schema/308</li>
+<li>https://vocabulary.raid.org/contributor.position.schema/309</li>
+<li>https://vocabulary.raid.org/contributor.position.schema/310</li>
+<li>https://vocabulary.raid.org/contributor.position.schema/311</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/contributor.position.schemaUri/306">https://vocabulary.raid.org/contributor.position.schemaUri/306</a></p>
+<p>ContributorRole</p>
+<h3 id="raiddtocontributorcontributorrole">RaidDto.Contributor.ContributorRole</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtocontributorcontributorroleschemauri">RaidDto.Contributor.ContributorRole.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://credit.niso.org/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/contributor.role.schemaUri/165">https://vocabulary.raid.org/contributor.role.schemaUri/165</a></p>
+<h4 id="raiddtocontributorcontributorroleid">RaidDto.Contributor.ContributorRole.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://credit.niso.org/contributor-role/conceptualization/</li>
+<li>https://credit.niso.org/contributor-role/data-curation/</li>
+<li>https://credit.niso.org/contributor-role/formal-analysis/</li>
+<li>https://credit.niso.org/contributor-role/funding-acquisition/</li>
+<li>https://credit.niso.org/contributor-role/investigation/</li>
+<li>https://credit.niso.org/contributor-role/methodology/</li>
+<li>https://credit.niso.org/contributor-role/project-administration/</li>
+<li>https://credit.niso.org/contributor-role/resources/</li>
+<li>https://credit.niso.org/contributor-role/software/</li>
+<li>https://credit.niso.org/contributor-role/supervision/</li>
+<li>https://credit.niso.org/contributor-role/validation/</li>
+<li>https://credit.niso.org/contributor-role/visualization/</li>
+<li>https://credit.niso.org/contributor-role/writing-original-draft/</li>
+<li>https://credit.niso.org/contributor-role/writing-review-editing/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/contributor.role.schemaUri/166">https://vocabulary.raid.org/contributor.role.schemaUri/166</a></p>
+<h3 id="raiddtocontributorleader">RaidDto.Contributor.leader</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtocontributorcontact">RaidDto.Contributor.contact</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtocontributoremail">RaidDto.Contributor.email</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h2 id="raiddtoorganisation">RaidDto.Organisation</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+*</p>
+<h3 id="raiddtoorganisationid">RaidDto.Organisation.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtoorganisationschemauri">RaidDto.Organisation.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://ror.org/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/organisation.schemaUri/158">https://vocabulary.raid.org/organisation.schemaUri/158</a></p>
+<p>OrganisationRole</p>
+<h3 id="raiddtoorganisationorganisationrole">RaidDto.Organisation.OrganisationRole</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoorganisationorganisationrolestartdate">RaidDto.Organisation.OrganisationRole.startDate</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoorganisationorganisationroleenddate">RaidDto.Organisation.OrganisationRole.endDate</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoorganisationorganisationroleschemauri">RaidDto.Organisation.OrganisationRole.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/organisation.role.schema/359</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/organisation.role.schemaUri/281">https://vocabulary.raid.org/organisation.role.schemaUri/281</a></p>
+<h4 id="raiddtoorganisationorganisationroleid">RaidDto.Organisation.OrganisationRole.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/organisation.role.schema/182</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/183</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/184</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/185</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/186</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/187</li>
+<li>https://vocabulary.raid.org/organisation.role.schema/188</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/organisation.schemaUri/282">https://vocabulary.raid.org/organisation.schemaUri/282</a></p>
+<h2 id="raiddtorelatedraid">RaidDto.RelatedRaid</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtorelatedraidid">RaidDto.RelatedRaid.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p>RelatedRaidType</p>
+<h3 id="raiddtorelatedraidrelatedraidtype">RaidDto.RelatedRaid.RelatedRaidType</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtorelatedraidrelatedraidtypeid">RaidDto.RelatedRaid.RelatedRaidType.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/198</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/199</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/200</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/201</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/202</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/203</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/204</li>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/205</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedRaid.type.schemaUri/286">https://vocabulary.raid.org/relatedRaid.type.schemaUri/286</a></p>
+<h4 id="raiddtorelatedraidrelatedraidtypeschemauri">RaidDto.RelatedRaid.RelatedRaidType.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedRaid.type.schema/367</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedRaid.type.schemaUri/285">https://vocabulary.raid.org/relatedRaid.type.schemaUri/285</a></p>
+<h2 id="raiddtorelatedobject">RaidDto.RelatedObject</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtorelatedobjectid">RaidDto.RelatedObject.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtorelatedobjectschemauri">RaidDto.RelatedObject.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>http://doi.org/</li>
+<li>http://hdl.handle.net/</li>
+<li>https://archive.org/</li>
+<li>https://arks.org/</li>
+<li>https://scicrunch.org/resolver/</li>
+<li>https://www.isbn-international.org/</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedObject.schemaUri/218">https://vocabulary.raid.org/relatedObject.schemaUri/218</a></p>
+<p>RelatedObjectType</p>
+<h3 id="raiddtorelatedobjectrelatedobjecttype">RaidDto.RelatedObject.RelatedObjectType</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtorelatedobjectrelatedobjecttypeid">RaidDto.RelatedObject.RelatedObjectType.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/247</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/248</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/249</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/250</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/251</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/252</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/253</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/254</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/255</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/256</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/257</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/258</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/259</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/260</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/261</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/262</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/263</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/264</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/265</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/266</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/267</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/268</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/269</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/270</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/271</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/272</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/273</li>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/274</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedObject.type.schemaUri/284">https://vocabulary.raid.org/relatedObject.type.schemaUri/284</a></p>
+<h4 id="raiddtorelatedobjectrelatedobjecttypeschemauri">RaidDto.RelatedObject.RelatedObjectType.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedObject.type.schema/329</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedObject.type.schemaUri/283">https://vocabulary.raid.org/relatedObject.type.schemaUri/283</a></p>
+<p>RelatedObjectCategory</p>
+<h3 id="raiddtorelatedobjectrelatedobjectcategory">RaidDto.RelatedObject.RelatedObjectCategory</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtorelatedobjectrelatedobjectcategoryid">RaidDto.RelatedObject.RelatedObjectCategory.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedObject.category.id/190</li>
+<li>https://vocabulary.raid.org/relatedObject.category.id/191</li>
+<li>https://vocabulary.raid.org/relatedObject.category.id/192</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/raid_placeholder/387">https://vocabulary.raid.org/raid_placeholder/387</a></p>
+<h4 id="raiddtorelatedobjectrelatedobjectcategoryschemauri">RaidDto.RelatedObject.RelatedObjectCategory.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://vocabulary.raid.org/relatedObject.category.schema/385</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/relatedObject.category.schemaUri/386">https://vocabulary.raid.org/relatedObject.category.schemaUri/386</a></p>
+<h2 id="raiddtoalternateidentifier">RaidDto.AlternateIdentifier</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtoalternateidentifierid">RaidDto.AlternateIdentifier.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtoalternateidentifiertype">RaidDto.AlternateIdentifier.type</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h2 id="raiddtosubject">RaidDto.Subject</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+*</p>
+<h3 id="raiddtosubjectid">RaidDto.Subject.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtosubjectschemauri">RaidDto.Subject.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p>SubjectKeyword</p>
+<h3 id="raiddtosubjectsubjectkeyword">RaidDto.Subject.SubjectKeyword</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtosubjectsubjectkeywordtext">RaidDto.Subject.SubjectKeyword.text</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<p>Language</p>
+<h4 id="raiddtosubjectsubjectkeywordlanguage">RaidDto.Subject.SubjectKeyword.Language</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h5 id="raiddtosubjectsubjectkeywordlanguageid">RaidDto.Subject.SubjectKeyword.Language.id</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h5 id="raiddtosubjectsubjectkeywordlanguageschemauri">RaidDto.Subject.SubjectKeyword.Language.schemaUri</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://www.iso.org/standard/74575.html</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.language.schemaUri/240">https://vocabulary.raid.org/description.language.schemaUri/240</a></p>
+<h2 id="raiddtospatialcoverage">RaidDto.SpatialCoverage</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtospatialcoverageid">RaidDto.SpatialCoverage.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtospatialcoverageschemauri">RaidDto.SpatialCoverage.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p>SpatialCoveragePlace</p>
+<h3 id="raiddtospatialcoveragespatialcoverageplace">RaidDto.SpatialCoverage.SpatialCoveragePlace</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtospatialcoveragespatialcoverageplacetext">RaidDto.SpatialCoverage.SpatialCoveragePlace.text</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<p>Language</p>
+<h4 id="raiddtospatialcoveragespatialcoverageplacelanguage">RaidDto.SpatialCoverage.SpatialCoveragePlace.Language</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h5 id="raiddtospatialcoveragespatialcoverageplacelanguageid">RaidDto.SpatialCoverage.SpatialCoveragePlace.Language.id</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h5 id="raiddtospatialcoveragespatialcoverageplacelanguageschemauri">RaidDto.SpatialCoverage.SpatialCoveragePlace.Language.schemaUri</h5>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p><strong>Allowed values</strong> (fetched at the time of the documentation generation):</p>
+<ul>
+<li>https://www.iso.org/standard/74575.html</li>
+</ul>
+<p>This is a dynamic enumeration whose values are defined in externally managed vocabulary. </p>
+<p>Link to the vocabulary:</p>
+<p><a href="https://vocabulary.raid.org/description.language.schemaUri/240">https://vocabulary.raid.org/description.language.schemaUri/240</a></p>
+<h2 id="raiddtotraditionalknowledgelabel">RaidDto.TraditionalKnowledgeLabel</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtotraditionalknowledgelabelid">RaidDto.TraditionalKnowledgeLabel.id</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtotraditionalknowledgelabelschemauri">RaidDto.TraditionalKnowledgeLabel.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="raiddtoid">RaidDto.Id</h2>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtoidid">RaidDto.Id.id</h3>
+<p><strong>Description</strong>:</p>
+<p>The identifier of the raid, e.g. https://raid.org.au/102.100.100/zzz</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h3 id="raiddtoidschemauri">RaidDto.Id.schemaUri</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h2 id="slots">Slots</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../slots/schemaUri/">schemaUri</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>RegistrationAgency</p>
+<h3 id="raiddtoidregistrationagency">RaidDto.Id.RegistrationAgency</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoidregistrationagencyid">RaidDto.Id.RegistrationAgency.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h4 id="raiddtoidregistrationagencyschemauri">RaidDto.Id.RegistrationAgency.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<p>Owner</p>
+<h3 id="raiddtoidowner">RaidDto.Id.Owner</h3>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h4 id="raiddtoidownerid">RaidDto.Id.Owner.id</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+mandatory</p>
+<p><strong>Cardinality</strong>:
+1</p>
+<h4 id="raiddtoidownerschemauri">RaidDto.Id.Owner.schemaUri</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h4 id="raiddtoidownerservicepoint">RaidDto.Id.Owner.servicePoint</h4>
+<p><strong>Description</strong>:</p>
+<p>None</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtoidraidagencyurl">RaidDto.Id.raidAgencyUrl</h3>
+<p><strong>Description</strong>:</p>
+<p>The URL for the raid via the minting raid agency system</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:</p>
+<h3 id="raiddtoidlicense">RaidDto.Id.license</h3>
+<p><strong>Description</strong>:</p>
+<p>The license under which the RAiD Metadata Record associated with this Identifier has been issued.</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+<h3 id="raiddtoidversion">RaidDto.Id.version</h3>
+<p><strong>Description</strong>:</p>
+<p>The version of the resource. Read-only. Increments automatically on update.</p>
+<p><strong>Requirement</strong>:
+optional</p>
+<p><strong>Cardinality</strong>:
+0..1</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.path"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
