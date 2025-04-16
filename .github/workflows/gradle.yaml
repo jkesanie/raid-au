@@ -24,7 +24,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CONFIG_FILE: api-svc/datamodel/mkdocs.yml
-          REQUIREMENTS: requirements.txt        
+          REQUIREMENTS: api-svc/datamodel/requirements.txt        
 
 
 
