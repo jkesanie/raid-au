@@ -171,5 +171,4 @@ The application provides several API endpoints:
 - `/api/raids.json`: Returns all RAiD data
 - `/api/handles.json`: Returns RAiD handles
 - `/api/all-handles.json`: Returns handles from all environments
-- `/api/diff.json`: Returns differences between data versions
 - `/api/raid-files-list.json`: Returns a list of available RAiD files
