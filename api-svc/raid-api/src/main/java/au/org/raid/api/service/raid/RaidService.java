@@ -17,6 +17,7 @@ import au.org.raid.api.service.RaidListenerService;
 import au.org.raid.api.service.datacite.DataciteService;
 import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.util.SchemaValues;
+import au.org.raid.api.util.TokenUtil;
 import au.org.raid.db.jooq.tables.records.ServicePointRecord;
 import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.RaidCreateRequest;
@@ -46,6 +47,7 @@ public class RaidService {
     private static final String SERVICE_POINT_USER_ROLE = "ROLE_service-point-user";
     private static final String RAID_USER_ROLE = "ROLE_raid-user";
     private static final String RAID_ADMIN_ROLE = "ROLE_raid-admin";
+    private static final String OPERATOR_ROLE = "operator";
     public static final String SERVICE_POINT_GROUP_ID_CLAIM = "service_point_group_id";
 
     private final DataciteService dataciteSvc;
@@ -102,9 +104,16 @@ public class RaidService {
 
     @SneakyThrows
     @Transactional
-    public RaidDto update(final RaidUpdateRequest raid) {
+    public RaidDto update(final RaidUpdateRequest raid, final long userServicePointId) {
+        final var raidServicePointId = raid.getIdentifier().getOwner().getServicePoint();
+
+        if (!TokenUtil.hasRole(OPERATOR_ROLE) && raidServicePointId != userServicePointId) {
+            throw new IllegalAccessException("User service point id (%d) does not match raid service point id (%d)"
+                    .formatted(userServicePointId, raidServicePointId));
+        }
+
         final var servicePointRecord =
-                servicePointRepository.findById(raid.getIdentifier().getOwner().getServicePoint()).orElseThrow(() ->
+                servicePointRepository.findById(raidServicePointId).orElseThrow(() ->
                         new UnknownServicePointException(raid.getIdentifier().getOwner().getServicePoint()));
 
         final Integer version = raid.getIdentifier().getVersion();
