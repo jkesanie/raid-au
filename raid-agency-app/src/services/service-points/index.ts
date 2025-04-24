@@ -33,6 +33,9 @@ export const fetchServicePoints = async ({
   token: string;
 }): Promise<ServicePoint[]> => {
   const url = new URL(`${endpoint}/service-point/`);
+  console.log('Requesting service points');
+
+  console.log(`Calling ${url}`);
 
   const response = await fetch(url, {
     method: "GET",
@@ -41,7 +44,12 @@ export const fetchServicePoints = async ({
       Authorization: `Bearer ${token}`,
     },
   });
-  return await response.json();
+
+  const servicePoints = await response.json();
+
+  console.log(JSON.stringify(servicePoints));
+
+  return servicePoints;
 };
 
 /**

@@ -1,7 +1,31 @@
 import {Card, CardContent, CardHeader, Grid} from "@mui/material";
-import {TextInputField} from "@/fields/TextInputField.tsx";
+import {TextSelectField} from "@/fields/TextSelectField.tsx";
+import {useQuery} from "@tanstack/react-query";
+import {fetchServicePoints} from "@/services/service-points";
+import {useKeycloak} from "@/contexts/keycloak-context";
 
 export const ServicePointForm = ({errors}) => {
+    const { authenticated, isInitialized, token } = useKeycloak();
+
+
+    const servicePointsQuery = useQuery({
+        queryKey: ["service-points"],
+        queryFn: () =>
+            fetchServicePoints({
+                token: token!,
+            }),
+        enabled: isInitialized && authenticated,
+    });
+
+    const options = servicePointsQuery.data?.map((servicePoint) => {
+        return {
+            label: servicePoint.name,
+            value: servicePoint.id.toString(),
+        };
+    })
+
+    const key = 'identifier.servicePoint';
+
     return (
         <Card
             sx={{
@@ -10,22 +34,18 @@ export const ServicePointForm = ({errors}) => {
             }}
             id={key}
         >
-            <CardHeader title={labelPlural} />
+            <CardHeader title="Service Point" />
             <CardContent>
                 <Grid container spacing={2}>
-                    <TextInputField
-                        name="date.startDate"
-                        label="Start Date"
+                    <TextSelectField
+                        name="identifier.owner.servicePoint"
+                        label="Service Point"
                         required={true}
                         width={3}
-                    />
-                    <TextInputField
-                        name="date.endDate"
-                        label="End Date"
-                        required={false}
-                        width={3}
+                        options={options || []}
                     />
                 </Grid>
             </CardContent>
-        </Card>    );
+        </Card>
+    );
 };

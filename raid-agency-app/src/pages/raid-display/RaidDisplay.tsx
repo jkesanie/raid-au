@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { MetadataDisplay } from "./components/MetadataDisplay";
 import { useKeycloak } from "@/contexts/keycloak-context";
+import {ServicePointView} from "@/entities/service-point/views/service-point-view/ServicePointView.tsx";
 
 export const RaidDisplay = () => {
   const { isInitialized, authenticated, token } = useKeycloak();
@@ -52,6 +53,9 @@ export const RaidDisplay = () => {
 
   const raidData = readQuery.data;
 
+  console.log(`RAiD: ${JSON.stringify(raidData)}`);
+  console.log(`service point: ${JSON.stringify(raidData.identifier.owner.servicePoint)}`);
+
   const breadcrumbs: Breadcrumb[] = [
     {
       label: "Home",
@@ -71,43 +75,47 @@ export const RaidDisplay = () => {
   ];
 
   return (
-    <>
-      <RaidDisplayMenu
-        prefix={prefix}
-        suffix={suffix}
-        title={raidData?.title?.map((el) => el.text).join("; ") || ""}
-      />
-      <Container>
-        <Stack direction="column" spacing={2}>
-          <BreadcrumbsBar breadcrumbs={breadcrumbs} />
-          <AnchorButtons raidData={raidData} />
-          {raidData && "metadata" in raidData && (
-            <MetadataDisplay
-              metadata={
-                raidData.metadata as {
-                  created?: number;
-                  updated?: number;
-                }
-              }
-            />
-          )}
-          {displayItems.map(({ itemKey, Component, emptyValue }) => {
-            const data =
-              raidData[itemKey as keyof RaidDto] || (emptyValue as any);
-            return (
-              <Box id={itemKey} key={itemKey} className="scroll">
-                <Component data={data} />
-              </Box>
-            );
-          })}
-          <Box id="externalLinks" className="scroll">
-            <ExternalLinksDisplay prefix={prefix} suffix={suffix} />
-          </Box>
-          <Box id="rawData" className="scroll">
-            <RawDataDisplay raidData={raidData} />
-          </Box>
-        </Stack>
-      </Container>
-    </>
+      <>
+        <RaidDisplayMenu
+            prefix={prefix}
+            suffix={suffix}
+            title={raidData?.title?.map((el) => el.text).join("; ") || ""}
+        />
+        <Container>
+          <Stack direction="column" spacing={2}>
+            <BreadcrumbsBar breadcrumbs={breadcrumbs}/>
+            <AnchorButtons raidData={raidData}/>
+            {raidData && "metadata" in raidData && (
+                <MetadataDisplay
+                    metadata={
+                      raidData.metadata as {
+                        created?: number;
+                        updated?: number;
+                      }
+                    }
+                />
+            )}
+            {raidData?.identifier?.owner?.servicePoint && (
+
+                <ServicePointView servicePointId={raidData.identifier.owner.servicePoint} />
+              )}
+            {displayItems.map(({itemKey, Component, emptyValue}) => {
+              const data =
+                  raidData[itemKey as keyof RaidDto] || (emptyValue as any);
+              return (
+                  <Box id={itemKey} key={itemKey} className="scroll">
+                    <Component data={data}/>
+                  </Box>
+              );
+            })}
+            <Box id="externalLinks" className="scroll">
+              <ExternalLinksDisplay prefix={prefix} suffix={suffix}/>
+            </Box>
+            <Box id="rawData" className="scroll">
+              <RawDataDisplay raidData={raidData}/>
+            </Box>
+          </Stack>
+        </Container>
+      </>
   );
 };
