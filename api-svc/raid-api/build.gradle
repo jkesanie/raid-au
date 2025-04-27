@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'org.springframework.boot' version '3.4.4'
+  id 'org.springframework.boot' version '3.3.11'
   id 'io.spring.dependency-management' version '1.1.6'
 //  id 'com.avast.gradle.docker-compose' version '0.17.6'
 }
@@ -61,11 +61,11 @@ dependencies{
   implementation 'jakarta.annotation:jakarta.annotation-api'
 
   implementation 'org.geonames:geonames-ws-client:1.1.17'
-  compileOnly 'org.projectlombok:lombok'
-  annotationProcessor 'org.projectlombok:lombok'
+  compileOnly 'org.projectlombok:lombok:1.18.36'
+  annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
-  testCompileOnly 'org.projectlombok:lombok'
-  testAnnotationProcessor 'org.projectlombok:lombok'
+  testCompileOnly 'org.projectlombok:lombok:1.18.36'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
     // postgres DB driver
   runtimeOnly libs.pgjdbc
 
@@ -97,6 +97,12 @@ dependencies{
   testImplementation 'com.jayway.jsonpath:json-path'
   testImplementation 'org.springframework.security:spring-security-test:6.2.2'
 
+  implementation('org.springframework.boot:spring-boot-starter-validation') {
+    exclude group: 'org.hibernate', module: 'hibernate-validator'
+  }
+// https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
+  implementation("org.hibernate.validator:hibernate-validator:8.0.2.Final")
+  // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
 }
 
 compileJava {
@@ -109,64 +115,70 @@ compileJava {
     "-Xlint:deprecation"
 }
 
-//testing{
-//  //noinspection GroovyAssignabilityCheck
-//  suites{
-//    //noinspection GroovyAssignabilityCheck
-//    intTest(JvmTestSuite){
-//      testType = TestSuiteType.INTEGRATION_TEST
-//      dependencies{
-//        implementation project(':api-svc:idl-raid-v2')
-//
-//        implementation.bundle libs.bundles.springboot
-//        implementation.bundle libs.bundles.springboot.test
-//
-//        implementation.bundle libs.bundles.feign
-//
-//        implementation libs.assertj
-//
-//        // for PostConstruct/PreDestroy - pkg: jakarta.annotation (used to be javax)
-//        implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
-//
-//        implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3"
-//
-//        compileOnly 'org.projectlombok:lombok:1.18.28'
-//        annotationProcessor 'org.projectlombok:lombok:1.18.28'
-//
-//      }
-//    }
-//  }
-//}
-//tasks.intTest.description = "don't run this, it's just a Gradle default"
+testing{
+  //noinspection GroovyAssignabilityCheck
+  suites{
+    //noinspection GroovyAssignabilityCheck
+    intTest(JvmTestSuite){
+      //testType = TestSuiteType.INTEGRATION_TEST
+      dependencies{
+        implementation project(':api-svc:idl-raid-v2')
 
-// compile intTest classes - but don't run by default (needs DDB migration)
-//tasks.build.dependsOn intTestClasses
+        implementation.bundle libs.bundles.springboot
+        implementation.bundle libs.bundles.springboot.test
 
-//test {
-//  useJUnitPlatform()
-//  systemProperties defaultSysProps
-//  testLogging.showStandardStreams =
-//    System.getenv("RAIDO_UNIT_TEST_OUTPUT")?.toBoolean()
-//}
+        implementation.bundle libs.bundles.feign
 
-//intTest {
-//  useJUnitPlatform()
-//  systemProperties defaultSysProps
-//  testLogging.showStandardStreams = true
-//}
+        implementation libs.assertj
 
-//task buildInfo(type: WriteProperties) {
-//  description = "Write build-info.properties file"
-//  outputFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
-//  encoding = "UTF-8"
-//  comment = "This file built by Gradle task buildInfo"
-//
-//  property("build.version", project.version)
-////  property("build.commitId", rootProject.gitCommitHash)
-//  // we don't use it for stuff, it's for people, so format it nice
-//  property("build.buildDate", new Date().toString())
-//}
-//processResources.dependsOn buildInfo
+        // for PostConstruct/PreDestroy - pkg: jakarta.annotation (used to be javax)
+        implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+
+        implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3"
+
+        compileOnly 'org.projectlombok:lombok:1.18.36'
+        annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+      }
+    }
+  }
+}
+
+
+clean {
+
+}
+tasks.intTest.description = "don't run this, it's just a Gradle default"
+
+//compile intTest classes - but don't run by default (needs DDB migration)
+tasks.build.dependsOn intTestClasses
+
+test {
+  useJUnitPlatform()
+  systemProperties defaultSysProps
+  testLogging.showStandardStreams =
+          System.getenv("RAIDO_UNIT_TEST_OUTPUT")?.toBoolean()
+}
+
+intTest {
+  useJUnitPlatform()
+  systemProperties defaultSysProps
+  testLogging.showStandardStreams = true
+}
+
+
+task buildInfo(type: WriteProperties) {
+  description = "Write build-info.properties file"
+  outputFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
+  encoding = "UTF-8"
+  comment = "This file built by Gradle task buildInfo"
+
+  property("build.version", project.version)
+//  property("build.commitId", rootProject.gitCommitHash)
+  // we don't use it for stuff, it's for people, so format it nice
+  property("build.buildDate", new Date().toString())
+}
+processResources.dependsOn buildInfo
 
 bootJar {
   archiveFileName = "raido-api-svc.jar"
