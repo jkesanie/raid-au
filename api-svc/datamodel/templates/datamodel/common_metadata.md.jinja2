@@ -41,7 +41,6 @@
 {% endfor %}
 {% endif -%}
 
-## Identifier and Mapping Information
 
 {% if element.id_prefixes %}
 ### Valid ID Prefixes
@@ -62,19 +61,8 @@ Instances of this class *should* have identifiers with one of the following pref
 {% for a in element.annotations -%}
 {%- if a|string|first != '_' -%}
 | {{ a }} | {{ element.annotations[a].value }} |
-{%- endif -%}
+{% endif -%}
 {% endfor %}
-{% endif %}
-
-{% if element.from_schema or element.imported_from %}
-### Schema Source
-
-{% if element.from_schema %}
-* from schema: {{ element.from_schema }}
-{% endif %}
-{% if element.imported_from %}
-* imported from: {{ element.imported_from }}
-{% endif %}
 {% endif %}
 
 {% if schemaview.get_mappings(element.name).items() -%}

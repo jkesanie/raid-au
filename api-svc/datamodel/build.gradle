@@ -2,9 +2,36 @@ plugins {
   id 'java'
 }
 import org.gradle.logging.internal.*
+import au.raid.org.api.*
 
 tasks.register('pullLinkMLImage', Exec) {  
   commandLine '/usr/local/bin/docker', 'pull', 'linkml/linkml'
+}
+
+tasks.register('pullMKdocsImage', Exec) {
+  commandLine '/usr/local/bin/docker', 'pull', 'squidfunk/mkdocs-material'
+}
+
+
+tasks.register('generateDatamodelDocs', Exec) {
+  dependsOn "copyDocConfig"
+  dependsOn "pullLinkMLImage"
+  commandLine '/usr/local/bin/docker', 'run', '-v', './src/v2:/work', '-v', './:/base', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-doc', 'raid-core.yaml', '-d', '/generated/v2/datamodel-docs/docs',  '--subfolder-type-separation', '--hierarchical-class-view', '--template-directory', '/base/templates/datamodel', '--example-directory', '/base/examples/'
+}
+
+tasks.register('generateSchemaDocs', Exec) {
+  dependsOn "copyDocConfig"
+  dependsOn "pullLinkMLImage"
+  commandLine '/usr/local/bin/docker', 'run', '-v', './src/v2:/work', '-v', './:/base', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-doc', 'raid-core.yaml', '-d', '/generated/v2/schema-docs/docs',  '--subfolder-type-separation', '--hierarchical-class-view', '--template-directory', '/base/templates/schema', '--example-directory', '/base/examples/'
+}
+
+
+tasks.register('copyDocConfig', Exec) {
+  commandLine 'cp', '-r', 'mkdocs-config/', 'generated'
+}
+
+tasks.register('buildDatamodelSite', Exec) {
+  commandLine '/usr/local/bin/docker', 'run','-v', 'generated/v2/datamodel-docs:/docs', 'squidfunk/mkdocs-material', 'build'
 }
 
 tasks.register('cleanupJSONSchema', Exec) {
@@ -13,15 +40,40 @@ tasks.register('cleanupJSONSchema', Exec) {
 tasks.register('generateJSONSchemaV2', Exec) {
   dependsOn "pullLinkMLImage"
   //dependsOn "cleanupJSONSchema"
-  commandLine '/usr/local/bin/docker', 'run', '-v', './v2:/work', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-json-schema', 'raid-core.yaml'
+  commandLine '/usr/local/bin/docker', 'run', '-v', './src/v2:/work', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-json-schema', 'raid-core.yaml'
+  doFirst {
+    standardOutput new FileOutputStream("api-svc/datamodel/generated/v2/raid-jsonschema.json")
+  }
 }
+
+// tasks:
+// - copy navs
+// - generate docs
+
+
+tasks.register('generateReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'src/v2/core-enums.yaml'
+  outputFile = "generated/v2/referencedata.sql"
+  examplesDir = "examples/"
+  mappingFile = "../../buildSrc/enum2table.yaml"
+  schemaID = 3
+}
+
+tasks.register('generateExtendedReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'src/v2/extended-enums.yaml'
+  outputFile = "generated/v2/referencedata-extended.sql"
+  examplesDir = "examples/"
+  mappingFile = "../../buildSrc/extended-enum2table.yaml"
+  schemaID = 3
+}
+
 
 tasks.register('generateMarkdownV2', Exec) {
   dependsOn "pullLinkMLImage"
   commandLine '/usr/local/bin/docker', 'run', '-v', './v2:/work', '-v', './generated:/generated', '-w', '/work', 'linkml/linkml', 'gen-doc', 'raid-core.yaml', '--directory', '/generated/v2/docs'
 }
 
-
+/*
 project.tasks.generateJSONSchemaV2.configure {
     it.logging.addStandardOutputListener(new StandardOutputListener() {
         @Override
@@ -31,6 +83,22 @@ project.tasks.generateJSONSchemaV2.configure {
         }
     })
 }
+*/
+
+tasks.register('generateInternalJsonSchemaV2', AddStaticEnums) {
+  dependsOn "generateJSONSchemaV2"
+  linkMLEnumsFile = file("src/v2/core-enums.yaml")
+  enumInfoFile = file("../../buildSrc/enum2table.yaml")
+  generatedSchemaFile = file("generated/v2/raid-jsonschema.json")
+  outputFile = file("generated/v2/raid-internal-jsonschema.json")
+}
+
+tasks.register('generateAll') {
+  dependsOn "generateInternalJsonSchemaV2"
+  dependsOn "generateExtendedReferenceData"
+  dependsOn "generateReferenceData"
+  dependsOn "generateSchemaDocs"
+  dependsOn "generateDatamodelDocs"
 
 
-
+}

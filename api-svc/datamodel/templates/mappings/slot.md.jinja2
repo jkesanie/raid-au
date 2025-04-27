@@ -1,0 +1,9 @@
+{% macro get_mapping_row(element_name, schema) -%}
+|raid:{{element_name}}
+{% set uris = schemaview.get_mappings(element_name).get('exact') -%}
+{% if uris is not none -%}
+|{{ uris | join('<br>') }}|
+{% else -%}|test|
+{% endif -%}
+{% endmacro -%}
+{{get_mapping_row(element.name, 'schema')-}}
