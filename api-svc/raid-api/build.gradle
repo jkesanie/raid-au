@@ -144,21 +144,12 @@ testing{
 }
 tasks.intTest.description = "don't run this, it's just a Gradle default"
 
-// compile intTest classes - but don't run by default (needs DDB migration)
-//tasks.build.dependsOn intTestClasses
+        implementation.bundle libs.bundles.springboot
+        implementation.bundle libs.bundles.springboot.test
 
-//test {
-//  useJUnitPlatform()
-//  systemProperties defaultSysProps
-//  testLogging.showStandardStreams =
-//    System.getenv("RAIDO_UNIT_TEST_OUTPUT")?.toBoolean()
-//}
+        implementation.bundle libs.bundles.feign
 
-//intTest {
-//  useJUnitPlatform()
-//  systemProperties defaultSysProps
-//  testLogging.showStandardStreams = true
-//}
+        implementation libs.assertj
 
 tasks.register('buildInfo', WriteProperties) {
     description = "Write build-info.properties file"
