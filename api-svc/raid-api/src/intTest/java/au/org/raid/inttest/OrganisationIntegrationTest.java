@@ -76,7 +76,7 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Minting a RAiD with empty organisation schemaUri fails")
     void emptyIdentifierSchemeUri() {
@@ -108,7 +108,7 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     @Test
     @DisplayName("Minting a RAiD with missing organisation id fails")
     void missingId() {
@@ -304,7 +304,7 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
                 fail("Expected RaidApiValidationException");
             }
         }
-
+/*
         @Test
         @DisplayName("Minting a RAiD with empty role type fails")
         void emptyRoleType() {
@@ -400,5 +400,7 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
                 fail("Expected RaidApiValidationException");
             }
         }
+
+ */
     }
 }

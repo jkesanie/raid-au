@@ -158,8 +158,8 @@ public class RaidService {
 
         final var servicePointId = raid.getIdentifier().getOwner().getServicePoint();
 
-        final var servicePointRecord = servicePointRepository.findById(servicePointId)
-                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
+        final var servicePointRecord = servicePointRepository.findById(servicePointId.longValue())
+                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId.toString()));
 
         orcidIntegrationService.setContributorStatus(contributors);
         raid.setContributor(contributors);
@@ -195,7 +195,7 @@ public class RaidService {
 
         var servicePointMatch = false;
         var canWrite = false;
-        var canRead = raidOptional.get().getAccess().getType().getId().equals(SchemaValues.ACCESS_TYPE_OPEN.getUri());
+        var canRead = raidOptional.get().getAccess().getType().getId().equals(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_);
 
         final var token = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken();
 
@@ -208,7 +208,7 @@ public class RaidService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        if (raidOptional.get().getIdentifier().getOwner().getServicePoint().equals(servicePoint.getId())) {
+        if (raidOptional.get().getIdentifier().getOwner().getServicePoint().longValue() == servicePoint.getId()) {
             servicePointMatch = true;
         }
 

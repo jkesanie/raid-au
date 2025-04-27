@@ -45,7 +45,7 @@ class RaidRecordFactoryTest {
         );
 
         assertThat(record.getHandle(), is(TestRaid.HANDLE));
-        assertThat(record.getServicePointId(), is(TestRaid.SERVICE_POINT_ID));
+        assertThat(record.getServicePointId(), is(TestRaid.SERVICE_POINT_ID.longValue()));
         assertThat(record.getMetadataSchema(), is(Metaschema.raido_metadata_schema_v2));
         assertThat(record.getDateCreated(), is(LocalDateTime.now(clock)));
         assertThat(record.getVersion(), is(TestRaid.VERSION));

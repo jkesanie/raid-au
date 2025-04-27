@@ -92,12 +92,12 @@ public class AbstractIntegrationTest {
                 .leader(true)
                 .schemaUri(ISNI_SCHEMA_URI)
                 .position(List.of(new ContributorPosition()
-                        .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                        .schemaUri(ContributorPositionSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_305)
                         .id(position)
                         .startDate(startDate.format(DateTimeFormatter.ISO_LOCAL_DATE))))
                 .role(List.of(
                         new ContributorRole()
-                                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                .schemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_)
                                 .id(role)));
 
         if (status != null) {

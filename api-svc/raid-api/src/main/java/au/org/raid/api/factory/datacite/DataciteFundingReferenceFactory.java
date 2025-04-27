@@ -19,6 +19,6 @@ public class DataciteFundingReferenceFactory {
                 .setFunderName(organisationName)
                 .setFunderIdentifier(organisation.getId())
                 .setFunderIdentifierType("ROR")
-                .setSchemeUri(organisation.getSchemaUri());
+                .setSchemeUri(organisation.getSchemaUri().getValue());
     }
 }

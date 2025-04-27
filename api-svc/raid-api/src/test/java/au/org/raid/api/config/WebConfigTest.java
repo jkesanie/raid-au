@@ -40,7 +40,7 @@ class WebConfigTest {
         webConfig.extendMessageConverters(converters);
         
         // Then
-        assertThat(converters).hasSize(3);
+        assertThat(converters).hasSize(4);
         assertThat(converters).contains(raidTurtleConverter, raidNTriplesConverter, raidRdfXmlConverter);
     }
 }

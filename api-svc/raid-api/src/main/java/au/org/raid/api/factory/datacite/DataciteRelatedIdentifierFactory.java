@@ -10,6 +10,7 @@ import au.org.raid.api.vocabularies.raid.RelatedObjectType;
 import au.org.raid.api.vocabularies.raid.RelatedRaidType;
 import au.org.raid.idl.raidv2.model.AlternateUrl;
 import au.org.raid.idl.raidv2.model.RelatedObject;
+import au.org.raid.idl.raidv2.model.RelatedObjectTypeIdEnum;
 import au.org.raid.idl.raidv2.model.RelatedRaid;
 import org.springframework.stereotype.Component;
 
@@ -75,9 +76,9 @@ public class DataciteRelatedIdentifierFactory {
     public DataciteRelatedIdentifier create(final RelatedObject relatedObject) {
         return new DataciteRelatedIdentifier()
                 .setRelatedIdentifier(relatedObject.getId())
-                .setRelatedIdentifierType(IDENTIFIER_TYPE_MAP.get(relatedObject.getSchemaUri()))
-                .setResourceTypeGeneral(RESOURCE_TYPE_MAP.get(relatedObject.getType().getId()))
-                .setRelationType(RELATION_TYPE_MAP.get(relatedObject.getCategory().get(0).getId()));
+                .setRelatedIdentifierType(IDENTIFIER_TYPE_MAP.get(relatedObject.getSchemaUri().getValue()))
+                .setResourceTypeGeneral(RESOURCE_TYPE_MAP.get(relatedObject.getType().getId().getValue()))
+                .setRelationType(RELATION_TYPE_MAP.get(relatedObject.getCategory().get(0).getId().getValue()));
     }
 
     public DataciteRelatedIdentifier create(final AlternateUrl alternateUrl) {
@@ -92,7 +93,7 @@ public class DataciteRelatedIdentifierFactory {
         return new DataciteRelatedIdentifier()
                 .setRelatedIdentifier(relatedRaid.getId())
                 .setRelatedIdentifierType(RelatedIdentifierType.DOI.getName())
-                .setRelationType(RELATION_TYPE_MAP.get(relatedRaid.getType().getId()))
+                .setRelationType(RELATION_TYPE_MAP.get(relatedRaid.getType().getId().getValue()))
                 .setResourceTypeGeneral(ResourceTypeGeneral.PROJECT.getName());
     }
 

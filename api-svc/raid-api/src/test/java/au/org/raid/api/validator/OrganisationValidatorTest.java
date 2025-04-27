@@ -2,9 +2,7 @@ package au.org.raid.api.validator;
 
 import au.org.raid.api.client.ror.RorClient;
 import au.org.raid.api.util.TestConstants;
-import au.org.raid.idl.raidv2.model.Organisation;
-import au.org.raid.idl.raidv2.model.OrganisationRole;
-import au.org.raid.idl.raidv2.model.ValidationFailure;
+import au.org.raid.idl.raidv2.model.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,14 +35,14 @@ class OrganisationValidatorTest {
     @DisplayName("Validation passes with valid organisation")
     void validOrganisation() {
         final var role = new OrganisationRole()
-                .schemaUri(TestConstants.ORGANISATION_ROLE_SCHEMA_URI)
-                .id(TestConstants.LEAD_RESEARCH_ORGANISATION_ROLE)
+                .schemaUri(OrganizationRoleSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_359)
+                .id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_182)
                 .startDate(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .endDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         final var organisation = new Organisation()
                 .id(TestConstants.VALID_ROR)
-                .schemaUri(TestConstants.HTTPS_ROR_ORG)
+                .schemaUri(OrganizationSchemaUriEnum.HTTPS_ROR_ORG_)
                 .role(List.of(role));
 
         when(rorClient.exists(TestConstants.VALID_ROR)).thenReturn(true);

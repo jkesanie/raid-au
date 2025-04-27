@@ -39,6 +39,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -344,9 +345,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
             .identifier(new Id()
@@ -354,7 +355,7 @@ class RaidServiceTest {
                         .servicePoint(servicePointId)))
                 .access(new Access()
                     .type(new AccessType()
-                        .id(SchemaValues.ACCESS_TYPE_OPEN.getUri())));
+                        .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -387,9 +388,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -397,7 +398,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_OPEN.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -435,9 +436,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -445,7 +446,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_OPEN.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -482,9 +483,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -492,7 +493,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_OPEN.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -529,9 +530,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId =new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -539,7 +540,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_EMBARGOED.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -576,9 +577,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -586,7 +587,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_EMBARGOED.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 
@@ -623,9 +624,9 @@ class RaidServiceTest {
         final var prefix = "_prefix";
         final var suffix = "_suffix";
         final var handle = "%s/%s".formatted(prefix, suffix);
-        final var servicePointId = 1L;
+        final var servicePointId = new BigDecimal(1L);
         final var servicePointGroupId = "service-point-group-id";
-        final var servicePointRecord = new ServicePointRecord().setId(servicePointId);
+        final var servicePointRecord = new ServicePointRecord().setId(servicePointId.longValue());
 
         final var raid = new RaidDto()
                 .identifier(new Id()
@@ -633,7 +634,7 @@ class RaidServiceTest {
                                 .servicePoint(servicePointId)))
                 .access(new Access()
                         .type(new AccessType()
-                                .id(SchemaValues.ACCESS_TYPE_OPEN.getUri())));
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)));
 
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raid));
 

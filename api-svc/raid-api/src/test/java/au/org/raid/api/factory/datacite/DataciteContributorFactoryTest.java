@@ -4,9 +4,7 @@ import au.org.raid.api.client.ror.RorClient;
 import au.org.raid.api.config.properties.DataciteProperties;
 import au.org.raid.api.model.datacite.DataciteContributor;
 import au.org.raid.api.util.SchemaValues;
-import au.org.raid.idl.raidv2.model.Organisation;
-import au.org.raid.idl.raidv2.model.OrganisationRole;
-import au.org.raid.idl.raidv2.model.RegistrationAgency;
+import au.org.raid.idl.raidv2.model.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +48,7 @@ public class DataciteContributorFactoryTest {
         assertThat(result.getNameType(), is("Organizational"));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ROR"));
-        assertThat(result.getNameIdentifiers().get(0).getSchemeUri(), is(schemaUri));
+        assertThat(result.getNameIdentifiers().get(0).getSchemeUri(), is(schemaUri.getValue()));
     }
 
     @Test
@@ -64,8 +62,8 @@ public class DataciteContributorFactoryTest {
         final var organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.LEAD_RESEARCH_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_182)
                 ));
 
         final var dataciteContributor = dataciteContributorFactory.create(organisation);
@@ -85,8 +83,8 @@ public class DataciteContributorFactoryTest {
         Organisation organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.OTHER_RESEARCH_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_183)
                 ));
 
         DataciteContributor dataciteContributor = dataciteContributorFactory.create(organisation);
@@ -105,8 +103,9 @@ public class DataciteContributorFactoryTest {
         Organisation organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.PARTNER_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_184)
+
                 ));
 
         DataciteContributor dataciteContributor = dataciteContributorFactory.create(organisation);
@@ -125,8 +124,8 @@ public class DataciteContributorFactoryTest {
         Organisation organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.CONTRACTOR_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_185)
                 ));
 
         DataciteContributor dataciteContributor = dataciteContributorFactory.create(organisation);
@@ -145,8 +144,8 @@ public class DataciteContributorFactoryTest {
         Organisation organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.FACILITY_RESEARCH_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_187)
                 ));
 
         DataciteContributor dataciteContributor = dataciteContributorFactory.create(organisation);
@@ -166,8 +165,8 @@ public class DataciteContributorFactoryTest {
         final var organisation = new Organisation()
                 .id(id)
                 .role(List.of(
-                        new OrganisationRole().id(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()),
-                        new OrganisationRole().id(SchemaValues.OTHER_ORGANISATION_ROLE.getUri())
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186),
+                        new OrganisationRole().id(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_188)
                 ));
 
         final var dataciteContributor = dataciteContributorFactory.create(organisation);

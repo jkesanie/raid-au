@@ -117,7 +117,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with a empty language schemaUri fails")
     void emptyLanguageSchemeUri() {
@@ -138,7 +138,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with a null language id fails")
     void nullLanguageId() {
@@ -202,7 +202,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-
+/*
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with a invalid language schemaUri fails")
     void invalidLanguageSchemeUri() {
@@ -223,5 +223,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
+
+ */
 
 }

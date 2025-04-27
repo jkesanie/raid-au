@@ -252,7 +252,7 @@ public class RaidController implements RaidApi {
     }
 
     private boolean isViewable(final RaidDto raidDto) {
-        if (raidDto.getAccess().getType().getId().equals(SchemaValues.ACCESS_TYPE_OPEN.getUri())) {
+        if (raidDto.getAccess().getType().getId().equals(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)) {
             return true;
         }
 
