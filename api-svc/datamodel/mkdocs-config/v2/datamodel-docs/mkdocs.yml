@@ -1,0 +1,21 @@
+site_name: RAiD Application Profile documentation
+site_url: https://datamodel.raid.org/
+site_dir: site
+theme:
+  name: material
+  features:
+    - navigation.path
+docs_dir: docs
+plugins:
+  - search
+  - awesome-nav
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+extra:
+  version:
+    provider: mike
+    default: 2.0.0
