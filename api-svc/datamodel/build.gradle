@@ -52,18 +52,18 @@ tasks.register('generateJSONSchemaV2', Exec) {
 
 
 tasks.register('generateReferenceData', GenerateReferenceDataTask) {
-  dataModelPath = 'src/v2/core-enums.yaml'
-  outputFile = "generated/v2/referencedata.sql"
-  examplesDir = "examples/"
-  mappingFile = "../../buildSrc/enum2table.yaml"
+  dataModelPath = 'api-svc/datamodel/src/v2/core-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata.sql"
+  examplesDir = "api-svc/datamodel/examples/"
+  mappingFile = "buildSrc/enum2table.yaml"
   schemaID = 3
 }
 
 tasks.register('generateExtendedReferenceData', GenerateReferenceDataTask) {
-  dataModelPath = 'src/v2/extended-enums.yaml'
-  outputFile = "generated/v2/referencedata-extended.sql"
-  examplesDir = "examples/"
-  mappingFile = "../../buildSrc/extended-enum2table.yaml"
+  dataModelPath = 'api-svc/datamodel/src/v2/extended-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata-extended.sql"
+  examplesDir = "api-svc/datamodel/examples/"
+  mappingFile = "buildSrc/extended-enum2table.yaml"
   schemaID = 3
 }
 
