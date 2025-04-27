@@ -543,7 +543,8 @@ components:
     ValidationFailureResponse:
       allOf:
         - $ref: '#/components/schemas/FailureResponse'
-      required: failures
+      required:
+        - failures
       properties:
         failures:
           type: array

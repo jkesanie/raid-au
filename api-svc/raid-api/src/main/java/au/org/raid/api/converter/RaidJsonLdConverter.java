@@ -100,7 +100,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                 
                 // Add type as alternateType if available
                 if (title.getType() != null && title.getType().getId() != null) {
-                    nameObj.put("alternateType", title.getType().getId());
+                    nameObj.put("alternateType", title.getType().getId().getValue());
                 }
                 
                 // Add language if available
@@ -148,7 +148,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                 
                 // Add type as alternateType if available
                 if (desc.getType() != null && desc.getType().getId() != null) {
-                    descObj.put("alternateType", desc.getType().getId());
+                    descObj.put("alternateType", desc.getType().getId().getValue());
                 }
                 
                 // Add language if available
@@ -189,7 +189,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
             
             if (raidDto.getAccess().getType() != null && raidDto.getAccess().getType().getId() != null) {
                 accessObj.put("@type", "CreativeWork");
-                accessObj.put("conditionsOfAccess", raidDto.getAccess().getType().getId());
+                accessObj.put("conditionsOfAccess", raidDto.getAccess().getType().getId().getValue());
             }
             
             if (raidDto.getAccess().getStatement() != null && raidDto.getAccess().getStatement().getText() != null) {
@@ -228,7 +228,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                     ArrayNode roles = objectMapper.createArrayNode();
                     for (ContributorRole role : contributor.getRole()) {
                         if (role.getId() != null) {
-                            roles.add(role.getId());
+                            roles.add(role.getId().getValue());
                         }
                     }
                     if (roles.size() > 0) {
@@ -244,7 +244,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                         positionObj.put("@type", "OrganizationRole");
                         
                         if (position.getId() != null) {
-                            positionObj.put("roleName", position.getId());
+                            positionObj.put("roleName", position.getId().getValue());
                         }
                         
                         // Add temporal coverage for start/end dates
@@ -321,11 +321,11 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                         roleObj.put("@type", "OrganizationRole");
                         
                         if (role.getId() != null) {
-                            roleObj.put("roleName", role.getId());
+                            roleObj.put("roleName", role.getId().getValue());
                             
                             // Check if this is a funding role
-                            if (role.getId().toLowerCase().contains("fund") || 
-                                role.getId().toLowerCase().contains("sponsor")) {
+                            if (role.getId().getValue().toLowerCase().contains("fund") ||
+                                role.getId().getValue().toLowerCase().contains("sponsor")) {
                                 isFunder = true;
                             }
                         }
@@ -381,12 +381,12 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                 
                 // Add schema URI as URL
                 if (relObj.getSchemaUri() != null) {
-                    itemObj.put("url", relObj.getSchemaUri());
+                    itemObj.put("url", relObj.getSchemaUri().getValue());
                 }
                 
                 // Add object type
                 if (relObj.getType() != null && relObj.getType().getId() != null) {
-                    itemObj.put("additionalType", relObj.getType().getId());
+                    itemObj.put("additionalType", relObj.getType().getId().getValue());
                 }
                 
                 // Add categories
@@ -394,7 +394,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                     ArrayNode categories = objectMapper.createArrayNode();
                     for (RelatedObjectCategory category : relObj.getCategory()) {
                         if (category.getId() != null) {
-                            categories.add(category.getId());
+                            categories.add(category.getId().getValue());
                         }
                     }
                     if (categories.size() > 0) {
@@ -425,7 +425,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                 
                 // Add relation type
                 if (relRaid.getType() != null && relRaid.getType().getId() != null) {
-                    raidObj.put("relationshipType", relRaid.getType().getId());
+                    raidObj.put("relationshipType", relRaid.getType().getId().getValue());
                 }
                 
                 relatedRaids.add(raidObj);
@@ -582,7 +582,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
             }
             
             if (raidDto.getIdentifier().getRegistrationAgency().getSchemaUri() != null) {
-                agency.put("url", raidDto.getIdentifier().getRegistrationAgency().getSchemaUri());
+                agency.put("url", raidDto.getIdentifier().getRegistrationAgency().getSchemaUri().getValue());
             }
             
             root.set("publisher", agency);
@@ -614,7 +614,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
         context.put("funder", "https://schema.org/funder");
         context.put("sponsor", "https://schema.org/sponsor");
         context.put("principalInvestigator", "https://schema.org/accountablePerson");
-        context.put("leadOrSupervisor", "https://schema.org/accountablePerson");
+        context.put("leadOrSupervisor", "https://schema.org/s");
         context.put("isPartOf", "https://schema.org/isPartOf");
         context.put("isRelatedTo", "https://schema.org/isRelatedTo");
         context.put("keywords", "https://schema.org/keywords");

@@ -4,6 +4,7 @@ import au.org.raid.api.model.datacite.DataciteContributor;
 import au.org.raid.api.model.datacite.NameIdentifier;
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.idl.raidv2.model.Organisation;
+import au.org.raid.idl.raidv2.model.OrganizationRoleIdEnum;
 import au.org.raid.idl.raidv2.model.RegistrationAgency;
 import org.springframework.stereotype.Component;
 
@@ -23,14 +24,14 @@ public class DataciteContributorFactory {
                 .setNameIdentifiers(List.of(
                         new NameIdentifier()
                                 .setNameIdentifier(registrationAgency.getId())
-                                .setSchemeUri(registrationAgency.getSchemaUri())
+                                .setSchemeUri(registrationAgency.getSchemaUri().getValue())
                                 .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEME)
                 ));
     }
 
     public DataciteContributor create(final Organisation organisation) {
         final var latestRole = organisation.getRole().stream()
-                .filter(role -> !role.getId().equals(SchemaValues.FUNDER_ORGANISATION_ROLE.getUri()))
+                .filter(role -> !role.getId().equals(OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_186))
                 .max((o1, o2) -> o2.getStartDate().compareTo(o1.getStartDate()))
                 .orElse(null);
 
@@ -45,7 +46,7 @@ public class DataciteContributorFactory {
                 ));
 
         if (latestRole != null) {
-            contributor.setContributorType(ORGANISATION_ROLE_MAP.get(latestRole.getId()));
+            contributor.setContributorType(ORGANISATION_ROLE_MAP.get(latestRole.getId().getValue()));
         }
 
         return contributor;
@@ -53,11 +54,11 @@ public class DataciteContributorFactory {
 
 
     private static final Map<String, String> ORGANISATION_ROLE_MAP = Map.of(
-            SchemaValues.LEAD_RESEARCH_ORGANISATION_ROLE.getUri(), "HostingInstitution",
-            SchemaValues.OTHER_RESEARCH_ORGANISATION_ROLE.getUri(), "Other",
-            SchemaValues.PARTNER_ORGANISATION_ROLE.getUri(), "Other",
-            SchemaValues.CONTRACTOR_ORGANISATION_ROLE.getUri(), "Other",
-            SchemaValues.FACILITY_RESEARCH_ORGANISATION_ROLE.getUri(), "Sponsor",
-            SchemaValues.OTHER_ORGANISATION_ROLE.getUri(), "Other"
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_182.getValue(), "HostingInstitution",
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_183.getValue(), "Other",
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_184.getValue(), "Other",
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_185.getValue(), "Other",
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_187.getValue(), "Sponsor",
+            OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_188.getValue(), "Other"
     );
 }

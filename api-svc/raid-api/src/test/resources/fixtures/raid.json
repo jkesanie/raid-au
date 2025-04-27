@@ -12,6 +12,7 @@
       "servicePoint": 20000000
     },
     "raidAgencyUrl": "https://raid.org.au/10378.1/1696639",
+    "license": "license",
     "version": 1
   },
   "title": [
@@ -87,12 +88,12 @@
       ],
       "role": [
         {
-          "schemaUri": "https://credit.niso.org",
-          "id": "https://credit.niso.org/contributor-roles/formal-analysis/"
+          "schemaUri": "https://credit.niso.org/",
+          "id": "https://credit.niso.org/contributor-role/formal-analysis/"
         },
         {
-          "schemaUri": "https://credit.niso.org",
-          "id": "https://credit.niso.org/contributor-roles/investigation/"
+          "schemaUri": "https://credit.niso.org/",
+          "id": "https://credit.niso.org/contributor-role/investigation/"
         }
       ]
     },
@@ -109,8 +110,8 @@
       ],
       "role": [
         {
-          "schemaUri": "https://credit.niso.org",
-          "id": "https://credit.niso.org/contributor-roles/project-administration/"
+          "schemaUri": "https://credit.niso.org/",
+          "id": "https://credit.niso.org/contributor-role/project-administration/"
         }
       ]
     }
@@ -143,29 +144,29 @@
   "relatedObject": [
     {
       "id": "https://doi.org/10.47366/sabia.v5n1a3",
-      "schemaUri": "https://doi.org/",
+      "schemaUri": "http://doi.org/",
       "type": {
         "id": "https://vocabulary.raid.org/relatedObject.type.schema/258",
         "schemaUri": "https://vocabulary.raid.org/relatedObject.type.schema/329"
       },
       "category": [
         {
-          "id": "https://github.com/au-research/raid-metadata/blob/main/scheme/related-object/category/v1/input.json",
-          "schemaUri": "https://github.com/au-research/raid-metadata/tree/main/scheme/related-object/category/v1"
+          "id": "https://vocabulary.raid.org/relatedObject.category.id/191",
+          "schemaUri": "https://vocabulary.raid.org/relatedObject.category.schema/385"
         }
       ]
     },
     {
       "id": "https://doi.org/10.47366/sabia.v5n1a3",
-      "schemaUri": "https://doi.org/",
+      "schemaUri": "http://doi.org/",
       "type": {
         "id": "https://vocabulary.raid.org/relatedObject.type.schema/270",
         "schemaUri": "https://vocabulary.raid.org/relatedObject.type.schema/329"
       },
       "category": [
         {
-          "id": "https://github.com/au-research/raid-metadata/blob/main/scheme/related-object/category/v1/input.json",
-          "schemaUri": "https://github.com/au-research/raid-metadata/tree/main/scheme/related-object/category/v1"
+          "id": "https://vocabulary.raid.org/relatedObject.category.id/191",
+          "schemaUri": "https://vocabulary.raid.org/relatedObject.category.schema/385"
         }
       ]
     }

@@ -63,7 +63,7 @@ public class ContributorValidator {
                     }
 
                     if (!isBlank(contributor.getId())) {
-                        if (isBlank(contributor.getSchemaUri())) {
+                        if (isBlank(contributor.getSchemaUri().getValue())) {
                             failures.add(
                                     new ValidationFailure()
                                             .fieldId("contributor[%d].schemaUri".formatted(index))
@@ -71,7 +71,7 @@ public class ContributorValidator {
                                             .message(NOT_SET_MESSAGE)
                             );
                         }
-                        else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
+                        else if (!contributor.getSchemaUri().getValue().matches(ORCID_URL_PREFIX_PATTERN)) {
                             failures.add(new ValidationFailure()
                                     .fieldId("contributor[%d].schemaUri".formatted(index))
                                     .errorType(INVALID_VALUE_TYPE)
@@ -208,14 +208,14 @@ public class ContributorValidator {
                                     .message("id is required"));
                     }
 
-                    if (isBlank(contributor.getSchemaUri())) {
+                    if (isBlank(contributor.getSchemaUri().getValue())) {
                         failures.add(
                                 new ValidationFailure()
                                         .fieldId("contributor[%d].schemaUri".formatted(index))
                                         .errorType(NOT_SET_TYPE)
                                         .message(NOT_SET_MESSAGE)
                         );
-                    } else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
+                    } else if (!contributor.getSchemaUri().getValue().matches(ORCID_URL_PREFIX_PATTERN)) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)

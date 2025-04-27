@@ -84,44 +84,44 @@ public class AbstractIntegrationTest {
         final var descriptions = new ArrayList<Description>();
         descriptions.add(new Description()
                 .language(new Language()
-                        .schemaUri(LANGUAGE_SCHEMA_URI)
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                         .id(LANGUAGE_ID))
                 .type(new DescriptionType()
-                        .id(PRIMARY_DESCRIPTION_TYPE)
-                        .schemaUri(DESCRIPTION_TYPE_SCHEMA_URI))
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_318)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320))
                 .text("stuff about the int test raid")
                 .language(new Language()
-                        .schemaUri(LANGUAGE_SCHEMA_URI)
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                         .id(LANGUAGE_ID)));
 
 
         return new RaidCreateRequest()
                 .title(List.of(new Title()
                         .language(new Language()
-                                .schemaUri(LANGUAGE_SCHEMA_URI)
+                                .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                                 .id(LANGUAGE_ID)
                         )
                         .type(new TitleType()
-                                .id(PRIMARY_TITLE_TYPE)
-                                .schemaUri(TITLE_TYPE_SCHEMA_URI))
+                                .id(TitleTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_5)
+                                .schemaUri(TitleTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_376))
                         .text(initialTitle)
                         .startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE))))
                 .date(new Date().startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE)))
                 .description(descriptions)
 
                 .contributor(List.of(contributor(
-                        REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)))
+                        REAL_TEST_ORCID, ContributorPositionIdEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_307, ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLE_SOFTWARE_, today, CONTRIBUTOR_EMAIL)))
                 .organisation(List.of(organisation(
-                        REAL_TEST_ROR, LEAD_RESEARCH_ORGANISATION, today)))
+                        REAL_TEST_ROR, OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_182, today)))
                 .access(new Access()
                         .statement(new AccessStatement()
                                 .text("Embargoed")
                                 .language(new Language()
                                         .id(LANGUAGE_ID)
-                                        .schemaUri(LANGUAGE_SCHEMA_URI)))
+                                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)))
                         .type(new AccessType()
-                                .id(EMBARGOED_ACCESS_TYPE)
-                                .schemaUri(ACCESS_TYPE_SCHEMA_URI))
+                                .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_)
+                                .schemaUri(AccessTypeSchemaUriEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_))
                         .embargoExpiry(LocalDate.now().plusMonths(1)))
                 .spatialCoverage(List.of(new SpatialCoverage()
                         .id(GEONAMES_MELBOURNE)
@@ -129,7 +129,7 @@ public class AbstractIntegrationTest {
                                 .text("Melbourne")
                                 .language(new Language()
                                         .id(LANGUAGE_ID)
-                                        .schemaUri(LANGUAGE_SCHEMA_URI))))
+                                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML))))
                         .schemaUri(GEONAMES_SCHEMA_URI)))
                 .subject(List.of(
                         new Subject()
@@ -138,14 +138,14 @@ public class AbstractIntegrationTest {
                                 .keyword(List.of(new SubjectKeyword()
                                         .language(new Language()
                                                 .id("eng")
-                                                .schemaUri("https://www.iso.org/standard/74575.html"))
+                                                .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML))
                                         .text("ENES")
                                 ))));
     }
     public Contributor contributor(
             final String orcid,
-            final String position,
-            final String role,
+            final ContributorPositionIdEnum position,
+            final ContributorRoleIdEnum role,
             final LocalDate startDate,
             final String email
     ) {
@@ -154,28 +154,28 @@ public class AbstractIntegrationTest {
                 .contact(true)
                 .leader(true)
 //                .email(email)
-                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                .schemaUri(ContributorSchemaUriEnum.HTTPS_ORCID_ORG_)
                 .position(List.of(new ContributorPosition()
-                        .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                        .schemaUri(ContributorPositionSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_305)
                         .id(position)
                         .startDate(startDate.format(DateTimeFormatter.ISO_LOCAL_DATE))))
                 .role(List.of(
                         new ContributorRole()
-                                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                .schemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_)
                                 .id(role)));
     }
 
     public Organisation organisation(
             String ror,
-            String role,
+            OrganizationRoleIdEnum role,
             LocalDate today
     ) {
         return new Organisation()
                 .id(ror)
-                .schemaUri(ORGANISATION_IDENTIFIER_SCHEMA_URI)
+                .schemaUri(OrganizationSchemaUriEnum.HTTPS_ROR_ORG_)
                 .role(List.of(
                         new OrganisationRole()
-                                .schemaUri(ORGANISATION_ROLE_SCHEMA_URI)
+                                .schemaUri(OrganizationRoleSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_359)
                                 .id(role)
                                 .startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE))));
     }

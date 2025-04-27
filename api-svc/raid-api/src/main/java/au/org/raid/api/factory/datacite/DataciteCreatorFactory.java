@@ -43,8 +43,8 @@ public class DataciteCreatorFactory {
             creator.setNameIdentifiers(List.of(
                     new NameIdentifier()
                             .setNameIdentifier(contributor.getId())
-                            .setSchemeUri(contributor.getSchemaUri())
-                            .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri()))
+                            .setSchemeUri(contributor.getSchemaUri().getValue())
+                            .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri().getValue()))
             ));
         }
 

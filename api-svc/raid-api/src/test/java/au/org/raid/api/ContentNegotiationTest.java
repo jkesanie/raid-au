@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,29 +70,29 @@ public class ContentNegotiationTest {
         RaidDto mockRaid = new RaidDto()
             .identifier(new Id()
                 .id("https://raid.org.au/10378.1/1696639")
-                .schemaUri("https://raid.org/schemas/identifier")
+                .schemaUri(RaidIdentifierSchemaURIEnum.HTTPS_RAID_ORG_)
                 .registrationAgency(new RegistrationAgency()
                     .id("https://raid.org/")
-                    .schemaUri("https://raid.org/schemas/registrationAgency"))
+                    .schemaUri(RegistrationAgencySchemaURIEnum.HTTPS_ROR_ORG_))
                 .owner(new Owner()
                     .id("https://raid.org/")
-                    .schemaUri("https://raid.org/schemas/owner")
-                    .servicePoint(1L)))
+                    .schemaUri(RegistrationAgencySchemaURIEnum.HTTPS_ROR_ORG_)
+                    .servicePoint(new BigDecimal(1L))))
             .title(List.of(new Title()
                 .text("Test RAID")
                 .type(new TitleType()
-                    .id("https://raid.org/titles/primary")
-                    .schemaUri("https://raid.org/schemas/titleType"))
+                    .id(TitleTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_4)
+                    .schemaUri(TitleTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_376))
                 .language(new Language()
                     .id("en")
-                    .schemaUri("https://raid.org/schemas/language"))))
-            .date(new Date()
+                    .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML))))
+            .date(new au.org.raid.idl.raidv2.model.Date()
                 .startDate("2022-01-01")
                 .endDate("2023-01-01"))
             .access(new Access()
                 .type(new AccessType()
-                    .id("https://raid.org/access/open")
-                    .schemaUri("https://raid.org/schemas/accessType")));
+                    .id(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)
+                    .schemaUri(AccessTypeSchemaUriEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_)));
 
         when(raidService.findByHandle(anyString())).thenReturn(Optional.of(mockRaid));
     }

@@ -5,6 +5,7 @@ import au.org.raid.api.exception.ServicePointNotFoundException;
 import au.org.raid.api.service.RaidHistoryService;
 import au.org.raid.api.service.ServicePointService;
 import au.org.raid.api.util.SchemaValues;
+import au.org.raid.idl.raidv2.model.AccessTypeIdEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -276,7 +277,7 @@ public class SecurityConfig {
             final var raid = raidHistoryService.findByHandle(handle)
                     .orElseThrow(() -> new ResourceNotFoundException(handle));
 
-            if (raid.getAccess().getType().getId().equals(SchemaValues.ACCESS_TYPE_EMBARGOED.getUri())) {
+            if (raid.getAccess().getType().getId().equals(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_)) {
                 return new AuthorizationDecision(false);
             }
 

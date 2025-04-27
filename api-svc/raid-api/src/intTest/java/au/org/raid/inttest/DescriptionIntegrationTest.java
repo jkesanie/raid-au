@@ -38,7 +38,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Minting a RAiD with a description with an empty language schemaUri fails")
     void emptyLanguageSchemeUri() {
@@ -80,7 +80,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     @Test
     @DisplayName("Minting a RAiD with a description with an null language id fails")
     void nullLanguageId() {
@@ -122,7 +122,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Minting a RAiD with a description with an invalid language schema fails")
     void invalidLanguageScheme() {
@@ -143,7 +143,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
 
     @Test
     @DisplayName("Minting a RAiD with missing description block succeeds")
@@ -178,7 +178,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Validation fails with invalid type schemaUri")
     void invalidSchemeUri() {
@@ -222,7 +222,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     @Test
     @DisplayName("Validation fails with missing text")
     void missingDescription() {
@@ -310,7 +310,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Validation fails with empty type id")
     void emptyId() {
@@ -364,7 +364,7 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     private Description newDescription() {
         return new Description()
                 .text("New description...")

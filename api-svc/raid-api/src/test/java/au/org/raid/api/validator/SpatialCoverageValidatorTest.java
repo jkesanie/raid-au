@@ -2,10 +2,7 @@ package au.org.raid.api.validator;
 
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.api.util.TestConstants;
-import au.org.raid.idl.raidv2.model.Language;
-import au.org.raid.idl.raidv2.model.SpatialCoverage;
-import au.org.raid.idl.raidv2.model.SpatialCoveragePlace;
-import au.org.raid.idl.raidv2.model.ValidationFailure;
+import au.org.raid.idl.raidv2.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +35,7 @@ class SpatialCoverageValidatorTest {
 
         final var language = new Language()
                 .id(TestConstants.LANGUAGE_ID)
-                .schemaUri(TestConstants.LANGUAGE_SCHEMA_URI);
+                .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML);
 
         final var places = List.of(new SpatialCoveragePlace()
                 .text("London"));
