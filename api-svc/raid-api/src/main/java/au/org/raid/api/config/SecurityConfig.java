@@ -78,6 +78,7 @@ public class SecurityConfig {
                                 .hasRole(RAID_DUMPER_ROLE)
                                 .requestMatchers(new AntPathRequestMatcher(RAID_API + "/**", "GET"))
                                 .access(AuthorizationManagers.anyOf(
+                                        isOperator(),
                                         anyServicePointUserUnlessEmbargoed(),
                                         servicePointOwner(),
                                         hasRaidPermissions(RAID_ADMIN_ROLE, ADMIN_RAIDS_CLAIM),
@@ -248,8 +249,16 @@ public class SecurityConfig {
         };
     }
 
+    private AuthorizationManager<RequestAuthorizationContext> isOperator() {
+        return (authentication, context) -> {
+            final var token = getToken();
 
-        private AuthorizationManager<RequestAuthorizationContext> anyServicePointUserUnlessEmbargoed() {
+            return new AuthorizationDecision(tokenContainsRole(token, OPERATOR_ROLE));
+        };
+    }
+
+
+    private AuthorizationManager<RequestAuthorizationContext> anyServicePointUserUnlessEmbargoed() {
         return (authentication, context) -> {
             if (isPidSearch(context)) {
                 return new AuthorizationDecision(false);
