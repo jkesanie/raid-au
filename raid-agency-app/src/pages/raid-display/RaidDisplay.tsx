@@ -23,8 +23,10 @@ import { useParams } from "react-router-dom";
 import { MetadataDisplay } from "./components/MetadataDisplay";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import {ServicePointView} from "@/entities/service-point/views/service-point-view/ServicePointView.tsx";
+import {useAuthHelper} from "@/keycloak";
 
 export const RaidDisplay = () => {
+  const { isOperator } = useAuthHelper();
   const { isInitialized, authenticated, token } = useKeycloak();
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   const handle = `${prefix}/${suffix}`;
@@ -95,7 +97,7 @@ export const RaidDisplay = () => {
                     }
                 />
             )}
-            {raidData?.identifier?.owner?.servicePoint && (
+            {isOperator && raidData?.identifier?.owner?.servicePoint && (
 
                 <ServicePointView servicePointId={raidData.identifier.owner.servicePoint} />
               )}

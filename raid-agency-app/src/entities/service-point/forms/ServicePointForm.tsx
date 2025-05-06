@@ -34,7 +34,7 @@ export const ServicePointForm = ({errors}) => {
             }}
             id={key}
         >
-            <CardHeader title="Service Point" />
+            <CardHeader title="Service Point">Service Point</CardHeader>
             <CardContent>
                 <Grid container spacing={2}>
                     <TextSelectField

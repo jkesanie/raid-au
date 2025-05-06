@@ -1,4 +1,4 @@
-import {Card, CardContent, Grid} from "@mui/material";
+import {Card, CardContent, CardHeader, Grid} from "@mui/material";
 import {useQuery} from "@tanstack/react-query";
 import {fetchServicePoints} from "@/services/service-points";
 import {useKeycloak} from "@/contexts/keycloak-context";
@@ -36,6 +36,7 @@ export const ServicePointView = ({servicePointId}: ServicePointViewProps) => {
 
     return (
         <Card>
+            <CardHeader title="Service Point"/>
             <CardContent>
                 <Grid container spacing={2}>
                     <DisplayItem

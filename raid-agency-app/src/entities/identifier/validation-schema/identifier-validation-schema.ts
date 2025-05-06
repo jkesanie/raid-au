@@ -3,7 +3,7 @@ import { z } from "zod";
 const identifierOwnerValidationSchema = z.object({
   id: z.string().min(1),
   schemaUri: z.string().min(1),
-  servicePoint: z.number().int(),
+  servicePoint: z.string().transform(val => Number(val)).pipe(z.number().int()),
 });
 
 const identifierRegistrationAgencyValidationSchema = z.object({
