@@ -7,7 +7,9 @@ export const contributorPositionValidationSchema = z.array(
   z.object({
     id: z.string(),
     schemaUri: z.literal(contributorPositionSchema[0].uri),
-    startDate: z.string().regex(combinedPattern).min(1),
-    endDate: z.string().regex(combinedPattern).optional().nullable(),
+    startDate: z.string().transform(val => val === '' ? undefined : val)
+        .pipe(z.string().regex(combinedPattern)),
+    endDate: z.string().transform(val => val === '' ? undefined : val).pipe(
+        z.string().regex(combinedPattern).optional())
   })
 );

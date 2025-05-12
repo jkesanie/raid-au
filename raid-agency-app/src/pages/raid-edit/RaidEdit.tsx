@@ -1,26 +1,26 @@
-import type { Breadcrumb } from "@/components/breadcrumbs-bar";
-import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
-import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { useErrorDialog } from "@/components/error-dialog";
-import { RaidForm } from "@/components/raid-form";
-import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
-import { useKeycloak } from "@/contexts/keycloak-context";
-import { Contributor, RaidCreateRequest, RaidDto } from "@/generated/raid";
-import { Loading } from "@/pages/loading";
-import { fetchOneRaid, updateOneRaid } from "@/services/raid";
-import { fetchServicePoints } from "@/services/service-points";
-import { raidRequest } from "@/utils/data-utils";
+import type {Breadcrumb} from "@/components/breadcrumbs-bar";
+import {BreadcrumbsBar} from "@/components/breadcrumbs-bar";
+import {ErrorAlertComponent} from "@/components/error-alert-component";
+import {useErrorDialog} from "@/components/error-dialog";
+import {RaidForm} from "@/components/raid-form";
+import {RaidFormErrorMessage} from "@/components/raid-form-error-message";
+import {useKeycloak} from "@/contexts/keycloak-context";
+import {Contributor, RaidCreateRequest, RaidDto} from "@/generated/raid";
+import {Loading} from "@/pages/loading";
+import {fetchServicePoints} from "@/services/service-points";
+import {raidRequest} from "@/utils/data-utils";
 import {
   DocumentScanner as DocumentScannerIcon,
   Edit as EditIcon,
   HistoryEdu as HistoryEduIcon,
   Home as HomeIcon,
 } from "@mui/icons-material";
-import { Container, Stack } from "@mui/material";
+import {Container, Stack} from "@mui/material";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {useEffect, useMemo} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import {raidService} from "@/services/raid-service.ts";
 
 function createEditRaidPageBreadcrumbs({
   prefix,
@@ -63,13 +63,9 @@ export const RaidEdit = () => {
     throw new Error("prefix and suffix are required");
   }
 
-  const query = useQuery<RaidDto>({
-    queryKey: useMemo(() => ["raids", prefix, suffix], [prefix, suffix]),
-    queryFn: () =>
-      fetchOneRaid({
-        handle: `${prefix}/${suffix}`,
-        token: token!,
-      }),
+  const query = useQuery({
+    queryKey: useMemo(() => ["raids", prefix, suffix], []),
+    queryFn: () => raidService.fetch(`${prefix}/${suffix}`),
     enabled: isInitialized && authenticated,
   });
 
@@ -110,7 +106,9 @@ export const RaidEdit = () => {
   ]);
 
   const updateMutation = useMutation({
-    mutationFn: updateOneRaid,
+    mutationFn: async (raid: RaidDto) => {
+      return await raidService.update(raid, `${prefix}/${suffix}`)
+    },
     onSuccess: () => {
       navigate(`/raids/${prefix}/${suffix}`);
     },
@@ -120,11 +118,7 @@ export const RaidEdit = () => {
   });
 
   const handleSubmit = async (data: RaidDto) => {
-    updateMutation.mutate({
-      data: raidRequest(data),
-      handle: `${prefix}/${suffix}`,
-      token: token!,
-    });
+    updateMutation.mutate(raidRequest(data));
   };
 
   if (query.isPending) {
