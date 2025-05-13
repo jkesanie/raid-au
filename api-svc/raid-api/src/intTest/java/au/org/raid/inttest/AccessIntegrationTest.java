@@ -93,8 +93,8 @@ public class AccessIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).contains(
                     new ValidationFailure()
                             .fieldId("access.statement.language.id")
-                            .errorType("notSet")
-                            .message("field must be set")
+                            .errorType("invalidValue")
+                            .message("has invalid/unsupported value - must match \"^\\s*\\S.*$\"")
             );
         } catch (Exception e) {
             failOnError(e);

@@ -73,8 +73,8 @@ public class TitleIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).hasSize(1);
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("title[0].language.id")
-                    .errorType("notSet")
-                    .message("field must be set")
+                    .errorType("invalidValue")
+                    .message("has invalid/unsupported value - must match \"^\\s*\\S.*$\"")
             );
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -592,9 +592,7 @@ components:
           - "string"
           - "null"
         statement:
-          anyOf:
-          - $ref: "#/components/schemas/AccessStatement"
-          - type: "null"
+          $ref: "#/components/schemas/AccessStatement"
           description: "a metadata schema block containing an explanation for any\
             \ access type that is not ‘open’, with the explanation’s associated properties"
         type:
@@ -602,6 +600,7 @@ components:
           description: "a metadata schema block containing RAiD access type information"
       required:
       - "type"
+      - "statement"
       title: "Access"
       type: "object"
     AccessStatement:
@@ -653,14 +652,14 @@ components:
         id:
           description: "an identifier other than the RAiD applied to the project or\
             \ activity"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         type:
           description: "free text description of the type of alternateIdentifier supplied"
-          type:
-          - "string"
-          - "null"
+          type: "string"
+      required:
+      - "id"
+      - "type"
       title: "AlternateIdentifier"
       type: "object"
     AlternateUrl:
@@ -669,6 +668,7 @@ components:
       properties:
         url:
           description: "a link to another website related to the project or activity"
+          pattern: "^\\s*\\S.*$"
           type: "string"
       required:
       - "url"
@@ -813,6 +813,7 @@ components:
           - "null"
         startDate:
           description: "the project or activity’s start date"
+          pattern: "^\\s*\\S.*$"
           type: "string"
       required:
       - "startDate"
@@ -831,14 +832,14 @@ components:
         text:
           description: "the text of an access statement that explains any restrictions\
             \ on access"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         type:
           $ref: "#/components/schemas/DescriptionType"
           description: "a metadata schema block declaring the type of description"
       required:
       - "type"
+      - "text"
       title: "Description"
       type: "object"
     DescriptionType:
@@ -895,15 +896,14 @@ components:
         version:
           description: "The version of the resource. Read-only. Increments automatically\
             \ on update."
-          type:
-          - "integer"
-          - "null"
+          type: "integer"
       required:
       - "id"
       - "schemaUri"
       - "registrationAgency"
       - "owner"
       - "license"
+      - "version"
       title: "Id"
       type: "object"
     Language:
@@ -913,12 +913,14 @@ components:
         id:
           description: "the language used for the access statement text, identified\
             \ by a code or other identifier"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         schemaUri:
           $ref: "#/components/schemas/LanguageSchemaURIEnum"
           description: "the URI of the language identifier schema"
+      required:
+      - "id"
+      - "schemaUri"
       title: "Language"
       type: "object"
     LanguageSchemaURIEnum:
@@ -950,9 +952,8 @@ components:
       properties:
         id:
           description: "an organisation associated with a project or activity"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         role:
           description: "a metadata schema sub-block describing an organisation’s role\
             \ on a project"
@@ -963,6 +964,8 @@ components:
           $ref: "#/components/schemas/OrganizationSchemaUriEnum"
           description: "the URI of the organisation identifier schema"
       required:
+      - "id"
+      - "schemaUri"
       - "role"
       title: "Organisation"
       type: "object"
@@ -984,12 +987,14 @@ components:
           $ref: "#/components/schemas/OrganizationRoleSchemaUriEnum"
           description: "the URI of the role schema used"
         startDate:
+          anyOf:
+          - pattern: "2222-22-22"
+          - pattern: "2221-22-22"
           description: "the date that the organisation began a role associated with\
             \ the project or activity"
-          type:
-          - "string"
-          - "null"
+          type: "string"
       required:
+      - "startDate"
       - "id"
       - "schemaUri"
       title: "OrganisationRole"
@@ -1024,12 +1029,11 @@ components:
           description: "the Service Point (SP) that requested the RAiD. SPs belong\
             \ to an owner, RAiD owners can have multiple SPs; SPs do not need to be\
             \ legal entities"
-          type:
-          - "number"
-          - "null"
+          type: "number"
       required:
       - "id"
       - "schemaUri"
+      - "servicePoint"
       title: "Owner"
       type: "object"
     RaidCreateRequest:
@@ -1358,9 +1362,8 @@ components:
             \ output or product created by a project or activity, and/or (c) internal\
             \ process documentation used within a project or activity, that is identified\
             \ by a persistent identifier (PID)."
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         schemaUri:
           $ref: "#/components/schemas/RelatedObjectSchemaUriEnum"
           description: "The URI of the relatedObject identifier schema"
@@ -1368,6 +1371,8 @@ components:
           $ref: "#/components/schemas/RelatedObjectType"
           description: "a metadata schema sub-block describing a relatedObject’s type"
       required:
+      - "id"
+      - "schemaUri"
       - "type"
       - "category"
       title: "RelatedObject"
@@ -1430,14 +1435,14 @@ components:
       properties:
         id:
           description: "a subsidiary or otherwise related RAiD"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         type:
           $ref: "#/components/schemas/RelatedRaidType"
           description: "a metadata schema sub-block qualifying the relationship with\
             \ a related Raid"
       required:
+      - "id"
       - "type"
       title: "RelatedRaid"
       type: "object"
@@ -1570,9 +1575,8 @@ components:
         endDate:
           description: "the date the project or activity title was changed or stopped\
             \ being used"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         language:
           anyOf:
           - $ref: "#/components/schemas/Language"
@@ -1580,19 +1584,20 @@ components:
           description: "a metadata schema block declaring the language of the text"
         startDate:
           description: "the date the project or activity’s title began being used"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         text:
           description: "a name or title by which the project or activity is known"
-          type:
-          - "string"
-          - "null"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
         type:
           $ref: "#/components/schemas/TitleType"
           description: "a metadata schema block containing information about the title\
             \ type"
       required:
+      - "startDate"
+      - "endDate"
+      - "text"
       - "type"
       title: "Title"
       type: "object"

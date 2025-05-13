@@ -173,6 +173,7 @@ classes:
         exact_mappings:
           - schema:license
       version:
+        required: true
         annotations:
           notes: The RAiD version number is set automatically by the RAiD Service software when a RAiD is updated.
         range: integer
@@ -185,6 +186,7 @@ classes:
       startDate:
         description: the project or activity’s start date
         required: true
+        pattern: "^\\s*\\S.*$"
         range: string
       endDate:
         description: the project or activity’s end date
@@ -203,23 +205,29 @@ classes:
           default: Date record created
         description: the date the project or activity’s title began being used
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
         examples:
-          - value: 2023-08-28
-          - value: 2023-08
-          - value: 2023
+          - value: "2023-08-28"
+          - value: "2023-08"
+          - value: "2023"
       endDate:
         annotations:
           notes: ISO 8601 standard date. Only the year is required, month and day are optional (but recommended when available).
           default: Date record created
         description: the date the project or activity title was changed or stopped being used
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
         examples:
-          - value: 2023-08-28
-          - value: 2023-08
-          - value: 2023
+          - value: "2023-08-28"
+          - value: "2023-08"
+          - value: "2023"
       text:
         description: a name or title by which the project or activity is known
         range: string
+        pattern: "^\\s*\\S.*$"
+        required: true
       type:
         required: true
         description: a metadata schema block containing information about the title type
@@ -236,6 +244,8 @@ classes:
           notes: maximum 1,000 characters
         description: the text of an access statement that explains any restrictions on access
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
     slots:
       - language
   Access:
@@ -249,6 +259,7 @@ classes:
         description: a metadata schema block containing an explanation for any access type that is not ‘open’, with the explanation’s associated properties
         range: AccessStatement
         maximum_cardinality: 1
+        required: true
       embargoExpiry:
         range: date
         annotations:
@@ -310,6 +321,7 @@ classes:
         description: a link to another website related to the project or activity
         required: true
         range: string
+        pattern: "^\\s*\\S.*$"
         examples:
           - value: https://osf.io/puwgx/ (an Open Science Framework project page)
 
@@ -319,9 +331,12 @@ classes:
       id:
         description: an organisation associated with a project or activity
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
       schemaUri:
         description: the URI of the organisation identifier schema
         range: OrganizationSchemaUriEnum
+        required: true
       role:
         description: a metadata schema sub-block describing an organisation’s role on a project
         range: OrganisationRole
@@ -333,6 +348,8 @@ classes:
       id:
         description: a subsidiary or otherwise related RAiD
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
       type:
         description:  a metadata schema sub-block qualifying the relationship with a related Raid
         range: RelatedRaidType
@@ -343,7 +360,10 @@ classes:
       id:
         description: any (a) input or resource used by a project or activity, (b) output or product created by a project or activity, and/or (c) internal process documentation used within a project or activity, that is identified by a persistent identifier (PID).
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
       schemaUri:
+        required: true
         annotations:
           notes: Controlled list is a subset of DataCite Metadata Schema 4.4 Appendix 1 Table 8 ‘Description of relatedIdentiferType’.
         description: The URI of the relatedObject identifier schema
@@ -365,11 +385,14 @@ classes:
           notes: An alternateIdentifer.id may be any alphanumeric string that is unique within its domain of issue, for example a local identifier unique to an organisation. The alternateIdentifier.id represents an additional identifier for the same instance of the project or activity; its referent is identical to that of the RAiD.
         description: an identifier other than the RAiD applied to the project or activity
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
         examples:
           - value: 123456ABC
       type:
         description: free text description of the type of alternateIdentifier supplied
         range: string
+        required: true
         examples:
           - value: A local project ID in the university CRIS
   Owner:
@@ -390,6 +413,7 @@ classes:
           notes:  A RAiD minted by a Registration Agency must have a SP associated with an Owner affiliated with that Agency; Registration Agencies must maintain and register lists of their Service Points with the RAiD Registration Authority.
         description: the Service Point (SP) that requested the RAiD. SPs belong to an owner, RAiD owners can have multiple SPs; SPs do not need to be legal entities
         range: double
+        required: true
         examples:
           - value: 20000003
   RegistrationAgency:
@@ -509,6 +533,8 @@ classes:
       startDate:
         description: the date that the organisation began a role associated with the project or activity
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
       endDate:
         description: the date that the organisation terminated a role associated with the project or activity
         range: string

@@ -173,8 +173,8 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).hasSize(1);
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("spatialCoverage[0].place[0].language.id")
-                    .errorType("notSet")
-                    .message("field must be set")
+                    .errorType("invalidValue")
+                    .message("has invalid/unsupported value - must match \"^\\s*\\S.*$\"")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");

@@ -49,6 +49,9 @@ classes:
           notes: currently limited to ISO 639:2023 (Set 3)
         description:  the language used for the access statement text, identified by a code or other identifier
         range: string
+        required: true
+        pattern: "^\\s*\\S.*$"
       schemaUri:
         description: the URI of the language identifier schema
         range: LanguageSchemaURIEnum
+        required: true
