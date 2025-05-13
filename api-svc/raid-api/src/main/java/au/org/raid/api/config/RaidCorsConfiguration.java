@@ -16,7 +16,13 @@ public class RaidCorsConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Add all allowed origins or use allowedOriginPatterns for wildcard support
-        configuration.setAllowedOrigins(List.of("http://localhost:7080"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:7080",
+                "https://app.test.raid.org.au",
+                "https://app.demo.raid.org.au",
+                "https://app.stage.raid.org.au",
+                "https://app.prod.raid.org.au"
+        ));
         // Include all necessary HTTP methods including OPTIONS
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         // Allow all common headers
