@@ -1,7 +1,11 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.2.0
+# 2.5.1
+## App-client UI
+* Fix refresh token request to prevent stale access token
+
+# 2.5.0
 ## App-client UI
 * Enhanced contributor management with ORCID integration
 * Improved invite functionality with ORCID notifications
