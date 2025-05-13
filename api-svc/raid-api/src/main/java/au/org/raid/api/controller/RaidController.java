@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @SecurityScheme(name = "bearerAuth", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)

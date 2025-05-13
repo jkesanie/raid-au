@@ -9,7 +9,9 @@ export const organisationRoleValidationSchema = z.array(
       organisationRole.map((role) => role.uri) as [string, ...string[]]
     ),
     schemaUri: z.literal(organisationRoleSchema[0].uri),
-    startDate: z.string().regex(combinedPattern).min(1),
-    endDate: z.string().regex(combinedPattern).optional().nullable(),
+    startDate: z.string().transform(val => val === '' ? undefined : val)
+        .pipe(z.string().regex(combinedPattern)),
+    endDate: z.string().transform(val => val === '' ? undefined : val)
+        .pipe(z.string().regex(combinedPattern).optional())
   })
 );

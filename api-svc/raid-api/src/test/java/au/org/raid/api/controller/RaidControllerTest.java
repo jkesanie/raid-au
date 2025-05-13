@@ -297,6 +297,7 @@ class RaidControllerTest {
         final var handle = new IdentifierHandle(PREFIX, SUFFIX);
         final var id = new IdentifierUrl("https://raid.org.au", handle);
         final var endDate = startDate.plusMonths(6);
+        final var servicePointId = 20000000L;
 
         final var input = createRaidForPut();
         final var output = createRaidForGet(title, startDate);
@@ -304,75 +305,107 @@ class RaidControllerTest {
         when(validationService.validateForUpdate(String.join("/", PREFIX, SUFFIX), input))
                 .thenReturn(Collections.emptyList());
 
-        when(raidService.update(input)).thenReturn(output);
+        when(raidService.update(input, servicePointId)).thenReturn(output);
 
-        mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input))
-                        .characterEncoding("utf-8"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.identifier.id", Matchers.is(id.formatUrl())))
-                .andExpect(jsonPath("$.identifier.schemaUri", Matchers.is(SchemaValues.RAID_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.identifier.registrationAgency.id", Matchers.is(REGISTRATION_AGENCY_ID)))
-                .andExpect(jsonPath("$.identifier.registrationAgency.schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.identifier.owner.id", Matchers.is(IDENTIFIER_OWNER_ID)))
-                .andExpect(jsonPath("$.identifier.owner.schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.identifier.owner.servicePoint", Matchers.is(SERVICE_POINT_ID.intValue())))
-                .andExpect(jsonPath("$.title[0].text", Matchers.is(title)))
-                .andExpect(jsonPath("$.title[0].type.id", Matchers.is(SchemaValues.PRIMARY_TITLE_TYPE.getUri())))
-                .andExpect(jsonPath("$.title[0].type.schemaUri", Matchers.is(SchemaValues.TITLE_TYPE_SCHEMA.getUri())))
-                .andExpect(jsonPath("$.title[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.title[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.date.startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.date.endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.description[0].text", Matchers.is("Genome sequencing and assembly project at WUR of the C. Japonicum. ")))
-                .andExpect(jsonPath("$.description[0].type.id", Matchers.is(SchemaValues.PRIMARY_DESCRIPTION_TYPE.getUri())))
-                .andExpect(jsonPath("$.description[0].type.schemaUri", Matchers.is(SchemaValues.DESCRIPTION_TYPE_SCHEMA.getUri())))
-                .andExpect(jsonPath("$.access.type.id", Matchers.is(SchemaValues.ACCESS_TYPE_OPEN.getUri())))
-                .andExpect(jsonPath("$.access.type.schemaUri", Matchers.is(SchemaValues.ACCESS_TYPE_SCHEMA.getUri())))
-                .andExpect(jsonPath("$.access.statement.text", Matchers.is("This RAiD is closed")))
-                .andExpect(jsonPath("$.contributor[0].id", Matchers.is("https://orcid.org/0000-0002-4368-8058")))
-                .andExpect(jsonPath("$.contributor[0].schemaUri", Matchers.is("https://orcid.org/")))
-                .andExpect(jsonPath("$.contributor[0].position[0].schemaUri", Matchers.is(SchemaValues.CONTRIBUTOR_POSITION_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.contributor[0].position[0].id", Matchers.is(SchemaValues.PRINCIPAL_INVESTIGATOR_CONTRIBUTOR_POSITION_ROLE.getUri())))
-                .andExpect(jsonPath("$.contributor[0].position[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.contributor[0].position[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.contributor[0].role[0].schemaUri", Matchers.is(SchemaValues.CONTRIBUTOR_ROLE_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.contributor[0].role[0].id", Matchers.is("https://credit.niso.org/contributor-roles/formal-analysis/")))
-                .andExpect(jsonPath("$.organisation[0].role[0].id", Matchers.is(SchemaValues.LEAD_RESEARCH_ORGANISATION_ROLE.getUri())))
-                .andExpect(jsonPath("$.organisation[0].role[0].schemaUri", Matchers.is(SchemaValues.ORGANISATION_ROLE_SCHEMA_URI.getUri())))
-                .andExpect(jsonPath("$.organisation[0].role[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.organisation[0].role[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
-                .andExpect(jsonPath("$.organisation[0].id", Matchers.is("https://ror.org/04qw24q55")))
-                .andExpect(jsonPath("$.organisation[0].schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())));
+        try (MockedStatic<SecurityContextHolder> securityContextHolder = Mockito.mockStatic(SecurityContextHolder.class)) {
+
+            final var jwt = getJwt();
+            final var verifyFindServicePointId = mockFindServicePointId();
+
+            final var jwtAuthenticationToken = mock(JwtAuthenticationToken.class);
+            when(jwtAuthenticationToken.getToken()).thenReturn(jwt);
+
+            final var securityContext = mock(SecurityContext.class);
+            when(securityContext.getAuthentication()).thenReturn(jwtAuthenticationToken);
+
+            securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+
+            mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(input))
+                            .characterEncoding("utf-8"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.identifier.id", Matchers.is(id.formatUrl())))
+                    .andExpect(jsonPath("$.identifier.schemaUri", Matchers.is(SchemaValues.RAID_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.identifier.registrationAgency.id", Matchers.is(REGISTRATION_AGENCY_ID)))
+                    .andExpect(jsonPath("$.identifier.registrationAgency.schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.identifier.owner.id", Matchers.is(IDENTIFIER_OWNER_ID)))
+                    .andExpect(jsonPath("$.identifier.owner.schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.identifier.owner.servicePoint", Matchers.is(SERVICE_POINT_ID.intValue())))
+                    .andExpect(jsonPath("$.title[0].text", Matchers.is(title)))
+                    .andExpect(jsonPath("$.title[0].type.id", Matchers.is(SchemaValues.PRIMARY_TITLE_TYPE.getUri())))
+                    .andExpect(jsonPath("$.title[0].type.schemaUri", Matchers.is(SchemaValues.TITLE_TYPE_SCHEMA.getUri())))
+                    .andExpect(jsonPath("$.title[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.title[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.date.startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.date.endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.description[0].text", Matchers.is("Genome sequencing and assembly project at WUR of the C. Japonicum. ")))
+                    .andExpect(jsonPath("$.description[0].type.id", Matchers.is(SchemaValues.PRIMARY_DESCRIPTION_TYPE.getUri())))
+                    .andExpect(jsonPath("$.description[0].type.schemaUri", Matchers.is(SchemaValues.DESCRIPTION_TYPE_SCHEMA.getUri())))
+                    .andExpect(jsonPath("$.access.type.id", Matchers.is(SchemaValues.ACCESS_TYPE_OPEN.getUri())))
+                    .andExpect(jsonPath("$.access.type.schemaUri", Matchers.is(SchemaValues.ACCESS_TYPE_SCHEMA.getUri())))
+                    .andExpect(jsonPath("$.access.statement.text", Matchers.is("This RAiD is closed")))
+                    .andExpect(jsonPath("$.contributor[0].id", Matchers.is("https://orcid.org/0000-0002-4368-8058")))
+                    .andExpect(jsonPath("$.contributor[0].schemaUri", Matchers.is("https://orcid.org/")))
+                    .andExpect(jsonPath("$.contributor[0].position[0].schemaUri", Matchers.is(SchemaValues.CONTRIBUTOR_POSITION_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.contributor[0].position[0].id", Matchers.is(SchemaValues.PRINCIPAL_INVESTIGATOR_CONTRIBUTOR_POSITION_ROLE.getUri())))
+                    .andExpect(jsonPath("$.contributor[0].position[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.contributor[0].position[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.contributor[0].role[0].schemaUri", Matchers.is(SchemaValues.CONTRIBUTOR_ROLE_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.contributor[0].role[0].id", Matchers.is("https://credit.niso.org/contributor-roles/formal-analysis/")))
+                    .andExpect(jsonPath("$.organisation[0].role[0].id", Matchers.is(SchemaValues.LEAD_RESEARCH_ORGANISATION_ROLE.getUri())))
+                    .andExpect(jsonPath("$.organisation[0].role[0].schemaUri", Matchers.is(SchemaValues.ORGANISATION_ROLE_SCHEMA_URI.getUri())))
+                    .andExpect(jsonPath("$.organisation[0].role[0].startDate", Matchers.is(startDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.organisation[0].role[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
+                    .andExpect(jsonPath("$.organisation[0].id", Matchers.is("https://ror.org/04qw24q55")))
+                    .andExpect(jsonPath("$.organisation[0].schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())));
+
+            verifyFindServicePointId.get();
+
+        }
     }
 
     @Test
     void updateRaid_Returns404IfNotFound() throws Exception {
         final var handle = String.join("/", PREFIX, SUFFIX);
         final var input = createRaidForPut();
+        final var servicePointId = 20000000;
 
         when(validationService.validateForUpdate(eq(handle), any(RaidUpdateRequest.class))).thenReturn(Collections.emptyList());
 
         doThrow(new ResourceNotFoundException(handle))
-                .when(raidService).update(input);
+                .when(raidService).update(input, servicePointId);
 
-        final MvcResult mvcResult = mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(input))
-                        .characterEncoding("utf-8"))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andReturn();
+        try (MockedStatic<SecurityContextHolder> securityContextHolder = Mockito.mockStatic(SecurityContextHolder.class)) {
 
-        final FailureResponse failureResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), FailureResponse.class);
+            final var jwt = getJwt();
+            final var verifyFindServicePointId = mockFindServicePointId();
 
-        assertThat(failureResponse.getType(), Matchers.is("https://raid.org.au/errors#ResourceNotFoundException"));
-        assertThat(failureResponse.getTitle(), Matchers.is("The resource was not found."));
-        assertThat(failureResponse.getStatus(), Matchers.is(404));
-        assertThat(failureResponse.getDetail(), Matchers.is("No RAiD was found with handle 10378.1/1696639."));
-        assertThat(failureResponse.getInstance(), Matchers.is("https://raid.org.au"));
+            final var jwtAuthenticationToken = mock(JwtAuthenticationToken.class);
+            when(jwtAuthenticationToken.getToken()).thenReturn(jwt);
+
+            final var securityContext = mock(SecurityContext.class);
+            when(securityContext.getAuthentication()).thenReturn(jwtAuthenticationToken);
+
+            securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+
+            final MvcResult mvcResult = mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(input))
+                            .characterEncoding("utf-8"))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andReturn();
+
+            final FailureResponse failureResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), FailureResponse.class);
+
+            assertThat(failureResponse.getType(), Matchers.is("https://raid.org.au/errors#ResourceNotFoundException"));
+            assertThat(failureResponse.getTitle(), Matchers.is("The resource was not found."));
+            assertThat(failureResponse.getStatus(), Matchers.is(404));
+            assertThat(failureResponse.getDetail(), Matchers.is("No RAiD was found with handle 10378.1/1696639."));
+            assertThat(failureResponse.getInstance(), Matchers.is("https://raid.org.au"));
+        }
     }
 
     @Test

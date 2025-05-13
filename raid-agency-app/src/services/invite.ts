@@ -1,4 +1,5 @@
 import { getEnv } from "@/utils/api-utils/api-utils";
+import {authService} from "@/services/auth-service.ts";
 
 let currentEnv = getEnv();
 if (currentEnv === "dev") {
@@ -19,14 +20,10 @@ export async function sendInvite({
   title: string;
   token: string;
 } & ({ email: string } | { orcid: string })) {
-  const response = await fetch(
+  const response = await authService.fetchWithAuth(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         inviteeEmail: email || "",
         inviteeOrcid: orcid || "",
@@ -44,15 +41,8 @@ export async function sendInvite({
 }
 
 export async function fetchInvites({ token }: { token: string }) {
-  const response = await fetch(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite/fetch`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  const response = await authService.fetchWithAuth(
+      `https://${subDomain}.${currentEnv}.raid.org.au/invite/fetch`
   );
   return await response.json();
 }
@@ -66,14 +56,10 @@ export async function acceptInvite({
   token: string;
   handle: string;
 }) {
-  const response = await fetch(
+  const response = await authService.fetchWithAuth(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite/accept`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         code,
         handle,
@@ -92,14 +78,10 @@ export async function rejectInvite({
   token: string;
   handle: string;
 }) {
-  const response = await fetch(
+  const response = await authService.fetchWithAuth(
     `https://${subDomain}.${currentEnv}.raid.org.au/invite/reject`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         code,
         handle,
