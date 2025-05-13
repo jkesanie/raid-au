@@ -41,27 +41,28 @@ The RAiD Agency Static App is a web application that fetches, processes, and dis
 
 ## 🛣️ Routes
 
-| Route                     | Description                                       |
-| :------------------------ | :------------------------------------------------ |
-| `/`                       | Home page with overview statistics                |
-| `/raids`                  | Lists all available RAiDs                         |
-| `/raids/[prefix]`         | Lists RAiDs for a specific prefix                 |
-| `/raids/[prefix]/[suffix]` | Detail page for a specific RAiD                  |
-| `/prefixes`               | Lists all available prefixes                      |
-| `/api/raids.json`         | JSON API endpoint for RAiD data                   |
-| `/api/handles.json`       | JSON API endpoint for handle data                 |
-| `/api/all-handles.json`   | Combined handles from multiple environments       |
-| `/api/diff.json`          | Differences between current and previous data     |
-| `/api/raid-files-list.json` | List of available RAiD files                    |
+| Route                       | Description                                 |
+| :-------------------------- | :------------------------------------------ |
+| `/`                         | Home page with overview statistics          |
+| `/raids`                    | Lists all available RAiDs                   |
+| `/raids/[prefix]`           | Lists RAiDs for a specific prefix           |
+| `/raids/[prefix]/[suffix]`  | Detail page for a specific RAiD             |
+| `/prefixes`                 | Lists all available prefixes                |
+| `/api/raids.json`           | JSON API endpoint for RAiD data             |
+| `/api/handles.json`         | JSON API endpoint for handle data           |
+| `/api/all-handles.json`     | Combined handles from multiple environments |
+| `/api/raid-files-list.json` | List of available RAiD files                |
 
 ## 📦 Data Flow
 
 1. **Data Acquisition**:
+
    - `scripts/fetch-raids.sh` authenticates with the IAM endpoint and fetches RAiD data from the API
    - `scripts/fetch-handles.sh` fetches handles from various environments (prod, stage, demo, test)
    - Data is stored in `src/raw-data/`
 
 2. **Build Process**:
+
    - The `predev` and `prebuild` scripts run the data fetching scripts
    - Astro processes the data to generate static pages during build
 
@@ -71,13 +72,13 @@ The RAiD Agency Static App is a web application that fetches, processes, and dis
 
 ## 🛠️ Commands
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run scripts`         | Fetches latest RAiD data                         |
-| `npm run dev`             | Starts local dev server at `localhost:4321` (runs scripts first) |
-| `npm run build`           | Build production site to `./dist/` (runs scripts first) |
-| `npm run preview`         | Preview your build locally                       |
+| Command           | Action                                                           |
+| :---------------- | :--------------------------------------------------------------- |
+| `npm install`     | Installs dependencies                                            |
+| `npm run scripts` | Fetches latest RAiD data                                         |
+| `npm run dev`     | Starts local dev server at `localhost:4321` (runs scripts first) |
+| `npm run build`   | Build production site to `./dist/` (runs scripts first)          |
+| `npm run preview` | Preview your build locally                                       |
 
 ## 🔐 Environment Setup
 
@@ -109,7 +110,6 @@ The application provides several API endpoints under `/api/`:
 - `/api/raids.json`: Returns all RAiD data
 - `/api/handles.json`: Returns all RAiD handles from current environment
 - `/api/all-handles.json`: Returns handles from all environments
-- `/api/diff.json`: Returns differences between current and previous data
 - `/api/raid-files-list.json`: Returns a list of available RAiD files
 
 ## 🧩 Component Structure
@@ -134,7 +134,7 @@ Each component follows a consistent pattern to extract and display its specific 
 TypeScript interfaces in `src/generated/raid/` are generated from OpenAPI specifications and define the structure of RAiD data. Key models include:
 
 - `RaidDto.ts`: The main RAiD data object
-- `Access.ts`: Access information 
+- `Access.ts`: Access information
 - `Contributor.ts`: Contributor information
 - `Organisation.ts`: Organization information
 - `RelatedObject.ts`: Related object data
@@ -179,7 +179,7 @@ To build for production:
 For CI/CD setup:
 
 1. Include the required environment variables in your CI environment
-2. Configure your CI pipeline to run `npm run build` 
+2. Configure your CI pipeline to run `npm run build`
 3. Deploy the `dist/` directory to your hosting environment
 
 ## 🧪 Testing

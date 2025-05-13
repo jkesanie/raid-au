@@ -1,7 +1,7 @@
 async function getEnvironmentForHandle(handle: string): Promise<string> {
   try {
     const response = await fetch(
-      "https://static.demo.raid.org.au/api/handles.json"
+      "https://static.prod.raid.org.au/api/all-handles.json"
     );
     const handles = await response.json();
     const handlesMap = new Map<string, string>(handles);
