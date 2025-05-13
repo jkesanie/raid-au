@@ -21,7 +21,7 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
       {data[index] && Object.hasOwn(data[index], "status") && (
         <DisplayItem
           label="Contributor Status"
-          value={"status" in data[index] ? String(data[index].status) : ""}
+          value={"status" in data[index] ? String((data[index] as any).status) : ""}
           width={12}
         />
       )}

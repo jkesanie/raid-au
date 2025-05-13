@@ -65,7 +65,7 @@ export function RelatedRaidDetailsForm({
   const relatedRaids: RelatedRaid[] = getValues("relatedRaid");
 
   const segments = relatedRaids[index].id
-    ? getLastTwoUrlSegments(relatedRaids[index].id)
+    ? getLastTwoUrlSegments(relatedRaids[index].id!)
     : null;
   const [prefix, suffix] = segments ? segments.split("/") : ["", ""];
 
