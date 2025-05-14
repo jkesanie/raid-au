@@ -1,7 +1,8 @@
 import contributorPositionSchema from "@/references/contributor_position_schema.json";
-
 import { combinedPattern } from "@/utils/date-utils/date-utils";
 import { z } from "zod";
+
+console.log('Schema version: FIXED-20240514');
 
 export const contributorPositionValidationSchema = z.array(
     z.object({
