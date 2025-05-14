@@ -14,9 +14,7 @@ export const organisationRoleValidationSchema = z.array(
 
             startDate: z.string().transform(val => val === '' ? undefined : val)
                 .pipe(z.string().regex(combinedPattern)),
-            endDate: z.string().optional(),
-            // endDate: z.string().transform(val => val === '' ? undefined : val)
-            //     .pipe(z.string().regex(combinedPattern)).optional()
-
+            endDate: z.string().transform(val => val === '' ? undefined : val)
+                .pipe(z.string().regex(combinedPattern)).optional()
     })
 );
