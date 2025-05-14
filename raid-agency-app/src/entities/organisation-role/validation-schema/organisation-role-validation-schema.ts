@@ -3,8 +3,6 @@ import organisationRoleSchema from "@/references/organisation_role_schema.json";
 import { combinedPattern } from "@/utils/date-utils/date-utils";
 import { z } from "zod";
 
-console.log('Schema version: FIXED-20240514');
-
 export const organisationRoleValidationSchema = z.array(
     z.object({
             id: z.enum(
@@ -14,7 +12,15 @@ export const organisationRoleValidationSchema = z.array(
 
             startDate: z.string().transform(val => val === '' ? undefined : val)
                 .pipe(z.string().regex(combinedPattern)),
-            endDate: z.string().transform(val => val === '' ? undefined : val)
-                .pipe(z.string().regex(combinedPattern)).optional()
+            endDate: z.string()
+                .optional()
+                .transform(val => {
+                        if (val === undefined) return undefined;
+                        if (val === '') return undefined;
+                        return val;
+                })
+                .pipe(
+                    z.string().regex(combinedPattern).optional()
+                )
     })
 );
