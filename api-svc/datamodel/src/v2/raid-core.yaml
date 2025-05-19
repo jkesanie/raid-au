@@ -217,7 +217,7 @@ classes:
           default: Date record created
         description: the date the project or activity title was changed or stopped being used
         range: string
-        required: true
+        required: false
         pattern: "^\\s*\\S.*$"
         examples:
           - value: "2023-08-28"

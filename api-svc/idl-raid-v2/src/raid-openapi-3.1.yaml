@@ -987,11 +987,9 @@ components:
           $ref: "#/components/schemas/OrganizationRoleSchemaUriEnum"
           description: "the URI of the role schema used"
         startDate:
-          anyOf:
-          - pattern: "2222-22-22"
-          - pattern: "2221-22-22"
           description: "the date that the organisation began a role associated with\
             \ the project or activity"
+          pattern: "^\\s*\\S.*$"
           type: "string"
       required:
       - "startDate"
@@ -1576,7 +1574,9 @@ components:
           description: "the date the project or activity title was changed or stopped\
             \ being used"
           pattern: "^\\s*\\S.*$"
-          type: "string"
+          type:
+          - "string"
+          - "null"
         language:
           anyOf:
           - $ref: "#/components/schemas/Language"
@@ -1596,7 +1596,6 @@ components:
             \ type"
       required:
       - "startDate"
-      - "endDate"
       - "text"
       - "type"
       title: "Title"
