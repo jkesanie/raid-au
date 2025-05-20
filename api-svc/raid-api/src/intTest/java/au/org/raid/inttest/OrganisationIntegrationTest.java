@@ -164,8 +164,8 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).contains(
                     new ValidationFailure()
                             .fieldId("organisation[0].id")
-                            .errorType("notSet")
-                            .message("field must be set")
+                            .errorType("invalidValue")
+                            .message("has invalid/unsupported value - must match \"^\\s*\\S.*$\"")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");

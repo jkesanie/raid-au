@@ -260,8 +260,8 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).hasSize(1);
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("description[0].text")
-                    .errorType("notSet")
-                    .message("field must be set")
+                    .errorType("invalidValue")
+                    .message("has invalid/unsupported value - must match \"^\\s*\\S.*$\"")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");

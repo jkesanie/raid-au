@@ -1069,7 +1069,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 new ValidationFailure()
                                         .fieldId("contributor[0].position")
                                         .errorType("notSet")
-                                        .message("A contributor must have a position")
+                                        .message("field must be set")
                         ));
                     }
                 }
