@@ -215,7 +215,7 @@ public class SecurityConfig {
             final var raid = raidHistoryService.findByHandle(handle)
                     .orElseThrow(() -> new ResourceNotFoundException(handle));
 
-            if (raid.getIdentifier().getOwner().getServicePoint().equals(servicePoint.getId())) {
+            if (raid.getIdentifier().getOwner().getServicePoint().longValue() == servicePoint.getId()) {
                 return new AuthorizationDecision(true);
             }
 
