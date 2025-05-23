@@ -21,6 +21,15 @@
     {%- endif -%}
 {% endmacro %}
 
+{% macro list_annotations(slot) %}
+    {%-for a in slot.annotations %}
+    {%- if a|string|first != '_' -%}
+        **{{a}}**: {{slot.annotations[a].value}}<br/>
+    {%- endif -%}
+
+    {%- endfor -%}
+{% endmacro %}
+
 # {{ title }} {% if element.deprecated %} <span style="color: red;"><strong> (DEPRECATED) </strong> {% endif %}
 
 {%- if header -%}
@@ -68,12 +77,12 @@ URI: {{ gen.uri_link(element) }}
 | ---  | --- | --- | --- |
 {% if gen.get_direct_slots(element)|length > 0 %}
 {%- for slot in gen.get_direct_slots(element) -%}
-| {{ gen.link(slot) }} | {{ gen.cardinality(slot) }} <br/> {{ compute_range(slot) }} | {{ slot.description|enshorten }} | direct |
+| {{ gen.link(slot) }} | {{ gen.cardinality(slot) }} <br/> {{ compute_range(slot) }} | {{ slot.description }} <br/> {{ list_annotations(slot) }} | direct |
 {% endfor -%}
 {% endif -%}
 {% if gen.get_indirect_slots(element)|length > 0 %}
 {%- for slot in gen.get_indirect_slots(element) -%}
-| {{ gen.link(slot) }} | {{ gen.cardinality(slot) }} <br/> {{ compute_range(slot) }} | {{ slot.description|enshorten }} | {{ gen.links(gen.get_slot_inherited_from(element.name, slot.name))|join(', ') }} |
+| {{ gen.link(slot) }} | {{ gen.cardinality(slot) }} <br/> {{ compute_range(slot) }} | {{ slot.description }} | {{ gen.links(gen.get_slot_inherited_from(element.name, slot.name))|join(', ') }} |
 {% endfor -%}
 {% endif %}
 

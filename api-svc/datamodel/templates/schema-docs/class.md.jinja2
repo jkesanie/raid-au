@@ -28,10 +28,18 @@ optional
 {{ gen.cardinality(schemaview.get_slot(element.name|lower)) }}
 {% endif %}
 
+{%-for a in element.annotations %}
+{% if a|string|first != '_' %}
+ **{{a}}**:
+{{ element.annotations[a].value }}
 
-{% if gen.example_object_blobs(element.name) -%}
+{%- endif -%}
+{%- endfor -%}
+
+
+{% if gen.example_object_blobs(element.name) %}
 **Examples**
-{% for name, blob in gen.example_object_blobs(element.name) -%}
+{% for name, blob in gen.example_object_blobs(element.name) %}
 ```json
 {{ blob }}
 ```

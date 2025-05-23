@@ -21,6 +21,14 @@ optional
 **Cardinality**:
 {{ gen.cardinality(slot) }}
 
+{%-for a in element.annotations %}
+{% if a|string|first != '_' %}
+ **{{a}}**:
+{{ element.annotations[a].value }}
+
+{%- endif -%}
+{%- endfor -%}
+
 {% if gen.example_object_blobs(element.name) -%}
 **Examples**
 {% for name, blob in gen.example_object_blobs(element.name) -%}
