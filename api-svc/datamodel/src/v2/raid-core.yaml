@@ -9,7 +9,8 @@ prefixes:
   raidvoc: https://vocabulary.raid.org/
   skos: http://www.w3.org/2004/02/skos/core#
   schema: http://schema.org/
-  dcterms: http://purl.org/dc/terms/
+  dct: http://purl.org/dc/terms/
+  dce: http://purl.org/dc/elements/1.1/
 imports:
   - linkml:types
   - shared
@@ -25,23 +26,33 @@ slots:
     multivalued: true
     inlined_as_list: true
     required: true
+    exact_mappings:
+      - dce:identifier
   title:
     range: Title
     multivalued: true
     inlined_as_list: true
     required: true
+    exact_mappings:
+      - dce:title
   date:
     range: Date
     multivalued: false
     required: true
+    related_mappings:
+      - dce:date
   description:
     range: Description
     multivalued: true
     inlined_as_list: true
+    exact_mappings:
+      - dce:description
   access:
     range: Access
     multivalued: false
     required: true
+    related_mappings:
+      - dce:rights
   alternateUrl:
     range: AlternateUrl
     multivalued: true
@@ -51,18 +62,26 @@ slots:
     multivalued: true
     inlined_as_list: true
     required: true
+    exact_mappings:
+      - dce:contributor
   organisation:
     range: Organisation
     multivalued: true
     inlined_as_list: true
+    broad_mappings:
+      - dce:contributor
   relatedRaid:
     range: RelatedRaid
     multivalued: true
     inlined_as_list: true
+    exact_mappings:
+      - dce:related
   relatedObject:
     range: RelatedObject
     multivalued: true
     inlined_as_list: true
+    exact_mappings:
+      - dce:related
   alternateIdentifier:
     range: AlternateIdentifier
     multivalued: true
