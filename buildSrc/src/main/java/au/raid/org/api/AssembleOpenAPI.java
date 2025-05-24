@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Creates the final OpenAPI file by combining OpenAPI template and json schema file.
  *
  * @author jkesanie
  */

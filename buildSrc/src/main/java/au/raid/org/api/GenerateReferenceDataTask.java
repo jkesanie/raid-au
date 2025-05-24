@@ -18,7 +18,11 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.provider.Property;
 import org.yaml.snakeyaml.Yaml;
 
-public abstract class GenerateReferenceDataTask extends DefaultTask {
+/**
+ * Creates flyway migration file that contains up-to-date vocabulary related data.
+ *
+ * @author jkesanie
+ */public abstract class GenerateReferenceDataTask extends DefaultTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenerateReferenceDataTask.class);
 
@@ -106,12 +110,4 @@ public abstract class GenerateReferenceDataTask extends DefaultTask {
         });
         return String.join(",\n", rows);
     }
-
-
-
-
-
-
-
-
 }
