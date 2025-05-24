@@ -1,4 +1,5 @@
 id: https://datamodel.raid.org/extended/
+version: 2
 name: RAiD-extended
 prefixes:
   linkml: https://w3id.org/linkml/
