@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import static au.raid.org.api.Utils.*;
 
 /**
+ * Adds enums to JSON Schema file according to the dynamic enumeration specification from the LinkML data model.
  *
  * @author jkesanie
  */

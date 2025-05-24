@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-  raidV2SpecFile = file("src/raid-openapi-internal-3.1.yaml")
+  raidV2SpecFile = file("src/raid-openapi-strict-3.1.yaml")
   generateDirName = "src/main/generated"
   generateTsDirName = "../../app-client/src/Generated/Raidv2"
 //  templateDirName = "src/main/resources/template"
@@ -40,8 +40,8 @@ tasks.register('assembleOpenAPIV2Specs', AssembleOpenAPI) {
 
 tasks.register('assembleOpenAPIV2InternalSpecs', AssembleOpenAPI) {
   openAPITemplateFile = file("src/template-raid-openapi-3.1.yaml")
-  generatedSchemaFile = file("../datamodel/generated/v2/raid-internal-jsonschema.json")
-  outputFile = file("src/raid-openapi-internal-3.1.yaml")
+  generatedSchemaFile = file("../datamodel/generated/v2/raid-strict-jsonschema.json")
+  outputFile = file("src/raid-openapi-strict-3.1.yaml")
 }
 
 clean {

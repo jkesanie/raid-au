@@ -9,6 +9,8 @@ docs_dir: docs
 plugins:
   - search
   - awesome-nav
+  - mike:
+      deploy_prefix: 'docs'
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:
@@ -18,4 +20,4 @@ markdown_extensions:
 extra:
   version:
     provider: mike
-    default: 2.0.0
+    alias: true
