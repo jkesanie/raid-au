@@ -6,16 +6,14 @@ package au.raid.org.api;
 
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static au.raid.org.api.Utils.*;
@@ -28,10 +26,10 @@ import static au.raid.org.api.Utils.*;
 public abstract class AddStaticEnums extends DefaultTask {
 
     @Input
-    abstract Property<File> getLinkMLEnumsFile();
+    abstract ListProperty<File> getLinkMLEnumsFiles();
 
     @Input
-    abstract Property<File> getEnumInfoFile();
+    abstract ListProperty<File> getEnumInfoFiles();
 
     @Input
     abstract Property<File> getGeneratedSchemaFile();
@@ -62,8 +60,15 @@ public abstract class AddStaticEnums extends DefaultTask {
 
     @TaskAction
     void generated() throws Exception {
-        Map<String, DynamicEnum> enums = loadDynamicEnums(getLinkMLEnumsFile().get());
-        List<SchemaMapping> enumInfos = loadEnumInfo(getEnumInfoFile().get());
+        Map<String, DynamicEnum> enums = new HashMap<String, DynamicEnum>();
+        for(File enumFileProp : getLinkMLEnumsFiles().get()) {
+            enums.putAll(loadDynamicEnums(enumFileProp));
+        }
+        List<SchemaMapping> enumInfos = new ArrayList<SchemaMapping>();
+        for(File enumInfoProp : getEnumInfoFiles().get()) {
+            enumInfos.addAll(loadEnumInfo(enumInfoProp));
+        }
+
         Set<Mapping> mappings = preprocessEnumInfo(enumInfos);
         validateEnumInfo(enums, mappings);
 

@@ -1,7 +1,6 @@
 plugins {
   id 'java'
 }
-import org.gradle.logging.internal.*
 import au.raid.org.api.*
 
 tasks.register('pullLinkMLImage', Exec) {  
@@ -86,8 +85,8 @@ tasks.register('generateExtendedReferenceDataV2', GenerateReferenceDataTask) {
 
 tasks.register('generateStrictJsonSchemaV2', AddStaticEnums) {
   dependsOn "generateJSONSchemaV2"
-  linkMLEnumsFile = file("src/v2/core-enums.yaml")
-  enumInfoFile = file("../../buildSrc/enum2table.yaml")
+  linkMLEnumsFiles = [file("src/v2/core-enums.yaml"), file("src/v2/extended-enums.yaml")]
+  enumInfoFiles = [file("../../buildSrc/enum2table.yaml"), file("../../buildSrc/extended-enum2table.yaml")]
   generatedSchemaFile = file("generated/v2/raid-jsonschema.json")
   outputFile = file("generated/v2/raid-strict-jsonschema.json")
 }
