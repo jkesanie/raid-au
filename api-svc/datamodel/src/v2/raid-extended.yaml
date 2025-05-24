@@ -23,6 +23,8 @@ slots:
     inlined_as_list: true
     in_subset:
       - extended
+    close_mappings:
+      - schema:keywords
   spatialCoverage:
     description: metadata schema block containing information about any spatial region(s) or named place(s) targeted by the project
     slot_uri: raidext:spatialCoverage
@@ -31,6 +33,8 @@ slots:
     inlined_as_list: true
     in_subset:
       - extended
+    exact_mappings:
+      - schema:location
   traditionalKnowledgeLabel:
     description: metadata schema block containing information about Traditional Knowledge / Biocultural Labels and Notices
     slot_uri: raidext:traditionalKnowledgeLabel
@@ -39,8 +43,12 @@ slots:
     inlined_as_list: true
     in_subset:
       - extended
+    broad_mappings:
+      - schema:additionalProperty
 classes:
   Subject:
+    close_mappings:
+      - schema:DefinedTerm
     description: metadata schema block containing the subject area of the RAiD plus associated properties
     class_uri: raidext:Subject
     in_subset:
@@ -49,15 +57,21 @@ classes:
       id:
         description:  identifier (URI) for a subject area or classification code describing the project or activity
         range: string
+        close_mappings:
+          - schema:termCode
       schemaUri:
         description: the URI of the subject identifier schema
         range: SubjectSchemaURIEnum
+        close_mappings:
+          - schema:inDefinedTermSet
       keyword:
         description: metadata schema sub-block containing free-text keyword describing a project plus associated properties
         range: SubjectKeyword
         multivalued: true
         inlined_as_list: true
   SpatialCoverage:
+    close_mappings:
+      - schema:Place
     description: metadata schema block containing information about any spatial region(s) or named place(s) targeted by the project
     class_uri: raidext:SpatialCoverage
     in_subset:
@@ -67,6 +81,9 @@ classes:
         description: spatial region or named place that is the subject or target of the project or activity. Repeat this property as necessary to indicate different locations. Do not duplicate organisational locations
         range: string
         required: true
+        exact_mappings:
+          - schema:identifier
+          - dct:identifier
         examples:
           - value: https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=1947835&class=boundary (Tundzha, Bulgaria, from OpenStreetMap)
           - value: https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=186382&class=boundary (Bulgaria, from OpenStreetMap)
@@ -87,6 +104,9 @@ classes:
         range: SpatialCoveragePlace
         multivalued: true      
         inlined_as_list: true
+        exact_mappings:
+          - schema:location
+          - dct:spatial
   SubjectKeyword:
     description: metadata schema sub-block containing free-text keyword describing a project plus associated properties
     class_uri: raidext:SubjectKeyword
@@ -98,9 +118,17 @@ classes:
       text:
         description: unconstrained keyword or key phrase describing the project or activity
         range: string
+        close_mappings:
+          - schema:alternateName
+        exact_mappings:
+          - schema:keywords
+          - dct:subject
     slots:
       - language
   SpatialCoveragePlace:
+    exact_mappings:
+      - schema:Place
+      - dct:Location
     description: metadata schema sub-block containing free-text place names or descriptions plus associated metadata properties
     class_uri: raidext:SpatialCoveragePlace
     in_subset:
@@ -113,7 +141,12 @@ classes:
           constraints: do not duplicate information from spatialCoverage.id above; do not use for organisational locations (which are derived from the organisation’s ROR)
         description: free text description of one or more geographic locations that are the subject or target of the project or activity; use to specify or describe a geographic location in a manner not covered by spatialCoverage.id
         range: string
+        exact_mappings:
+          - schema:name
+          - dct:spatial
   TraditionalKnowledgeLabel:
+    broad_mappings:
+      - schema:PropertyValue
     description: metadata schema block containing information about Traditional Knowledge / Biocultural Labels and Notices
     class_uri: raidext:TraditionalKnowledgeLabel
     in_subset:
@@ -124,6 +157,8 @@ classes:
           notes: Currently only Local Contexts Hub Projects are allowed as a source for validated TK/BC Labels and Notices.
         description:  identifier (URI) linking to a verified source for Traditional Knowledge (TK) or Biocultural (BC) Labels or Notices pertaining to a project or activity
         range: string
+        broad_mappings:
+          - schema:value
         examples:
           - value: |-
               [https://localcontextshub.org/projects/03818172-23c1-4dd1-a662-f11aa07cccda/] (Island Sustainability Project 2025, a Project in Local Contexts Hub)
