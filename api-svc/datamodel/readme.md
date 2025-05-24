@@ -1,6 +1,7 @@
 # Data model project
 
 ## TODO: 
+* Add implementation for filling and storing Metadata.raidModelVersion and make it required in the data model. This field can be used in the RAiD crosswalks to determine the right crosswalk implementation. 
 * reference data and strict JSON Schema generators both download the vocabulary data. This should be optimized so that the data is downloaded only once. 
 * Modify generator tasks to process all versions at the same time.
 
@@ -167,6 +168,17 @@ Reference data tasks (`generateReferenceData` and `generateExtendedReferenceData
 
 For details see documentation in the buildSrc project.
 
+Example configuration:
+```
+tasks.register('generateReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'api-svc/datamodel/src/v2/core-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata.sql"
+  examplesDir = "api-svc/datamodel/examples/"
+  mappingFile = "buildSrc/enum2table.yaml"
+  schemaID = 3
+}
+```
+
 ## Others
 
 There are tasks in the datamodel project for generating JSON-LD context, OWL ontology and SHACL shapes from the specificiation. The current implementation of the JSON-LD context and SHACL generators does not yet support dynamic enumeration, which causes  `generateJSONLDContextV2` and `generateSHACLV2` tasks to fail. A workaround would be to add a custom task that would add create a version of the linkml specification that would include the materialized enumeration with values queried from the vocabulary service.
@@ -185,10 +197,14 @@ General step for creating a new data model version are:
   * :api-svc:datamodel:generateInternalJsonSchemaV2
   * :api-svc:datamodel:generateJSONSchemaV2
   * :api-svc:datamodel:generateReferenceDataV2
+    * Note: data model version. 
   * :api-svc:datamodel:generateExtendedReferenceDataV2
   * :api-svc:datamodel:generateAllV2
+* In case of new dynamic enumerations, update `enum2table.yaml` and `extended-enum2table.yaml` files under buildSrc project.
+* Generate new data model artefacts (`:api-svc:datamodel:generateAllX`)
 * Modify tasks in the idl-raid-[version] project to use the correct generated files from the datamodel project
   * e.g. `generatedSchemaFile = file("../datamodel/generated/v2/raid-jsonschema.json")` --> `generatedSchemaFile = file("../datamodel/generated/v3/raid-jsonschema.json")`
+* Add generated reference data to the database.
 * Deploy and push new version of the data model documentation
 
 ## Non-breaking changes 
@@ -214,3 +230,16 @@ Breaking changes include:
 
 There changes require new major version of the data model to be added (e.g. v2.0 -> v3.0).
 
+## Deprecation 
+
+Any part of the data model can be marked as deprecated by adding to it a slot `deprecated: true`.
+
+Example:
+```
+id: https://datamodel.raid.org/core/
+name: RAiD-core
+version: 1
+deprecated: true
+```
+
+If vocabularies or vocabulary items are deprecated a flyway migration file must be added manually that sets the status of the target rows to `inactive`.
