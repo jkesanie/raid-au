@@ -16,11 +16,14 @@ slots:
     range: string
   url:
     range: string
+    exact_mappings:
+      - schema:url
   id:
     range: string
     identifier: true
     exact_mappings:
       - schema:identifier
+      - dct:identifier
   text:
     range: string
   startDate:
@@ -51,6 +54,9 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - schema:inLanguage
+          - dct:language
       schemaUri:
         description: the URI of the language identifier schema
         range: LanguageSchemaURIEnum

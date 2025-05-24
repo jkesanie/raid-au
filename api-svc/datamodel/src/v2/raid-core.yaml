@@ -11,6 +11,8 @@ prefixes:
   schema: http://schema.org/
   dct: http://purl.org/dc/terms/
   dce: http://purl.org/dc/elements/1.1/
+  dcat: http://www.w3.org/ns/dcat#
+  foaf: http://xmlns.com/foaf/0.1/
 imports:
   - linkml:types
   - shared
@@ -149,6 +151,8 @@ classes:
       - id
       - access
   Id:
+    broad_mappings:
+      - schema:PropertyValue
     description: a metadata schema block containing the RAiD name and associated properties.
     attributes:
       id:
@@ -158,7 +162,7 @@ classes:
         examples:
           - value: https://raid.org/xxx.yyy/zzz
         exact_mappings:
-          - schema:identifier
+          - dct:identifier
           - schema:value
       schemaUri:
         description: The URI of the Identifier scheme. For example, https://raid.org
@@ -170,12 +174,14 @@ classes:
         required: true
         close_mappings:
           - schema:provider
+          - dce:creator
       owner:
         description: a metadata schema sub-block that declares the owner of the RAiD (i.e. the organisation requesting the RAiD)
         range: Owner
         required: true
         close_mappings:
           - schema:publisher
+          - dce:publisher
       raidAgencyUrl:
         range: string
         description: >
@@ -191,6 +197,7 @@ classes:
           - value: Creative Commons CC-0
         exact_mappings:
           - schema:license
+          - dct:license
       version:
         required: true
         annotations:
@@ -207,10 +214,18 @@ classes:
         required: true
         pattern: "^\\s*\\S.*$"
         range: string
+        close_mappings:
+          - schema:foundingDate
+        exact_mappings:
+          - dcat:startDate
       endDate:
         description: the project or activity’s end date
         required: false
         range: string
+        close_mappings:
+          - schema:dissolutionDate
+        exact_mappings:
+          - dcat:endDate
   Title:
     description: a metadata schema block containing the title of the RAiD and associated properties
     slots:
@@ -226,6 +241,8 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - dcat:startDate
         examples:
           - value: "2023-08-28"
           - value: "2023-08"
@@ -238,6 +255,8 @@ classes:
         range: string
         required: false
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - dcat:endDate
         examples:
           - value: "2023-08-28"
           - value: "2023-08"
@@ -247,11 +266,17 @@ classes:
         range: string
         pattern: "^\\s*\\S.*$"
         required: true
+        exact_mappings:
+          - dct:title
+          - schema:name
+          - schema:alternateName
       type:
         required: true
         description: a metadata schema block containing information about the title type
         range: TitleType
   Description:
+    broad_mappings:
+      - schema:TextObject
     description: a metadata schema block containing the description of the RAiD and associated properties
     attributes:
       type:
@@ -265,6 +290,9 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - dct:description
+          - schema:description
     slots:
       - language
   Access:
@@ -274,18 +302,29 @@ classes:
         description:  a metadata schema block containing RAiD access type information
         range: AccessType
         required: true
+        close_mappings:
+          - schema:additionalProperty
       statement:
         description: a metadata schema block containing an explanation for any access type that is not ‘open’, with the explanation’s associated properties
         range: AccessStatement
         maximum_cardinality: 1
         required: true
+        exact_mappings:
+          - dce:rights
+        broad_mappings:
+          - schema:additionalProperty
       embargoExpiry:
         range: date
         annotations:
           notes: |-
             Mandatory if access.type is ‘embargoed’. Embargo expiration dates may not lay more than 18 months from the date the RAiD was registered; year, month, and day must be specified.
         description:  the date any embargo on access to the RAiD metadata ends
+        broad_mappings:
+          - schema:additionalProperty
   Contributor:
+    exact_mappings:
+      - schema:Person
+      - foaf:Person
     description: a metadata schema block containing a contributor to a RAiD and their associated properties
     attributes:
       id:
@@ -294,6 +333,9 @@ classes:
           notes: Allowed values are identifiers defined by contributor.schemaUri
         description: the contributor (person) associated with a project or activity identified by a persistent identifier (PID)
         range: string
+        exact_mappings:
+          - dct:identifier
+          - schema:identifier
       status:
         annotations:
           readonly: true
@@ -306,6 +348,9 @@ classes:
         annotations:
           readonly: true
         range: string
+        exact_mappings:
+          - dct:identifier
+          - schema:identifier
       schemaUri:
         annotations:
           notes: The controlled list of allowed identifier schemas is defined at https://vocabulary.raid.org/contributor.schemaUri/215 and is shared across all Registration Agencies.
@@ -317,10 +362,14 @@ classes:
         range: ContributorPosition
         required: true
         multivalued: true
+        broad_mappings:
+          - schema:member
       role:
         description: metadata schema sub-block describing a contributor’s scientific or scholarly role on a project using the CRediT vocabulary
         range: ContributorRole
         multivalued: true
+        broad_mappings:
+          - schema:member
       leader:
         annotations:
           notes: More than one contributor can be flagged as a leader if the project is jointly led.
@@ -331,6 +380,8 @@ classes:
         range: boolean
       email:
         range: string
+        exact_mappings:
+          - schema:email
   AlternateUrl:
     description: a metadata schema block containing alternative URLs for the project
     attributes:
@@ -343,8 +394,12 @@ classes:
         pattern: "^\\s*\\S.*$"
         examples:
           - value: https://osf.io/puwgx/ (an Open Science Framework project page)
+        exact_mappings:
+          - schema:url
 
   Organisation:
+    exact_mappings:
+      - schema:Organization
     description: a metadata schema block containing the organisation associated with a RAiD and its associated properties
     attributes:
       id:
@@ -352,6 +407,9 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - schema:identifier
+          - dct:identifier
       schemaUri:
         description: the URI of the organisation identifier schema
         range: OrganizationSchemaUriEnum
@@ -361,7 +419,11 @@ classes:
         range: OrganisationRole
         multivalued: true
         required: true
+        exact_mappings:
+          - schema:member
   RelatedRaid:
+    broad_mappings:
+      - schema:PropertyValue
     description: a metadata schema block containing related RAiDs and qualifying the relationship
     attributes:
       id:
@@ -369,11 +431,17 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - schema:identifier
+          - schema:value
+          - dct:identifier
       type:
         description:  a metadata schema sub-block qualifying the relationship with a related Raid
         range: RelatedRaidType
         required: true
   RelatedObject:
+    broad_mappings:
+      - schema:Thing
     description: a metadata schema block containing inputs, outputs, and process documents related to a RAiD plus associated properties
     attributes:
       id:
@@ -381,6 +449,10 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        broad_mappings:
+          - schema:url
+        exact_mappings:
+          - dct:identifier
       schemaUri:
         required: true
         annotations:
@@ -397,6 +469,8 @@ classes:
         required: true
         range: RelatedObjectCategory
   AlternateIdentifier:
+    broad_mappings:
+      - schema:PropertyValue
     description: a metadata schema block containing alternative local or global identifiers for the project or activity associated with the RAiD
     attributes:
       id:
@@ -408,13 +482,22 @@ classes:
         pattern: "^\\s*\\S.*$"
         examples:
           - value: 123456ABC
+        exact_mappings:
+          - schema:identifier
+          - dct:identifier
+        broad_mappings:
+          - schema:value
       type:
         description: free text description of the type of alternateIdentifier supplied
         range: string
         required: true
+        close_mappings:
+          - schema:additionalType
         examples:
           - value: A local project ID in the university CRIS
   Owner:
+    exact_mappings:
+      - schema:Organization
     attributes:
       id:
         description: the persistent identifier of the legal entity responsible for the RAiD (i.e. the ‘owner’ of a RAiD); as recognised by their Registration Agency
@@ -423,6 +506,7 @@ classes:
         required: true
         exact_mappings:
           - schema:identifier
+          - dct:identifier
       schemaUri:
         description: the URI of the identifier scheme that is used to identify RAiD owners
         range: RegistrationAgencySchemaURIEnum
@@ -436,6 +520,8 @@ classes:
         examples:
           - value: 20000003
   RegistrationAgency:
+    exact_mappings:
+      - schema:Organization
     description: metadata schema sub-block declaring the Registration Agency that minted the RAiD.
     attributes:
       id:
@@ -448,6 +534,7 @@ classes:
         pattern: ^https:\/\/ror[.]org/.*$
         exact_mappings:
           - schema:identifier
+          - dct:identifier
       schemaUri:
         annotations:
           constraints: a PID is required and (currently) only ROR is allowed
@@ -459,6 +546,8 @@ classes:
       id:
         required: true
         range: TitleTypeIdEnum
+        broad_mappings:
+          - schema:additionalType
       schemaUri:
         required: true
         range: TitleTypeSchemaURIEnum
@@ -471,6 +560,8 @@ classes:
         description: the type of description.
         range: DescriptionTypeIdEnum
         required: true
+        broad_mappings:
+          - schema:additionalType
       schemaUri:
         annotations:
           notes: Controlled list adapted from Vocabularies for Registry Schema 1.6.5 ‘Description Type’ and DataCite Metadata Schema 4.4 Appendix 1 Table 10 ‘Description of descriptiontype’.
@@ -485,6 +576,10 @@ classes:
         description:  the type of access granted to a RAiD metadata record
         range: AccessTypeIdEnum
         required: true
+        exact_mappings:
+          - schema:value
+        broad_mappings:
+          - schema:additionalType
       schemaUri:
         annotations:
           notes: |-
@@ -493,6 +588,8 @@ classes:
         range: AccessTypeSchemaUriEnum
         required: true
   AccessStatement:
+    exact_mappings:
+      - schema:PropertyValue
     description: a metadata schema block containing an explanation for any access type that is not ‘open’, with the explanation’s associated properties.
     attributes:
       text:
@@ -501,12 +598,16 @@ classes:
           constraints: maximum 1,000 characters
         description: the text of an access statement that explains any restrictions on access
         range: string
+        exact_mappings:
+          - schema:value
     slots:
       - language
   ContributorPosition:
     annotations:
       constraints:  contributors must have one and only one position at any given time (contributors may also be flagged as a ‘leader’ or ‘contact’ separately).
       notes:  This property represents a contributor’s administrative position on a project (such as their position on a grant application); use contributor.role to define for scientific or scholarly contribution.
+    broad_mappings:
+      - schema:OrganizationRole
     description: a metadata schema sub-block describing a contributor’s administrative position on a project or activity
     slots:
       - startDate
@@ -515,9 +616,15 @@ classes:
       startDate:
         description: date the contributor began position associated with the project or activity
         range: string
+        exact_mappings:
+          - schema:startDate
+          - dcat:startDate
       endDate:
         description: date the contributor terminated position associated with the project or activity
         range: string
+        exact_mappings:
+          - schema:endDate
+          - dcat:endDate
     attributes:
       id:
         annotations:
@@ -525,6 +632,9 @@ classes:
         description: a contributor’s administrative position in the project
         range: ContributorPositionIdEnum
         required: true
+        exact_mappings:
+          - schema:roleName
+          - dct:identifier
       schemaUri:
         annotations:
           notes: Controlled list informed by Simon Cox’s Project Ontology, OpenAIRE ‘Project’ guidelines, NIH definitions, ARC definitions, and DataCite Metadata Schema 4.4 Appendix 1 Table 5 ‘Description of contributorType’.
@@ -533,11 +643,16 @@ classes:
         required: true
 
   ContributorRole:
+    broad_mappings:
+      - schema:OrganizationRole
     attributes:
       id:
         description: a contributor’s (person) role(s) on the Project
         range: ContributorRoleIdEnum
         required: true
+        exact_mappings:
+          - schema:roleName
+          - dct:identifier
       schemaUri:
         annotations:
           notes: currently limited to the CRediT vocabulary
@@ -545,6 +660,8 @@ classes:
         range: ContributorRoleSchemaUriEnum
         required: true
   OrganisationRole:
+    exact_mappings:
+      - schema:OrganizationRole
     annotations:
       notes: An organisation’s role may change over time, but each organisation may have one and only one role at any given time.
     description: a metadata schema sub-block describing an organisation’s role on a project
@@ -554,9 +671,15 @@ classes:
         range: string
         required: true
         pattern: "^\\s*\\S.*$"
+        exact_mappings:
+          - schema:startDate
+          - dcat:startDate
       endDate:
         description: the date that the organisation terminated a role associated with the project or activity
         range: string
+        exact_mappings:
+          - schema:endDate
+          - dcat:endDate
       id:
         annotations:
           constraints: one (and only one) Organisation must be designated as ‘Lead Research Organisation’
@@ -564,6 +687,9 @@ classes:
         description: the organisation’s role
         range: OrganizationRoleIdEnum
         required: true
+        exact_mappings:
+          - schema:roleName
+          - dct:identifier
       schemaUri:
         description: the URI of the role schema used
         range: OrganizationRoleSchemaUriEnum
@@ -577,6 +703,8 @@ classes:
         description: a description of the relationship between the activity being registered and the related resource
         range: RelatedRaidTypeIdEnum
         required: true
+        broad_mappings:
+          - schema:additionalType
       schemaUri:
         description: The URI of the relationship schema used
         range: RelatedRaidTypeSchemaUriEnum
@@ -590,6 +718,8 @@ classes:
         description: a type of input, output, or process document
         range: RelatedObjectTypeIdEnum
         required: true
+        broad_mappings:
+          - schema:additionalType
       schemaUri:
         description: the URI of the type schema used
         range: RelatedObjectTypeSchemaUriEnum
@@ -613,14 +743,16 @@ classes:
         range: double
         exact_mappings:
           - schema:dateCreated
+          - dct:created
       updated:
         range: double
         exact_mappings:
           - schema:dateModified
+          - dct:modified
       raidModelVersion:
         range: string
         exact_mappings:
-          - schema:ResearchObject
+          - schema:schemaVersion
 subsets:
   extended:
     description: RAiD-extended
