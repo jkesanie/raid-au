@@ -13,6 +13,7 @@ prefixes:
   dce: http://purl.org/dc/elements/1.1/
   dcat: http://www.w3.org/ns/dcat#
   foaf: http://xmlns.com/foaf/0.1/
+  adms: http://www.w3.org/ns/adms#
 imports:
   - linkml:types
   - shared
@@ -59,6 +60,8 @@ slots:
     range: AlternateUrl
     multivalued: true
     inlined_as_list: true
+    exact_mappings:
+      - dce:related
   contributor:
     range: Contributor
     multivalued: true
@@ -78,6 +81,8 @@ slots:
     inlined_as_list: true
     exact_mappings:
       - dce:related
+    broad_mappings:
+      - schema:additionalProperty
   relatedObject:
     range: RelatedObject
     multivalued: true
@@ -88,7 +93,8 @@ slots:
     range: AlternateIdentifier
     multivalued: true
     inlined_as_list: true
-
+    exact_mappings:
+      - dce:identifier
 classes:
   RaidDto:
     exact_mappings:
@@ -112,7 +118,8 @@ classes:
       identifier:
         range: Id
         required: true
-
+        exact_mappings:
+          - dce:identifier
   RaidCreateRequest:
     is_a: RaidDto
     slot_usage:
@@ -175,6 +182,8 @@ classes:
         close_mappings:
           - schema:provider
           - dce:creator
+        broad_mappings:
+          - schema:additionalProperty
       owner:
         description: a metadata schema sub-block that declares the owner of the RAiD (i.e. the organisation requesting the RAiD)
         range: Owner
@@ -182,6 +191,8 @@ classes:
         close_mappings:
           - schema:publisher
           - dce:publisher
+        broad_mappings:
+          - schema:additionalProperty
       raidAgencyUrl:
         range: string
         description: >
@@ -207,6 +218,8 @@ classes:
         exact_mappings:
           - schema:version
   Date:
+    exact_mappings:
+      - dct:PeriodOfTime
     description: Metadata schema block containing the start and end date of the RAiD.
     attributes:
       startDate:
@@ -218,6 +231,7 @@ classes:
           - schema:foundingDate
         exact_mappings:
           - dcat:startDate
+          - schema:startDate
       endDate:
         description: the project or activity’s end date
         required: false
@@ -226,6 +240,7 @@ classes:
           - schema:dissolutionDate
         exact_mappings:
           - dcat:endDate
+          - schema:endDate
   Title:
     description: a metadata schema block containing the title of the RAiD and associated properties
     slots:
@@ -243,6 +258,7 @@ classes:
         pattern: "^\\s*\\S.*$"
         exact_mappings:
           - dcat:startDate
+          - schema:startDate
         examples:
           - value: "2023-08-28"
           - value: "2023-08"
@@ -257,6 +273,7 @@ classes:
         pattern: "^\\s*\\S.*$"
         exact_mappings:
           - dcat:endDate
+          - schema:endDate
         examples:
           - value: "2023-08-28"
           - value: "2023-08"
@@ -268,12 +285,15 @@ classes:
         required: true
         exact_mappings:
           - dct:title
+          - dct:alternative
           - schema:name
           - schema:alternateName
       type:
         required: true
         description: a metadata schema block containing information about the title type
         range: TitleType
+        close_mappings:
+          - schema:additionalType
   Description:
     broad_mappings:
       - schema:TextObject
@@ -283,6 +303,8 @@ classes:
         description: a metadata schema block declaring the type of description
         required: true
         range: DescriptionType
+        close_mappings:
+          - schema:additionalType
       text:
         annotations:
           notes: maximum 1,000 characters
@@ -303,7 +325,7 @@ classes:
         range: AccessType
         required: true
         close_mappings:
-          - schema:additionalProperty
+          - schema:additionalType
       statement:
         description: a metadata schema block containing an explanation for any access type that is not ‘open’, with the explanation’s associated properties
         range: AccessStatement
@@ -363,13 +385,13 @@ classes:
         required: true
         multivalued: true
         broad_mappings:
-          - schema:member
+          - schema:memberOf
       role:
         description: metadata schema sub-block describing a contributor’s scientific or scholarly role on a project using the CRediT vocabulary
         range: ContributorRole
         multivalued: true
         broad_mappings:
-          - schema:member
+          - schema:memberOf
       leader:
         annotations:
           notes: More than one contributor can be flagged as a leader if the project is jointly led.
@@ -396,7 +418,7 @@ classes:
           - value: https://osf.io/puwgx/ (an Open Science Framework project page)
         exact_mappings:
           - schema:url
-
+          - dce:related
   Organisation:
     exact_mappings:
       - schema:Organization
@@ -439,6 +461,8 @@ classes:
         description:  a metadata schema sub-block qualifying the relationship with a related Raid
         range: RelatedRaidType
         required: true
+        close_mappings:
+          - schema:additionalType
   RelatedObject:
     broad_mappings:
       - schema:Thing
@@ -463,11 +487,15 @@ classes:
         description: a metadata schema sub-block describing a relatedObject’s type
         range: RelatedObjectType
         required: true
+        close_mappings:
+          - schema:additionalType
       category:
         description: a metadata schema sub-block declaring that a relatedObject is an input, output and/or process document
         multivalued: true
         required: true
         range: RelatedObjectCategory
+        close_mappings:
+          - schema:additionalType
   AlternateIdentifier:
     broad_mappings:
       - schema:PropertyValue
@@ -546,7 +574,7 @@ classes:
       id:
         required: true
         range: TitleTypeIdEnum
-        broad_mappings:
+        close_mappings:
           - schema:additionalType
       schemaUri:
         required: true
@@ -560,7 +588,7 @@ classes:
         description: the type of description.
         range: DescriptionTypeIdEnum
         required: true
-        broad_mappings:
+        close_mappings:
           - schema:additionalType
       schemaUri:
         annotations:
@@ -576,9 +604,7 @@ classes:
         description:  the type of access granted to a RAiD metadata record
         range: AccessTypeIdEnum
         required: true
-        exact_mappings:
-          - schema:value
-        broad_mappings:
+        close_mappings:
           - schema:additionalType
       schemaUri:
         annotations:
@@ -703,7 +729,7 @@ classes:
         description: a description of the relationship between the activity being registered and the related resource
         range: RelatedRaidTypeIdEnum
         required: true
-        broad_mappings:
+        close_mappings:
           - schema:additionalType
       schemaUri:
         description: The URI of the relationship schema used
@@ -718,7 +744,7 @@ classes:
         description: a type of input, output, or process document
         range: RelatedObjectTypeIdEnum
         required: true
-        broad_mappings:
+        close_mappings:
           - schema:additionalType
       schemaUri:
         description: the URI of the type schema used
@@ -733,6 +759,8 @@ classes:
         description: a declaration of an object as an input, output, or other
         range: RelatedObjectCategoryIdEnum
         required: true
+        close_mappings:
+          - schema:additionalType
       schemaUri:
         description: the URI of the category schema used.
         range: RelatedObjectCategorySchemaUriEnum
