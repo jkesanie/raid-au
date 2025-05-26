@@ -1,4 +1,4 @@
-import { TextInputField } from "@/fields/TextInputField";
+import { TextInputField } from "@/components/fields/TextInputField";
 import { RaidDto } from "@/generated/raid";
 import { Card, CardContent, CardHeader, Grid } from "@mui/material";
 import { memo } from "react";

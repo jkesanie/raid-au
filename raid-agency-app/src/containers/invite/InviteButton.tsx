@@ -1,4 +1,4 @@
-import { useAuthHelper } from "@/keycloak/hooks/useAuthHelper";
+import { useAuthHelper } from "@/auth/keycloak/hooks/useAuthHelper";
 import { PersonAdd as PersonAddIcon } from "@mui/icons-material";
 import { Fab, Tooltip } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";

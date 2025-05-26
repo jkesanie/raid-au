@@ -1,4 +1,4 @@
-import { useAuthHelper } from "@/keycloak";
+import { useAuthHelper } from "@/auth/keycloak"
 import { GroupSelector } from "@/pages/home/components/GroupSelector";
 import { RaidTable } from "@/pages/raid-table";
 import { Add as AddIcon } from "@mui/icons-material";

@@ -1,4 +1,4 @@
-import { TextSelectField } from "@/fields/TextSelectField";
+import { TextSelectField } from "@/components/fields/TextSelectField";
 import generalMapping from "@/mapping/data/general-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";

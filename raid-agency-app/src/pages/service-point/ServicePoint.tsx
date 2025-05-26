@@ -1,7 +1,7 @@
 import type { Breadcrumb } from "@/components/breadcrumbs-bar";
 import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
 import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { useAuthHelper } from "@/keycloak";
+import { useAuthHelper } from "@/auth/keycloak";
 import { Loading } from "@/pages/loading";
 import { fetchServicePointWithMembers } from "@/services/service-points";
 import { ServicePointWithMembers } from "@/types";
