@@ -12,15 +12,12 @@ import {
   ServicePointWithMembers,
   UpdateServicePointRequest,
 } from "@/types";
-import {getApiEndpoint} from "@/utils/api-utils/api-utils";
 import {authService} from "@/services/auth-service.ts";
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 // Keycloak configuration from environment variables
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
-
-// Base API endpoint for service point operations
-const endpoint = getApiEndpoint();
 
 /**
  * Fetches all service points
@@ -33,7 +30,7 @@ export const fetchServicePoints = async ({
 }: {
   token: string;
 }): Promise<ServicePoint[]> => {
-  const url = new URL(`${endpoint}/service-point/`);
+  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
 
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
@@ -60,7 +57,7 @@ export const fetchServicePointsWithMembers = async ({
 }: {
   token: string;
 }): Promise<ServicePointWithMembers[]> => {
-  const servicePointUrl = new URL(`${endpoint}/service-point/`);
+  const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
 
   const members = new Map<string, ServicePointMember[]>();
@@ -122,7 +119,7 @@ export const fetchServicePointWithMembers = async ({
   id: number;
   token: string;
 }): Promise<ServicePointWithMembers> => {
-  const servicePointUrl = new URL(`${endpoint}/service-point/${id}`);
+  const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
   const members = new Map<string, ServicePointMember[]>();
 
@@ -192,8 +189,7 @@ export const fetchServicePoint = async ({
   id: number;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/${id}`);
-
+  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
     headers: {
@@ -218,8 +214,7 @@ export const createServicePoint = async ({
   data: CreateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/`);
-
+  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "POST",
     headers: {
@@ -248,8 +243,7 @@ export const updateServicePoint = async ({
   data: UpdateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/${id}`);
-
+  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "PUT",
     headers: {

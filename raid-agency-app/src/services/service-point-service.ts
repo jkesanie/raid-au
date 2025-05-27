@@ -1,21 +1,19 @@
 import {ServicePoint} from "@/generated/raid";
-import {getApiEndpoint} from "@/utils/api-utils/api-utils.ts";
 import {authService} from "@/services/auth-service.ts";
 import {CreateServicePointRequest, ServicePointMember, UpdateServicePointRequest} from "@/types.ts";
+import { API_CONSTANTS } from "@/constants/apiConstants.ts";
 
-const endpoint = getApiEndpoint();
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
 
 export const servicePointService = {
     fetchAll: async (): Promise<ServicePoint[]> => {
-        const url = new URL(`${endpoint}/service-point/`);
-
+        const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
         const response = await authService.fetchWithAuth(url.toString());
         return await response.json();
     },
     fetchAllWithMembers: async () => {
-        const servicePointUrl = new URL(`${endpoint}/service-point/`);
+        const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
         const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
 
         const members = new Map<string, ServicePointMember[]>();
@@ -50,13 +48,12 @@ export const servicePointService = {
         );
     },
     fetch: async (id: number): Promise<ServicePoint> => {
-        const url = new URL(`${endpoint}/service-point/${id}`);
-
+        const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
         const response = await authService.fetchWithAuth(url.toString());
         return await response.json();
     },
     fetchWithMembers: async (id: number) => {
-        const servicePointUrl = new URL(`${endpoint}/service-point/${id}`);
+        const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
         const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
         const members = new Map<string, ServicePointMember[]>();
 
@@ -101,7 +98,7 @@ export const servicePointService = {
         return servicePointWithMembers;
     },
     create: async (data: CreateServicePointRequest) => {
-        const url = new URL(`${endpoint}/service-point/`);
+        const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
 
         const response = await fetch(url, {
             method: "POST",
@@ -110,8 +107,7 @@ export const servicePointService = {
         return await response.json();
     },
     update: async (data: UpdateServicePointRequest, id: number) => {
-        const url = new URL(`${endpoint}/service-point/${id}`);
-
+        const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
         const response = await fetch(url, {
             method: "PUT",
             body: JSON.stringify(data.servicePointUpdateRequest),
