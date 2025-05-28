@@ -6,7 +6,7 @@ export async function fetchOrcidContributors({ handle }: { handle: string }) {
   environment = environment === "dev" ? "test" : environment;
   const subDomain = "orcid";
   try {
-    const url = API_CONSTANTS.ORCID_CONTRIBUTORS.ALL(subDomain, environment);
+    const url = API_CONSTANTS.ORCID.CONTRIBUTORS(subDomain, environment);
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

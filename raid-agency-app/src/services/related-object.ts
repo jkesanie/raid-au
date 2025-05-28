@@ -83,11 +83,14 @@ interface DoiUrlData {
  * @returns Promise resolving to an object containing the title and registration agency
  * @throws Error if the DOI APIs return invalid responses
  */
+
+import { API_CONSTANTS } from "@/constants/apiConstants";
+
 export async function getTitleFromDOI(
   handle: string
 ): Promise<{ title: string; ra: string }> {
   try {
-    const doiRaResponse = await fetch(`https://doi.org/doiRA/${handle}`);
+    const doiRaResponse = await fetch(API_CONSTANTS.DOI.REGISTRATION(handle));
     const [doiRaInfo] = (await doiRaResponse.json()) as DoiRaData[];
 
     if (!doiRaInfo?.RA) {
@@ -97,19 +100,19 @@ export async function getTitleFromDOI(
     const ra = doiRaInfo.RA.toLowerCase();
 
     switch (ra) {
-      case "crossref":
+      case "crossref": {
         const crossrefResponse = await fetch(
-          `https://api.crossref.org/works/${handle}`
+          API_CONSTANTS.DOI.CROSS_REF(handle)
         );
         const crossrefData: CrossrefData = await crossrefResponse.json();
         return {
           title: crossrefData.message.title?.[0] || "",
           ra,
         };
-
-      case "datacite":
+      }
+      case "datacite": {
         const dataciteResponse = await fetch(
-          `https://api.datacite.org/dois/${handle}`
+          API_CONSTANTS.DOI.DATA_CITE(handle)
         );
         if (!dataciteResponse.ok) {
           throw new Error(`Datacite API error: ${dataciteResponse.statusText}`);
@@ -119,10 +122,10 @@ export async function getTitleFromDOI(
           title: dataciteData.data.attributes.titles?.[0]?.title || "",
           ra,
         };
-
-      default:
+      }
+      default: {
         const doiUrlResponse = await fetch(
-          `https://doi.org/api/handles/${handle}?type=url`
+          API_CONSTANTS.DOI.BY_HANDLE_URL(handle)
         );
         const doiUrlData: DoiUrlData = await doiUrlResponse.json();
         const url = doiUrlData.values?.[0]?.data?.value;
@@ -147,6 +150,7 @@ export async function getTitleFromDOI(
           title: titleMatch?.[1] || "",
           ra,
         };
+      }
     }
   } catch (error) {
     console.error("Error fetching DOI title:", error);

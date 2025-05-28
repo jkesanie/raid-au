@@ -30,7 +30,7 @@ export const fetchServicePoints = async ({
 }: {
   token: string;
 }): Promise<ServicePoint[]> => {
-  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
 
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
@@ -57,7 +57,7 @@ export const fetchServicePointsWithMembers = async ({
 }: {
   token: string;
 }): Promise<ServicePointWithMembers[]> => {
-  const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
+  const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
 
   const members = new Map<string, ServicePointMember[]>();
@@ -119,7 +119,7 @@ export const fetchServicePointWithMembers = async ({
   id: number;
   token: string;
 }): Promise<ServicePointWithMembers> => {
-  const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+  const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
   const members = new Map<string, ServicePointMember[]>();
 
@@ -189,7 +189,7 @@ export const fetchServicePoint = async ({
   id: number;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
     headers: {
@@ -214,7 +214,7 @@ export const createServicePoint = async ({
   data: CreateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.ALL}`);
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "POST",
     headers: {
@@ -243,7 +243,7 @@ export const updateServicePoint = async ({
   data: UpdateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "PUT",
     headers: {

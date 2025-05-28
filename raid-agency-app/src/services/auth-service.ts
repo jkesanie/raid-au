@@ -78,7 +78,7 @@ export const authService = {
         return keycloakInstance.token;
     },
 
-    get user(): any {
+    get user(): { id: string | undefined; roles: string[] } {
         return {
             id: keycloakInstance.subject,
             roles: keycloakInstance.realmAccess?.roles || [],
