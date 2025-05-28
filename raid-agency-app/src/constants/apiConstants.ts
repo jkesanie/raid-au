@@ -9,4 +9,12 @@ export const API_CONSTANTS = {
     ALL: `${BASE_URL}/service-point/`,
     BY_ID: (id:number) => `${BASE_URL}/service-point/${id}`,
   },
+  RAID: {
+    ALL: `${BASE_URL}/raid/`,
+    BY_HANDLE: (handle: string) => `${BASE_URL}/raid/${handle}`,
+    HISTORY: (handle: string) => `${BASE_URL}/raid/${handle}/history`,
+    GET_ENV_FOR_HANDLE: `https://static.prod.raid.org.au/api/all-handles.json`,
+    RELATED_RAID_TITLE:(handle: string, environment: string) =>
+      `https://static.${environment}.raid.org.au/raids/${handle}.json`,
+  },
 };

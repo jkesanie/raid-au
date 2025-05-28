@@ -6,11 +6,7 @@
  */
 import { RaidDto } from "@/generated/raid";
 import { RaidHistoryType } from "@/pages/raid-history";
-import { getApiEndpoint } from "@/utils/api-utils/api-utils";
-
-// Get the base API endpoint for the RAID service
-const endpoint = getApiEndpoint();
-const API_ENDPOINT = `${endpoint}/raid`;
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 /**
  * Generates default headers for API requests including authentication
@@ -37,17 +33,13 @@ export const fetchAllRaids = async ({
   fields?: string[];
   token: string;
 }): Promise<RaidDto[]> => {
-  // the trailing slash is required for the API to work
-  const url = new URL(`${API_ENDPOINT}/`);
-
+  const url = new URL(API_CONSTANTS.RAID.ALL);
   if (fields?.length) {
     url.searchParams.set("includeFields", fields.join(","));
   }
-
   const response = await fetch(url, {
     headers: getDefaultHeaders(token),
   });
-
   if (!response.ok) {
     throw new Error(`RAiDs could not be fetched`);
   }
@@ -70,12 +62,11 @@ export const fetchOneRaid = async ({
   handle: string;
   token: string;
 }): Promise<RaidDto> => {
-  const url = `${API_ENDPOINT}/${handle}`;
+  const url = API_CONSTANTS.RAID.BY_HANDLE(handle);
   const response = await fetch(url, {
     method: "GET",
     headers: getDefaultHeaders(token),
   });
-
   if (!response.ok) {
     throw new Error(`RAiD could not be fetched`);
   }
@@ -97,12 +88,11 @@ export const fetchOneRaidHistory = async ({
   handle: string;
   token: string;
 }): Promise<RaidHistoryType[]> => {
-  const url = `${API_ENDPOINT}/${handle}/history`;
+  const url = API_CONSTANTS.RAID.HISTORY(handle);
   const response = await fetch(url, {
     method: "GET",
     headers: getDefaultHeaders(token),
   });
-
   if (!response.ok) {
     throw new Error(`RAiD history could not be fetched`);
   }
@@ -124,13 +114,12 @@ export const createOneRaid = async ({
   raid: RaidDto;
   token: string;
 }): Promise<RaidDto> => {
-  const url = `${API_ENDPOINT}/`;
+  const url = API_CONSTANTS.RAID.ALL;
   const response = await fetch(url, {
     method: "POST",
     headers: getDefaultHeaders(token),
     body: JSON.stringify(raid),
   });
-
   if (!response.ok) {
     throw new Error(`RAiD could not be created`);
   }
@@ -156,13 +145,12 @@ export const updateOneRaid = async ({
   token: string;
 }): Promise<RaidDto> => {
   const raidToBeUpdated = transformBeforeUpdate(data);
-  const url = `${API_ENDPOINT}/${handle}`;
+  const url = API_CONSTANTS.RAID.BY_HANDLE(handle);
   const response = await fetch(url, {
     method: "PUT",
     headers: getDefaultHeaders(token),
     body: JSON.stringify(raidToBeUpdated),
   });
-
   if (!response.ok) {
     throw new Error(`RAiD could not be updated`);
   }
@@ -184,7 +172,6 @@ export const transformBeforeUpdate = (raid: RaidDto): RaidDto => {
   if (raid?.date?.endDate === "") {
     raid.date.endDate = undefined;
   }
-
   if (raid?.title) {
     raid.title.forEach((title) => {
       if (title.endDate === "") {
@@ -192,7 +179,6 @@ export const transformBeforeUpdate = (raid: RaidDto): RaidDto => {
       }
     });
   }
-
   if (raid?.contributor) {
     raid.contributor.forEach((contributor) => {
       if (contributor.position) {
@@ -204,7 +190,6 @@ export const transformBeforeUpdate = (raid: RaidDto): RaidDto => {
       }
     });
   }
-
   if (raid?.organisation) {
     raid.organisation.forEach((organisation) => {
       if (organisation.role) {

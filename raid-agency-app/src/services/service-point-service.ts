@@ -48,12 +48,12 @@ export const servicePointService = {
         );
     },
     fetch: async (id: number): Promise<ServicePoint> => {
-        const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+        const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
         const response = await authService.fetchWithAuth(url.toString());
         return await response.json();
     },
     fetchWithMembers: async (id: number) => {
-        const servicePointUrl = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+        const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
         const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
         const members = new Map<string, ServicePointMember[]>();
 
@@ -107,7 +107,7 @@ export const servicePointService = {
         return await response.json();
     },
     update: async (data: UpdateServicePointRequest, id: number) => {
-        const url = new URL(`${API_CONSTANTS.SERVICE_POINT.BY_ID(id)}`);
+        const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
         const response = await fetch(url, {
             method: "PUT",
             body: JSON.stringify(data.servicePointUpdateRequest),
