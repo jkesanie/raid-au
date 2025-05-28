@@ -17,4 +17,18 @@ export const API_CONSTANTS = {
     RELATED_RAID_TITLE:(handle: string, environment: string) =>
       `https://static.${environment}.raid.org.au/raids/${handle}.json`,
   },
+  ORCID_CONTRIBUTORS: {
+    ALL: (subDomain: string, environment: string) =>
+      `https://${subDomain}.${environment}.raid.org.au/contributors`,
+  },
+  INVITE: {
+    SEND: (subDomain: string, environment: string) =>
+      `https://${subDomain}.${environment}.raid.org.au/invite`,
+    FETCH: (subDomain: string, environment: string) =>
+      `https://${subDomain}.${environment}.raid.org.au/invite/fetch`,
+    ACCEPT: (subDomain: string, environment: string) =>
+      `https://${subDomain}.${environment}.raid.org.au/invite/accept`,
+    REJECT: (subDomain: string, environment: string) =>
+      `https://${subDomain}.${environment}.raid.org.au/invite/reject`,
+  }
 };
