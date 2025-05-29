@@ -25,8 +25,6 @@ export const fetchRelatedRaidTitle = async ({
 
   if (environment) {
     const url = API_CONSTANTS.RAID.RELATED_RAID_TITLE(handle, environment);
-    console.log(`Fetching related RAID title from: ${url}`);
-    // Fetch the related RAID title from the static URL
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
