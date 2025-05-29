@@ -1,4 +1,4 @@
-import { TextInputField } from "@/fields/TextInputField";
+import { TextInputField } from "@/components/fields/TextInputField";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";

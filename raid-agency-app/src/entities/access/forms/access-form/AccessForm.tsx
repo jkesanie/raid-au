@@ -1,6 +1,6 @@
-import LanguageSelector from "@/fields/LanguageSelector";
-import { TextInputField } from "@/fields/TextInputField";
-import { TextSelectField } from "@/fields/TextSelectField";
+import LanguageSelector from "@/components/fields/LanguageSelector";
+import { TextInputField } from "@/components/fields/TextInputField";
+import { TextSelectField } from "@/components/fields/TextSelectField";
 import { RaidDto } from "@/generated/raid";
 import generalMapping from "@/mapping/data/general-mapping.json";
 import { Card, CardContent, CardHeader, Grid } from "@mui/material";

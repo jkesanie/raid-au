@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useContext, useEffect, useRef, useState,} from "react";
-import {keycloakInstance} from "@/keycloak";
+import {keycloakInstance} from "@/auth/keycloak";
 import {ErrorAlertComponent} from "@/components/error-alert-component";
 import {Loading} from "@/pages/loading";
 

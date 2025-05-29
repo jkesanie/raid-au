@@ -96,13 +96,18 @@ npm run test:e2e
 ## Project Structure
 
 - `src/`: Source code
+  - `auth/`: Authentication logic
   - `components/`: Reusable UI components
+  - `constants/`: Application constants
+  - `containers/`: Logic heavy components
   - `contexts/`: React contexts for state management
   - `entities/`: Entity-specific components and logic
+  - `error/`:  Error boundary component and logic
   - `generated/`: Generated TypeScript interfaces
-  - `keycloak/`: Authentication logic
+  - `mapping/`: Mapping context
   - `pages/`: Page components
   - `references/`: Reference data
+  - `routes/`: Application routes
   - `services/`: API services
   - `utils/`: Utility functions
 

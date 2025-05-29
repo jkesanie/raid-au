@@ -1,5 +1,5 @@
-import { TextInputField } from "@/fields/TextInputField";
-import { TextSelectField } from "@/fields/TextSelectField";
+import { TextInputField } from "@/components/fields/TextInputField";
+import { TextSelectField } from "@/components/fields/TextSelectField";
 import { RelatedRaid } from "@/generated/raid";
 import generalMapping from "@/mapping/data/general-mapping.json";
 import { fetchRelatedRaidTitle } from "@/services/related-raid";

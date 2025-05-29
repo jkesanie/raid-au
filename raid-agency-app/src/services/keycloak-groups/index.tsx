@@ -1,10 +1,9 @@
-import { getApiEndpoint } from "@/utils/api-utils/api-utils";
 import {authService} from "@/services/auth-service.ts";
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
 const keycloakGroupEndpoint = `${kcUrl}/realms/${kcRealm}/group`;
-const apiEndpoint = getApiEndpoint();
 
 export async function joinKeycloakGroup({
   token,
@@ -108,7 +107,7 @@ export async function fetchCurrentUserRor({
       throw new Error("Error: Keycloak token not set");
     }
 
-    const requestUrl = `${apiEndpoint}/service-point/`;
+    const requestUrl = API_CONSTANTS.SERVICE_POINT.ALL;
 
     const response = await authService.fetchWithAuth(requestUrl);
 

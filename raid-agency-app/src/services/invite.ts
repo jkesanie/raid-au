@@ -1,5 +1,6 @@
 import { getEnv } from "@/utils/api-utils/api-utils";
 import {authService} from "@/services/auth-service.ts";
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 let currentEnv = getEnv();
 if (currentEnv === "dev") {
@@ -21,7 +22,7 @@ export async function sendInvite({
   token: string;
 } & ({ email: string } | { orcid: string })) {
   const response = await authService.fetchWithAuth(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite`,
+    API_CONSTANTS.INVITE.SEND(subDomain, currentEnv),
     {
       method: "POST",
       body: JSON.stringify({
@@ -42,7 +43,7 @@ export async function sendInvite({
 
 export async function fetchInvites({ token }: { token: string }) {
   const response = await authService.fetchWithAuth(
-      `https://${subDomain}.${currentEnv}.raid.org.au/invite/fetch`
+      API_CONSTANTS.INVITE.FETCH(subDomain, currentEnv),
   );
   return await response.json();
 }
@@ -57,7 +58,7 @@ export async function acceptInvite({
   handle: string;
 }) {
   const response = await authService.fetchWithAuth(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite/accept`,
+    API_CONSTANTS.INVITE.ACCEPT(subDomain, currentEnv),
     {
       method: "POST",
       body: JSON.stringify({
@@ -79,7 +80,7 @@ export async function rejectInvite({
   handle: string;
 }) {
   const response = await authService.fetchWithAuth(
-    `https://${subDomain}.${currentEnv}.raid.org.au/invite/reject`,
+    API_CONSTANTS.INVITE.REJECT(subDomain, currentEnv),
     {
       method: "POST",
       body: JSON.stringify({

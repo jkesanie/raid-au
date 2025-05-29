@@ -1,6 +1,6 @@
 import { DisplayItem } from "@/components/display-item";
-import { CheckboxField } from "@/fields/CheckboxField";
-import { TextInputField } from "@/fields/TextInputField";
+import { CheckboxField } from "@/components/fields/CheckboxField";
+import { TextInputField } from "@/components/fields/TextInputField";
 import { Contributor } from "@/generated/raid";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";

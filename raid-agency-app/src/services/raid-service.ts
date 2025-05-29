@@ -1,16 +1,13 @@
 import {RaidDto} from "@/generated/raid";
-import {getApiEndpoint} from "@/utils/api-utils/api-utils.ts";
 import {authService} from "@/services/auth-service.ts";
 import {RaidHistoryType} from "@/pages/raid-history";
 import {transformBeforeUpdate} from "@/services/raid.ts";
-
-const endpoint = getApiEndpoint();
-const API_ENDPOINT = `${endpoint}/raid`;
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 export const raidService = {
     fetchAll: async (fields?: string[]) => {
         // the trailing slash is required for the API to work
-        const url = new URL(`${API_ENDPOINT}/`);
+        const url = new URL(API_CONSTANTS.RAID.ALL);
 
         if (fields?.length) {
             fields.forEach(field => url.searchParams.append("includeFields", field));
@@ -25,7 +22,7 @@ export const raidService = {
         return await response.json() as RaidDto[];
     },
     fetch: async (handle: string) => {
-        const url = `${API_ENDPOINT}/${handle}`;
+        const url = API_CONSTANTS.RAID.BY_HANDLE(handle);
         const response = await authService.fetchWithAuth(url);
 
         if (!response.ok) {
@@ -35,7 +32,7 @@ export const raidService = {
         return await response.json() as RaidDto;
     },
     fetchHistory: async (handle: string) => {
-        const url = `${API_ENDPOINT}/${handle}/history`;
+        const url = API_CONSTANTS.RAID.HISTORY(handle);
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -45,7 +42,7 @@ export const raidService = {
         return await response.json() as RaidHistoryType[];
     },
     create: async (raid: RaidDto) => {
-        const url = `${API_ENDPOINT}/`;
+        const url = API_CONSTANTS.RAID.ALL;
         const response = await authService.fetchWithAuth(url, {
             method: "POST",
             body: JSON.stringify(raid),
@@ -59,7 +56,7 @@ export const raidService = {
     },
     update: async (data: RaidDto, handle: string) => {
         const raidToBeUpdated = transformBeforeUpdate(data);
-        const url = `${API_ENDPOINT}/${handle}`;
+        const url = API_CONSTANTS.RAID.BY_HANDLE(handle);
         const response = await authService.fetchWithAuth(url, {
             method: "PUT",
             body: JSON.stringify(raidToBeUpdated),

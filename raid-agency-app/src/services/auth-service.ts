@@ -1,5 +1,5 @@
 // src/services/authService.ts
-import { keycloakInstance } from "@/keycloak";
+import { keycloakInstance } from "@/auth/keycloak";
 
 // Define roles as readonly const to ensure type safety
 export const REALM_ROLES = {
@@ -78,7 +78,7 @@ export const authService = {
         return keycloakInstance.token;
     },
 
-    get user(): any {
+    get user(): { id: string | undefined; roles: string[] } {
         return {
             id: keycloakInstance.subject,
             roles: keycloakInstance.realmAccess?.roles || [],
