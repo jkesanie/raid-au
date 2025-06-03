@@ -85,7 +85,7 @@ export function RelatedObjectDetailsForm({
               if (
                 window.confirm(
                   `Are you sure you want to delete ${label} # ${index + 1} ?`
-                )//ShortTerm Fix: Display the title of the item and its sequence number in the confirmation dialog
+                )//ShortTerm Fix: Display the title of the item and its corresponding sequence number in the confirmation dialog
               ) {
                 handleRemoveItem(index);
               }
