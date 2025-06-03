@@ -28,6 +28,7 @@ const baseContributorSchema = z.object({
   email: z.string().optional(),
   id: z
     .string()
+    .trim()
     .regex(new RegExp(orcidPattern), { message: orcidErrorMsg })
     .optional(),
   leader: z.boolean(),
@@ -43,6 +44,7 @@ export const singleContributorValidationSchema = z.union([
   baseContributorSchema.extend({
     id: z
       .string()
+      .trim()
       .regex(
         new RegExp("^https://orcid.org/\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"),
         { message: orcidErrorMsg }
