@@ -56,6 +56,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RaidServiceTest {
+    private static final String USER_ID = "user-id";
+
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"))
@@ -172,11 +174,15 @@ class RaidServiceTest {
 
         when(servicePointRepository.findById(servicePointId)).thenReturn(Optional.of(servicePointRecord));
 
-        final var result = raidService.update(updateRequest);
-        assertThat(result, Matchers.is(expected));
+        try (MockedStatic<TokenUtil> tokenUtil = Mockito.mockStatic(TokenUtil.class)) {
+            tokenUtil.when(TokenUtil::getUserId).thenReturn(USER_ID);
 
-        verify(dataciteService).update(updateRequest, handle, repositoryId, password);
-        verify(raidListenerService).createOrUpdate("https://raid.org.au/"  + handle, updateRequest.getContributor());
+            final var result = raidService.update(updateRequest, servicePointId);
+            assertThat(result, Matchers.is(expected));
+
+            verify(dataciteService).update(updateRequest, handle, repositoryId, password);
+            verify(raidListenerService).createOrUpdate("https://raid.org.au/" + handle, updateRequest.getContributor());
+        }
     }
 
     @Test
@@ -207,12 +213,16 @@ class RaidServiceTest {
 
         when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(expected));
 
-        final var result = raidService.update(updateRequest);
+        try (MockedStatic<TokenUtil> tokenUtil = Mockito.mockStatic(TokenUtil.class)) {
+            tokenUtil.when(TokenUtil::getUserId).thenReturn(USER_ID);
 
-        assertThat(result, Matchers.is(expected));
+            final var result = raidService.update(updateRequest, servicePointId);
 
-        verifyNoInteractions(dataciteService);
-        verifyNoInteractions(raidIngestService);
+            assertThat(result, Matchers.is(expected));
+
+            verifyNoInteractions(dataciteService);
+            verifyNoInteractions(raidIngestService);
+        }
     }
 
     @Test
