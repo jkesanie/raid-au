@@ -59,7 +59,7 @@ const RelatedObjectItemView = memo(
                 generalMap.get(String(category.id)) ?? "";
 
               return (
-                <Grid container spacing={2}>
+                <Grid container spacing={2} key={category.id}>
                   <DisplayItem
                     label="Position"
                     value={relatedObjectCategoryMappedValue}

@@ -156,6 +156,7 @@ class RaidServiceTest {
         final var servicePointId = 20_000_000L;
         final var repositoryId = "repository-id";
         final var password = "_password";
+        final var servicePointGroupId = "service-point-group-id";
 
         final var servicePointRecord = new ServicePointRecord()
                 .setRepositoryId(repositoryId)
@@ -172,10 +173,18 @@ class RaidServiceTest {
         when(raidHistoryService.save(updateRequest)).thenReturn(expected);
         when(raidIngestService.update(expected)).thenReturn(expected);
 
-        when(servicePointRepository.findById(servicePointId)).thenReturn(Optional.of(servicePointRecord));
+        try (MockedStatic<SecurityContextHolder> securityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            final var securityContext = mock(SecurityContext.class);
+            final var authentication = mock(JwtAuthenticationToken.class);
+            final var token = mock(Jwt.class);
+            final var claims = Map.<String, Object>of("service_point_group_id", servicePointGroupId);
 
-        try (MockedStatic<TokenUtil> tokenUtil = Mockito.mockStatic(TokenUtil.class)) {
-            tokenUtil.when(TokenUtil::getUserId).thenReturn(USER_ID);
+            securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.getToken()).thenReturn(token);
+            when(token.getClaims()).thenReturn(claims);
+
+            when(servicePointRepository.findById(servicePointId)).thenReturn(Optional.of(servicePointRecord));
 
             final var result = raidService.update(updateRequest, servicePointId);
             assertThat(result, Matchers.is(expected));
@@ -193,6 +202,7 @@ class RaidServiceTest {
         final var raidJson = raidJson();
         final var repositoryId = "repository-id";
         final var password = "_password";
+        final var servicePointGroupId = "service-point-group-id";
 
         final var servicePointRecord = new ServicePointRecord()
                 .setId(servicePointId)
@@ -213,8 +223,16 @@ class RaidServiceTest {
 
         when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(expected));
 
-        try (MockedStatic<TokenUtil> tokenUtil = Mockito.mockStatic(TokenUtil.class)) {
-            tokenUtil.when(TokenUtil::getUserId).thenReturn(USER_ID);
+        try (MockedStatic<SecurityContextHolder> securityContextHolder = mockStatic(SecurityContextHolder.class)) {
+            final var securityContext = mock(SecurityContext.class);
+            final var authentication = mock(JwtAuthenticationToken.class);
+            final var token = mock(Jwt.class);
+            final var claims = Map.<String, Object>of("service_point_group_id", servicePointGroupId);
+
+            securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.getToken()).thenReturn(token);
+            when(token.getClaims()).thenReturn(claims);
 
             final var result = raidService.update(updateRequest, servicePointId);
 

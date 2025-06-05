@@ -1,10 +1,10 @@
 import {Card, CardContent, CardHeader, Grid} from "@mui/material";
-import {TextSelectField} from "@/fields/TextSelectField.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {fetchServicePoints} from "@/services/service-points";
 import {useKeycloak} from "@/contexts/keycloak-context";
 import {FieldErrors} from "react-hook-form";
 import {RaidDto} from "@/generated/raid";
+import {TextSelectField} from "@/components/fields/TextSelectField.tsx";
 
 export const ServicePointForm = ({errors}: { errors: FieldErrors<RaidDto>}) => {
     const { authenticated, isInitialized, token } = useKeycloak();

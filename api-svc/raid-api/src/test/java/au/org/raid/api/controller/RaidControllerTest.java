@@ -322,7 +322,6 @@ class RaidControllerTest {
 
             securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
 
-
             mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input))
@@ -363,6 +362,7 @@ class RaidControllerTest {
                     .andExpect(jsonPath("$.organisation[0].role[0].endDate", Matchers.is(endDate.format(DateTimeFormatter.ISO_DATE))))
                     .andExpect(jsonPath("$.organisation[0].id", Matchers.is("https://ror.org/04qw24q55")))
                     .andExpect(jsonPath("$.organisation[0].schemaUri", Matchers.is(SchemaValues.ROR_SCHEMA_URI.getUri())));
+            verifyFindServicePointId.get();
         }
     }
 
@@ -390,7 +390,6 @@ class RaidControllerTest {
 
             securityContextHolder.when(SecurityContextHolder::getContext).thenReturn(securityContext);
 
-
             final MvcResult mvcResult = mockMvc.perform(put(String.format("/raid/%s/%s", PREFIX, SUFFIX))
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(input))
@@ -406,6 +405,8 @@ class RaidControllerTest {
             assertThat(failureResponse.getStatus(), Matchers.is(404));
             assertThat(failureResponse.getDetail(), Matchers.is("No RAiD was found with handle 10378.1/1696639."));
             assertThat(failureResponse.getInstance(), Matchers.is("https://raid.org.au"));
+
+            verifyFindServicePointId.get();
         }
     }
 

@@ -30,6 +30,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,6 +59,7 @@ public class SecurityConfig {
     private static final String ADMIN_RAIDS_CLAIM = "admin_raids";
     private static final String USER_RAIDS_CLAIM = "user_raids";
 
+    private final CorsConfigurationSource corsConfigurationSource;
     private final KeycloakLogoutHandler keycloakLogoutHandler;
     private final ServicePointService servicePointService;
     private final RaidHistoryService raidHistoryService;
@@ -65,7 +67,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeHttpRequests ->
+        http
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/swagger-ui*/**").permitAll()
@@ -115,6 +119,9 @@ public class SecurityConfig {
                 .logout(logout -> logout.addLogoutHandler(keycloakLogoutHandler).logoutSuccessUrl("/"));
 
         http.csrf(AbstractHttpConfigurer::disable);
+
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+
         return http.build();
     }
 

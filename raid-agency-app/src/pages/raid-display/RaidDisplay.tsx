@@ -1,29 +1,25 @@
-import { AnchorButtons } from "@/components/anchor-buttons";
-import type { Breadcrumb } from "@/components/breadcrumbs-bar";
-import { BreadcrumbsBar } from "@/components/breadcrumbs-bar";
-import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { RaidDto } from "@/generated/raid";
-import { Loading } from "@/pages/loading";
-import {
-  ExternalLinksDisplay,
-  RaidDisplayMenu,
-  RawDataDisplay,
-} from "@/pages/raid-display/components";
-import { fetchOneRaid } from "@/services/raid";
-import { displayItems } from "@/utils/data-utils/data-utils";
+import {AnchorButtons} from "@/components/anchor-buttons";
+import type {Breadcrumb} from "@/components/breadcrumbs-bar";
+import {BreadcrumbsBar} from "@/components/breadcrumbs-bar";
+import {ErrorAlertComponent} from "@/components/error-alert-component";
+import {RaidDto} from "@/generated/raid";
+import {Loading} from "@/pages/loading";
+import {ExternalLinksDisplay, RaidDisplayMenu, RawDataDisplay,} from "@/pages/raid-display/components";
+import {displayItems} from "@/utils/data-utils/data-utils";
 import {
   DocumentScanner as DocumentScannerIcon,
   HistoryEdu as HistoryEduIcon,
   Home as HomeIcon,
 } from "@mui/icons-material";
-import { Box, Container, Stack } from "@mui/material";
+import {Box, Container, Stack} from "@mui/material";
 
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import { MetadataDisplay } from "./components/MetadataDisplay";
-import { useKeycloak } from "@/contexts/keycloak-context";
+import {useAuthHelper} from "@/auth/keycloak/hooks/useAuthHelper";
+import {useQuery} from "@tanstack/react-query";
+import {useParams} from "react-router-dom";
+import {MetadataDisplay} from "./components/MetadataDisplay";
+import {useKeycloak} from "@/contexts/keycloak-context";
+import {raidService} from "@/services/raid-service.ts";
 import {ServicePointView} from "@/entities/service-point/views/service-point-view/ServicePointView.tsx";
-import {useAuthHelper} from "@/keycloak";
 
 export const RaidDisplay = () => {
   const { isOperator } = useAuthHelper();
@@ -31,13 +27,9 @@ export const RaidDisplay = () => {
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   const handle = `${prefix}/${suffix}`;
 
-  const readQuery = useQuery<RaidDto>({
+  const readQuery = useQuery({
     queryKey: ["raids", prefix, suffix],
-    queryFn: () =>
-      fetchOneRaid({
-        handle,
-        token: token!,
-      }),
+    queryFn: () => raidService.fetch(handle),
     enabled: isInitialized && authenticated,
   });
 

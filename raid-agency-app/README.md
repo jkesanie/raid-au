@@ -23,29 +23,51 @@ The RAiD Agency Application provides a comprehensive interface for researchers a
 
 ### First steps
 
-1. Clone the repository
-2. Create `.env` file from `.env.template`
-3. Adapt values in `.env` to match your infrastructure:
-   - `VITE_RAID_API_URL`: The URL for your RAiD API
-   - `VITE_KEYCLOAK_URL`: Your Keycloak server URL
-   - `VITE_KEYCLOAK_REALM`: Your Keycloak realm
-   - `VITE_KEYCLOAK_CLIENT_ID`: Your Keycloak client ID
+#### Prerequisites
 
-### Install dependencies
+- Clone the repository from https://github.com/au-research/raid-au
+- Ensure Java 17 is installed:
+  - Linux: `sudo apt install openjdk-17-jre-headless`
+  - macOS: `brew install openjdk@17`
+- Ensure Docker is installed and running
 
-```bash
-npm install
-```
+#### Backend Setup
 
-### Development Server
+1. Navigate to the root directory of the project
+2. Execute the following command to start all backend services:
+   ```
+   ./gradlew clean dockerComposeUp bootRun flywayClean flywayMigrate
+   ```
 
-Start the development server with:
+#### Frontend Setup
 
-```bash
-npm run dev
-```
+1. Open a new terminal window
+2. Navigate to the `raid-au/raid-agency-app` directory (the frontend component)
+3. Install the frontend dependencies:
+   ```
+   npm i
+   ```
+4. Duplicate `.env.template` as `.env` and set `VITE_KEYCLOAK_E2E_PASSWORD` to "password"
 
-This will start the application in development mode and open it in your default browser at `http://localhost:3000`.
+#### Keycloak Configuration
+
+1. Access Keycloak at http://localhost:8001 and log in with credentials: username "admin", password "admin"
+2. Change the realm from "master" to "raid" using the dropdown menu in the upper left corner
+3. Navigate to "Client scopes" in the left navigation menu and create a client scope named "web-origins"
+4. Within the newly created "web-origins" client scope, go to the "Mappers" tab
+5. Click "Add mapper" → "From predefined mappers" and select "allowed web origins"
+6. Navigate to "Clients" in the left sidebar and select the "raid-api" client
+7. Access the "Client scopes" tab and add the "web-origins" scope
+
+#### Starting the Application
+
+1. Ensure you are in the `raid-agency-app` directory
+2. Start the React application:
+   ```
+   npm run dev
+   ```
+3. Access the application at http://localhost:7080
+4. To log in, click any login button and use the credentials: username "raid-test-user", password "password"
 
 ### Build for Production
 
@@ -74,13 +96,18 @@ npm run test:e2e
 ## Project Structure
 
 - `src/`: Source code
+  - `auth/`: Authentication logic
   - `components/`: Reusable UI components
+  - `constants/`: Application constants
+  - `containers/`: Logic heavy components
   - `contexts/`: React contexts for state management
   - `entities/`: Entity-specific components and logic
+  - `error/`:  Error boundary component and logic
   - `generated/`: Generated TypeScript interfaces
-  - `keycloak/`: Authentication logic
+  - `mapping/`: Mapping context
   - `pages/`: Page components
   - `references/`: Reference data
+  - `routes/`: Application routes
   - `services/`: API services
   - `utils/`: Utility functions
 

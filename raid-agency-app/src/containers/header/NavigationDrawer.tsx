@@ -1,5 +1,5 @@
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { useAuthHelper } from "@/keycloak";
+import { useAuthHelper } from "@/auth/keycloak";
 import {
   Add as AddIcon,
   ExitToApp as ExitToAppIcon,

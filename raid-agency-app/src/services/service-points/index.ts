@@ -5,21 +5,19 @@
  * It handles fetching, creating, and updating service points, as well as managing
  * users associated with service points through Keycloak integration.
  */
-import { ServicePoint } from "@/generated/raid";
+import {ServicePoint} from "@/generated/raid";
 import {
   CreateServicePointRequest,
   ServicePointMember,
   ServicePointWithMembers,
   UpdateServicePointRequest,
 } from "@/types";
-import { getApiEndpoint } from "@/utils/api-utils/api-utils";
+import {authService} from "@/services/auth-service.ts";
+import { API_CONSTANTS } from "@/constants/apiConstants";
 
 // Keycloak configuration from environment variables
 const kcUrl = import.meta.env.VITE_KEYCLOAK_URL as string;
 const kcRealm = import.meta.env.VITE_KEYCLOAK_REALM as string;
-
-// Base API endpoint for service point operations
-const endpoint = getApiEndpoint();
 
 /**
  * Fetches all service points
@@ -32,12 +30,9 @@ export const fetchServicePoints = async ({
 }: {
   token: string;
 }): Promise<ServicePoint[]> => {
-  const url = new URL(`${endpoint}/service-point/`);
-  console.log('Requesting service points');
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
 
-  console.log(`Calling ${url}`);
-
-  const response = await fetch(url, {
+  const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -67,12 +62,12 @@ export const fetchServicePointsWithMembers = async ({
 }: {
   token: string;
 }): Promise<ServicePointWithMembers[]> => {
-  const servicePointUrl = new URL(`${endpoint}/service-point/`);
+  const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
 
   const members = new Map<string, ServicePointMember[]>();
 
-  const servicePointResponse = await fetch(servicePointUrl, {
+  const servicePointResponse = await authService.fetchWithAuth(servicePointUrl.toString(), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -84,7 +79,7 @@ export const fetchServicePointsWithMembers = async ({
   // Fetch members for each service point that has a groupId
   for (const servicePoint of servicePoints) {
     if (servicePoint.groupId) {
-      const servicePointMembersResponse = await fetch(
+      const servicePointMembersResponse = await authService.fetchWithAuth(
         `${servicePointMembersUrl}?groupId=${servicePoint.groupId}`,
         {
           method: "GET",
@@ -103,18 +98,16 @@ export const fetchServicePointsWithMembers = async ({
   }
 
   // Combine service points with their members
-  const servicePointsWithMembers = servicePoints.map(
-    (servicePoint: ServicePoint) => {
-      return {
-        ...servicePoint,
-        members: members.has(servicePoint?.groupId as string)
-          ? members.get(servicePoint.groupId as string)
-          : [],
-      };
-    }
+  return servicePoints.map(
+      (servicePoint: ServicePoint) => {
+        return {
+          ...servicePoint,
+          members: members.has(servicePoint?.groupId as string)
+              ? members.get(servicePoint.groupId as string)
+              : [],
+        };
+      }
   );
-
-  return servicePointsWithMembers;
 };
 
 /**
@@ -131,11 +124,11 @@ export const fetchServicePointWithMembers = async ({
   id: number;
   token: string;
 }): Promise<ServicePointWithMembers> => {
-  const servicePointUrl = new URL(`${endpoint}/service-point/${id}`);
+  const servicePointUrl = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
   const servicePointMembersUrl = `${kcUrl}/realms/${kcRealm}/group`;
   const members = new Map<string, ServicePointMember[]>();
 
-  const servicePointResponse = await fetch(servicePointUrl, {
+  const servicePointResponse = await authService.fetchWithAuth(servicePointUrl.toString(), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -153,7 +146,7 @@ export const fetchServicePointWithMembers = async ({
 
   // Fetch members if the service point has a groupId
   if (servicePoint.groupId) {
-    const servicePointMembersResponse = await fetch(
+    const servicePointMembersResponse = await authService.fetchWithAuth(
       `${servicePointMembersUrl}?groupId=${servicePoint.groupId}`,
       {
         method: "GET",
@@ -178,15 +171,13 @@ export const fetchServicePointWithMembers = async ({
   }
 
   // Combine service point with its members
-  const servicePointWithMembers = {
+  return {
     ...servicePoint,
     members:
-      servicePoint.groupId && members.has(servicePoint.groupId)
-        ? members.get(servicePoint.groupId)
-        : [],
+        servicePoint.groupId && members.has(servicePoint.groupId)
+            ? members.get(servicePoint.groupId)
+            : [],
   };
-
-  return servicePointWithMembers;
 };
 
 /**
@@ -203,9 +194,8 @@ export const fetchServicePoint = async ({
   id: number;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/${id}`);
-
-  const response = await fetch(url, {
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
+  const response = await authService.fetchWithAuth(url.toString(), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -229,9 +219,8 @@ export const createServicePoint = async ({
   data: CreateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/`);
-
-  const response = await fetch(url, {
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
+  const response = await authService.fetchWithAuth(url.toString(), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -259,9 +248,8 @@ export const updateServicePoint = async ({
   data: UpdateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
-  const url = new URL(`${endpoint}/service-point/${id}`);
-
-  const response = await fetch(url, {
+  const url = new URL(API_CONSTANTS.SERVICE_POINT.BY_ID(id));
+  const response = await authService.fetchWithAuth(url.toString(), {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -294,7 +282,7 @@ export const updateUserServicePointUserRole = async ({
 }): Promise<ServicePoint> => {
   const url = `${kcUrl}/realms/${kcRealm}/group`;
 
-  const response = await fetch(`${url}/${operation}`, {
+  const response = await authService.fetchWithAuth(`${url}/${operation}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -328,7 +316,7 @@ export const addUserToGroupAdmins = async ({
 }): Promise<ServicePoint> => {
   const url = `${kcUrl}/realms/${kcRealm}/group`;
 
-  const response = await fetch(`${url}/group-admin`, {
+  const response = await authService.fetchWithAuth(`${url}/group-admin`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -362,7 +350,7 @@ export const removeUserFromGroupAdmins = async ({
 }): Promise<ServicePoint> => {
   const url = `${kcUrl}/realms/${kcRealm}/group`;
 
-  const response = await fetch(`${url}/group-admin`, {
+  const response = await authService.fetchWithAuth(`${url}/group-admin`, {
     method: "DELETE",
     credentials: "include",
     headers: {
@@ -400,7 +388,7 @@ export const removeUserFromServicePoint = async ({
 }): Promise<void> => {
   // Step 1: Remove active group attribute
   const activeGroupUrl = `${kcUrl}/realms/${kcRealm}/group/active-group`;
-  const activeGroupResponse = await fetch(`${activeGroupUrl}`, {
+  const activeGroupResponse = await authService.fetchWithAuth(`${activeGroupUrl}`, {
     method: "DELETE",
     credentials: "include",
     headers: {
@@ -415,7 +403,7 @@ export const removeUserFromServicePoint = async ({
 
   // Step 2: Remove user from group
   const removeFromGroupUrl = `${kcUrl}/realms/${kcRealm}/group/leave`;
-  const removeFromGroupResponse = await fetch(`${removeFromGroupUrl}`, {
+  const removeFromGroupResponse = await authService.fetchWithAuth(`${removeFromGroupUrl}`, {
     method: "PUT",
     credentials: "include",
     headers: {

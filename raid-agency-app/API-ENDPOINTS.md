@@ -46,6 +46,7 @@ This document provides an overview of all API endpoints used by the RAID Agency 
 | `/group/revoke` | PUT | Revoke user access from service point | Body: `userId`, `groupId`<br>Headers: Authorization | Service point data |
 | `/group/group-admin` | PUT | Add user to group admins | Body: `userId`, `groupId`<br>Headers: Authorization | Service point data |
 | `/group/group-admin` | DELETE | Remove user from group admins | Body: `userId`, `groupId`<br>Headers: Authorization | Service point data |
+| `/group/active-group` | PUT | Add active group attribute | Body: `activeGroupId` <br>Headers: Authorization | No content |
 | `/group/active-group` | DELETE | Remove active group attribute | Body: `userId`<br>Headers: Authorization | No content |
 | `/group/leave` | PUT | Remove user from service point | Body: `userId`, `groupId`<br>Headers: Authorization | No content |
 

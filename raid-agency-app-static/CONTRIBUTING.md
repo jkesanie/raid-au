@@ -38,7 +38,6 @@ The project follows the Astro framework structure with some additional directori
 - `src/components/raid-components/`: Components specific to RAiD data display
 - `src/generated/raid/`: TypeScript interfaces for RAiD data models
 - `src/mapping/data/`: Mapping files for codes and identifiers
-- `src/services/`: Data services for fetching and processing RAiD data
 - `src/utils/`: Utility functions
 
 ### Component Development

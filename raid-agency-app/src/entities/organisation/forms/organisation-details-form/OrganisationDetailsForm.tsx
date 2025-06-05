@@ -1,6 +1,6 @@
-import { OrganisationLookupButton } from "@/components/organisation-lookup/OrganisationLookupButton";
-import { OrganisationLookupDialog } from "@/components/organisation-lookup/OrganisationLookupDialog";
-import { TextInputField } from "@/fields/TextInputField";
+import { OrganisationLookupButton } from "@/containers/organisation-lookup/OrganisationLookupButton";
+import { OrganisationLookupDialog } from "@/containers/organisation-lookup/OrganisationLookupDialog";
+import { TextInputField } from "@/components/fields/TextInputField";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -107,10 +107,8 @@ export function OrganisationDetailsForm({
             onClick={() => {
               if (
                 window.confirm(
-                  `Are you sure you want to delete ${label} "${getValues(
-                    `${key}.${index}.text`
-                  )}"?`
-                )
+                  `Are you sure you want to delete ${label} # ${index + 1} ?`
+                )//ShortTerm Fix: Display the title of the item and its corresponding sequence number in the confirmation dialog
               ) {
                 handleRemoveItem(index);
               }
