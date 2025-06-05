@@ -128,9 +128,7 @@ export const RaidForm = memo(
 
                   {isOperator && raidData.identifier?.id && (
                         <ServicePointForm
-                            control={control}
                             errors={formState.errors}
-                            trigger={trigger}
                         />
                   )}
 

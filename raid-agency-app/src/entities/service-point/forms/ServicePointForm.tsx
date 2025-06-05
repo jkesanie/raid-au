@@ -3,10 +3,11 @@ import {TextSelectField} from "@/fields/TextSelectField.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {fetchServicePoints} from "@/services/service-points";
 import {useKeycloak} from "@/contexts/keycloak-context";
+import {FieldErrors} from "react-hook-form";
+import {RaidDto} from "@/generated/raid";
 
-export const ServicePointForm = ({errors}) => {
+export const ServicePointForm = ({errors}: { errors: FieldErrors<RaidDto>}) => {
     const { authenticated, isInitialized, token } = useKeycloak();
-
 
     const servicePointsQuery = useQuery({
         queryKey: ["service-points"],
@@ -14,7 +15,7 @@ export const ServicePointForm = ({errors}) => {
             fetchServicePoints({
                 token: token!,
             }),
-        enabled: isInitialized && authenticated,
+        enabled: isInitialized && authenticated && !!token,
     });
 
     const options = servicePointsQuery.data?.map((servicePoint) => {
@@ -24,7 +25,15 @@ export const ServicePointForm = ({errors}) => {
         };
     })
 
-    const key = 'identifier.servicePoint';
+    const key = 'identifier.owner.servicePoint' as keyof FieldErrors<RaidDto>;
+
+    if (servicePointsQuery.isLoading) {
+        return <div>Loading service points...</div>;
+    }
+
+    if (servicePointsQuery.isError) {
+        return <div>Error loading service points</div>;
+    }
 
     return (
         <Card
@@ -34,17 +43,15 @@ export const ServicePointForm = ({errors}) => {
             }}
             id={key}
         >
-            <CardHeader title="Service Point">Service Point</CardHeader>
+            <CardHeader title="Service Point"/>
             <CardContent>
-                <Grid container spacing={2}>
-                    <TextSelectField
-                        name="identifier.owner.servicePoint"
-                        label="Service Point"
-                        required={true}
-                        width={3}
-                        options={options || []}
-                    />
-                </Grid>
+                <TextSelectField
+                    name="identifier.owner.servicePoint"
+                    label="Service Point"
+                    required={true}
+                    width={3}
+                    options={options || []}
+                />
             </CardContent>
         </Card>
     );

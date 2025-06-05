@@ -30,7 +30,7 @@ export const ServicePointView = ({servicePointId}: ServicePointViewProps) => {
     }
 
     // Ensure data exists before passing it to ServicePointDisplay
-    const servicePoint = servicePointsQuery.data.find((servicePoint) => {
+    const servicePoint = servicePointsQuery.data?.find((servicePoint) => {
         return servicePoint.id === servicePointId;
     });
 
@@ -41,7 +41,7 @@ export const ServicePointView = ({servicePointId}: ServicePointViewProps) => {
                 <Grid container spacing={2}>
                     <DisplayItem
                         label="Service Point"
-                        value={servicePoint.name || ''}
+                        value={servicePoint?.name || ''}
                         width={6}
                     />
                 </Grid>
