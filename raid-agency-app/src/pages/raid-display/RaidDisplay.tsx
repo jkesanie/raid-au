@@ -46,10 +46,6 @@ export const RaidDisplay = () => {
   }
 
   const raidData = readQuery.data;
-
-  console.log(`RAiD: ${JSON.stringify(raidData)}`);
-  console.log(`service point: ${JSON.stringify(raidData.identifier.owner.servicePoint)}`);
-
   const breadcrumbs: Breadcrumb[] = [
     {
       label: "Home",
@@ -90,7 +86,6 @@ export const RaidDisplay = () => {
                 />
             )}
             {isOperator && raidData?.identifier?.owner?.servicePoint && (
-
                 <ServicePointView servicePointId={raidData.identifier.owner.servicePoint} />
               )}
             {displayItems.map(({itemKey, Component, emptyValue}) => {

@@ -20,7 +20,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {ServicePointForm} from "@/entities/service-point/forms/ServicePointForm.tsx";
-import {useAuthHelper} from "@/keycloak";
+import {useAuthHelper} from "@/auth/keycloak";
 
 /**
  * Main form component for creating and editing RAIDs
@@ -108,17 +108,17 @@ export const RaidForm = memo(
                 </Fab>
               </Tooltip>
               <Tooltip title="Save changes" placement="left">
-                <Fab
-                    variant="extended"
-                    color="primary"
-                    component="button"
-                    type="submit"
-                    disabled={isSubmitting || !isFormValid}
-                    data-testid="save-raid-button"
-                >
-                  <SaveIcon sx={{mr: 1}}/>
-                  {isSubmitting ? "Saving..." : "Save"}
-                </Fab>
+                    <Fab
+                        variant="extended"
+                        color="primary"
+                        component="button"
+                        type="submit"
+                        disabled={isSubmitting || !isFormValid}
+                        data-testid="save-raid-button"
+                    >
+                      <SaveIcon sx={{mr: 1}}/>
+                      {isSubmitting ? "Saving..." : "Save"}
+                    </Fab>
               </Tooltip>
             </Stack>
 

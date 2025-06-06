@@ -3,7 +3,7 @@ import {useQuery} from "@tanstack/react-query";
 import {fetchServicePoints} from "@/services/service-points";
 import {useKeycloak} from "@/contexts/keycloak-context";
 import {DisplayItem} from "@/components/display-item";
-
+import {useMemo} from "react";
 
 interface ServicePointViewProps {
     servicePointId: number;
@@ -12,27 +12,31 @@ interface ServicePointViewProps {
 export const ServicePointView = ({servicePointId}: ServicePointViewProps) => {
     const {authenticated, isInitialized, token} = useKeycloak();
 
-    console.log("ServicePointView auth:", {authenticated, isInitialized, tokenAvailable: !!token});
-
-    // Use the same pattern as your working component
     const servicePointsQuery = useQuery({
         queryKey: ["service-points"],
         queryFn: () => fetchServicePoints({token: token!}),
-        enabled: isInitialized && authenticated && !!token, // Add explicit token check
+        enabled: isInitialized && authenticated && !!token,
     });
 
-    // Add defensive checks to prevent the error
-    console.log("service points:", servicePointsQuery.data);
+    // Move useMemo BEFORE any conditional returns
+    const servicePoint = useMemo(() => {
+        return servicePointsQuery.data?.find((servicePoint) => {
+            return servicePoint.id === servicePointId;
+        });
+    }, [servicePointsQuery.data, servicePointId]);
 
-    // If still loading, show loading state
+    // Now you can have conditional returns
     if (servicePointsQuery.isLoading) {
         return <div>Loading service points...</div>;
     }
 
-    // Ensure data exists before passing it to ServicePointDisplay
-    const servicePoint = servicePointsQuery.data?.find((servicePoint) => {
-        return servicePoint.id === servicePointId;
-    });
+    if (servicePointsQuery.isError) {
+        return <div>Error loading service points...</div>;
+    }
+
+    if (!servicePoint) {
+        return <div>Unable to find service point ({servicePointId})...</div>;
+    }
 
     return (
         <Card>
@@ -41,7 +45,7 @@ export const ServicePointView = ({servicePointId}: ServicePointViewProps) => {
                 <Grid container spacing={2}>
                     <DisplayItem
                         label="Service Point"
-                        value={servicePoint?.name || ''}
+                        value={servicePoint.name || ''}
                         width={6}
                     />
                 </Grid>

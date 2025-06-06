@@ -40,11 +40,7 @@ export const fetchServicePoints = async ({
     },
   });
 
-  const servicePoints = await response.json();
-
-  console.log(JSON.stringify(servicePoints));
-
-  return servicePoints;
+  return await response.json();
 };
 
 /**

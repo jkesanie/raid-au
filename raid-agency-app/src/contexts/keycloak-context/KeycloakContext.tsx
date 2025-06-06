@@ -64,13 +64,10 @@ export function KeycloakProvider({ children }: { children: ReactNode }) {
     try {
       const refreshed = await keycloakInstance.updateToken(60);
       if (refreshed) {
-        console.log("Token refreshed successfully");
         setRefreshTokenWarning(false);
-      } else {
-        console.log("Token still valid, no need to refresh");
       }
     } catch (error) {
-      console.log("Failed to refresh token", error);
+      console.error("Failed to refresh token", error);
       setRefreshTokenWarning(true);
     }
   }
