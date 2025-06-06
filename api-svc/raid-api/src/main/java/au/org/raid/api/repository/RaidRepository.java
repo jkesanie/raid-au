@@ -113,8 +113,7 @@ public class RaidRepository {
                 .distinctOn(RAID.HANDLE)
                 .from(RAID)
                 .join(RAID_HISTORY).on(RAID_HISTORY.HANDLE.eq(RAID.HANDLE))
-                .and(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
-                )
+                .and(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1))
                 .fetchInto(RaidRecord.class);
     }
 

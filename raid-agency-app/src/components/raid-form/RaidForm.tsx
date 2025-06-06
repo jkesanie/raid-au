@@ -19,6 +19,8 @@ import { Fab, Stack, Tooltip } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import {ServicePointForm} from "@/entities/service-point/forms/ServicePointForm.tsx";
+import {useAuthHelper} from "@/auth/keycloak";
 
 /**
  * Main form component for creating and editing RAIDs
@@ -47,7 +49,8 @@ export const RaidForm = memo(
     prefix: string;
     suffix: string;
   }) => {
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
+      const { isOperator } = useAuthHelper();
+      const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const formMethods = useForm<RaidDto>({
       defaultValues: raidData,
@@ -76,129 +79,136 @@ export const RaidForm = memo(
     }, [isInitialLoad]);
 
     return (
-      <FormProvider {...formMethods}>
-        <form
-          onSubmit={formMethods.handleSubmit(handleSubmit)}
-          autoComplete="off"
-          noValidate
-        >
-          <Stack
-            gap={2}
-            sx={{
-              position: "fixed",
-              bottom: "16px",
-              right: "16px",
-              zIndex: 1000,
-            }}
-            alignItems="end"
+        <FormProvider {...formMethods}>
+          <form
+              onSubmit={formMethods.handleSubmit(handleSubmit)}
+              autoComplete="off"
+              noValidate
           >
-            <Tooltip title="Cancel" placement="left">
-              <Fab
-                component={Link}
-                color="primary"
-                size="small"
-                to={
-                  raidData?.identifier?.id ? `/raids/${prefix}/${suffix}` : "/"
-                }
-              >
-                <CloseIcon />
-              </Fab>
-            </Tooltip>
-            <Tooltip title="Save changes" placement="left">
-              <Fab
-                variant="extended"
-                color="primary"
-                component="button"
-                type="submit"
-                disabled={isSubmitting || !isFormValid}
-                data-testid="save-raid-button"
-              >
-                <SaveIcon sx={{ mr: 1 }} />
-                {isSubmitting ? "Saving..." : "Save"}
-              </Fab>
-            </Tooltip>
-          </Stack>
-
-          <Stack spacing={2} data-testid="raid-form">
-            <AnchorButtons raidData={raidData} errors={formState.errors} />
-            <Stack spacing={2}>
-              <DateForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <TitlesForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <DescriptionsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <ContributorsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-                data={raidData.contributor || []}
-              />
-
-              <OrganisationsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <RelatedObjectsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <AlternateIdentifiersForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <AlternateUrlsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <RelatedRaidsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <AccessForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <SubjectsForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
-
-              <SpatialCoveragesForm
-                control={control}
-                errors={formState.errors}
-                trigger={trigger}
-              />
+            <Stack
+                gap={2}
+                sx={{
+                  position: "fixed",
+                  bottom: "16px",
+                  right: "16px",
+                  zIndex: 1000,
+                }}
+                alignItems="end"
+            >
+              <Tooltip title="Cancel" placement="left">
+                <Fab
+                    component={Link}
+                    color="primary"
+                    size="small"
+                    to={
+                      raidData?.identifier?.id ? `/raids/${prefix}/${suffix}` : "/"
+                    }
+                >
+                  <CloseIcon/>
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Save changes" placement="left">
+                    <Fab
+                        variant="extended"
+                        color="primary"
+                        component="button"
+                        type="submit"
+                        disabled={isSubmitting || !isFormValid}
+                        data-testid="save-raid-button"
+                    >
+                      <SaveIcon sx={{mr: 1}}/>
+                      {isSubmitting ? "Saving..." : "Save"}
+                    </Fab>
+              </Tooltip>
             </Stack>
-          </Stack>
-          <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
-        </form>
-      </FormProvider>
+
+            <Stack spacing={2} data-testid="raid-form">
+              <AnchorButtons raidData={raidData} errors={formState.errors}/>
+              <Stack spacing={2}>
+
+                  {isOperator && raidData.identifier?.id && (
+                        <ServicePointForm
+                            errors={formState.errors}
+                        />
+                  )}
+
+                <DateForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <TitlesForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <DescriptionsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <ContributorsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                    data={raidData.contributor || []}
+                />
+
+                <OrganisationsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <RelatedObjectsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <AlternateIdentifiersForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <AlternateUrlsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <RelatedRaidsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <AccessForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <SubjectsForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+
+                <SpatialCoveragesForm
+                    control={control}
+                    errors={formState.errors}
+                    trigger={trigger}
+                />
+              </Stack>
+            </Stack>
+            <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
+          </form>
+        </FormProvider>
     );
   }
 );

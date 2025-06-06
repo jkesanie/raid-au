@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static au.org.raid.api.util.TokenUtil.OPERATOR_ROLE;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -47,7 +49,6 @@ public class RaidService {
     private static final String SERVICE_POINT_USER_ROLE = "ROLE_service-point-user";
     private static final String RAID_USER_ROLE = "ROLE_raid-user";
     private static final String RAID_ADMIN_ROLE = "ROLE_raid-admin";
-    private static final String OPERATOR_ROLE = "operator";
     public static final String SERVICE_POINT_GROUP_ID_CLAIM = "service_point_group_id";
 
     private final DataciteService dataciteSvc;

@@ -39,6 +39,7 @@ export const fetchServicePoints = async ({
       Authorization: `Bearer ${token}`,
     },
   });
+
   return await response.json();
 };
 
