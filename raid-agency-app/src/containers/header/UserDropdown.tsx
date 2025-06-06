@@ -1,9 +1,10 @@
 import { ErrorAlertComponent } from "@/components/error-alert-component";
-import { useSnackbar } from "@/components/snackbar";
+import { SnackbarContextInterface, useSnackbar } from "@/components/snackbar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
 import { fetchCurrentUserKeycloakGroups } from "@/services/keycloak-groups";
 import { KeycloakGroup } from "@/types";
+import { copyToClipboardWithNotification } from "@/utils/copy-utils/copyWithNotify";
 import {
   AccountCircle as AccountCircleIcon,
   ExitToApp as ExitToAppIcon,
@@ -129,10 +130,15 @@ export function UserDropdown() {
             <MenuList dense>
               {tokenParsed?.email && (
                 <MenuItem
-                  onClick={() => {
-                    navigator.clipboard.writeText(tokenParsed?.email || "");
-                    snackbar?.openSnackbar(`✅ Copied value to clipboard`);
-                  }}
+                  onClick={async () => {
+                      await copyToClipboardWithNotification(
+                        tokenParsed?.email || "",
+                        "✅ Copied email to clipboard",
+                        snackbar as SnackbarContextInterface
+                      );
+                    handleAccountMenuClose();
+                    }
+                  }
                 >
                   <ListItemText
                     primary="Email"
@@ -141,10 +147,15 @@ export function UserDropdown() {
                 </MenuItem>
               )}
               <MenuItem
-                onClick={() => {
-                  navigator.clipboard.writeText(tokenParsed?.sub || "");
-                  snackbar?.openSnackbar(`✅ Copied value to clipboard`);
-                }}
+                onClick={async () => {
+                    await copyToClipboardWithNotification(
+                      tokenParsed?.sub || "",
+                      "✅ Copied identity to clipboard",
+                      snackbar as SnackbarContextInterface
+                    );
+                  handleAccountMenuClose();
+                  }
+                }
               >
                 <ListItemText primary="Identity" secondary={tokenParsed?.sub} />
               </MenuItem>

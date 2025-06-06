@@ -19,7 +19,7 @@ export const RaidTable = ({ title }: { title?: string }) => {
 
   const raidQuery = useQuery({
     queryKey: ["listRaids"],
-    queryFn: () => raidService.fetchAll(["identifier", "title", "date"]),
+    queryFn: () => raidService.fetchAll([]),
     enabled: isInitialized && authenticated,
   });
 
