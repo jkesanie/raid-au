@@ -19,7 +19,7 @@ import {
   UseFormTrigger,
   useFieldArray,
 } from "react-hook-form";
-
+import { Title} from "@/generated/raid";
 export function TitlesForm({
   control,
   errors,
@@ -40,7 +40,7 @@ export function TitlesForm({
   const errorMessage = errors[key]?.message;
 
   const handleAddItem = () => {
-    append(generator());
+    append(generator(fields as unknown as [Title]));
     trigger(key);
   };
 
