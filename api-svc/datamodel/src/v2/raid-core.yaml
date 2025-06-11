@@ -170,7 +170,7 @@ classes:
           - value: https://raid.org/xxx.yyy/zzz
         exact_mappings:
           - dct:identifier
-          - schema:value
+          - schema:identifier
       schemaUri:
         description: The URI of the Identifier scheme. For example, https://raid.org
         required: true
