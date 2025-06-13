@@ -143,7 +143,7 @@ export const raidRequest = (data: RaidDto): RaidDto => {
     access: data?.access || ({} as Access),
     alternateUrl: data?.alternateUrl || ([] as AlternateUrl[]),
     relatedRaid: data?.relatedRaid || ([] as RelatedRaid[]),
-    date: dateCleaner(data?.date) || ({} as ModelDate),
+    date: dateCleaner(data?.date) ?? ({} as ModelDate),
     contributor: data?.contributor || ([] as Contributor[]),
     alternateIdentifier:
       data?.alternateIdentifier || ([] as AlternateIdentifier[]),
