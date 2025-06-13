@@ -25,41 +25,22 @@ public class ServicePointRecordFactory {
     }
 
     public ServicePointRecord create(final ServicePointCreateRequest servicePoint) {
-
-        final var identifierOwner = Optional.ofNullable(servicePoint.getIdentifierOwner())
-                .map(String::trim)
-                .orElse(null);
-
-        final var adminEmail = Optional.ofNullable(servicePoint.getAdminEmail())
-                .map(String::trim)
-                .orElse(null);
-
-        final var techEmail = Optional.ofNullable(servicePoint.getTechEmail())
-                .map(String::trim)
-                .orElse(null);
-
-        final var repositoryId = Optional.ofNullable(servicePoint.getRepositoryId())
-                .map(String::trim)
-                .orElse(null);
-
-        final var prefix = Optional.ofNullable(servicePoint.getPrefix())
-                .map(String::trim)
-                .orElse(null);
-
-        final var groupId = Optional.ofNullable(servicePoint.getGroupId())
-                .map(String::trim)
-                .orElse(null);
-
         return new ServicePointRecord()
                 .setName(servicePoint.getName())
-                .setIdentifierOwner(identifierOwner)
-                .setAdminEmail(adminEmail)
-                .setTechEmail(techEmail)
+                .setIdentifierOwner(trim(servicePoint.getIdentifierOwner()))
+                .setAdminEmail(trim(servicePoint.getAdminEmail()))
+                .setTechEmail(trim(servicePoint.getTechEmail()))
                 .setAppWritesEnabled(servicePoint.getAppWritesEnabled())
                 .setEnabled(servicePoint.getEnabled())
-                .setRepositoryId(repositoryId)
-                .setPrefix(prefix)
+                .setRepositoryId(trim(servicePoint.getRepositoryId()))
+                .setPrefix(trim(servicePoint.getPrefix()))
                 .setPassword(servicePoint.getPassword())
-                .setGroupId(groupId);
+                .setGroupId(trim(servicePoint.getGroupId()));
+    }
+
+    private String trim(final String value) {
+        return Optional.ofNullable(value)
+                .map(String::trim)
+                .orElse(null);
     }
 }
