@@ -1,0 +1,226 @@
+id: https://schema.org/
+name: researchproject
+version: 2
+prefixes:
+  linkml: https://w3id.org/linkml/
+  schema: http://schema.org/
+  raid: https://datamodel.raid.org/core/
+  raidext: https://datamodel.raid.org/extended/
+imports:
+  - linkml:types
+
+classes:
+  Any:
+    class_uri: linkml:Any
+  ResearchProject:
+    attributes:
+      identifier:
+        required: true
+        multivalued: true
+        range: Any
+        any_of:
+          - range: string
+          - range: AlternativeIdentifier
+      additionalProperty:
+        range: Any
+        any_of:
+          - range: RegistrationAgency
+          - range: Owner
+          - range: TraditionalKnowledgeLabel
+      foundingDate:
+        required: true
+        range: date
+      dissolutionDate:
+        range: date
+      name:
+        required: true
+        range: string
+        description: Latest primary title value
+      alternateName:
+        range: string
+        description: Other than current primary title value
+      description:
+        range: Any
+        multivalued: true
+        any_of:
+          - range: string
+          - range: Description
+        description: Primary description or the only description is added as string.
+      member:
+        range: Any
+        any_of:
+          - range: Person
+          - range: Organisation
+        multivalued: true
+      member_of:
+        range: Any
+        any_of:
+          - range: ContributorPosition
+          - range: ContributorRole
+          - range: OrganisationRole
+        multivalued: true
+      isRelatedTo:
+        range: Any
+        any_of:
+          - range: RelatedObject
+          - range: RelatedRaid
+      url:
+        range: string
+      keywords:
+        range: Subject
+      location:
+        range: SpatialCoverage
+  TraditionalKnowledgeLabel:
+    class_uri: schema:PropertyValue
+    attributes:
+      value:
+        required: true
+        range: string
+      propertyID:
+        required: true
+        range: TraditionalKnowledgeLabelPropertyEnum
+  SpatialCoverage:
+    class_uri: schema:Place
+    attributes:
+      identifier:
+        required: true
+        range: string
+      name:
+        range: string
+  Subject:
+    class_uri: schema:DefinedTerm
+    attributes:
+      termCode:
+        required: true
+        range: string
+      inDefinedTermSet:
+        required: true
+        range: string
+      alternateName:
+        range: string
+        multivalued: true
+
+  AlternativeIdentifier:
+    class_uri: schema:PropertyValue
+    attributes:
+      value:
+        required: true
+        range: string
+      propertyID:
+        required: true
+        range: AlternativeIdentifierPropertyEnum
+      additionalType:
+        range: string
+  RelatedRaid:
+    class_uri: schema:Thing
+    attributes:
+      id:
+        required: true
+        range: string
+      additionalType:
+        range: string
+  RelatedObject:
+    class_uri: schema:Thing
+    attributes:
+      url:
+        required: true
+        range: string
+      additionalType:
+        multivalued: true
+        range: string
+  Organisation:
+    class_uri: schema:Organization
+    attributes:
+      identifier:
+        required: true
+        range: string
+  OrganisationRole:
+    class_uri: schema:OrganizationRole
+    attributes:
+      roleName:
+        required: true
+        range: string
+      startDate:
+        required: true
+        range: date
+      endDate:
+        range: date
+      member:
+        required: true
+        range: Organisation
+
+  Person:
+    class_uri: schema:Person
+    attributes:
+      identifier:
+        range: string
+        multivalued: true
+      email:
+        range: string
+      memberOf:
+        required: true
+        range: string
+        description: Value is the ResearchProject.Identifier.id
+  ContributorPosition:
+    class_uri: schema:Role
+    attributes:
+      roleName:
+        required: true
+        range: string
+      startDate:
+        range: date
+      endDate:
+        range: date
+      member:
+        required: true
+        range: Person
+  ContributorRole:
+    class_uri: schema:Role
+    attributes:
+      roleName:
+        required: true
+        range: string
+      member:
+        required: true
+        range: Person
+
+  Description:
+    class_uri: schema:TextObject
+    attributes:
+      additionalType:
+        range: string
+      inLanguage:
+        range: string
+
+  RegistrationAgency:
+    class_uri: schema:PropertyValue
+    attributes:
+      value:
+        required: true
+        range: string
+      propertyID:
+        required: true
+        range: RegistrationAgencyPropertyEnum
+
+  Owner:
+    class_uri: schema:PropertyValue
+    attributes:
+      value:
+        required: true
+        range: string
+      propertyID:
+        required: true
+        range: OwnerPropertyEnum
+enums:
+  RegistrationAgencyPropertyEnum:
+    permissible_values:
+      https://datamodel.raid.org/core/registrationAgency:
+  OwnerPropertyEnum:
+    permissible_values:
+      https://datamodel.raid.org/core/owner:
+  AlternativeIdentifierPropertyEnum:
+    permissible_values:
+      https://datamodel.raid.org/core/alternativeIdentifier:
+  TraditionalKnowledgeLabelPropertyEnum:
+    permissible_values:
+      https://datamodel.raid.org/core/traditionalKnowledgeLabel:
