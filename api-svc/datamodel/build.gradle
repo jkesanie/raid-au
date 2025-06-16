@@ -106,10 +106,12 @@ tasks.register('generateStrictJsonSchemaV2', AddStaticEnums) {
 
 tasks.register('generateAllV2') {
   dependsOn "generateStrictJsonSchemaV2"
+  dependsOn "generateJSONSchemaV2ResearchProject"
   dependsOn "generateExtendedReferenceDataV2"
   dependsOn "generateReferenceDataV2"
   dependsOn "generateSchemaDocsV2"
   dependsOn "generateDatamodelDocsV2"
+  dependsOn "generateSchemaOrgDocsV2"
 
 
 }
