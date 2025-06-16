@@ -161,7 +161,7 @@ export const raidRequest = (data: RaidDto): RaidDto => {
  * for creating a new RAID, with generated default values for required fields.
  */
 export const newRaid: RaidCreateRequest = {
-  title: [titleDataGenerator()],
+  title: [titleDataGenerator([{} as Title])],
   date: dateDataGenerator(),
   access: accessDataGenerator(),
   organisation: [],
