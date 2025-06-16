@@ -53,7 +53,7 @@ function createEditRaidPageBreadcrumbs({
 }
 
 export const RaidEdit = () => {
-  const { openErrorDialog} = useErrorDialog();
+  const { openErrorDialog } = useErrorDialog();
   const { authenticated, isInitialized, token, tokenParsed } = useKeycloak();
   const navigate = useNavigate();
 

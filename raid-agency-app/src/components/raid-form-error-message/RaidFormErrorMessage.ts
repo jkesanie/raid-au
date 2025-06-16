@@ -33,7 +33,6 @@ export const RaidFormErrorMessage = (
     messageParsed = JSON.parse(error.message);
   } catch (parseError) {
     // If parsing fails, handle the error message as a plain string
-    console.warn('Failed to parse error message as JSON:', parseError);
     message.failures.push(error.message);
   }
 
