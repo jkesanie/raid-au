@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class DataciteTypesFactory {
     public DataciteTypes create() {
         return new DataciteTypes()
+                .setResourceType("RAiD")
                 .setResourceTypeGeneral(ResourceTypeGeneral.PROJECT.getName());
     }
 }
