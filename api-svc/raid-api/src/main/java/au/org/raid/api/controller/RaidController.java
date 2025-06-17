@@ -3,6 +3,7 @@ package au.org.raid.api.controller;
 import au.org.raid.api.dto.RaidPermissionsDto;
 import au.org.raid.api.exception.ServicePointNotFoundException;
 import au.org.raid.api.exception.ValidationException;
+import au.org.raid.api.service.Handle;
 import au.org.raid.api.service.RaidHistoryService;
 import au.org.raid.api.service.RaidIngestService;
 import au.org.raid.api.service.ServicePointService;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -144,6 +143,20 @@ public class RaidController implements RaidApi {
                                                           @PathVariable final String suffix) {
 
         return ResponseEntity.of(raidService.getPermissions(prefix, suffix));
+    }
+
+    @PostMapping("/raid/post-to-datacite")
+    public ResponseEntity<RaidDto> postToDatacite(@Valid @RequestBody final RaidDto raidDto) {
+        final var handle = new Handle(raidDto.getIdentifier().getId());
+
+        // return bad request if not a doi
+        if (!handle.toString().startsWith("10.")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        raidService.postToDatacite(raidDto);
+
+        return ResponseEntity.noContent().build();
     }
 
     @Override

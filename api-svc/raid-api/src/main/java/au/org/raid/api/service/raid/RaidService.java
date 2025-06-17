@@ -23,6 +23,7 @@ import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.RaidCreateRequest;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import au.org.raid.idl.raidv2.model.RaidUpdateRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -263,5 +264,18 @@ public class RaidService {
                 contributor.setStatus(existingContributor.getStatus());
             }
         });
+    }
+
+    public void postToDatacite(@Valid RaidDto raid) {
+        final var handle = new Handle(raid.getIdentifier().getId());
+
+        //TODO: Check prefix
+
+        final var servicePointId = raid.getIdentifier().getOwner().getServicePoint();
+
+        final var servicePointRecord = servicePointRepository.findById(servicePointId)
+                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
+
+        dataciteSvc.update(raid, handle.toString(), servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
     }
 }

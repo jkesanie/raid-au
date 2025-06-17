@@ -87,9 +87,10 @@ public class SecurityConfig {
                 // Upgrade endpoints
                 .requestMatchers(GET, "/upgradable/all").hasRole(RAID_UPGRADER_ROLE)
                 .requestMatchers(POST, "/upgrade").hasRole(RAID_UPGRADER_ROLE)
+                .requestMatchers(POST, RAID_API + "/post-to-datacite").hasRole(RAID_UPGRADER_ROLE)
 
                 // RAID API endpoints
-                .requestMatchers(GET, RAID_API + "/all-public").hasRole(RAID_DUMPER_ROLE)
+                .requestMatchers(GET, RAID_API + "/all-public").hasAnyRole(RAID_DUMPER_ROLE, RAID_UPGRADER_ROLE)
                 .requestMatchers(GET, RAID_API + "/**").access(raidAuthorizationService.createReadAccessManager())
                 .requestMatchers(POST, RAID_API + "/**").hasAnyRole(SERVICE_POINT_USER_ROLE, RAID_ADMIN_ROLE)
                 .requestMatchers(PUT, RAID_API + "/**").access(raidAuthorizationService.createWriteAccessManager())

@@ -131,7 +131,6 @@ public class RaidRepository {
                 .fetchInto(RaidRecord.class);
     }
 
-
     public List<RaidRecord> findAllByOrganisationId(final String ror) {
         return dslContext.select()
                 .from(RAID)
