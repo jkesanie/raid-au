@@ -13,8 +13,12 @@ classes:
   Any:
     class_uri: linkml:Any
   ResearchProject:
+    exact_mappings:
+      - raid:RaidDto
     attributes:
       identifier:
+        exact_mappings:
+          - raid:id
         required: true
         multivalued: true
         range: Any
@@ -28,18 +32,28 @@ classes:
           - range: Owner
           - range: TraditionalKnowledgeLabel
       foundingDate:
+        close_mappings:
+          - raid:startDate
         required: true
         range: date
       dissolutionDate:
+        close_mappings:
+          - raid:endDate
         range: date
       name:
+        exact_mappings:
+          - raid:text
         required: true
         range: string
         description: Latest primary title value
       alternateName:
+        exact_mappings:
+          - raid:text
         range: string
         description: Other than current primary title value
       description:
+        exact_mappings:
+          - raid:text
         range: Any
         multivalued: true
         any_of:
@@ -65,45 +79,70 @@ classes:
           - range: RelatedObject
           - range: RelatedRaid
       url:
+        exact_mappings:
+          - raid:url
         range: string
       keywords:
+        exact_mappings:
+          - raidext:subject
         range: Subject
       location:
+        exact_mappings:
+          - raidext:spatialCoverage
         range: SpatialCoverage
   TraditionalKnowledgeLabel:
+    narrow_mappings:
+      - raidext:TraditionalKnowledgeLabel
     class_uri: schema:PropertyValue
     attributes:
       value:
+        narrow_mappings:
+          - raid:id
         required: true
         range: string
       propertyID:
         required: true
         range: TraditionalKnowledgeLabelPropertyEnum
   SpatialCoverage:
+    close_mappings:
+      - raidext:SpatialCoverage
     class_uri: schema:Place
     attributes:
       identifier:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       name:
+        exact_mappings:
+          - raid:text
         range: string
   Subject:
+    exact_mappings:
+      - raidext:Subject
     class_uri: schema:DefinedTerm
     attributes:
       termCode:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       inDefinedTermSet:
+        close_mappings:
+          - raid:schemaUri
         required: true
         range: string
       alternateName:
+        close_mappings:
+          raid:text
         range: string
         multivalued: true
-
   AlternativeIdentifier:
     class_uri: schema:PropertyValue
     attributes:
       value:
+        narrow_mappings:
+          - raid:id
         required: true
         range: string
       propertyID:
@@ -129,55 +168,82 @@ classes:
         multivalued: true
         range: string
   Organisation:
+    exact_mappings:
+      - raid:Organisation
     class_uri: schema:Organization
     attributes:
       identifier:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
   OrganisationRole:
     class_uri: schema:OrganizationRole
     attributes:
       roleName:
+        exact_mappings:
+          raid:id
         required: true
         range: string
       startDate:
+        exact_mappings:
+          - raid:startDate
         required: true
         range: date
       endDate:
+        exact_mappings:
+          - raid:endDate
         range: date
       member:
         required: true
         range: Organisation
-
   Person:
+    exact_mappings:
+      raid:Contributor
     class_uri: schema:Person
     attributes:
       identifier:
+        exact_mappings:
+          - raid:id
         range: string
         multivalued: true
       email:
+        exact_mappings:
+          - raid:email
         range: string
       memberOf:
         required: true
         range: string
         description: Value is the ResearchProject.Identifier.id
   ContributorPosition:
+    narrow_mappings:
+      - raid:ContributorPosition
     class_uri: schema:Role
     attributes:
       roleName:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       startDate:
+        exact_mappings:
+          - raid:startDate
         range: date
       endDate:
+        exact_mappings:
+          - raid:endDate
         range: date
       member:
         required: true
         range: Person
   ContributorRole:
+    narrow_mappings:
+      - raid:ContributorRole
     class_uri: schema:Role
     attributes:
       roleName:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       member:
@@ -185,17 +251,27 @@ classes:
         range: Person
 
   Description:
+    exact_mappings:
+      - raid:Description
     class_uri: schema:TextObject
     attributes:
       additionalType:
+        narrow_mappings:
+          - raid:type
         range: string
       inLanguage:
+        exact_mappings:
+          - raid:language
         range: string
 
   RegistrationAgency:
+    narrow_mappings:
+      - raid:Owner
     class_uri: schema:PropertyValue
     attributes:
       value:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       propertyID:
@@ -203,9 +279,13 @@ classes:
         range: RegistrationAgencyPropertyEnum
 
   Owner:
+    narrow_mappings:
+      - raid:Owner
     class_uri: schema:PropertyValue
     attributes:
       value:
+        exact_mappings:
+          - raid:id
         required: true
         range: string
       propertyID:
