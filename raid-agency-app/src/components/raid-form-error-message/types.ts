@@ -24,3 +24,8 @@ export interface ParsedErrorMessage {
   title?: string;
   failures?: Failure[];
 }
+
+export interface ErrorItem {
+  message?: string;
+  text?: { message?: string };
+}
