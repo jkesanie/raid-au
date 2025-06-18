@@ -21,6 +21,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {ServicePointForm} from "@/entities/service-point/forms/ServicePointForm.tsx";
 import {useAuthHelper} from "@/auth/keycloak";
+import { useErrorDialog } from "@/components/error-dialog";
+import { transformErrorMessage } from "../raid-form-error-message/ErrorContentUtils";
 
 /**
  * Main form component for creating and editing RAIDs
@@ -49,9 +51,9 @@ export const RaidForm = memo(
     prefix: string;
     suffix: string;
   }) => {
-      const { isOperator } = useAuthHelper();
-      const [isInitialLoad, setIsInitialLoad] = useState(true);
-
+    const { isOperator } = useAuthHelper();
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const { openErrorDialog } = useErrorDialog();
     const formMethods = useForm<RaidDto>({
       defaultValues: raidData,
       resolver: zodResolver(RaidValidationSchema),
@@ -64,9 +66,8 @@ export const RaidForm = memo(
 
     const handleSubmit = useCallback(
       (data: RaidDto) => {
-        if (formState.errors) {
-          console.log(formState.errors);
-        }
+        // This function is called when the form is submitted
+        // and all validations pass
         onSubmit(data);
       },
       [onSubmit]
@@ -77,6 +78,14 @@ export const RaidForm = memo(
         setIsInitialLoad(false);
       }
     }, [isInitialLoad]);
+
+    useEffect(() => {
+      if (Object.keys(formState.errors).length > 0) {
+        openErrorDialog(transformErrorMessage(formState.errors));
+      }
+      // This effect runs when there are validation errors
+      // and opens an error dialog with the transformed error message
+    }, [formState.errors, openErrorDialog]);
 
     return (
         <FormProvider {...formMethods}>
