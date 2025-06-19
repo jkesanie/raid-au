@@ -13,10 +13,12 @@ classes:
   Any:
     class_uri: linkml:Any
   ResearchProject:
+    class_uri: schema:ResearchProject
     exact_mappings:
       - raid:RaidDto
     attributes:
       identifier:
+        slot_uri: schema:identifier
         exact_mappings:
           - raid:id
         required: true
@@ -24,271 +26,329 @@ classes:
         range: Any
         any_of:
           - range: string
-          - range: AlternativeIdentifier
+          - range: AlternativeIdentifierSchemaOrg
       additionalProperty:
+        slot_uri: schema:additionalProperty
         range: Any
         any_of:
-          - range: RegistrationAgency
-          - range: Owner
-          - range: TraditionalKnowledgeLabel
+          - range: RegistrationAgencySchemaOrg
+          - range: OwnerSchemaOrg
+          - range: TraditionalKnowledgeLabelSchemaOrg
       foundingDate:
+        slot_uri: schema:foundingDate
         close_mappings:
           - raid:startDate
         required: true
         range: date
       dissolutionDate:
+        slot_uri: schema:dissolutionDate
         close_mappings:
           - raid:endDate
         range: date
       name:
+        slot_uri: schema:name
         exact_mappings:
           - raid:text
         required: true
         range: string
         description: Latest primary title value
       alternateName:
+        slot_uri: schema:alternateName
         exact_mappings:
           - raid:text
         range: string
         description: Other than current primary title value
       description:
+        slot_uri: schema:description
         exact_mappings:
           - raid:text
         range: Any
         multivalued: true
         any_of:
           - range: string
-          - range: Description
+          - range: DescriptionSchemaOrg
         description: Primary description or the only description is added as string.
       member:
+        slot_uri: schema:member
         range: Any
         any_of:
-          - range: Person
-          - range: Organisation
+          - range: PersonSchemaOrg
+          - range: OrganisationSchemaOrg
         multivalued: true
       member_of:
+        slot_uri: schema:member_of
         range: Any
         any_of:
-          - range: ContributorPosition
-          - range: ContributorRole
-          - range: OrganisationRole
+          - range: ContributorPositionSchemaOrg
+          - range: ContributorRoleSchemaOrg
+          - range: OrganisationRoleSchemaOrg
         multivalued: true
       isRelatedTo:
+        slot_uri: schema:isRelatedTo
         range: Any
         any_of:
-          - range: RelatedObject
-          - range: RelatedRaid
+          - range: RelatedObjectSchemaOrg
+          - range: RelatedRaidSchemaOrg
       url:
+        slot_uri: schema:url
         exact_mappings:
           - raid:url
         range: string
       keywords:
+        slot_uri: schema:keywords
         exact_mappings:
           - raidext:subject
-        range: Subject
+        range: SubjectSchemaOrg
       location:
+        slot_uri: schema:location
         exact_mappings:
           - raidext:spatialCoverage
-        range: SpatialCoverage
-  TraditionalKnowledgeLabel:
+        range: SpatialCoverageSchemaOrg
+  TraditionalKnowledgeLabelSchemaOrg:
+    title: TraditionalKnowledgeLabel
     narrow_mappings:
       - raidext:TraditionalKnowledgeLabel
     class_uri: schema:PropertyValue
     attributes:
       value:
+        slot_uri: schema:value
         narrow_mappings:
           - raid:id
         required: true
         range: string
       propertyID:
+        slot_uri: schema:propertyID
         required: true
         range: TraditionalKnowledgeLabelPropertyEnum
-  SpatialCoverage:
+  SpatialCoverageSchemaOrg:
+    title: SpatialCoverage
     close_mappings:
       - raidext:SpatialCoverage
     class_uri: schema:Place
     attributes:
       identifier:
+        slot_uri: schema:identifier
         exact_mappings:
           - raid:id
         required: true
         range: string
       name:
+        slot_uri: schema:name
         exact_mappings:
           - raid:text
         range: string
-  Subject:
+  SubjectSchemaOrg:
+    title: Subject
     exact_mappings:
       - raidext:Subject
     class_uri: schema:DefinedTerm
     attributes:
       termCode:
+        slot_uri: schema:termCode
         exact_mappings:
           - raid:id
         required: true
         range: string
       inDefinedTermSet:
+        slot_uri: schema:inDefinedTermSet
         close_mappings:
           - raid:schemaUri
         required: true
         range: string
       alternateName:
+        slot_uri: schema:alternateName
         close_mappings:
           raid:text
         range: string
         multivalued: true
-  AlternativeIdentifier:
+  AlternativeIdentifierSchemaOrg:
+    title: AlternativeIdentifier
     class_uri: schema:PropertyValue
     attributes:
       value:
+        slot_uri: schema:value
         narrow_mappings:
           - raid:id
         required: true
         range: string
       propertyID:
+        slot_uri: schema:propertyID
         required: true
         range: AlternativeIdentifierPropertyEnum
       additionalType:
         range: string
-  RelatedRaid:
+  RelatedRaidSchemaOrg:
+    title: RelatedRaid
     class_uri: schema:Thing
     attributes:
-      id:
+      identifier:
+        slot_uri: schema:identifier
         required: true
         range: string
       additionalType:
         range: string
-  RelatedObject:
+  RelatedObjectSchemaOrg:
+    title: RelatedObject
     class_uri: schema:Thing
     attributes:
       url:
+        slot_uri: schema:url
         required: true
         range: string
       additionalType:
+        slot_uri: schema:additionalType
         multivalued: true
         range: string
-  Organisation:
+  OrganisationSchemaOrg:
+    title: Organisation
     exact_mappings:
       - raid:Organisation
     class_uri: schema:Organization
     attributes:
       identifier:
+        slot_uri: schema:identifier
         exact_mappings:
           - raid:id
         required: true
         range: string
-  OrganisationRole:
+  OrganisationRoleSchemaOrg:
+    title: OrganisationRole
     class_uri: schema:OrganizationRole
     attributes:
       roleName:
+        slot_uri: schema:roleName
         exact_mappings:
           raid:id
         required: true
         range: string
       startDate:
+        slot_uri: schema:startDate
         exact_mappings:
           - raid:startDate
         required: true
         range: date
       endDate:
+        slot_uri: schema:endDate
         exact_mappings:
           - raid:endDate
         range: date
       member:
+        slot_uri: schema:member
         required: true
-        range: Organisation
-  Person:
+        range: OrganisationSchemaOrg
+  PersonSchemaOrg:
+    title: Person
     exact_mappings:
       raid:Contributor
     class_uri: schema:Person
     attributes:
       identifier:
+        slot_uri: schema:identifier
         exact_mappings:
           - raid:id
         range: string
         multivalued: true
       email:
+        slot_uri: schema:email
         exact_mappings:
           - raid:email
         range: string
       memberOf:
+        slot_uri: schema:memberOf
         required: true
         range: string
         description: Value is the ResearchProject.Identifier.id
-  ContributorPosition:
+  ContributorPositionSchemaOrg:
+    title: ContributorPosition
     narrow_mappings:
       - raid:ContributorPosition
     class_uri: schema:Role
     attributes:
       roleName:
+        slot_uri: schema:roleName
         exact_mappings:
           - raid:id
         required: true
         range: string
       startDate:
+        slot_uri: schema:startDate
         exact_mappings:
           - raid:startDate
         range: date
       endDate:
+        slot_uri: schema:endDate
         exact_mappings:
           - raid:endDate
         range: date
       member:
+        slot_uri: schema:member
         required: true
-        range: Person
-  ContributorRole:
+        range: PersonSchemaOrg
+  ContributorRoleSchemaOrg:
+    title: ContributorRole
     narrow_mappings:
       - raid:ContributorRole
     class_uri: schema:Role
     attributes:
       roleName:
+        slot_uri: schema:roleName
         exact_mappings:
           - raid:id
         required: true
         range: string
       member:
+        slot_uri: schema:member
         required: true
-        range: Person
+        range: PersonSchemaOrg
 
-  Description:
+  DescriptionSchemaOrg:
+    title: Description
     exact_mappings:
       - raid:Description
     class_uri: schema:TextObject
     attributes:
       additionalType:
+        slot_uri: schema:additionalType
         narrow_mappings:
           - raid:type
         range: string
       inLanguage:
+        slot_uri: schema:inLanguage
         exact_mappings:
           - raid:language
         range: string
 
-  RegistrationAgency:
+  RegistrationAgencySchemaOrg:
+    title: RegistrationAgency
     narrow_mappings:
       - raid:Owner
     class_uri: schema:PropertyValue
     attributes:
       value:
+        slot_uri: schema:value
         exact_mappings:
           - raid:id
         required: true
         range: string
       propertyID:
+        slot_uri: schema:propertyID
         required: true
         range: RegistrationAgencyPropertyEnum
 
-  Owner:
+  OwnerSchemaOrg:
+    title: Owner
     narrow_mappings:
       - raid:Owner
     class_uri: schema:PropertyValue
     attributes:
       value:
+        slot_uri: schema:value
         exact_mappings:
           - raid:id
         required: true
         range: string
       propertyID:
+        slot_uri: schema:propertyID
         required: true
         range: OwnerPropertyEnum
 enums:
