@@ -3509,7 +3509,7 @@
 
 <h1 id="description">description</h1>
 <p><em>Primary description or the only description is added as string.</em></p>
-<p>URI: <a href="https://schema.org/slot/description">https://schema.org/slot/description</a>
+<p>URI: <a href="http://schema.org/description">schema:description</a>
 Alias: description</p>
 <!-- no inheritance hierarchy -->
 
@@ -3533,7 +3533,7 @@ Alias: description</p>
 <h2 id="properties">Properties</h2>
 <ul>
 <li>
-<p>Range: <a href="../../classes/Any/">Any</a>&nbsp;or&nbsp;<br /><a href="../../types/String/">String</a>&nbsp;or&nbsp;<br /><a href="../../classes/Description/">Description</a></p>
+<p>Range: <a href="../../classes/Any/">Any</a>&nbsp;or&nbsp;<br /><a href="../../types/String/">String</a>&nbsp;or&nbsp;<br /><a href="../../classes/DescriptionSchemaOrg/">DescriptionSchemaOrg</a></p>
 </li>
 <li>
 <p>Multivalued: True</p>
@@ -3550,11 +3550,15 @@ Alias: description</p>
 <tbody>
 <tr>
 <td>self</td>
-<td>https://schema.org/description</td>
+<td>schema:description</td>
 </tr>
 <tr>
 <td>native</td>
 <td>https://schema.org/description</td>
+</tr>
+<tr>
+<td>exact</td>
+<td>raid:text</td>
 </tr>
 </tbody>
 </table>
@@ -3563,7 +3567,10 @@ Alias: description</p>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">description</span>
 <span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Primary description or the only description is added as string.</span>
 <span class="nt">from_schema</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://schema.org/</span>
+<span class="nt">exact_mappings</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">raid:text</span>
 <span class="nt">rank</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="nt">slot_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schema:description</span>
 <span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">description</span>
 <span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ResearchProject</span>
 <span class="nt">domain_of</span><span class="p">:</span>
@@ -3572,7 +3579,7 @@ Alias: description</p>
 <span class="nt">multivalued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">any_of</span><span class="p">:</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Description</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DescriptionSchemaOrg</span>
 </code></pre></div>
 </details>
 
