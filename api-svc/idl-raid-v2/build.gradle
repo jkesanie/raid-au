@@ -34,13 +34,13 @@ import au.raid.org.api.*
 
 tasks.register('assembleOpenAPIV2Specs', AssembleOpenAPI) {
   openAPITemplateFile = file("src/template-raid-openapi-3.1.yaml")
-  generatedSchemaFile = file("../datamodel/generated/v2/raid-jsonschema.json")
+  generatedSchemaFiles = [file("../datamodel/generated/v2/raid-jsonschema.json"), file("../datamodel/generated/v2/researchproject.json")]
   outputFile = file("src/raid-openapi-3.1.yaml")
 }
 
 tasks.register('assembleOpenAPIV2InternalSpecs', AssembleOpenAPI) {
   openAPITemplateFile = file("src/template-raid-openapi-3.1.yaml")
-  generatedSchemaFile = file("../datamodel/generated/v2/raid-strict-jsonschema.json")
+  generatedSchemaFiles = [file("../datamodel/generated/v2/raid-jsonschema.json"), file("../datamodel/generated/v2/researchproject.json")]
   outputFile = file("src/raid-openapi-strict-3.1.yaml")
 }
 
