@@ -735,25 +735,29 @@ components:
       type: "object"
     ContributorPosition:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema sub-block describing a contributor’s administrative\
+        \ position on a project or activity"
       properties:
         endDate:
-          format: "date"
+          description: "date the contributor terminated position associated with the\
+            \ project or activity"
           type:
           - "string"
           - "null"
-        member:
-          $ref: "#/components/schemas/Person"
-        roleName:
-          type: "string"
+        id:
+          $ref: "#/components/schemas/ContributorPositionIdEnum"
+          description: "a contributor’s administrative position in the project"
+        schemaUri:
+          $ref: "#/components/schemas/ContributorPositionSchemaUriEnum"
+          description: "the URI of the position schema used"
         startDate:
-          format: "date"
-          type:
-          - "string"
-          - "null"
+          description: "date the contributor began position associated with the project\
+            \ or activity"
+          type: "string"
       required:
-      - "roleName"
-      - "member"
+      - "startDate"
+      - "id"
+      - "schemaUri"
       title: "ContributorPosition"
       type: "object"
     ContributorPositionIdEnum:
@@ -768,13 +772,15 @@ components:
       additionalProperties: false
       description: ""
       properties:
-        member:
-          $ref: "#/components/schemas/Person"
-        roleName:
-          type: "string"
+        id:
+          $ref: "#/components/schemas/ContributorRoleIdEnum"
+          description: "a contributor’s (person) role(s) on the Project"
+        schemaUri:
+          $ref: "#/components/schemas/ContributorRoleSchemaUriEnum"
+          description: "the URI of the role schema used"
       required:
-      - "roleName"
-      - "member"
+      - "id"
+      - "schemaUri"
       title: "ContributorRole"
       type: "object"
     ContributorRoleIdEnum:
@@ -815,16 +821,25 @@ components:
       type: "object"
     Description:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema block containing the description of the RAiD\
+        \ and associated properties"
       properties:
-        additionalType:
-          type:
-          - "string"
-          - "null"
-        inLanguage:
-          type:
-          - "string"
-          - "null"
+        language:
+          anyOf:
+          - $ref: "#/components/schemas/Language"
+          - type: "null"
+          description: "a metadata schema block declaring the language of the text"
+        text:
+          description: "the text of an access statement that explains any restrictions\
+            \ on access"
+          pattern: "^\\s*\\S.*$"
+          type: "string"
+        type:
+          $ref: "#/components/schemas/DescriptionType"
+          description: "a metadata schema block declaring the type of description"
+      required:
+      - "type"
+      - "text"
       title: "Description"
       type: "object"
     DescriptionType:
@@ -932,34 +947,54 @@ components:
       type: "object"
     Organisation:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema block containing the organisation associated\
+        \ with a RAiD and its associated properties"
       properties:
-        identifier:
+        id:
+          description: "an organisation associated with a project or activity"
+          pattern: "^\\s*\\S.*$"
           type: "string"
+        role:
+          description: "a metadata schema sub-block describing an organisation’s role\
+            \ on a project"
+          items:
+            $ref: "#/components/schemas/OrganisationRole"
+          type: "array"
+        schemaUri:
+          $ref: "#/components/schemas/OrganizationSchemaUriEnum"
+          description: "the URI of the organisation identifier schema"
       required:
-      - "identifier"
+      - "id"
+      - "schemaUri"
+      - "role"
       title: "Organisation"
       type: "object"
     OrganisationRole:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema sub-block describing an organisation’s role\
+        \ on a project"
       properties:
         endDate:
-          format: "date"
+          description: "the date that the organisation terminated a role associated\
+            \ with the project or activity"
           type:
           - "string"
           - "null"
-        member:
-          $ref: "#/components/schemas/Organisation"
-        roleName:
-          type: "string"
+        id:
+          $ref: "#/components/schemas/OrganizationRoleIdEnum"
+          description: "the organisation’s role"
+        schemaUri:
+          $ref: "#/components/schemas/OrganizationRoleSchemaUriEnum"
+          description: "the URI of the role schema used"
         startDate:
-          format: "date"
+          description: "the date that the organisation began a role associated with\
+            \ the project or activity"
+          pattern: "^\\s*\\S.*$"
           type: "string"
       required:
-      - "roleName"
       - "startDate"
-      - "member"
+      - "id"
+      - "schemaUri"
       title: "OrganisationRole"
       type: "object"
     OrganizationRoleIdEnum:
@@ -978,13 +1013,25 @@ components:
       additionalProperties: false
       description: ""
       properties:
-        propertyID:
-          $ref: "#/components/schemas/OwnerPropertyEnum"
-        value:
+        id:
+          description: "the persistent identifier of the legal entity responsible\
+            \ for the RAiD (i.e. the ‘owner’ of a RAiD); as recognised by their Registration\
+            \ Agency"
+          pattern: "^https:\\/\\/ror[.]org/.*$"
           type: "string"
+        schemaUri:
+          $ref: "#/components/schemas/RegistrationAgencySchemaURIEnum"
+          description: "the URI of the identifier scheme that is used to identify\
+            \ RAiD owners"
+        servicePoint:
+          description: "the Service Point (SP) that requested the RAiD. SPs belong\
+            \ to an owner, RAiD owners can have multiple SPs; SPs do not need to be\
+            \ legal entities"
+          type: "number"
       required:
-      - "value"
-      - "propertyID"
+      - "id"
+      - "schemaUri"
+      - "servicePoint"
       title: "Owner"
       type: "object"
     RaidCreateRequest:
@@ -1276,15 +1323,21 @@ components:
       type: "object"
     RegistrationAgency:
       additionalProperties: false
-      description: ""
+      description: "metadata schema sub-block declaring the Registration Agency that\
+        \ minted the RAiD."
       properties:
-        propertyID:
-          $ref: "#/components/schemas/RegistrationAgencyPropertyEnum"
-        value:
+        id:
+          description: "the persistent identifier of the RAiD Registration Agency\
+            \ that minted the RAiD"
+          pattern: "^https:\\/\\/ror[.]org/.*$"
           type: "string"
+        schemaUri:
+          $ref: "#/components/schemas/RegistrationAgencySchemaURIEnum"
+          description: "the URI of the identifier scheme that is used to identify\
+            \ RAiD Registration Agencies"
       required:
-      - "value"
-      - "propertyID"
+      - "id"
+      - "schemaUri"
       title: "RegistrationAgency"
       type: "object"
     RegistrationAgencySchemaURIEnum:
@@ -1293,18 +1346,33 @@ components:
       type: "string"
     RelatedObject:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema block containing inputs, outputs, and process\
+        \ documents related to a RAiD plus associated properties"
       properties:
-        additionalType:
+        category:
+          description: "a metadata schema sub-block declaring that a relatedObject\
+            \ is an input, output and/or process document"
           items:
-            type: "string"
-          type:
-          - "array"
-          - "null"
-        url:
+            $ref: "#/components/schemas/RelatedObjectCategory"
+          type: "array"
+        id:
+          description: "any (a) input or resource used by a project or activity, (b)\
+            \ output or product created by a project or activity, and/or (c) internal\
+            \ process documentation used within a project or activity, that is identified\
+            \ by a persistent identifier (PID)."
+          pattern: "^\\s*\\S.*$"
           type: "string"
+        schemaUri:
+          $ref: "#/components/schemas/RelatedObjectSchemaUriEnum"
+          description: "The URI of the relatedObject identifier schema"
+        type:
+          $ref: "#/components/schemas/RelatedObjectType"
+          description: "a metadata schema sub-block describing a relatedObject’s type"
       required:
-      - "url"
+      - "id"
+      - "schemaUri"
+      - "type"
+      - "category"
       title: "RelatedObject"
       type: "object"
     RelatedObjectCategory:
@@ -1360,16 +1428,20 @@ components:
       type: "string"
     RelatedRaid:
       additionalProperties: false
-      description: ""
+      description: "a metadata schema block containing related RAiDs and qualifying\
+        \ the relationship"
       properties:
-        additionalType:
-          type:
-          - "string"
-          - "null"
         id:
+          description: "a subsidiary or otherwise related RAiD"
+          pattern: "^\\s*\\S.*$"
           type: "string"
+        type:
+          $ref: "#/components/schemas/RelatedRaidType"
+          description: "a metadata schema sub-block qualifying the relationship with\
+            \ a related Raid"
       required:
       - "id"
+      - "type"
       title: "RelatedRaid"
       type: "object"
     RelatedRaidType:
@@ -1399,16 +1471,28 @@ components:
       type: "string"
     SpatialCoverage:
       additionalProperties: false
-      description: ""
+      description: "metadata schema block containing information about any spatial\
+        \ region(s) or named place(s) targeted by the project"
       properties:
-        identifier:
+        id:
+          description: "spatial region or named place that is the subject or target\
+            \ of the project or activity. Repeat this property as necessary to indicate\
+            \ different locations. Do not duplicate organisational locations"
           type: "string"
-        name:
+        place:
+          description: "metadata schema sub-block containing free-text place names\
+            \ or descriptions plus associated metadata properties"
+          items:
+            $ref: "#/components/schemas/SpatialCoveragePlace"
           type:
-          - "string"
+          - "array"
           - "null"
+        schemaUri:
+          $ref: "#/components/schemas/SpatialCoverageSchemaUriEnum"
+          description: "the URI of the geolocation schema used for spatialCoverage"
       required:
-      - "identifier"
+      - "id"
+      - "schemaUri"
       title: "SpatialCoverage"
       type: "object"
     SpatialCoveragePlace:
@@ -1436,21 +1520,26 @@ components:
       type: "string"
     Subject:
       additionalProperties: false
-      description: ""
+      description: "metadata schema block containing the subject area of the RAiD\
+        \ plus associated properties"
       properties:
-        alternateName:
+        id:
+          description: "identifier (URI) for a subject area or classification code\
+            \ describing the project or activity"
+          type:
+          - "string"
+          - "null"
+        keyword:
+          description: "metadata schema sub-block containing free-text keyword describing\
+            \ a project plus associated properties"
           items:
-            type: "string"
+            $ref: "#/components/schemas/SubjectKeyword"
           type:
           - "array"
           - "null"
-        inDefinedTermSet:
-          type: "string"
-        termCode:
-          type: "string"
-      required:
-      - "termCode"
-      - "inDefinedTermSet"
+        schemaUri:
+          $ref: "#/components/schemas/SubjectSchemaURIEnum"
+          description: "the URI of the subject identifier schema"
       title: "Subject"
       type: "object"
     SubjectKeyword:
@@ -1534,22 +1623,33 @@ components:
       type: "string"
     TraditionalKnowledgeLabel:
       additionalProperties: false
-      description: ""
+      description: "metadata schema block containing information about Traditional\
+        \ Knowledge / Biocultural Labels and Notices"
       properties:
-        propertyID:
-          $ref: "#/components/schemas/TraditionalKnowledgeLabelPropertyEnum"
-        value:
-          type: "string"
-      required:
-      - "value"
-      - "propertyID"
+        id:
+          description: "identifier (URI) linking to a verified source for Traditional\
+            \ Knowledge (TK) or Biocultural (BC) Labels or Notices pertaining to a\
+            \ project or activity"
+          type:
+          - "string"
+          - "null"
+        schemaUri:
+          $ref: "#/components/schemas/TraditionalKnowledgeLabelSchemaUriEnum"
+          description: "the URI of the Traditional Knowledge or Biocultural label\
+            \ identifier schema"
       title: "TraditionalKnowledgeLabel"
       type: "object"
     TraditionalKnowledgeLabelSchemaUriEnum:
       description: ""
       title: "TraditionalKnowledgeLabelSchemaUriEnum"
       type: "string"
-    AlternativeIdentifier:
+    AlternativeIdentifierPropertyEnum:
+      description: ""
+      enum:
+      - "https://datamodel.raid.org/core/alternativeIdentifier"
+      title: "AlternativeIdentifierPropertyEnum"
+      type: "string"
+    AlternativeIdentifierSchemaOrg:
       additionalProperties: false
       description: ""
       properties:
@@ -1564,14 +1664,8 @@ components:
       required:
       - "value"
       - "propertyID"
-      title: "AlternativeIdentifier"
+      title: "AlternativeIdentifierSchemaOrg"
       type: "object"
-    AlternativeIdentifierPropertyEnum:
-      description: ""
-      enum:
-      - "https://datamodel.raid.org/core/alternativeIdentifier"
-      title: "AlternativeIdentifierPropertyEnum"
-      type: "string"
     Any:
       additionalProperties: true
       description: ""
@@ -1582,13 +1676,108 @@ components:
       - "object"
       - "number"
       - "string"
+    ContributorPositionSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        endDate:
+          format: "date"
+          type:
+          - "string"
+          - "null"
+        member:
+          $ref: "#/components/schemas/PersonSchemaOrg"
+        roleName:
+          type: "string"
+        startDate:
+          format: "date"
+          type:
+          - "string"
+          - "null"
+      required:
+      - "roleName"
+      - "member"
+      title: "ContributorPositionSchemaOrg"
+      type: "object"
+    ContributorRoleSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        member:
+          $ref: "#/components/schemas/PersonSchemaOrg"
+        roleName:
+          type: "string"
+      required:
+      - "roleName"
+      - "member"
+      title: "ContributorRoleSchemaOrg"
+      type: "object"
+    DescriptionSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        additionalType:
+          type:
+          - "string"
+          - "null"
+        inLanguage:
+          type:
+          - "string"
+          - "null"
+      title: "DescriptionSchemaOrg"
+      type: "object"
+    OrganisationRoleSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        endDate:
+          format: "date"
+          type:
+          - "string"
+          - "null"
+        member:
+          $ref: "#/components/schemas/OrganisationSchemaOrg"
+        roleName:
+          type: "string"
+        startDate:
+          format: "date"
+          type: "string"
+      required:
+      - "roleName"
+      - "startDate"
+      - "member"
+      title: "OrganisationRoleSchemaOrg"
+      type: "object"
+    OrganisationSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        identifier:
+          type: "string"
+      required:
+      - "identifier"
+      title: "OrganisationSchemaOrg"
+      type: "object"
     OwnerPropertyEnum:
       description: ""
       enum:
       - "https://datamodel.raid.org/core/owner"
       title: "OwnerPropertyEnum"
       type: "string"
-    Person:
+    OwnerSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        propertyID:
+          $ref: "#/components/schemas/OwnerPropertyEnum"
+        value:
+          type: "string"
+      required:
+      - "value"
+      - "propertyID"
+      title: "OwnerSchemaOrg"
+      type: "object"
+    PersonSchemaOrg:
       additionalProperties: false
       description: ""
       properties:
@@ -1607,7 +1796,7 @@ components:
           type: "string"
       required:
       - "memberOf"
-      title: "Person"
+      title: "PersonSchemaOrg"
       type: "object"
     RegistrationAgencyPropertyEnum:
       description: ""
@@ -1615,15 +1804,58 @@ components:
       - "https://datamodel.raid.org/core/registrationAgency"
       title: "RegistrationAgencyPropertyEnum"
       type: "string"
+    RegistrationAgencySchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        propertyID:
+          $ref: "#/components/schemas/RegistrationAgencyPropertyEnum"
+        value:
+          type: "string"
+      required:
+      - "value"
+      - "propertyID"
+      title: "RegistrationAgencySchemaOrg"
+      type: "object"
+    RelatedObjectSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        additionalType:
+          items:
+            type: "string"
+          type:
+          - "array"
+          - "null"
+        url:
+          type: "string"
+      required:
+      - "url"
+      title: "RelatedObjectSchemaOrg"
+      type: "object"
+    RelatedRaidSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        additionalType:
+          type:
+          - "string"
+          - "null"
+        identifier:
+          type: "string"
+      required:
+      - "identifier"
+      title: "RelatedRaidSchemaOrg"
+      type: "object"
     ResearchProject:
       additionalProperties: false
       description: ""
       properties:
         additionalProperty:
           anyOf:
-          - $ref: "#/components/schemas/RegistrationAgency"
-          - $ref: "#/components/schemas/Owner"
-          - $ref: "#/components/schemas/TraditionalKnowledgeLabel"
+          - $ref: "#/components/schemas/RegistrationAgencySchemaOrg"
+          - $ref: "#/components/schemas/OwnerSchemaOrg"
+          - $ref: "#/components/schemas/TraditionalKnowledgeLabelSchemaOrg"
           - type: "null"
         alternateName:
           description: "Other than current primary title value"
@@ -1636,7 +1868,7 @@ components:
             $ref: "#/components/schemas/Any"
             anyOf:
             - type: "string"
-            - $ref: "#/components/schemas/Description"
+            - $ref: "#/components/schemas/DescriptionSchemaOrg"
           type:
           - "array"
           - "null"
@@ -1653,27 +1885,27 @@ components:
             $ref: "#/components/schemas/Any"
             anyOf:
             - type: "string"
-            - $ref: "#/components/schemas/AlternativeIdentifier"
+            - $ref: "#/components/schemas/AlternativeIdentifierSchemaOrg"
           type: "array"
         isRelatedTo:
           anyOf:
-          - $ref: "#/components/schemas/RelatedObject"
-          - $ref: "#/components/schemas/RelatedRaid"
+          - $ref: "#/components/schemas/RelatedObjectSchemaOrg"
+          - $ref: "#/components/schemas/RelatedRaidSchemaOrg"
           - type: "null"
         keywords:
           anyOf:
-          - $ref: "#/components/schemas/Subject"
+          - $ref: "#/components/schemas/SubjectSchemaOrg"
           - type: "null"
         location:
           anyOf:
-          - $ref: "#/components/schemas/SpatialCoverage"
+          - $ref: "#/components/schemas/SpatialCoverageSchemaOrg"
           - type: "null"
         member:
           items:
             $ref: "#/components/schemas/Any"
             anyOf:
-            - $ref: "#/components/schemas/Person"
-            - $ref: "#/components/schemas/Organisation"
+            - $ref: "#/components/schemas/PersonSchemaOrg"
+            - $ref: "#/components/schemas/OrganisationSchemaOrg"
           type:
           - "array"
           - "null"
@@ -1681,9 +1913,9 @@ components:
           items:
             $ref: "#/components/schemas/Any"
             anyOf:
-            - $ref: "#/components/schemas/ContributorPosition"
-            - $ref: "#/components/schemas/ContributorRole"
-            - $ref: "#/components/schemas/OrganisationRole"
+            - $ref: "#/components/schemas/ContributorPositionSchemaOrg"
+            - $ref: "#/components/schemas/ContributorRoleSchemaOrg"
+            - $ref: "#/components/schemas/OrganisationRoleSchemaOrg"
           type:
           - "array"
           - "null"
@@ -1700,9 +1932,55 @@ components:
       - "name"
       title: "ResearchProject"
       type: "object"
+    SpatialCoverageSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        identifier:
+          type: "string"
+        name:
+          type:
+          - "string"
+          - "null"
+      required:
+      - "identifier"
+      title: "SpatialCoverageSchemaOrg"
+      type: "object"
+    SubjectSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        alternateName:
+          items:
+            type: "string"
+          type:
+          - "array"
+          - "null"
+        inDefinedTermSet:
+          type: "string"
+        termCode:
+          type: "string"
+      required:
+      - "termCode"
+      - "inDefinedTermSet"
+      title: "SubjectSchemaOrg"
+      type: "object"
     TraditionalKnowledgeLabelPropertyEnum:
       description: ""
       enum:
       - "https://datamodel.raid.org/core/traditionalKnowledgeLabel"
       title: "TraditionalKnowledgeLabelPropertyEnum"
       type: "string"
+    TraditionalKnowledgeLabelSchemaOrg:
+      additionalProperties: false
+      description: ""
+      properties:
+        propertyID:
+          $ref: "#/components/schemas/TraditionalKnowledgeLabelPropertyEnum"
+        value:
+          type: "string"
+      required:
+      - "value"
+      - "propertyID"
+      title: "TraditionalKnowledgeLabelSchemaOrg"
+      type: "object"
