@@ -15,12 +15,12 @@ function FieldGrid({
   isRowHighlighted: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [selectedValue, setSelectedValue] = useState<{ id: string; name?: string } | null>(null);
   const { setValue, getValues } = useFormContext();
 
   useEffect(() => {
     if (selectedValue) {
-      setValue(`organisation.${index}.id`, selectedValue, {
+      setValue(`organisation.${index}.id`, selectedValue.id, {
         shouldValidate: true,
       });
     }
@@ -45,7 +45,7 @@ function FieldGrid({
           Current value:{" "}
           {organisationNames?.size &&
             organisationNames?.get(getValues(`organisation.${index}.id`))
-              ?.value}
+              ?.value || selectedValue?.name}
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <TextInputField
