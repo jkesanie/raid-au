@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
@@ -27,7 +28,7 @@ public abstract class AssembleOpenAPI extends DefaultTask {
     abstract Property<File> getOpenAPITemplateFile();
     
     @Input
-    abstract Property<File> getGeneratedSchemaFile();
+    abstract ListProperty<File> getGeneratedSchemaFiles();
 
     @Input
     abstract Property<File> getOutputFile();
@@ -35,12 +36,13 @@ public abstract class AssembleOpenAPI extends DefaultTask {
     @TaskAction
     void assemble() throws Exception {
         Map<String, Object> apiTemplate = Utils.getYamlTree(getOpenAPITemplateFile().get());
-        Map<String, Object> schema = Utils.getJsonTree(getGeneratedSchemaFile().get());
-        
         Map<String, Object> components = (Map<String, Object>) apiTemplate.get("components");
         Map<String, Object> schemas = (Map<String, Object>) components.get("schemas");
-        
-        schemas.putAll((Map<String,Object>) schema.get("$defs"));
+
+        for(File schemaFile : getGeneratedSchemaFiles().get()) {
+            Map<String, Object> schema = Utils.getJsonTree(schemaFile);
+            schemas.putAll((Map<String,Object>) schema.get("$defs"));
+        }
         String output = new YAMLMapper().writeValueAsString(apiTemplate);
         // hacky stuff
         String outputModified = output.replaceAll("#/\\$defs/", "#/components/schemas/");
