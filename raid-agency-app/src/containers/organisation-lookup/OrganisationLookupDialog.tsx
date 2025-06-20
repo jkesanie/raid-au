@@ -33,7 +33,7 @@ export function OrganisationLookupDialog({
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  setSelectedValue: (value: string | null) => void;
+  setSelectedValue: (value: { id: string; name?: string }) => void;
 }) {
   const [query, setQuery] = useState("");
   const searchMutation = useMutation({
@@ -49,9 +49,9 @@ export function OrganisationLookupDialog({
     searchMutation.mutate(query);
   };
 
-  const handleListItemClick = (item: any) => {
+  const handleListItemClick = (item: { id: string; name?: string }) => {
     setOpen(false);
-    setSelectedValue(item.id);
+    setSelectedValue(item);
   };
 
   return (
