@@ -31,7 +31,7 @@ export const RawDataDisplay = ({ raidData }: { raidData: RaidDto }) => {
                 onClick={async () => {
                     await copyToClipboardWithNotification(
                       JSON.stringify(raidData, null, 2),
-                      "✅ Copied raw JSON data to clipboard",
+                      "Copied raw JSON data to clipboard",
                       snackbar as SnackbarContextInterface
                     )
                   }

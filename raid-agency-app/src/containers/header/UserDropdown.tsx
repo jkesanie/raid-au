@@ -133,7 +133,7 @@ export function UserDropdown() {
                   onClick={async () => {
                       await copyToClipboardWithNotification(
                         tokenParsed?.email || "",
-                        "✅ Copied email to clipboard",
+                        "Copied email to clipboard",
                         snackbar as SnackbarContextInterface
                       );
                     handleAccountMenuClose();
@@ -150,7 +150,7 @@ export function UserDropdown() {
                 onClick={async () => {
                     await copyToClipboardWithNotification(
                       tokenParsed?.sub || "",
-                      "✅ Copied identity to clipboard",
+                      "Copied identity to clipboard",
                       snackbar as SnackbarContextInterface
                     );
                   handleAccountMenuClose();

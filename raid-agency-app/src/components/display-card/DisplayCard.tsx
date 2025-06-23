@@ -51,7 +51,7 @@ export const DisplayCard = memo(
                   onClick={async () => {
                       await copyToClipboardWithNotification(
                         JSON.stringify(data, null, 2),
-                        "✅ Copied raw JSON data to clipboard",
+                        "Copied raw JSON data to clipboard",
                         snackbar as SnackbarContextInterface
                       )
                     }
