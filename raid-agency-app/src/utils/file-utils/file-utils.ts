@@ -57,5 +57,5 @@ export const downloadJson = ({
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 
-  snackbar.openSnackbar(`✅ Downloaded JSON file`);
+  snackbar.openSnackbar(`Downloaded JSON file`, 3000, 'success');
 };
