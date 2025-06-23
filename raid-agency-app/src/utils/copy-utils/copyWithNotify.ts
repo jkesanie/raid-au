@@ -11,13 +11,13 @@ import { SnackbarContextInterface } from "@/components/snackbar";
 export const copyToClipboardWithNotification = async (
     data: string,
     message: string,
-    snackbar: { openSnackbar: (msg: string) => void } | SnackbarContextInterface
+    snackbar: { openSnackbar: (msg: string, duration?: number, severity?: string) => void } | SnackbarContextInterface
 ) => {
     try {
       await navigator.clipboard.writeText(data);
-      snackbar.openSnackbar(message);
+     snackbar.openSnackbar(message, 3000, "success");
     } catch (error) {
       console.error("Failed to copy to clipboard:", error);
-      snackbar.openSnackbar("❌ Failed to copy data to clipboard");
+      snackbar.openSnackbar("Failed to copy data to clipboard", 3000, "error");
     }
 };

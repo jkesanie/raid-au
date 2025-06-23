@@ -9,11 +9,14 @@ import {Container, Stack} from "@mui/material";
 import {useMutation} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {raidService} from "@/services/raid-service.ts";
+import { useSnackbar } from "@/components/snackbar/hooks/useSnackbar";
+import { messages } from "@/constants/messages";
 
 export const MintRaid = () => {
   const { openErrorDialog } = useErrorDialog();
   const { token } = useKeycloak();
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
 
   const mintMutation = useMutation({
     mutationFn: raidService.create,
@@ -21,6 +24,7 @@ export const MintRaid = () => {
       const resultHandle = new URL(data.identifier?.id ?? "");
       const [prefix, suffix] = resultHandle.pathname.split("/").filter(Boolean);
       navigate(`/raids/${prefix}/${suffix}`);
+      snackbar.openSnackbar(messages.raidCreated, 3000, "success");
     },
     onError: (error: Error) => {
       RaidFormErrorMessage(error, openErrorDialog);

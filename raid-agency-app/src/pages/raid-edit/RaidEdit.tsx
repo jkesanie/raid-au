@@ -20,6 +20,8 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {useEffect, useMemo} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {raidService} from "@/services/raid-service.ts";
+import { useSnackbar } from "@/components/snackbar/hooks/useSnackbar";
+import {messages} from "@/constants/messages";
 
 function createEditRaidPageBreadcrumbs({
   prefix,
@@ -56,6 +58,7 @@ export const RaidEdit = () => {
   const { openErrorDialog } = useErrorDialog();
   const { authenticated, isInitialized, token, tokenParsed } = useKeycloak();
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
 
   const { prefix, suffix } = useParams() as { prefix: string; suffix: string };
   if (!prefix || !suffix) {
@@ -110,6 +113,7 @@ export const RaidEdit = () => {
     },
     onSuccess: () => {
       navigate(`/raids/${prefix}/${suffix}`);
+      snackbar.openSnackbar(messages.raidUpdated, 3000, "success");
     },
     onError: (error: Error) => {
       RaidFormErrorMessage(error, openErrorDialog);

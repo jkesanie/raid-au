@@ -54,7 +54,7 @@ export const RaidTableRowContextMenu = ({ row }: { row: RaidDto }) => {
           onClick={async () => {
             await copyToClipboardWithNotification(
               JSON.stringify(row, null, 2),
-              "✅ Copied raw JSON data to clipboard",
+              "Copied raw JSON data to clipboard",
               snackbar as SnackbarContextInterface
             );
             handleClose();
@@ -70,7 +70,7 @@ export const RaidTableRowContextMenu = ({ row }: { row: RaidDto }) => {
           onClick={async () => {
             await copyToClipboardWithNotification(
               `${suffix}`,
-              "✅ Copied Suffix to clipboard",
+              "Copied Suffix to clipboard",
               snackbar as SnackbarContextInterface
             );
             handleClose();
@@ -85,7 +85,7 @@ export const RaidTableRowContextMenu = ({ row }: { row: RaidDto }) => {
           onClick={async () => {
             await copyToClipboardWithNotification(
               `${prefix}/${suffix}`,
-              "✅ Copied Identifier to clipboard",
+              "Copied Identifier to clipboard",
               snackbar as SnackbarContextInterface
             );
             handleClose();
@@ -103,7 +103,7 @@ export const RaidTableRowContextMenu = ({ row }: { row: RaidDto }) => {
           onClick={async () => {
             await copyToClipboardWithNotification(
               `https://raid.org/${prefix}/${suffix}`,
-              "✅ Copied URL to clipboard",
+              "Copied URL to clipboard",
               snackbar as SnackbarContextInterface
             );
             handleClose();

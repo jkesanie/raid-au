@@ -1,11 +1,13 @@
 import { SnackbarContext } from "@/components/snackbar";
 import { Snackbar } from "@mui/material";
+import Alert from '@mui/material/Alert';
 import React, { PropsWithChildren, useState } from "react";
 
 interface SnackbarStateInterface {
   open: boolean;
   content: string;
   duration?: number;
+  severity?: "success" | "error" | "info";
 }
 
 /**
@@ -23,12 +25,13 @@ export const SnackbarProvider: React.FC<PropsWithChildren<unknown>> = ({
   const [snackbarState, setSnackbarState] = useState<SnackbarStateInterface>({
     open: false,
     content: "",
-    duration: 0,
+    duration: 3000,
+    severity: "info",
   });
 
   const openSnackbar = React.useCallback(
-    (content: string, duration: number = 3000) => {
-      setSnackbarState({ open: true, content, duration });
+    (content: string, duration: number = 3000, severity: "success" | "error" | "info" = "info") => {
+      setSnackbarState({ open: true, content, duration, severity });
     },
     []
   );
@@ -48,9 +51,17 @@ export const SnackbarProvider: React.FC<PropsWithChildren<unknown>> = ({
         open={snackbarState.open}
         autoHideDuration={snackbarState.duration}
         onClose={closeSnackbar}
-        message={snackbarState.content}
-        sx={{ opacity: 0.8 }}
-      />
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbarState.severity || "info"}
+          variant="filled"
+          sx={{ width: 'auto' }}
+        >
+          {snackbarState.content}
+        </Alert>
+      </Snackbar>
       {children}
     </SnackbarContext.Provider>
   );
