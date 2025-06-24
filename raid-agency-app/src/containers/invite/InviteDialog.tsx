@@ -55,12 +55,12 @@ export function InviteDialog({
   const sendInviteMutation = useMutation({
     mutationFn: sendInvite,
     onSuccess: () => {
-      snackbar.openSnackbar("✅ Thank you, invite has been sent.");
+      snackbar.openSnackbar("Thank you, invite has been sent.", 3000, "success");
       setIsLoading(false);
       handleClose();
     },
     onError: () => {
-      snackbar.openSnackbar("❌ An error occurred.");
+      snackbar.openSnackbar("An error occurred.", 3000, "error");
       setIsLoading(false);
       handleClose();
     },

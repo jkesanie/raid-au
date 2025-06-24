@@ -62,7 +62,7 @@ export const ServicePointUsersList = ({
       queryClient.invalidateQueries({
         queryKey: ["servicePoints"],
       });
-      snackbar.openSnackbar(`✅ Success: Removed user from service point`);
+      snackbar.openSnackbar(`Success: Removed user from service point`, 3000, "success");
     },
   });
 
@@ -75,7 +75,7 @@ export const ServicePointUsersList = ({
       queryClient.invalidateQueries({
         queryKey: ["servicePoints"],
       });
-      snackbar.openSnackbar(`✅ Success: Removed user from group admins`);
+      snackbar.openSnackbar(`Success: Removed user from group admins`, 3000, "success");
     },
   });
 
@@ -88,7 +88,7 @@ export const ServicePointUsersList = ({
       queryClient.invalidateQueries({
         queryKey: ["servicePoints"],
       });
-      snackbar.openSnackbar(`✅ Success: Added user to group admins`);
+      snackbar.openSnackbar(`Success: Added user to group admins`, 3000, "success");
     },
   });
 
