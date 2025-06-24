@@ -1,7 +1,27 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.5.1
+# 2.5.3
+## App-client UI
+* Enhanced snackbar UX with notifications for successful RAiD minting and editing
+* Improved ROR organization lookup with automatic name population
+* Added dynamic error dialog to display API response errors
+* Enhanced error handling with standardized error structure transformation
+* Improved copy functionality with JSON data export from RAiD table
+* Enhanced validation for DOI and ORCID identifiers to handle whitespace
+* Improved alert dialog messages for required segments with sequence numbers
+* Major project structure reorganization with API constants consolidation
+* Enhanced end date validation for contributor positions and organization roles
+* Various UI/UX improvements and bug fixes
+
+## API
+* Added endpoint to post RAiD data to Datacite with backfill capability
+* Updated Datacite mapping to set 'RAiD' as resource type
+* Enhanced service point input processing with whitespace trimming
+* Improved security configuration and authorization handling
+* Various security and data handling improvements
+
+# 2.5.2
 ## App-client UI
 * Fix refresh token request to prevent stale access token
 
