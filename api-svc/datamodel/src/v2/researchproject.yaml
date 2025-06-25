@@ -9,6 +9,30 @@ prefixes:
 imports:
   - linkml:types
 
+slots:
+  identifier:
+    slot_uri: schema:identifier
+  name:
+    slot_uri: schema:name
+  alternateName:
+    slot_uri: schema:alternateName
+  member:
+    slot_uri: schema:member
+  url:
+    slot_uri: schema:url
+  value:
+    slot_uri: schema:value
+  propertyID:
+    slot_uri: schema:propertyID
+  additionalType:
+    slot_uri: schema:additionalType
+  roleName:
+    slot_uri: schema:roleName
+  startDate:
+    slot_uri: schema:startDate
+  endDate:
+    slot_uri: schema:endDate
+
 classes:
   Any:
     class_uri: linkml:Any
@@ -30,6 +54,7 @@ classes:
       additionalProperty:
         slot_uri: schema:additionalProperty
         range: Any
+        multivalued: true
         any_of:
           - range: RegistrationAgencySchemaOrg
           - range: OwnerSchemaOrg
