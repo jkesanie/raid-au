@@ -12,7 +12,7 @@ export const contributorPositionValidationSchema = z.array(
             .optional()
             .transform(val => {
                 if (val === undefined) return undefined;
-                if (val === '') return undefined;
+                if (val === '') return '';
                 return val;
             })
             .pipe(

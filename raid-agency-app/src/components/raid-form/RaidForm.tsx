@@ -61,7 +61,7 @@ export const RaidForm = memo(
       reValidateMode: "onChange",
     });
 
-    const { control, trigger, formState } = formMethods;
+    const { control, trigger, formState, watch } = formMethods;
     const isFormValid = Object.keys(formState.errors).length === 0;
 
     const handleSubmit = useCallback(
@@ -164,6 +164,8 @@ export const RaidForm = memo(
                     errors={formState.errors}
                     trigger={trigger}
                     data={raidData.contributor || []}
+                    watch={watch}
+                    isDirty={formState.isDirty}
                 />
 
                 <OrganisationsForm

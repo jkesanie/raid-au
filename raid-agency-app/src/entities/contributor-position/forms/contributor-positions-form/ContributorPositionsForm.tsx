@@ -1,5 +1,5 @@
-import { RaidDto } from "@/generated/raid";
-import { AddBox } from "@mui/icons-material";
+import { RaidDto, ContributorPosition } from "@/generated/raid";
+import { AddBox, FamilyRestroomOutlined } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -16,9 +16,11 @@ import {
   FieldErrors,
   UseFormTrigger,
   useFieldArray,
+  useFormContext
 } from "react-hook-form";
 import { contributorPositionDataGenerator } from "@/entities/contributor-position/data-generator/contributor-position-data-generator";
 import { ContributorPositionDetailsForm } from "@/entities/contributor-position/forms/contributor-position-details-form";
+import { SubSections, useEnableAddFields } from "@/shared/business-rules/enableAddFields";
 
 export function ContributorPositionsForm({
   control,
@@ -49,6 +51,9 @@ export function ContributorPositionsForm({
     append(generator());
     trigger(`${parentKey}.${parentIndex}.${key}`);
   };
+  const { formState, watch } = useFormContext<RaidDto>();
+  const positions = watch([`${parentKey}.${parentIndex}.${key}`]) as ContributorPosition[][];
+  const isDirty = formState.isDirty;
 
   const hasError = errors[parentKey]?.[parentIndex]?.[key];
   return (
@@ -93,6 +98,7 @@ export function ContributorPositionsForm({
           onClick={handleAddItem}
           onMouseEnter={() => setIsRowHighlighted(true)}
           onMouseLeave={() => setIsRowHighlighted(false)}
+          disabled={useEnableAddFields(positions as unknown as SubSections, isDirty)}
         >
           Add {label}
         </Button>
