@@ -69,6 +69,9 @@ openApiGenerate {
   /* Setting globals seems to mean it only generates what you specify.
   If no globalProps, it generates everything.*/
   globalProperties = [
+          //library : "okhttp-gson",
+          //serializationLibrary: "gson",
+          //legacyDiscriminatorBehavior: 'false',
     // blank means that it generates all models
     models: "",
     /* blank means all api classes will ge generated.
