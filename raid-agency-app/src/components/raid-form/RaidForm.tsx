@@ -161,9 +161,9 @@ export const RaidForm = memo(
 
                 <ContributorsForm
                     control={control}
+                    data={raidData.contributor ?? []}
                     errors={formState.errors}
                     trigger={trigger}
-                    data={raidData.contributor || []}
                 />
 
                 <OrganisationsForm
