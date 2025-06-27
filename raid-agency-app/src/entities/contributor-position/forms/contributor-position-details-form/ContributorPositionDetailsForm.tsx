@@ -41,9 +41,8 @@ function FieldGrid({
       />
       <TextInputField
         name={`contributor.${parentIndex}.position.${index}.endDate`}
-        label="end Date"
-        placeholder="end Date"
-        required={true}
+        label="End Date"
+        placeholder="End Date"
         width={3}
       />
     </Grid>

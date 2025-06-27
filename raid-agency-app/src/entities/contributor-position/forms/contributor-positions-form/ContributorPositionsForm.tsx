@@ -1,5 +1,5 @@
 import { RaidDto, ContributorPosition } from "@/generated/raid";
-import { AddBox, FamilyRestroomOutlined } from "@mui/icons-material";
+import { AddBox } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -20,7 +20,7 @@ import {
 } from "react-hook-form";
 import { contributorPositionDataGenerator } from "@/entities/contributor-position/data-generator/contributor-position-data-generator";
 import { ContributorPositionDetailsForm } from "@/entities/contributor-position/forms/contributor-position-details-form";
-import { SubSections, useEnableAddFields } from "@/shared/business-rules/enableAddFields";
+import { SubSections, useEnableAddFields } from "@/shared/hooks/business-rules/useEnableAddFields";
 
 export function ContributorPositionsForm({
   control,

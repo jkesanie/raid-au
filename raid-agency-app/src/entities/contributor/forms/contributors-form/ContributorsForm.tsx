@@ -11,13 +11,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Control,
   FieldErrors,
   UseFormTrigger,
   useFieldArray,
-  UseFormWatch
 } from "react-hook-form";
 
 import { ContributorPositionsForm } from "@/entities/contributor-position/forms/contributor-positions-form";
