@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useEnableAddFields } from './useEnableAddFields';
+import { describe, it, expect } from 'vitest';
 
 // Mock types based on the hook usage
 type SubSection = {
