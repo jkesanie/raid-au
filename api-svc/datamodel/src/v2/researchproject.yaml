@@ -34,21 +34,6 @@ slots:
     slot_uri: schema:endDate
 
 classes:
-  AdditionalProperty:
-    attributes:
-      value:
-        slot_uri: schema:value
-        exact_mappings:
-          - raid:id
-        required: true
-        range: string
-      propertyID:
-        slot_uri: schema:propertyID
-        required: true
-        exactly_one_of:
-          - range: OwnerPropertyEnum
-          - range: RegistrationAgencyPropertyEnum
-          - range: TraditionalKnowledgeLabelPropertyEnum
   ResearchProject:
     class_uri: schema:ResearchProject
     exact_mappings:
