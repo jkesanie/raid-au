@@ -48,6 +48,7 @@ const TextInputField = memo(function TextInputField({
     <Grid item xs={width}>
       <TextField
         {...field}
+        id={field.name || `field-${Date.now()}`}
         size="small"
         error={Boolean(errorMessage)}
         fullWidth

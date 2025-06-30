@@ -17,6 +17,7 @@ interface TextSelectFieldProps {
   required: boolean;
   multiline?: boolean;
   width?: number;
+  id?: string;
 }
 
 export function TextSelectField({
@@ -52,11 +53,12 @@ export function TextSelectField({
     <Grid item xs={width}>
       <TextField
         {...field}
+        id={field.name || `field-${Date.now()}`}
         error={Boolean(errorMessage)}
         fullWidth
         helperText={getDisplayHelperText()}
         label={label}
-        placeholder={label}
+        placeholder={placeholder || label}
         required={required}
         select
         size="small"

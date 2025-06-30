@@ -22,6 +22,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {raidService} from "@/services/raid-service.ts";
 import { useSnackbar } from "@/components/snackbar/hooks/useSnackbar";
 import {messages} from "@/constants/messages";
+import { addMissingEndDateInPlace } from "./TransformResponseData";
 
 function createEditRaidPageBreadcrumbs({
   prefix,
@@ -56,7 +57,7 @@ function createEditRaidPageBreadcrumbs({
 
 export const RaidEdit = () => {
   const { openErrorDialog } = useErrorDialog();
-  const { authenticated, isInitialized, token, tokenParsed } = useKeycloak();
+  const { authenticated, isInitialized, token } = useKeycloak();
   const navigate = useNavigate();
   const snackbar = useSnackbar();
 
@@ -140,7 +141,7 @@ export const RaidEdit = () => {
     return <ErrorAlertComponent error="Service points could not be fetched" />;
   }
 
-  let contributors: (Contributor & { email?: string | undefined })[] = [];
+  const contributors: (Contributor & { email?: string | undefined })[] = [];
 
   for (const contributor of query.data?.contributor ?? []) {
     const updatedContributor = {
@@ -150,10 +151,8 @@ export const RaidEdit = () => {
     contributors.push(updatedContributor);
   }
 
-  let raidData: RaidDto | RaidCreateRequest;
-
-  raidData = {
-    ...query.data,
+  const raidData: RaidDto | RaidCreateRequest = {
+    ...(addMissingEndDateInPlace(query.data) as RaidDto),
     contributor: contributors,
   };
 
