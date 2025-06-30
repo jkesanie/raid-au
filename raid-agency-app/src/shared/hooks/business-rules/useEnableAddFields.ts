@@ -28,7 +28,6 @@ export type SubSections = SubSection[][];
 
 export const useEnableAddFields = (subSection: SubSections, isDirty: boolean): boolean | undefined => {
     return useMemo(() => {
-        if (!isDirty || !subSection.length) return false;
         const lastField = subSection[subSection.length - 1];
          // Enable if no fields in the last section
         if (!lastField?.length) return false;
@@ -36,8 +35,9 @@ export const useEnableAddFields = (subSection: SubSections, isDirty: boolean): b
         const lastSubSections = lastField[lastField.length - 1];
 
         // If endDate is missing, disable the button
-        if (!lastSubSections?.endDate) return true;
+        if (!isDirty && !lastSubSections?.endDate) return true;
 
+        if (!isDirty || !subSection.length) return false;
         const regex = /^\d{4}-(0[1-9]|1[0-2])(-([0-2]\d|3[01]))?$/; // YYYY-MM-DD format
         // If endDate is not a string, disable the button
         const endDateStr = lastSubSections.endDate as string;
