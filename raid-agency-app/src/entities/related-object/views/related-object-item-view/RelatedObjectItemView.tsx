@@ -1,7 +1,7 @@
 import { DisplayItem } from "@/components/display-item";
 import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
-import { Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, Grid, Stack, Typography } from "@mui/material";
 import { memo, useMemo } from "react";
 
 const RelatedObjectItemView = memo(
@@ -9,10 +9,12 @@ const RelatedObjectItemView = memo(
     i,
     relatedObject,
     relatedObjectTitle,
+    doiLoadingStates
   }: {
     i: number;
     relatedObject: RelatedObject;
     relatedObjectTitle: string;
+    doiLoadingStates: Record<string, boolean>;
   }) => {
     const { generalMap } = useMapping();
 
@@ -20,14 +22,35 @@ const RelatedObjectItemView = memo(
       () => generalMap.get(String(relatedObject.type?.id)) ?? "",
       [generalMap, relatedObject.type?.id]
     );
-
+      // Individual DOI Loading Indicator
+    const DOILoadingIndicator = memo(({ doiId }: { doiId?: string }) => {
+      if (!doiId || !doiLoadingStates[doiId]) return null;
+      
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+          <CircularProgress size={16} />
+          <Typography variant="caption" color="text.secondary">
+            Loading citation...
+          </Typography>
+        </Box>
+      );
+    });
+    const isLoading = relatedObject.id ? doiLoadingStates[relatedObject.id] : false;
+    const hasTitle = Boolean(relatedObjectTitle);
     return (
       <Stack gap={2}>
-        <Typography variant="subtitle2">
-          {relatedObjectTitle
-            ? relatedObjectTitle
-            : `Related Object #{${i + 1}}`}
-        </Typography>
+        <DOILoadingIndicator doiId={relatedObject.id} />
+        {hasTitle && !isLoading && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {relatedObjectTitle}
+          </Typography>
+        )}
+        {!hasTitle && !isLoading && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {`Related Object #${i + 1}`}
+          </Typography>
+        )}
+
         <Grid container spacing={2}>
           <DisplayItem
             label="Related Object Link"

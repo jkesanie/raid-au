@@ -1,11 +1,10 @@
 import { DisplayCard } from "@/components/display-card";
 import { NoItemsMessage } from "@/components/no-items-message";
 import { RelatedObject } from "@/generated/raid";
-import { getTitleFromDOI } from "@/services/related-object";
-import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
+import { batchFetchDetailedCitations,constructDOIUrl } from "@/services/related-object";
 import { Divider, Stack } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
 const useRelatedObjectTitles = () => {
@@ -18,43 +17,74 @@ const useRelatedObjectTitles = () => {
   });
 };
 
+// New interface for tracking loading states
+interface DOILoadingState {
+  [doiId: string]: boolean;
+}
+
 const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   const { data: relatedObjectTitles } = useRelatedObjectTitles();
+  const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
   const queryClient = useQueryClient();
-  // Update the mutation with proper typing
+  // Updated mutation using batch fetch
   const { mutate: downloadAllObjects } = useMutation({
     mutationFn: async (relatedObjects: RelatedObject[]) => {
-      const results = await Promise.all(
-        relatedObjects.map(async (obj) => {
-          if (!obj.id) return null;
+      // Filter valid objects and construct DOI URLs
+      
+      const validObjects = relatedObjects.filter(obj => obj.id);
+      const doiUrls = validObjects
+        .map(obj => constructDOIUrl(obj.id!))
+        .filter((url): url is string => url !== null);
 
-          await queryClient.prefetchQuery<{
-            title: string;
-            ra: string;
-          }>({
-            queryKey: ["doi", obj.id],
-            queryFn: async () => {
-              const lastTwoUrlSegments = getLastTwoUrlSegments(obj.id!);
-              if (lastTwoUrlSegments) {
-                return await getTitleFromDOI(lastTwoUrlSegments);
-              } else {
-                return Promise.reject(new Error("Invalid URL segments"));
-              }
-            },
-            staleTime: 1000 * 60 * 60 * 24 * 90,
+      const loadingStates: DOILoadingState = {};
+      validObjects.forEach(obj => {
+        if (obj.id) {
+          loadingStates[obj.id] = true;
+        }
+      });
+      
+      setDoiLoadingStates(loadingStates);
+
+      // Use the fast batch fetch function
+      try {
+        const citations = await batchFetchDetailedCitations(doiUrls, { 
+          timeout: 8000,
+          userAgent: 'RelatedObjects-Fetcher/1.0'
+        });
+
+        // Process results and cache them
+        const results = validObjects.map((obj, index) => {
+          const citation = citations[index];
+          // Update loading state for this specific DOI
+            setDoiLoadingStates(prev => ({
+              ...prev,
+              [obj.id!]: false
+            }));
+          // If no citation found, return null
+          if (!citation) return null;
+
+          // Cache the query result for individual access
+          queryClient.setQueryData(["doi", obj.id], {
+            title: citation, // The clean citation
+            ra: 'doi-batch', // Registration agency identifier
+            fullCitation: citation
           });
 
-          return queryClient.getQueryData<{
-            title: string;
-            ra: string;
-          }>(["doi", obj.id]);
-        })
-      );
-      return { results, objectsToFetch: relatedObjects };
+          return {
+            title: citation,
+            ra: 'doi-batch',
+            fullCitation: citation
+          };
+        });
+
+        return { results, objectsToFetch: validObjects };
+      } catch (error) {
+        setDoiLoadingStates({});
+        throw error;
+      }
     },
     onSuccess: ({ results, objectsToFetch }) => {
       const currentNames =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         queryClient.getQueryData<Map<string, any>>(["relatedObjectTitles"]) ||
         new Map();
       const newNames = new Map(currentNames);
@@ -67,8 +97,9 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
 
         newNames.set(relatedObjectId, {
           cachedAt: Date.now(),
-          value: displayName.title,
+          value: displayName.title, // This is now the clean citation
           source: displayName.ra,
+          fullCitation: displayName.fullCitation
         });
       });
 
@@ -77,7 +108,11 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         JSON.stringify([...newNames])
       );
       queryClient.setQueryData(["relatedObjectTitles"], newNames);
+      setDoiLoadingStates({});
     },
+    onError: (error) => {
+      console.error('❌ Batch DOI fetch failed:', error);
+    }
   });
 
   useEffect(() => {
@@ -116,6 +151,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
                   relatedObjectTitles?.size &&
                   relatedObjectTitles?.get(relatedObject.id)?.value
                 }
+                doiLoadingStates={doiLoadingStates}
               />
             ))}
           </Stack>
