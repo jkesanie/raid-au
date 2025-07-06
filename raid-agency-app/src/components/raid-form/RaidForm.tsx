@@ -80,12 +80,14 @@ export const RaidForm = memo(
     }, [isInitialLoad]);
 
     useEffect(() => {
-      if (Object.keys(formState.errors).length > 0) {
+      // This effect runs when the form is submitted
+      // and there are validation errors
+      if (formState.isSubmitted && Object.keys(formState.errors).length > 0) {
         openErrorDialog(transformErrorMessage(formState.errors));
       }
       // This effect runs when there are validation errors
       // and opens an error dialog with the transformed error message
-    }, [formState.errors, openErrorDialog]);
+    }, [formState.errors, formState.isSubmitted, openErrorDialog]);
 
     return (
         <FormProvider {...formMethods}>
