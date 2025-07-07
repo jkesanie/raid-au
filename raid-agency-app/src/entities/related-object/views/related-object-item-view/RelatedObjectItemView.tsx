@@ -8,12 +8,12 @@ const RelatedObjectItemView = memo(
   ({
     i,
     relatedObject,
-    useRelatedObjectCitation,
+    relatedObjectCitation,
     doiLoadingStates
   }: {
     i: number;
     relatedObject: RelatedObject;
-    useRelatedObjectCitation: string | undefined;
+    relatedObjectCitation: string | undefined;
     doiLoadingStates: Record<string, boolean>;
   }) => {
     const { generalMap } = useMapping();
@@ -36,7 +36,7 @@ const RelatedObjectItemView = memo(
       );
     });
     const isLoading = relatedObject.id ? doiLoadingStates[relatedObject.id] : false;
-    const hasTitle = Boolean(useRelatedObjectCitation);
+    const hasTitle = Boolean(relatedObjectCitation);
     return (
       <Stack gap={2}>
         <DOILoadingIndicator doiId={relatedObject.id} />
@@ -46,7 +46,7 @@ const RelatedObjectItemView = memo(
               Citation:
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {useRelatedObjectCitation}
+              {relatedObjectCitation}
             </Typography>
           </Box>
         )}

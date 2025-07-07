@@ -165,7 +165,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
                 relatedObject={relatedObject}
                 key={relatedObject.id || i}
                 i={i}
-                useRelatedObjectCitation={
+                relatedObjectCitation={
                   relatedObjectCitations?.size &&
                   relatedObjectCitations?.get(relatedObject.id)?.value
                 }

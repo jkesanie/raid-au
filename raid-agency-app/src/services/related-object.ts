@@ -76,7 +76,7 @@ async function fetchDetailedDOICitation(
   }
 }
 
-/**
+ /**
  * Enhanced citation cleaning that preserves publisher and detailed info
  * @param citation - Raw citation string
  * @returns Detailed citation with publisher info preserved
