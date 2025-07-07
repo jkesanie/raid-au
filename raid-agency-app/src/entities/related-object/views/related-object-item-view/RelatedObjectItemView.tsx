@@ -8,12 +8,12 @@ const RelatedObjectItemView = memo(
   ({
     i,
     relatedObject,
-    relatedObjectTitle,
+    useRelatedObjectCitation,
     doiLoadingStates
   }: {
     i: number;
     relatedObject: RelatedObject;
-    relatedObjectTitle: string;
+    useRelatedObjectCitation: string | undefined;
     doiLoadingStates: Record<string, boolean>;
   }) => {
     const { generalMap } = useMapping();
@@ -36,14 +36,19 @@ const RelatedObjectItemView = memo(
       );
     });
     const isLoading = relatedObject.id ? doiLoadingStates[relatedObject.id] : false;
-    const hasTitle = Boolean(relatedObjectTitle);
+    const hasTitle = Boolean(useRelatedObjectCitation);
     return (
       <Stack gap={2}>
         <DOILoadingIndicator doiId={relatedObject.id} />
         {hasTitle && !isLoading && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {relatedObjectTitle}
-          </Typography>
+          <Box sx={{ mt: 1, display: 'flex', gap: 0.5 }}>
+            <Typography variant="body2" sx={{ color: 'text.primary' }}>
+              Citation:
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {useRelatedObjectCitation}
+            </Typography>
+          </Box>
         )}
         {!hasTitle && !isLoading && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -69,11 +74,6 @@ const RelatedObjectItemView = memo(
           <Stack direction="row" alignItems="baseline">
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               Categories
-            </Typography>
-            <Typography variant="caption" color="text.disabled">
-              {relatedObjectTitle
-                ? relatedObjectTitle
-                : `Related Object #{${i + 1}}`}
             </Typography>
           </Stack>
           <Stack gap={2} divider={<Divider />}>

@@ -2,7 +2,7 @@
  * Related Object Service Module
  *
  * This module provides functionality for working with related objects in the RAID system,
- * particularly for resolving DOI information from external services like Crossref and Datacite.
+ * particularly for resolving DOI information from external services like Crossref, Datacite and mEDRA.
  */
 
 /**
@@ -167,27 +167,6 @@ interface FetchDOIOptions {
   userAgent?: string;
 }
 
-interface ParsedCitation {
-  fullCitation: string;
-  doi: string;
-  url: string;
-  title?: string;
-  authors?: string;
-  journal?: string;
-  year?: string;
-  volume?: string;
-  issue?: string;
-  pages?: string;
-}
-
-interface BatchResult {
-  citation: string | null;
-  url: string;
-  doi: string;
-  success: boolean;
-  error?: string;
-}
-
 /**
  * Fetches detailed citation with publisher info (using CSL-JSON for richer data)
  * @param doiUrl - The DOI URL
@@ -211,24 +190,14 @@ async function fetchDetailedDOICitation(
 
   try {
     // First try text/x-bibliography for formatted citation
-    const [response, raResponse] = await Promise.all([
-      fetch(doiUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'text/x-bibliography; style=apa',
-          'User-Agent': userAgent,
-        },
-        signal: controller.signal,
-      }),
-      fetch(doiUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/vnd.citationstyles.csl+json',
-          'User-Agent': userAgent,
-        },
-        signal: controller.signal,
-      }),
-    ]);
+    const response = await fetch(doiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/x-bibliography; style=apa',
+        'User-Agent': userAgent,
+      },
+      signal: controller.signal,
+    });
 
     clearTimeout(timeoutId);
     
@@ -238,21 +207,19 @@ async function fetchDetailedDOICitation(
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+    console.log("how many time this is been called", response);
     const citation = await response.text();
     
     if (!citation.trim()) {
       throw new Error('Empty citation received');
     }
-    const doiSource = await raResponse.json()
-
-
+  
     // For detailed citation, we want to keep more information
-    return cleanDetailedCitation(citation.trim())
+    return cleanDetailedCitation(citation.trim());
 
   } catch (error) {
     clearTimeout(timeoutId);
-    
+
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         throw new Error(`Request timeout after ${timeout}ms`);
@@ -357,7 +324,5 @@ export {
   batchFetchDetailedCitations,
   cleanDetailedCitation,
   constructDOIUrl,
-  type ParsedCitation,
-  type BatchResult,
   type FetchDOIOptions
 };

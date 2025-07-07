@@ -7,12 +7,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useState } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
-const useRelatedObjectTitles = () => {
+const useRelatedObjectCitations = () => {
   return useQuery({
-    queryKey: ["relatedObjectTitles"],
+    queryKey: ["relatedObjectCitations"],
     queryFn: () => {
-      const stored = localStorage.getItem("relatedObjectTitles");
-      return stored ? new Map(JSON.parse(stored)) : new Map();
+      try {
+        const stored = localStorage.getItem("relatedObjectCitations");
+        return stored ? new Map(JSON.parse(stored)) : new Map();
+      } catch (error) {
+        console.error('Error accessing relatedObjectCitations:', error);
+        return new Map();
+      }
     },
   });
 };
@@ -23,7 +28,7 @@ interface DOILoadingState {
 }
 
 const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
-  const { data: relatedObjectTitles } = useRelatedObjectTitles();
+  const { data: relatedObjectCitations } = useRelatedObjectCitations();
   const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
   const queryClient = useQueryClient();
   // Updated mutation using batch fetch
@@ -84,9 +89,15 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
       }
     },
     onSuccess: ({ results, objectsToFetch }) => {
+      type RelatedObjectCitation = {
+        cachedAt: number;
+        value: string;
+        source: string;
+        fullCitation: string;
+      };
       const currentNames =
-        queryClient.getQueryData<Map<string, any>>(["relatedObjectTitles"]) ||
-        new Map();
+        queryClient.getQueryData<Map<string, RelatedObjectCitation>>(["relatedObjectCitations"]) ||
+        new Map<string, RelatedObjectCitation>();
       const newNames = new Map(currentNames);
 
       results.forEach((relatedObjectData, index) => {
@@ -95,19 +106,21 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         const relatedObjectId = objectsToFetch[index].id;
         const displayName = relatedObjectData;
 
-        newNames.set(relatedObjectId, {
-          cachedAt: Date.now(),
-          value: displayName.title, // This is now the clean citation
-          source: displayName.ra,
-          fullCitation: displayName.fullCitation
-        });
+        if (relatedObjectId) {
+          newNames.set(relatedObjectId, {
+            cachedAt: Date.now(),
+            value: displayName.title, // This is now the clean citation
+            source: displayName.ra,
+            fullCitation: displayName.fullCitation
+          });
+        }
       });
 
       localStorage.setItem(
-        "relatedObjectTitles",
+        "relatedObjectCitations",
         JSON.stringify([...newNames])
       );
-      queryClient.setQueryData(["relatedObjectTitles"], newNames);
+      queryClient.setQueryData(["relatedObjectCitations"], newNames);
       setDoiLoadingStates({});
     },
     onError: (error) => {
@@ -116,13 +129,13 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   });
 
   useEffect(() => {
-    if (data.length > 0 && relatedObjectTitles) {
+    if (data.length > 0 && relatedObjectCitations) {
       const CACHE_EXPIRY_DAYS = 90;
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
       const orgsToDownload = data.filter((org) => {
         if (!org.id) return false;
-        const cached = relatedObjectTitles.get(org.id);
+        const cached = relatedObjectCitations.get(org.id);
         if (!cached) return true;
         const cacheAge = Date.now() - cached.cachedAt;
         return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
@@ -132,7 +145,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         downloadAllObjects(orgsToDownload);
       }
     }
-  }, [data, relatedObjectTitles, downloadAllObjects]);
+  }, [data, relatedObjectCitations, downloadAllObjects]);
 
   return (
     <DisplayCard
@@ -147,9 +160,9 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
                 relatedObject={relatedObject}
                 key={relatedObject.id || i}
                 i={i}
-                relatedObjectTitle={
-                  relatedObjectTitles?.size &&
-                  relatedObjectTitles?.get(relatedObject.id)?.value
+                useRelatedObjectCitation={
+                  relatedObjectCitations?.size &&
+                  relatedObjectCitations?.get(relatedObject.id)?.value
                 }
                 doiLoadingStates={doiLoadingStates}
               />
