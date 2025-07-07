@@ -33,7 +33,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   const hasFetchedRef = useRef(false);
   const queryClient = useQueryClient();
   // Updated mutation using batch fetch
-  const { mutate: downloadAllObjects } = useMutation({
+  const downloadMutation = useMutation({
     mutationFn: async (relatedObjects: RelatedObject[]) => {
       // Filter valid objects and construct DOI URLs
       
@@ -127,6 +127,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
     },
     onError: (error) => {
       console.error('❌ Batch DOI fetch failed:', error);
+      setDoiLoadingStates({});
       hasFetchedRef.current = false;
     }
   });
@@ -146,10 +147,10 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
 
       if (orgsToDownload.length > 0) {
         hasFetchedRef.current = true;
-        downloadAllObjects(orgsToDownload);
+        downloadMutation.mutate(orgsToDownload); 
       }
     }
-  }, [data, relatedObjectCitations, downloadAllObjects, hasFetchedRef]);
+  }, [data, downloadMutation, relatedObjectCitations]);
 
   return (
     <DisplayCard

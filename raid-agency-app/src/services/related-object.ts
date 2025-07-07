@@ -207,7 +207,7 @@ async function fetchDetailedDOICitation(
       }
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    console.log("how many time this is been called", response);
+
     const citation = await response.text();
     
     if (!citation.trim()) {
