@@ -123,12 +123,10 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
       );
       queryClient.setQueryData(["relatedObjectCitations"], newNames);
       setDoiLoadingStates({});
-      hasFetchedRef.current = false;
     },
     onError: (error) => {
       console.error('❌ Batch DOI fetch failed:', error);
       setDoiLoadingStates({});
-      hasFetchedRef.current = false;
     }
   });
 
@@ -150,7 +148,8 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         downloadMutation.mutate(orgsToDownload); 
       }
     }
-  }, [data, downloadMutation, relatedObjectCitations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, relatedObjectCitations]);
 
   return (
     <DisplayCard
