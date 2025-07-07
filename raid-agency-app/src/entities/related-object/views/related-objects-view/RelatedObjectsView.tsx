@@ -1,62 +1,104 @@
 import { DisplayCard } from "@/components/display-card";
 import { NoItemsMessage } from "@/components/no-items-message";
 import { RelatedObject } from "@/generated/raid";
-import { getTitleFromDOI } from "@/services/related-object";
-import { getLastTwoUrlSegments } from "@/utils/string-utils/string-utils";
+import { batchFetchDetailedCitations,constructDOIUrl } from "@/services/related-object";
 import { Divider, Stack } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
-const useRelatedObjectTitles = () => {
+const useRelatedObjectCitations = () => {
   return useQuery({
-    queryKey: ["relatedObjectTitles"],
+    queryKey: ["relatedObjectCitations"],
     queryFn: () => {
-      const stored = localStorage.getItem("relatedObjectTitles");
-      return stored ? new Map(JSON.parse(stored)) : new Map();
+      try {
+        const stored = localStorage.getItem("relatedObjectCitations");
+        return stored ? new Map(JSON.parse(stored)) : new Map();
+      } catch (error) {
+        console.error('Error accessing relatedObjectCitations:', error);
+        return new Map();
+      }
     },
   });
 };
 
-const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
-  const { data: relatedObjectTitles } = useRelatedObjectTitles();
-  const queryClient = useQueryClient();
-  // Update the mutation with proper typing
-  const { mutate: downloadAllObjects } = useMutation({
-    mutationFn: async (relatedObjects: RelatedObject[]) => {
-      const results = await Promise.all(
-        relatedObjects.map(async (obj) => {
-          if (!obj.id) return null;
+// New interface for tracking loading states
+interface DOILoadingState {
+  [doiId: string]: boolean;
+}
 
-          await queryClient.prefetchQuery<{
-            title: string;
-            ra: string;
-          }>({
-            queryKey: ["doi", obj.id],
-            queryFn: async () => {
-              const lastTwoUrlSegments = getLastTwoUrlSegments(obj.id!);
-              if (lastTwoUrlSegments) {
-                return await getTitleFromDOI(lastTwoUrlSegments);
-              } else {
-                return Promise.reject(new Error("Invalid URL segments"));
-              }
-            },
-            staleTime: 1000 * 60 * 60 * 24 * 90,
+const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
+  const { data: relatedObjectCitations } = useRelatedObjectCitations();
+  const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
+  const hasFetchedRef = useRef(false);
+  const queryClient = useQueryClient();
+  // Updated mutation using batch fetch
+  const downloadMutation = useMutation({
+    mutationFn: async (relatedObjects: RelatedObject[]) => {
+      // Filter valid objects and construct DOI URLs
+      
+      const validObjects = relatedObjects.filter(obj => obj.id);
+      const doiUrls = validObjects
+        .map(obj => constructDOIUrl(obj.id!))
+        .filter((url): url is string => url !== null);
+
+      const loadingStates: DOILoadingState = {};
+      validObjects.forEach(obj => {
+        if (obj.id) {
+          loadingStates[obj.id] = true;
+        }
+      });
+      
+      setDoiLoadingStates(loadingStates);
+
+      // Use the fast batch fetch function
+      try {
+        const citations = await batchFetchDetailedCitations(doiUrls, { 
+          timeout: 8000,
+          userAgent: 'RelatedObjects-Fetcher/1.0'
+        });
+
+        // Process results and cache them
+        const results = validObjects.map((obj, index) => {
+          const citation = citations[index];
+          // Update loading state for this specific DOI
+            setDoiLoadingStates(prev => ({
+              ...prev,
+              [obj.id!]: false
+            }));
+          // If no citation found, return null
+          if (!citation) return null;
+
+          // Cache the query result for individual access
+          queryClient.setQueryData(["doi", obj.id], {
+            title: citation, // The clean citation
+            ra: 'doi-batch', // Registration agency identifier
+            fullCitation: citation
           });
 
-          return queryClient.getQueryData<{
-            title: string;
-            ra: string;
-          }>(["doi", obj.id]);
-        })
-      );
-      return { results, objectsToFetch: relatedObjects };
+          return {
+            title: citation,
+            ra: 'doi-batch',
+            fullCitation: citation
+          };
+        });
+
+        return { results, objectsToFetch: validObjects };
+      } catch (error) {
+        setDoiLoadingStates({});
+        throw error;
+      }
     },
     onSuccess: ({ results, objectsToFetch }) => {
+      type RelatedObjectCitation = {
+        cachedAt: number;
+        value: string;
+        source: string;
+        fullCitation: string;
+      };
       const currentNames =
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryClient.getQueryData<Map<string, any>>(["relatedObjectTitles"]) ||
-        new Map();
+        queryClient.getQueryData<Map<string, RelatedObjectCitation>>(["relatedObjectCitations"]) ||
+        new Map<string, RelatedObjectCitation>();
       const newNames = new Map(currentNames);
 
       results.forEach((relatedObjectData, index) => {
@@ -65,39 +107,50 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         const relatedObjectId = objectsToFetch[index].id;
         const displayName = relatedObjectData;
 
-        newNames.set(relatedObjectId, {
-          cachedAt: Date.now(),
-          value: displayName.title,
-          source: displayName.ra,
-        });
+        if (relatedObjectId) {
+          newNames.set(relatedObjectId, {
+            cachedAt: Date.now(),
+            value: displayName.title, // This is now the clean citation
+            source: displayName.ra,
+            fullCitation: displayName.fullCitation
+          });
+        }
       });
 
       localStorage.setItem(
-        "relatedObjectTitles",
+        "relatedObjectCitations",
         JSON.stringify([...newNames])
       );
-      queryClient.setQueryData(["relatedObjectTitles"], newNames);
+      queryClient.setQueryData(["relatedObjectCitations"], newNames);
+      setDoiLoadingStates({});
+      hasFetchedRef.current = false;
     },
+    onError: (error) => {
+      console.error('❌ Batch DOI fetch failed:', error);
+      setDoiLoadingStates({});
+      hasFetchedRef.current = false;
+    }
   });
 
   useEffect(() => {
-    if (data.length > 0 && relatedObjectTitles) {
+    if (data.length > 0 && relatedObjectCitations && !hasFetchedRef.current) {
       const CACHE_EXPIRY_DAYS = 90;
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
       const orgsToDownload = data.filter((org) => {
         if (!org.id) return false;
-        const cached = relatedObjectTitles.get(org.id);
+        const cached = relatedObjectCitations.get(org.id);
         if (!cached) return true;
         const cacheAge = Date.now() - cached.cachedAt;
         return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
       });
 
       if (orgsToDownload.length > 0) {
-        downloadAllObjects(orgsToDownload);
+        hasFetchedRef.current = true;
+        downloadMutation.mutate(orgsToDownload); 
       }
     }
-  }, [data, relatedObjectTitles, downloadAllObjects]);
+  }, [data, downloadMutation, relatedObjectCitations]);
 
   return (
     <DisplayCard
@@ -112,10 +165,11 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
                 relatedObject={relatedObject}
                 key={relatedObject.id || i}
                 i={i}
-                relatedObjectTitle={
-                  relatedObjectTitles?.size &&
-                  relatedObjectTitles?.get(relatedObject.id)?.value
+                relatedObjectCitation={
+                  relatedObjectCitations?.size &&
+                  relatedObjectCitations?.get(relatedObject.id)?.value
                 }
+                doiLoadingStates={doiLoadingStates}
               />
             ))}
           </Stack>
