@@ -4,7 +4,7 @@ import { RelatedObject } from "@/generated/raid";
 import { batchFetchDetailedCitations,constructDOIUrl } from "@/services/related-object";
 import { Divider, Stack } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
 const useRelatedObjectCitations = () => {
@@ -30,6 +30,7 @@ interface DOILoadingState {
 const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   const { data: relatedObjectCitations } = useRelatedObjectCitations();
   const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
+  const hasFetchedRef = useRef(false);
   const queryClient = useQueryClient();
   // Updated mutation using batch fetch
   const { mutate: downloadAllObjects } = useMutation({
@@ -122,14 +123,16 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
       );
       queryClient.setQueryData(["relatedObjectCitations"], newNames);
       setDoiLoadingStates({});
+      hasFetchedRef.current = false;
     },
     onError: (error) => {
       console.error('❌ Batch DOI fetch failed:', error);
+      hasFetchedRef.current = false;
     }
   });
 
   useEffect(() => {
-    if (data.length > 0 && relatedObjectCitations) {
+    if (data.length > 0 && relatedObjectCitations && !hasFetchedRef.current) {
       const CACHE_EXPIRY_DAYS = 90;
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -142,10 +145,11 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
       });
 
       if (orgsToDownload.length > 0) {
+        hasFetchedRef.current = true;
         downloadAllObjects(orgsToDownload);
       }
     }
-  }, [data, relatedObjectCitations, downloadAllObjects]);
+  }, [data, relatedObjectCitations, downloadAllObjects, hasFetchedRef]);
 
   return (
     <DisplayCard
