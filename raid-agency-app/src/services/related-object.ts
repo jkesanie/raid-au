@@ -45,20 +45,24 @@ async function fetchDetailedDOICitation(
     });
 
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
+      /* if (response.status === 404) {
+        throw new Error('DOI not found');
+      } else if (response.status >= 500) {
+        throw new Error('Server error - please try again later');
+      } else if (response.status === 403) {
+        throw new Error('Access denied to DOI service');
+      } */
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const citation = await response.text();
-    
+
     if (!citation.trim()) {
       throw new Error('Empty citation received');
     }
-  
+
     // For detailed citation, we want to keep more information
     return cleanDetailedCitation(citation.trim());
 
@@ -71,7 +75,7 @@ async function fetchDetailedDOICitation(
       }
       throw error;
     }
-    
+
     throw new Error('Unknown error occurred while fetching detailed DOI citation');
   }
 }
