@@ -1,9 +1,10 @@
 import { DisplayItem } from "@/components/display-item";
 import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
-import { Alert, Box, CircularProgress, Divider, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { memo, useMemo } from "react";
+import { LoadingIndicator } from "@/components/loading-indicator/LoadingIndicator";
+import { ErrorAlertWithAction } from "@/components/error-alert-component";
 
 const RelatedObjectItemView = memo(
   ({
@@ -27,19 +28,7 @@ const RelatedObjectItemView = memo(
       () => generalMap.get(String(relatedObject.type?.id)) ?? "",
       [generalMap, relatedObject.type?.id]
     );
-      // Individual DOI Loading Indicator
-    const DOILoadingIndicator = memo(({ doiId }: { doiId?: string }) => {
-      if (!doiId || !doiLoadingStates[doiId]) return null;
-      
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-          <CircularProgress size={16} />
-          <Typography variant="caption" color="text.secondary">
-            Loading citation from DOI.org...
-          </Typography>
-        </Box>
-      );
-    });
+
     const isLoading = relatedObject.id ? doiLoadingStates[relatedObject.id] : false;
     const hasTitle = Boolean(relatedObjectCitation);
     return (
@@ -47,7 +36,11 @@ const RelatedObjectItemView = memo(
         <Typography variant="body2" color="text.primary" sx={{ mt: 1 }}>
             {`Related Object #${i + 1}`}
           </Typography>
-        <DOILoadingIndicator doiId={relatedObject.id} />
+        <LoadingIndicator
+          id={relatedObject.id}
+          loadingStates={doiLoadingStates}
+          message={"Loading citation from DOI.org..."}
+        />
         {hasTitle && !isLoading && (
           <Box sx={{ mt: 0, display: 'flex', gap: 0.5 }}>
             <Typography variant="body2" sx={{ color: 'text.primary' }}>
@@ -60,37 +53,11 @@ const RelatedObjectItemView = memo(
         )}
         {/* Individual error message with retry */}
         {relatedObject.id && doiErrors[relatedObject.id] && (
-          <Alert 
-            severity="error"
-            variant="outlined"
-            sx={{ 
-              mt: 1,
-              alignItems: 'center',
-              '& .MuiAlert-icon': {
-                fontSize: '1.25rem'
-              }
-            }}
-            action={
-              <Tooltip title="Retry">
-                <IconButton
-                  size="small"
-                  onClick={() => retrySingleDOI(relatedObject)}
-                  disabled={doiLoadingStates[relatedObject.id]}
-                  sx={{ 
-                    color: 'error.main',
-                    '&:hover': {
-                      bgcolor: 'error.light',
-                      color: 'error.contrastText'
-                    }
-                  }}
-                >
-                 <RefreshIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            }
-          >
-            Unable to retrieve citation from DOI.org
-          </Alert>
+          <ErrorAlertWithAction
+            message={"Unable to retrieve citation from DOI.org."}
+            onRetry={() => retrySingleDOI(relatedObject)}
+            args={relatedObject}
+          />
         )}
         <Grid container spacing={2}>
           <DisplayItem

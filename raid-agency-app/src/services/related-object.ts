@@ -5,6 +5,8 @@
  * particularly for resolving DOI information from external services like Crossref, Datacite and mEDRA.
  */
 
+import { useQuery } from "@tanstack/react-query";
+
 // Removed getTitleFromDOI function as it was not used in the original code
 
 interface FetchDOIOptions {
@@ -47,13 +49,7 @@ async function fetchDetailedDOICitation(
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      /* if (response.status === 404) {
-        throw new Error('DOI not found');
-      } else if (response.status >= 500) {
-        throw new Error('Server error - please try again later');
-      } else if (response.status === 403) {
-        throw new Error('Access denied to DOI service');
-      } */
+      // If the response is not OK, throw an error with status
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
@@ -165,12 +161,27 @@ function constructDOIUrl(identifier: string): string {
   // Assume it's a bare DOI and construct URL
   return `https://doi.org/${identifier}`;
 }
-
+// * Custom hook to fetch related object citations from localStorage
+const useRelatedObjectCitations = () => {
+  return useQuery({
+    queryKey: ["relatedObjectCitations"],
+    queryFn: () => {
+      try {
+        const stored = localStorage.getItem("relatedObjectCitations");
+        return stored ? new Map(JSON.parse(stored)) : new Map();
+      } catch (error) {
+        console.error('Error accessing relatedObjectCitations:', error);
+        return new Map();
+      }
+    },
+  });
+};
 // Export all functions and types for external use
 
 export {
   fetchDetailedDOICitation,
   batchFetchDetailedCitations,
+  useRelatedObjectCitations,
   cleanDetailedCitation,
   constructDOIUrl,
   type FetchDOIOptions

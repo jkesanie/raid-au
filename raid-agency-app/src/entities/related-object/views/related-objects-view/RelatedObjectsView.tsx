@@ -1,47 +1,55 @@
 import { DisplayCard } from "@/components/display-card";
 import { NoItemsMessage } from "@/components/no-items-message";
 import { RelatedObject } from "@/generated/raid";
-import { constructDOIUrl, fetchDetailedDOICitation } from "@/services/related-object";
+import { constructDOIUrl, fetchDetailedDOICitation, useRelatedObjectCitations } from "@/services/related-object";
 import { Divider, Stack } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { memo, useEffect, useState, useRef, useCallback } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
-const useRelatedObjectCitations = () => {
-  return useQuery({
-    queryKey: ["relatedObjectCitations"],
-    queryFn: () => {
-      try {
-        const stored = localStorage.getItem("relatedObjectCitations");
-        return stored ? new Map(JSON.parse(stored)) : new Map();
-      } catch (error) {
-        console.error('Error accessing relatedObjectCitations:', error);
-        return new Map();
-      }
-    },
-  });
-};
 
 // New interface for tracking loading states
 interface DOILoadingState {
   [doiId: string]: boolean;
 }
-
+// New interface for tracking errors
+// This allows us to track errors for each DOI separately
 interface DOIErrorState {
   [doiId: string]: string;
 }
-
+// Type for related object citation
 type RelatedObjectCitation = {
   cachedAt: number;
   source: string;
   fullCitation: string;
+  value?: string; // To display in cache manager
+};
+
+// Cache configuration
+const CACHE_CONFIG = {
+  EXPIRY_DAYS: 90,
+  BACKGROUND_REFRESH_DAYS: 30, // Refresh in background if older than 30 days
+  MS_PER_DAY: 1000 * 60 * 60 * 24,
+  STORAGE_KEY: "relatedObjectCitations",
+  VERSION: "v1" // For cache versioning
+};
+// Function to check if cache is expired
+// This checks if the cached item is older than the configured expiry days
+const isCacheExpired = (cachedAt: number): boolean => {
+  const cacheAge = Date.now() - cachedAt;
+  return cacheAge > CACHE_CONFIG.EXPIRY_DAYS * CACHE_CONFIG.MS_PER_DAY;
 };
 
 const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   const { data: relatedObjectCitations } = useRelatedObjectCitations();
+  // State to track loading and error states for DOIs
+  // Using separate states for loading and errors to avoid unnecessary re-renders
   const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
   const [doiErrors, setDoiErrors] = useState<DOIErrorState>({});
+  // Ref to track attempted DOIs to avoid re-fetching
+  // This will persist across renders without causing re-renders
   const attemptedDOIsRef = useRef<Set<string>>(new Set());
+
   const queryClient = useQueryClient();
 
   // Updated mutation using batch fetch
@@ -91,6 +99,7 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
       });
 
       const results = await Promise.all(fetchPromises);
+
       // Update ONLY the states for DOIs we just fetched
       setDoiLoadingStates(prev => {
         const newStates = { ...prev };
@@ -126,13 +135,15 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         if (citation) {
           queryClient.setQueryData(["doi", id], {
             ra: 'doi-batch',
-            fullCitation: citation
+            fullCitation: citation,
+            value: citation,// To display in cache manager
           });
 
           newNames.set(id, {
             cachedAt: Date.now(),
             source: 'doi-batch',
-            fullCitation: citation
+            fullCitation: citation,
+            value: citation // To display in cache manager
           });
         }
       });
@@ -157,16 +168,13 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
 
   useEffect(() => {
     if(!data.length || !relatedObjectCitations) return;
-    // Check if we have already fetched DOIs
-      const CACHE_EXPIRY_DAYS = 90;
-      const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
+      // Filter out already attempted or cached objects
+      // and those that are still fresh in cache
       const orgsToDownload = data.filter((org) => {
         if (!org.id || attemptedDOIsRef.current.has(org.id)) return false;
         const cached = relatedObjectCitations.get(org.id);
         if (!cached) return true;
-        const cacheAge = Date.now() - cached.cachedAt;
-        return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
+        return isCacheExpired(cached.cachedAt);
       });
 
     if (orgsToDownload.length > 0) {
