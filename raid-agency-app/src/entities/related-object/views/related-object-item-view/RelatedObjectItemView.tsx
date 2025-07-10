@@ -3,7 +3,7 @@ import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { memo, useMemo } from "react";
-import { LoadingIndicator } from "@/components/loading-indicator/LoadingIndicator";
+import { LoadingIndicator } from "@/components/loading-indicator";
 import { ErrorAlertWithAction } from "@/components/error-alert-component";
 
 const RelatedObjectItemView = memo(
