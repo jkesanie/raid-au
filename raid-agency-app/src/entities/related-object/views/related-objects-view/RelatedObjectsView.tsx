@@ -1,118 +1,149 @@
 import { DisplayCard } from "@/components/display-card";
 import { NoItemsMessage } from "@/components/no-items-message";
 import { RelatedObject } from "@/generated/raid";
-import { batchFetchDetailedCitations,constructDOIUrl } from "@/services/related-object";
+import { constructDOIUrl, fetchDetailedDOICitation, useRelatedObjectCitations } from "@/services/related-object";
 import { Divider, Stack } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { memo, useEffect, useState, useRef } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { memo, useEffect, useState, useRef, useCallback } from "react";
 import { RelatedObjectItemView } from "@/entities/related-object/views/related-object-item-view";
 
-const useRelatedObjectCitations = () => {
-  return useQuery({
-    queryKey: ["relatedObjectCitations"],
-    queryFn: () => {
-      try {
-        const stored = localStorage.getItem("relatedObjectCitations");
-        return stored ? new Map(JSON.parse(stored)) : new Map();
-      } catch (error) {
-        console.error('Error accessing relatedObjectCitations:', error);
-        return new Map();
-      }
-    },
-  });
-};
 
 // New interface for tracking loading states
 interface DOILoadingState {
   [doiId: string]: boolean;
 }
+// New interface for tracking errors
+// This allows us to track errors for each DOI separately
+interface DOIErrorState {
+  [doiId: string]: string;
+}
+// Type for related object citation
+type RelatedObjectCitation = {
+  cachedAt: number;
+  source: string;
+  fullCitation: string;
+  value?: string; // To display in cache manager
+};
+
+// Cache configuration
+const CACHE_CONFIG = {
+  EXPIRY_DAYS: 90,
+  BACKGROUND_REFRESH_DAYS: 30, // Refresh in background if older than 30 days
+  MS_PER_DAY: 1000 * 60 * 60 * 24,
+  STORAGE_KEY: "relatedObjectCitations",
+  VERSION: "v1" // For cache versioning
+};
+// Function to check if cache is expired
+// This checks if the cached item is older than the configured expiry days
+const isCacheExpired = (cachedAt: number): boolean => {
+  const cacheAge = Date.now() - cachedAt;
+  return cacheAge > CACHE_CONFIG.EXPIRY_DAYS * CACHE_CONFIG.MS_PER_DAY;
+};
 
 const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
   const { data: relatedObjectCitations } = useRelatedObjectCitations();
+  // State to track loading and error states for DOIs
+  // Using separate states for loading and errors to avoid unnecessary re-renders
   const [doiLoadingStates, setDoiLoadingStates] = useState<DOILoadingState>({});
-  const hasFetchedRef = useRef(false);
+  const [doiErrors, setDoiErrors] = useState<DOIErrorState>({});
+  // Ref to track attempted DOIs to avoid re-fetching
+  // This will persist across renders without causing re-renders
+  const attemptedDOIsRef = useRef<Set<string>>(new Set());
+
   const queryClient = useQueryClient();
+
   // Updated mutation using batch fetch
   const downloadMutation = useMutation({
     mutationFn: async (relatedObjects: RelatedObject[]) => {
       // Filter valid objects and construct DOI URLs
-      
       const validObjects = relatedObjects.filter(obj => obj.id);
-      const doiUrls = validObjects
-        .map(obj => constructDOIUrl(obj.id!))
-        .filter((url): url is string => url !== null);
-
-      const loadingStates: DOILoadingState = {};
-      validObjects.forEach(obj => {
-        if (obj.id) {
-          loadingStates[obj.id] = true;
-        }
-      });
-      
-      setDoiLoadingStates(loadingStates);
-
-      // Use the fast batch fetch function
-      try {
-        const citations = await batchFetchDetailedCitations(doiUrls, { 
-          timeout: 8000,
-          userAgent: 'RelatedObjects-Fetcher/1.0'
+      // Set loading states ONLY for DOIs being fetched now
+      setDoiLoadingStates(prev => {
+        const newStates = { ...prev };
+        validObjects.forEach(obj => {
+          if (obj.id) {
+            newStates[obj.id] = true;
+          }
         });
+        return newStates;
+      });
 
-        // Process results and cache them
-        const results = validObjects.map((obj, index) => {
-          const citation = citations[index];
-          // Update loading state for this specific DOI
-            setDoiLoadingStates(prev => ({
-              ...prev,
-              [obj.id!]: false
-            }));
-          // If no citation found, return null
-          if (!citation) return null;
-
-          // Cache the query result for individual access
-          queryClient.setQueryData(["doi", obj.id], {
-            title: citation, // The clean citation
-            ra: 'doi-batch', // Registration agency identifier
-            fullCitation: citation
+      // Clear errors ONLY for DOIs being fetched now
+      setDoiErrors(prev => {
+        const newErrors = { ...prev };
+        validObjects.forEach(obj => {
+          if (obj.id) delete newErrors[obj.id];
+        });
+        return newErrors;
+      });
+      // Use the fast batch fetch function
+      // Fetch each DOI and track individual results
+      const fetchPromises = validObjects.map(async (obj) => {
+        const id = obj.id!;
+        const url = constructDOIUrl(id);
+        try {
+          const citation = await fetchDetailedDOICitation(url, { 
+            timeout: 8000,
+            userAgent: 'RelatedObjects-Fetcher/1.0'
           });
 
-          return {
-            title: citation,
-            ra: 'doi-batch',
-            fullCitation: citation
-          };
-        });
+          if (!citation) {
+            throw new Error('Citation not found');
+          }
 
-        return { results, objectsToFetch: validObjects };
-      } catch (error) {
-        setDoiLoadingStates({});
-        throw error;
-      }
+          return { id, citation, error: null };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          return { id, citation: null, error: errorMessage };
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+
+      // Update ONLY the states for DOIs we just fetched
+      setDoiLoadingStates(prev => {
+        const newStates = { ...prev };
+        results.forEach(result => {
+          delete newStates[result.id];
+        });
+        return newStates;
+      });
+
+      // Add errors ONLY for failed DOIs we just fetched
+      setDoiErrors(prev => {
+        const newErrors = { ...prev };
+        results.forEach(result => {
+          if (result.error) {
+            newErrors[result.id] = result.error;
+          }
+        });
+        return newErrors;
+      });
+
+      // Process successful results
+      const successfulResults = results.filter(r => r.citation !== null);
+
+      return { results: successfulResults };
     },
-    onSuccess: ({ results, objectsToFetch }) => {
-      type RelatedObjectCitation = {
-        cachedAt: number;
-        value: string;
-        source: string;
-        fullCitation: string;
-      };
+    onSuccess: ({ results }) => {
       const currentNames =
         queryClient.getQueryData<Map<string, RelatedObjectCitation>>(["relatedObjectCitations"]) ||
         new Map<string, RelatedObjectCitation>();
       const newNames = new Map(currentNames);
 
-      results.forEach((relatedObjectData, index) => {
-        if (!relatedObjectData) return;
+      results.forEach(({ id, citation }) => {
+        if (citation) {
+          queryClient.setQueryData(["doi", id], {
+            ra: 'doi-batch',
+            fullCitation: citation,
+            value: citation,// To display in cache manager
+          });
 
-        const relatedObjectId = objectsToFetch[index].id;
-        const displayName = relatedObjectData;
-
-        if (relatedObjectId) {
-          newNames.set(relatedObjectId, {
+          newNames.set(id, {
             cachedAt: Date.now(),
-            value: displayName.title, // This is now the clean citation
-            source: displayName.ra,
-            fullCitation: displayName.fullCitation
+            source: 'doi-batch',
+            fullCitation: citation,
+            value: citation // To display in cache manager
           });
         }
       });
@@ -122,31 +153,38 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
         JSON.stringify([...newNames])
       );
       queryClient.setQueryData(["relatedObjectCitations"], newNames);
-      setDoiLoadingStates({});
     },
     onError: (error) => {
       console.error('❌ Batch DOI fetch failed:', error);
-      setDoiLoadingStates({});
     }
   });
 
-  useEffect(() => {
-    if (data.length > 0 && relatedObjectCitations && !hasFetchedRef.current) {
-      const CACHE_EXPIRY_DAYS = 90;
-      const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  // Retry individual DOI
+  const retrySingleDOI = useCallback((relatedObject: RelatedObject) => {
+    if (!relatedObject.id) return;
+    // Call mutation directly
+    downloadMutation.mutate([relatedObject]);
+  }, [downloadMutation])
 
+  useEffect(() => {
+    if(!data.length || !relatedObjectCitations) return;
+      // Filter out already attempted or cached objects
+      // and those that are still fresh in cache
       const orgsToDownload = data.filter((org) => {
-        if (!org.id) return false;
+        if (!org.id || attemptedDOIsRef.current.has(org.id)) return false;
         const cached = relatedObjectCitations.get(org.id);
         if (!cached) return true;
-        const cacheAge = Date.now() - cached.cachedAt;
-        return cacheAge > CACHE_EXPIRY_DAYS * MS_PER_DAY;
+        return isCacheExpired(cached.cachedAt);
       });
 
-      if (orgsToDownload.length > 0) {
-        hasFetchedRef.current = true;
-        downloadMutation.mutate(orgsToDownload); 
-      }
+    if (orgsToDownload.length > 0) {
+      // Mark as attempted IMMEDIATELY
+      const newAttempted = new Set(attemptedDOIsRef.current);
+      orgsToDownload.forEach(org => {
+        if (org.id) newAttempted.add(org.id);
+      });
+      attemptedDOIsRef.current = newAttempted;
+      downloadMutation.mutate(orgsToDownload);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, relatedObjectCitations]);
@@ -166,9 +204,11 @@ const RelatedObjectsView = memo(({ data }: { data: RelatedObject[] }) => {
                 i={i}
                 relatedObjectCitation={
                   relatedObjectCitations?.size &&
-                  relatedObjectCitations?.get(relatedObject.id)?.value
+                  relatedObjectCitations?.get(relatedObject.id)?.fullCitation
                 }
                 doiLoadingStates={doiLoadingStates}
+                doiErrors={doiErrors}
+                retrySingleDOI={retrySingleDOI}
               />
             ))}
           </Stack>
