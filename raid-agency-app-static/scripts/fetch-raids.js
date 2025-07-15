@@ -19,8 +19,6 @@ const __dirname = dirname(__filename);
 // Load environment variables
 dotenvConfig();
 
-const streamPipeline = promisify(pipeline);
-
 // Configuration with defaults
 const config = {
   iamEndpoint: process.env.IAM_ENDPOINT,
@@ -35,7 +33,8 @@ const config = {
   requestTimeout: parseInt(process.env.REQUEST_TIMEOUT) || 30000,
   maxRetries: parseInt(process.env.MAX_RETRIES) || 3,
   // Feature flags
-  enableCaching: process.env.ENABLE_CACHING === 'true',
+  enableCaching: process.env.ENABLE_CACHING === 'true' || true,
+  cachingTime: parseInt(process.env.CACHING_TIME) || 24 * 5 * 60 * 60 * 1000, // 5 days
   verboseLogging: process.env.VERBOSE_LOGGING === 'true'
 };
 
@@ -56,7 +55,7 @@ const stats = {
 function validateConfig() {
   const required = ['IAM_ENDPOINT', 'API_ENDPOINT', 'IAM_CLIENT_ID', 'IAM_CLIENT_SECRET', 'RAID_ENV'];
   const missing = required.filter(key => !process.env[key]);
-  
+  // Check if any required environment variables are missing
   if (missing.length > 0) {
     console.error('Error: The following required environment variables are not set:');
     missing.forEach(key => console.error(`  - ${key}`));
@@ -220,9 +219,9 @@ function cleanDetailedCitation(citation) {
 // Fetch citation for a DOI with caching
 async function fetchCitation(doi) {
   // Check cache first
-  if (config.enableCaching && citationCache.has(doi)) {
+  if (config.enableCaching && citationCache.has(doi) && (Date.now() - citationCache.get(doi).timestamp < config.cachingTime)) {
     stats.cachedCitations++;
-    return citationCache.get(doi);
+    return citationCache.get(doi).citation;
   }
   
   const url = `https://doi.org/${doi}`;
@@ -239,7 +238,10 @@ async function fetchCitation(doi) {
     const citation = response.data.trim();
     if (citation && !citation.includes('404') && !citation.includes('Not Found')) {
       if (config.enableCaching) {
-        citationCache.set(doi, citation);
+        citationCache.set(doi, {
+          citation: cleanDetailedCitation(citation),
+          timestamp: Date.now()
+        });
       }
       return cleanDetailedCitation(citation);
     }
@@ -421,9 +423,7 @@ async function main() {
 }
 
 // Run the script if executed directly
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
-}
+main();
 
 // Export functions for use as a module
 export {
