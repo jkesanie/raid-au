@@ -1,15 +1,64 @@
 #!/usr/bin/env node
 
+/**
+ * RAID Data Collection Script with Citation Enhancement
+ * 
+ * This script fetches RAID (Research Activity Identifier) data from a designated API
+ * and enriches it with citation information from DOI.org.
+ * 
+ * Main Operations:
+ * 1. Loads environment variables from .env file
+ * 2. Validates required configuration
+ * 3. Authenticates with IAM endpoint to obtain bearer token
+ * 4. Fetches all public RAID data from the API
+ * 5. Fetches citation data for all DOIs found in relatedObjects
+ * 6. Adds citation text to corresponding relatedObjects
+ * 7. Saves enriched data to raids.json
+ * 8. Extracts and saves unique handles from all environments
+ * 
+ * Features:
+ * - Concurrent DOI processing for better performance
+ * - Smart caching to avoid redundant API calls
+ * - Retry logic with exponential backoff
+ * - Progress tracking with real-time updates
+ * - Configurable rate limiting to respect API limits
+ * - Cross-platform compatibility (Windows/Mac/Linux)
+ * 
+ * Output Files:
+ * - ./src/raw-data/raids.json - Enhanced RAID data with citations
+ * - ./src/raw-data/handles.json - Combined handles from all environments
+ * - ./src/raw-data/.citation-cache.json - Citation cache (if caching enabled)
+ * 
+ * Environment Variables:
+ * Required:
+ * - IAM_ENDPOINT - IAM authentication endpoint
+ * - API_ENDPOINT - RAID API endpoint
+ * - IAM_CLIENT_ID - OAuth client ID
+ * - IAM_CLIENT_SECRET - OAuth client secret
+ * - RAID_ENV - RAID environment (prod/stage/demo/test)
+ * 
+ * Optional:
+ * - DATA_DIR - Output directory (default: ./src/raw-data)
+ * - CONCURRENT_DOI_REQUESTS - Number of parallel DOI requests (default: 5)
+ * - DOI_REQUEST_DELAY - Delay between batches in ms (default: 100)
+ * - REQUEST_TIMEOUT - HTTP request timeout in ms (default: 30000)
+ * - MAX_RETRIES - Maximum retry attempts (default: 3)
+ * - ENABLE_CACHING - Enable citation caching (default: false)
+ * - CACHING_TIME - Cache validity in ms (default: 5 days)
+ * - VERBOSE_LOGGING - Enable detailed logging (default: false)
+ * 
+ * Usage:
+ * $ node fetch-raids.js
+ * 
+ */
+
 import fs from 'fs/promises';
 import path from 'path';
 import https from 'https';
 import http from 'http';
-import { promisify } from 'util';
-import { pipeline } from 'stream';
 import { config as dotenvConfig } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { pathToFileURL } from 'url';
 import { fetchAllHandles } from './fetch-handles.js';
 
 // Get __dirname equivalent in ES modules
@@ -33,8 +82,8 @@ const config = {
   requestTimeout: parseInt(process.env.REQUEST_TIMEOUT) || 30000,
   maxRetries: parseInt(process.env.MAX_RETRIES) || 3,
   // Feature flags
-  enableCaching: process.env.ENABLE_CACHING === 'true' || true,
-  cachingTime: parseInt(process.env.CACHING_TIME) || 24 * 5 * 60 * 60 * 1000, // 5 days
+  enableCaching: process.env.ENABLE_CACHING === 'true',
+  cachingTime: parseInt(process.env.CACHING_TIME) || 5 * 24 * 60 * 60 * 1000, // 5 days
   verboseLogging: process.env.VERBOSE_LOGGING === 'true'
 };
 
@@ -224,7 +273,7 @@ async function fetchCitation(doi) {
     return citationCache.get(doi).citation;
   }
   
-  const url = `https://doi.org/${doi}`;
+  const url = `${doi}`;
   
   try {
     const response = await makeRequestWithRetry(url, {
@@ -235,20 +284,22 @@ async function fetchCitation(doi) {
     }, 2); // Fewer retries for DOI lookups
     
     // Check if we got a valid citation
-    const citation = response.data.trim();
-    if (citation && !citation.includes('404') && !citation.includes('Not Found')) {
+    const citation = cleanDetailedCitation(response.data);
+
+    if (citation && !citation.includes('DOI Not Found')) {
       if (config.enableCaching) {
         citationCache.set(doi, {
-          citation: cleanDetailedCitation(citation),
+          citation: citation,
           timestamp: Date.now()
         });
       }
-      return cleanDetailedCitation(citation);
+      stats.successfulCitations++;
+      return citation;
     }
-    return null;
+    return "DOI exists but metadata could not be retrieved - contact info@doi.org for help with this";
   } catch (error) {
     stats.failedCitations++;
-    return null;
+    return "DOI exists but metadata could not be retrieved - contact info@doi.org for help with this";
   }
 }
 
@@ -257,9 +308,6 @@ async function processDOIBatch(dois) {
   const results = await Promise.all(
     dois.map(async ({ doi, raidIndex, objectIndex }) => {
       const citation = await fetchCitation(doi);
-      if (citation) {
-        stats.successfulCitations++;
-      }
       return { citation, raidIndex, objectIndex };
     })
   );
@@ -304,13 +352,12 @@ async function addCitationsToRaidData(raidData) {
   
   for (let i = 0; i < allDois.length; i += batchSize) {
     const batch = allDois.slice(i, i + batchSize);
-    
     if (config.verboseLogging) {
       console.log(`Processing DOI batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(allDois.length / batchSize)}`);
     }
     
     const results = await processDOIBatch(batch);
-    
+
     // Apply results to RAID data
     results.forEach(({ citation, raidIndex, objectIndex }) => {
       if (citation) {
@@ -405,7 +452,7 @@ async function main() {
     console.log('\nSummary:');
     console.log(`- Total RAIDs processed: ${stats.totalRaids}`);
     console.log(`- Total DOIs found: ${stats.totalDois}`);
-    console.log(`- Successful citations: ${stats.successfulCitations}`);
+    console.log(`- Successful citations fetched: ${stats.successfulCitations}`);
     console.log(`- Failed citations: ${stats.failedCitations}`);
     if (config.enableCaching) {
       console.log(`- Cached citations used: ${stats.cachedCitations}`);
