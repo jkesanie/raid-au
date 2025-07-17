@@ -10,14 +10,14 @@ The RAiD Agency Static App is built on the Astro framework, using a static site 
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │                 │     │                 │     │                 │
 │  Data Fetching  │────▶│  Static Site    │────▶│  Static HTML    │
-│  (Shell Scripts)│     │  Generation     │     │  (User Browser) │
+│  (Node Modules) │     │  Generation     │     │  (User Browser) │
 │                 │     │  (Astro)        │     │                 │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
 ### Key Components
 
-1. **Data Fetching**: Shell scripts fetch data from the RAiD API
+1. **Data Fetching**: Node modules fetch data from the RAiD API
 2. **Static Site Generation**: Astro transforms the data into static HTML
 3. **Component Rendering**: Specialized components for each RAiD data type
 
@@ -27,8 +27,9 @@ The RAiD Agency Static App is built on the Astro framework, using a static site 
 
 The application fetches data using shell scripts in the `scripts/` directory:
 
-- `fetch-raids.sh`: Authenticates with OAuth and fetches RAiD data
-- `fetch-handles.sh`: Fetches handles from multiple environments
+- `fetch-raids.js`: Authenticates with OAuth and fetches RAiD data
+- `fetch-handles.js`: Fetches handles from multiple environments
+- `fetch-citation.js`: Fetches Citation with optional caching mechanism
 
 The data flow is as follows:
 
@@ -163,6 +164,20 @@ To add a new page:
 - `IAM_CLIENT_ID`: Client ID for OAuth
 - `IAM_CLIENT_SECRET`: Client secret for OAuth
 - `RAID_ENV`: Environment name (prod, stage, etc.)
+
+### Optional Performance Variables:
+
+# Performance Tuning
+- `CONCURRENT_DOI_REQUESTS` : Parallel DOI requests (default: 5)
+- `DOI_REQUEST_DELAY`: Delay between batches in ms (default: 100)
+- `REQUEST_TIMEOUT` : HTTP timeout in ms (default: 30000)
+- `MAX_RETRIES` : Maximum retry attempts (default: 3)
+
+# Feature Flags
+- `ENABLE_CACHING` : Enable citation caching (default: false)
+- `CACHING_TIME`: Cache TTL in ms (default: 5 days)
+- `VERBOSE_LOGGING`: Enable detailed logging (default: false)
+
 
 ### API Endpoints
 

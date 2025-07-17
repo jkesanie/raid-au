@@ -6,7 +6,4 @@ export interface RelatedObject {
     schemaUri?: string;
     type?: RelatedObjectType;
     category?: Array<RelatedObjectCategory>;
-    citation?: {
-        text?: string;
-    }
 }

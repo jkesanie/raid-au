@@ -29,6 +29,20 @@ IAM_CLIENT_SECRET=<client secret>
 RAID_ENV=<environment name>
 ```
 
+### Optional Performance Variables:
+```env
+# Performance Tuning
+CONCURRENT_DOI_REQUESTS=5     # Parallel DOI requests (default: 5)
+DOI_REQUEST_DELAY=100         # Delay between batches in ms (default: 100)
+REQUEST_TIMEOUT=30000         # HTTP timeout in ms (default: 30000)
+MAX_RETRIES=3                 # Maximum retry attempts (default: 3)
+
+# Feature Flags
+ENABLE_CACHING=true           # Enable citation caching (default: false)
+CACHING_TIME=432000000        # Cache TTL in ms (default: 5 days)
+VERBOSE_LOGGING=false         # Enable detailed logging (default: false)
+```
+
 ## Development Workflow
 
 ### Directory Structure

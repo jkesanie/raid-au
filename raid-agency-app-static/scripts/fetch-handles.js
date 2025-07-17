@@ -137,8 +137,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   });
 }
 
+async function extractHandles(raidData) {
+  const handles = new Set();
+  
+  if (Array.isArray(raidData)) {
+    raidData.forEach(raid => {
+      if (raid.identifier?.id) {
+        // Extract handle pattern (e.g., "10.82259/4tzj-am61")
+        const match = raid.identifier.id.match(/([^/]+\/[^/]+)(?:\/|$)/);
+        if (match) {
+          handles.add(match[1]);
+        }
+      }
+    });
+  }
+  
+  return Array.from(handles).sort();
+}
 // Export for use as a module
-export { fetchAllHandles, fetchAllHandlesWithConfig, fetchBackend };
+export { fetchAllHandles, fetchAllHandlesWithConfig, fetchBackend, extractHandles };
 
 // Also export as default
 export default fetchAllHandles;
