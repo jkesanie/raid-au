@@ -1,11 +1,6 @@
-﻿import type { RelatedObjectType } from './RelatedObjectType';
+﻿import type { RelatedObject } from './RelatedObject';
 import type { Citation } from './Citation';
-import type { RelatedObjectCategory } from './RelatedObjectCategory';
 
-export interface RelatedObjectWithCitation {
-    id?: string;
-    schemaUri?: string;
-    type?: RelatedObjectType;
-    category?: Array<RelatedObjectCategory>;
+export interface RelatedObjectWithCitation extends RelatedObject {
     citation?: Citation;
 }
