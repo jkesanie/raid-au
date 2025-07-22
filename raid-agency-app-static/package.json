@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "scripts": "./scripts/fetch-raids.sh && ./scripts/fetch-handles.sh",
+    "scripts": "node ./scripts/fetch-raids.js",
     "predev": "npm run scripts",
     "dev": "astro dev",
     "start": "astro dev",
@@ -18,9 +18,12 @@
     "@astrojs/tailwind": "^5.1.4",
     "@fontsource/figtree": "^5.1.1",
     "@openapitools/openapi-generator-cli": "^2.14.0",
+    "@tailwindcss/typography": "^0.5.16",
     "astro": "^5.1.7",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.3.1",
     "fast-json-patch": "^3.1.1",
+    "marked": "^16.1.0",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3"
   },
