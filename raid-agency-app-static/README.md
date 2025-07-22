@@ -21,7 +21,7 @@ The RAiD Agency Static App is a web application that fetches, processes, enriche
 /
 ├── public/                 # Static assets
 ├── scripts/                # Data fetching Node.js modules
-│   ├── fetch-raids.js      # Main orchestration script
+│   ├── fetch-raids.js      # Main orchestration module
 │   ├── fetch-citation.js   # Citation fetching and caching module
 │   └── fetch-handles.js    # Multi-environment handle fetching
 ├── src/
@@ -46,7 +46,7 @@ The RAiD Agency Static App is a web application that fetches, processes, enriche
 │   ├── raw-data/           # Raw JSON data from API
 │   │   ├── raids.json      # Enhanced RAiD data with citations
 │   │   ├── handles.json    # Unique handles
-|   |   ├── all-handles.json # Unique handles 
+|   |   ├── all-handles.json # Combined all handles 
 │   │   └── .citation-cache.json # Citation cache (if enabled)
 │   ├── services/           # Data services
 │   └── utils/              # Utility functions
@@ -97,7 +97,7 @@ The RAiD Agency Static App is a web application that fetches, processes, enriche
 | :--------------------- | :--------------------------------------------------------------- |
 | `npm install`          | Installs dependencies                                            |
 | `npm run scripts`      | Fetches latest RAiD data                                         |
-| `npm run dev`          | Starts local dev server at `localhost:4321` (runs fetch first)   |
+| `npm run dev`          | Starts local dev server at `localhost:4321` (runs scripts first) |
 | `npm run build`        | Build production site to `./dist/` (runs scripts first)          |
 | `npm run preview`      | Preview your build locally                                       |
 
@@ -120,7 +120,7 @@ RAID_ENV=<environment name>
 ### Optional Performance Variables:
 ```env
 # Performance Tuning
-CONCURRENT_DOI_REQUESTS=5      # Parallel DOI requests (default: 5)
+CONCURRENT_DOI_REQUESTS=5     # Parallel DOI requests (default: 5)
 DOI_REQUEST_DELAY=100         # Delay between batches in ms (default: 100)
 REQUEST_TIMEOUT=30000         # HTTP timeout in ms (default: 30000)
 MAX_RETRIES=3                 # Maximum retry attempts (default: 3)
@@ -153,18 +153,6 @@ The new Node.js implementation provides significant improvements:
 - **Zero parsing errors** with native JSON handling
 - **Smart caching** reduces API calls by up to 50% on subsequent runs
 - **Better error handling** with automatic retries and fallbacks
-
-Example performance metrics:
-```
-Summary:
-- Total RAIDs processed: 274
-- Total DOIs found: 540
-- Successful citations: 533
-- Failed citations: 5
-- Cached citations used: 123
-- Total handles: 598
-- Execution time: 136.15 seconds
-```
 
 ## 🌐 API Endpoints
 

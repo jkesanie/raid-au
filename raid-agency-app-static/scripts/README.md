@@ -16,7 +16,7 @@ The scripts in this directory are responsible for:
 ## Architecture
 
 The system is built using modular Node.js ES modules:
-- **fetch-raids.js** - Main orchestration script
+- **fetch-raids.js** - Main orchestration module
 - **fetch-citation.js** - Citation fetching and caching module
 - **fetch-handles.js** - Multi-environment handle fetching module
 
@@ -24,7 +24,7 @@ The system is built using modular Node.js ES modules:
 
 ### fetch-raids.js
 
-**Purpose:** Main script that orchestrates the entire data fetching process.
+**Purpose:** Main module that orchestrates the entire data fetching process.
 
 **Features:**
 - OAuth2 authentication with automatic token management
@@ -36,12 +36,12 @@ The system is built using modular Node.js ES modules:
 
 **Flow:**
 1. Loads environment variables from `.env`
-2. Validates required configuration
+2. Validates required configuration(environment variables)
 3. Authenticates with IAM endpoint to obtain bearer token
 4. Fetches all public RAiD data from the API
-5. Enriches data with citations from DOI.org (with fallback to Crossref)
-6. Fetches handles from all environments
-7. Saves enriched data and handles to output files
+5. Enriches data with citations from DOI.org and save them to `src/raw-data/raids.json`
+6. Extracts unique handles and saves them to `src/raw-data/handles.json`
+7. Fetches handles from all environments and save them to `src/raw-data/all-handles.json`
 
 **Requirements:**
 - Node.js v14+ with ES module support
@@ -166,18 +166,6 @@ This happens through the `predev` and `prebuild` npm scripts defined in `package
 - **Zero parsing errors** with native JSON handling
 - **Smart caching** reduces redundant API calls
 - **Better error handling** with automatic retries
-
-### Example Performance:
-```
-Summary:
-- Total RAIDs processed: 274
-- Total DOIs found: 540
-- Successful citations: 533
-- Failed citations: 5
-- Cached citations used: 123
-- Total handles: 598
-- Execution time: 136.15 seconds
-```
 
 ## Troubleshooting
 

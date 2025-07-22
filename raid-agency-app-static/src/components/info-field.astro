@@ -51,6 +51,23 @@ const { label, value, tooltip, isLink, markdown = false } = Astro.props as Props
     transform: translate(0);
     opacity: 1;
   }
+  .htags :global(h5) {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: currentColor;
+  }
+
+  .htags :global(h6) {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: currentColor;
+  }
 </style>
 
 <div>
@@ -72,7 +89,7 @@ const { label, value, tooltip, isLink, markdown = false } = Astro.props as Props
             {value}
           </a>
         ) : (
-          <div set:html={markdownContent(markdown, value)} class="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800"/>
+          <div set:html={markdownContent(markdown, value)} class="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800 htags"/>
            || 
            "---"
         )
@@ -94,7 +111,7 @@ const { label, value, tooltip, isLink, markdown = false } = Astro.props as Props
           <div class="tooltip">
             <span class="font-semibold block">
               {label}: 
-              <div set:html={markdownContent(markdown, value)} class="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800"/>
+              <div set:html={markdownContent(markdown, value)} class="prose prose-sm max-w-none [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800 htags"/>
             </span> 
             {tooltip}
           </div>
