@@ -1,10 +1,12 @@
 import { DisplayItem } from "@/components/display-item";
 import { RelatedObject } from "@/generated/raid";
 import { useMapping } from "@/mapping";
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography, Link } from "@mui/material";
 import { memo, useMemo } from "react";
 import { LoadingIndicator } from "@/components/loading-indicator";
 import { ErrorAlertWithAction } from "@/components/error-alert-component";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from 'rehype-raw';
 
 const RelatedObjectItemView = memo(
   ({
@@ -47,7 +49,21 @@ const RelatedObjectItemView = memo(
               Citation:
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {relatedObjectCitation}
+              <ReactMarkdown
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  p: ({ children }) => <span>{children}</span>, // Render as span instead of p
+                  strong: ({ children }) => <strong>{children}</strong>,
+                  em: ({ children }) => <em>{children}</em>,
+                  a: ({ href, children }) => (
+                    <Link href={href} color="primary">
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                {relatedObjectCitation}
+              </ReactMarkdown>
             </Typography>
           </Box>
         )}
