@@ -2,7 +2,6 @@ package au.org.raid.api.service;
 
 import au.org.raid.api.dto.ContributorLookupResponse;
 import au.org.raid.api.dto.ContributorStatus;
-import au.org.raid.api.dto.OrcidData;
 import au.org.raid.api.dto.RaidListenerMessage;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
 import au.org.raid.idl.raidv2.model.Contributor;
@@ -15,8 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -34,21 +35,19 @@ class RaidListenerServiceTest {
     private RaidListenerService raidListenerService;
 
     private static final String TEST_HANDLE = "test-handle";
-    private static final String TEST_EMAIL = "test@example.com";
-    private static final String TEST_ORCID = "0000-0000-0000-0000";
-    private static final String TEST_UUID = UUID.randomUUID().toString();
+    private static final String TEST_ORCID = "https://orcid.org/0000-0000-0000-0000";
 
     @Test
     @DisplayName("Should update contributor with ORCID ID when authenticated")
     void whenContributorIsAuthenticated_thenUpdateWithOrcidId() {
         // Arrange
-        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        Contributor contributor = new Contributor().id(TEST_ORCID);
 
         final var raidName = "raid-name";
         ContributorLookupResponse lookupResponse = ContributorLookupResponse.builder()
-                .orcidStatus("AUTHENTICATED")
-                .uuid(TEST_UUID)
-                .orcid(OrcidData.builder().orcid(TEST_ORCID).build())
+                .status("AUTHENTICATED")
+                .orcid(TEST_ORCID)
+                .name("Contributor Name")
                 .build();
 
         final var message = RaidListenerMessage.builder()
@@ -56,29 +55,22 @@ class RaidListenerServiceTest {
                 .contributor(contributor)
                 .build();
 
-        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
-
+        when(orcidIntegrationClient.findByOrcid(TEST_ORCID)).thenReturn(Optional.of(lookupResponse));
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
-        // Assert
-        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
-
-
         verify(orcidIntegrationClient, times(1)).post(message);
 
-        assert contributor.getId().equals("https://orcid.org/" + TEST_ORCID);
-        assert contributor.getUuid().equals(TEST_UUID);
-        assert contributor.getStatus().equals("AUTHENTICATED");
-        assert contributor.getEmail() == null;
+        assertThat(contributor.getId(), is(TEST_ORCID));
+        assertThat(contributor.getStatus(), is("AUTHENTICATED"));
     }
 
     @Test
     @DisplayName("Should post message when contributor is not authenticated")
     void whenContributorIsNotAuthenticated_thenPostMessage() {
         // Arrange
-        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        Contributor contributor = new Contributor();
         final var raidName = "raid-name";
         final var message = RaidListenerMessage.builder()
                 .raidName(raidName)
@@ -86,22 +78,18 @@ class RaidListenerServiceTest {
                 .build();
 
         final var lookupResponse = ContributorLookupResponse.builder()
-                .orcidStatus("AWAITING_AUTHENTICATION")
-                .uuid(TEST_UUID)
+                .status("AWAITING_AUTHENTICATION")
                 .build();
 
-        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(lookupResponse));
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
         verify(orcidIntegrationClient, times(1)).post(message);
 
         assert contributor.getId() == null;
-        assert contributor.getUuid().equals(TEST_UUID);
         assert contributor.getStatus().equals("AWAITING_AUTHENTICATION");
         assert contributor.getEmail() == null;
     }
@@ -112,33 +100,32 @@ class RaidListenerServiceTest {
         // Arrange
 
         final var raidName = "raid-name";
-        Contributor contributor = new Contributor().email(TEST_EMAIL);
+        Contributor contributor = new Contributor();
         final var message = RaidListenerMessage.builder()
                 .raidName(raidName)
                 .contributor(contributor)
                 .build();
-        when(orcidIntegrationClient.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
         when(raidListenerMessageFactory.create(TEST_HANDLE, contributor)).thenReturn(message);
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).findByEmail(TEST_EMAIL);
         verify(orcidIntegrationClient, times(1)).post(message);
 
-        assert contributor.getId() == null;
-        assert contributor.getUuid() != null;
-        assert contributor.getStatus().equals(ContributorStatus.AWAITING_AUTHENTICATION.name());
-        assert contributor.getEmail() == null;
+        assertThat(contributor.getId(), is(nullValue()));
+        assertThat(contributor.getUuid(), is(nullValue()));
+        assertThat(contributor.getStatus(), is(ContributorStatus.AWAITING_AUTHENTICATION.name()));
+        assertThat(contributor.getEmail(), is(nullValue()));
     }
 
     @Test
     @DisplayName("Should process all contributors with different authentication states")
     void whenMultipleContributors_thenProcessAll() {
+        final var orcid = "https://orcid.org/0000-0000-0000-0001";
         // Arrange
-        Contributor contributor1 = new Contributor().email("test1@example.com");
-        Contributor contributor2 = new Contributor().email("test2@example.com");
+        Contributor contributor1 = new Contributor().id(TEST_ORCID);
+        Contributor contributor2 = new Contributor().id(orcid);
         final var raidName = "raid-name";
         final var message = RaidListenerMessage.builder()
                 .raidName(raidName)
@@ -146,25 +133,29 @@ class RaidListenerServiceTest {
                 .build();
 
         ContributorLookupResponse lookupResponse1 = ContributorLookupResponse.builder()
-                .orcidStatus("AUTHENTICATED")
-                .uuid(UUID.randomUUID().toString())
-                .orcid(OrcidData.builder().orcid(TEST_ORCID).build())
+                .status("AUTHENTICATED")
+                .orcid(TEST_ORCID)
+                .name("Contributor Name")
                 .build();
 
-        when(orcidIntegrationClient.findByEmail("test1@example.com")).thenReturn(Optional.of(lookupResponse1));
-        when(orcidIntegrationClient.findByEmail("test2@example.com")).thenReturn(Optional.empty());
+        ContributorLookupResponse lookupResponse2 = ContributorLookupResponse.builder()
+                .status("AWAITING_AUTHENTICATION")
+                .orcid(orcid)
+                .name("Contributor Name")
+                .build();
+
         when(raidListenerMessageFactory.create(eq(TEST_HANDLE), any())).thenReturn(message);
+        when(orcidIntegrationClient.findByOrcid(TEST_ORCID)).thenReturn(Optional.of(lookupResponse1));
+        when(orcidIntegrationClient.findByOrcid(orcid)).thenReturn(Optional.of(lookupResponse2));
 
         // Act
         raidListenerService.createOrUpdate(TEST_HANDLE, List.of(contributor1, contributor2));
 
         // Assert
-        verify(orcidIntegrationClient, times(1)).findByEmail("test1@example.com");
-        verify(orcidIntegrationClient, times(1)).findByEmail("test2@example.com");
         verify(orcidIntegrationClient, times(2)).post(any());
 
-        assert contributor1.getId().equals("https://orcid.org/" + TEST_ORCID);
-        assert contributor2.getId() == null;
-        assert contributor2.getStatus().equals(ContributorStatus.AWAITING_AUTHENTICATION.name());
+        assertThat(contributor1.getId(), is(TEST_ORCID));
+        assertThat(contributor2.getId(), is(orcid));
+        assertThat(contributor2.getStatus(), is(ContributorStatus.AWAITING_AUTHENTICATION.name()));
     }
 }

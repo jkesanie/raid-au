@@ -20,51 +20,21 @@ public class RaidListenerService {
     private final RaidListenerMessageFactory raidListenerMessageFactory;
 
     public void createOrUpdate(final String handle, final List<Contributor> contributors) {
-
         for (final var contributor : contributors) {
+            if (isBlank(contributor.getStatus()) || contributor.getStatus().equals("UNAUTHENTICATED")) {
+                log.debug("Looking up contributor by id {}", contributor.getId());
 
-            if (!isBlank(contributor.getId())) {
-                if (isBlank(contributor.getStatus()) || contributor.getStatus().equals("UNAUTHENTICATED")) {
-                    log.debug("Looking up contributor by id {}", contributor.getId());
-
-                    final var response = orcidIntegrationClient.findByOrcid(contributor.getId());
-
-                    if (response.isPresent()) {
-
-                        final var lookupResponse = response.get();
-
-                        log.debug("Received look up response: {uuid: {}, status: {}", lookupResponse.getUuid(), lookupResponse.getOrcidStatus());
-
-                        contributor.uuid(lookupResponse.getUuid()).status(lookupResponse.getOrcidStatus());
-                    } else {
-                        contributor.uuid(UUID.randomUUID().toString())
-                                .status(ContributorStatus.AWAITING_AUTHENTICATION.name());
-                    }
-                }
-            }
-            else if (!isBlank(contributor.getEmail())) {
-                log.debug("Looking up contributor by email {}", contributor.getEmail());
-
-                final var response = orcidIntegrationClient.findByEmail(contributor.getEmail());
+                final var response = orcidIntegrationClient.findByOrcid(contributor.getId());
 
                 if (response.isPresent()) {
 
                     final var lookupResponse = response.get();
 
-                    log.debug("Received look up response: {uuid: {}, status: {}", lookupResponse.getUuid(), lookupResponse.getOrcidStatus());
+                    log.debug("Received look up response: {orcid: {}, status: {}", lookupResponse.getOrcid(), lookupResponse.getStatus());
 
-                    if (lookupResponse.getOrcidStatus().equalsIgnoreCase("AUTHENTICATED")) {
-                        contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getOrcidStatus())
-                                .id("https://orcid.org/%s".formatted(lookupResponse.getOrcid().getOrcid()));
-                    } else {
-                        contributor.uuid(lookupResponse.getUuid())
-                                .status(lookupResponse.getOrcidStatus());
-                    }
+                    contributor.status(lookupResponse.getStatus());
                 } else {
-                    contributor.uuid(UUID.randomUUID().toString())
-                            .status(ContributorStatus.AWAITING_AUTHENTICATION.name())
-                            .id(null);
+                    contributor.status(ContributorStatus.AWAITING_AUTHENTICATION.name());
                 }
             }
             final var message = raidListenerMessageFactory.create(
@@ -72,8 +42,6 @@ public class RaidListenerService {
                     contributor
             );
             orcidIntegrationClient.post(message);
-
-            contributor.email(null);
         }
     }
 }
