@@ -1,7 +1,6 @@
 package au.org.raid.api.factory.datacite;
 
 import au.org.raid.api.dto.ContributorLookupResponse;
-import au.org.raid.api.dto.OrcidData;
 import au.org.raid.api.service.OrcidIntegrationClient;
 import au.org.raid.idl.raidv2.model.Contributor;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,10 +38,8 @@ public class DataciteCreatorFactoryTest {
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()
-                .orcid(OrcidData.builder()
-                        .orcid(id)
-                        .name(name)
-                        .build())
+                .orcid(id)
+                .name(name)
                 .build();
 
         when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.of(contributorLookupResponse));
@@ -68,9 +64,7 @@ public class DataciteCreatorFactoryTest {
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()
-                .orcid(OrcidData.builder()
-                        .orcid(id)
-                        .build())
+                .orcid(id)
                 .build();
 
         when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.of(contributorLookupResponse));
@@ -94,10 +88,8 @@ public class DataciteCreatorFactoryTest {
                 .schemaUri(schemaUri);
 
         final var contributorLookupResponse = ContributorLookupResponse.builder()
-                .orcid(OrcidData.builder()
-                        .orcid(id)
-                        .name(name)
-                        .build())
+                .orcid(id)
+                .name(name)
                 .build();
 
         when(orcidIntegrationClient.findByOrcid(id)).thenReturn(Optional.of(contributorLookupResponse));

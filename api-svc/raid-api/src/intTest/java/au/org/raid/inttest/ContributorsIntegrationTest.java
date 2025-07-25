@@ -190,9 +190,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(failures, hasSize(1));
                 assertThat(failures, contains(
                         new ValidationFailure()
-                                .fieldId("contributor[0]")
+                                .fieldId("contributor[0].id")
                                 .errorType("notSet")
-                                .message("email, uuid or id is required")
+                                .message("field must be set")
                 ));
             }
         }
@@ -202,6 +202,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void emptyId() {
             createRequest.setContributor(List.of(
                     new Contributor()
+                            .id(REAL_TEST_ORCID)
                             .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
@@ -227,9 +228,9 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 assertThat(failures, hasSize(1));
                 assertThat(failures, contains(
                         new ValidationFailure()
-                                .fieldId("contributor[0]")
+                                .fieldId("contributor[0].id")
                                 .errorType("notSet")
-                                .message("email, uuid or id is required")
+                                .message("field must be set")
                 ));
             }
         }
@@ -239,6 +240,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void nullPositions() {
             createRequest.setContributor(List.of(
                     new Contributor()
+                            .id(REAL_TEST_ORCID)
                             .email(CONTRIBUTOR_EMAIL)
                             .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                             .contact(true)
@@ -270,6 +272,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void emptyPositions() {
             createRequest.setContributor(List.of(
                     new Contributor()
+                            .id(REAL_TEST_ORCID)
                             .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
@@ -302,6 +305,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void missingContact() {
             createRequest.setContributor(List.of(
                     new Contributor()
+                            .id(REAL_TEST_ORCID)
                             .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                             .email(CONTRIBUTOR_EMAIL)
                             .leader(true)
@@ -337,6 +341,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void missingLeader() {
             createRequest.setContributor(List.of(
                     new Contributor()
+                            .id(REAL_TEST_ORCID)
                             .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                             .email(CONTRIBUTOR_EMAIL)
                             .contact(true)
@@ -375,6 +380,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void missingPositionSchemeUri() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
@@ -410,6 +416,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void missingPositionType() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
@@ -446,6 +453,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void invalidPositionSchemeUri() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
@@ -483,6 +491,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void invalidPositionTypeForScheme() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
@@ -520,6 +529,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void overlappingPositions() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
@@ -565,6 +575,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void missingRoleSchemeUri() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
@@ -602,6 +613,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void missingPositionType() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                                 .email(CONTRIBUTOR_EMAIL)
                                 .contact(true)
@@ -638,6 +650,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void invalidPositionSchemeUri() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
@@ -675,6 +688,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             void invalidPositionTypeForScheme() {
                 createRequest.setContributor(List.of(
                         new Contributor()
+                                .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
                                 .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
@@ -1198,9 +1212,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @Test
         @DisplayName("Should add authenticated contributor to raid")
         void authenticatedContributor() {
-            createRequest.getContributor().get(0).setEmail("authenticated@test.raid.org.au");
-            createRequest.getContributor().get(0).setId(null);
-
             final var createResponse = raidApi.mintRaid(createRequest);
             final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
 
@@ -1208,8 +1219,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             final var raidDto = readResponse.getBody();
 
             assertThat(raidDto.getContributor().get(0).getStatus(), is("AUTHENTICATED"));
-            assertThat(raidDto.getContributor().get(0).getId(), is("https://orcid.org/0000-0002-1474-3214"));
-            assertThat(raidDto.getContributor().get(0).getUuid(), is("04742bfa-0e91-4339-b878-a4b850724f7b"));
+            assertThat(raidDto.getContributor().get(0).getId(), is(REAL_TEST_ORCID));
         }
 
         @Test
@@ -1260,8 +1270,8 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
 
             final var patchResponse = raidApi.patchRaid(handle.getPrefix(), handle.getSuffix(), raidPatchRequestFactory.create(raidDto));
             final var updateRequest = raidUpdateRequestFactory.create(patchResponse.getBody());
-
             raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
+
         }
 
         @Test
