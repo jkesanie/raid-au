@@ -366,12 +366,11 @@ async function main() {
     console.log(`Data successfully saved to ${outputFile}`);
     
     // Step 5: Extract and save handles
-    await fetchAllHandles();
     const handles = await extractHandles(raidData);
     const handlesFile = path.join(config.dataDir, 'handles.json');
     await fs.writeFile(handlesFile, JSON.stringify(handles, null, 2));
     console.log(`Unique handles saved to ${handlesFile}`);
-    
+    await fetchAllHandles();
     // Save cache for next run
     await saveCache();
     

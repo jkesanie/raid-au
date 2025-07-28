@@ -139,19 +139,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 async function extractHandles(raidData) {
   const handles = new Set();
-  
+
   if (Array.isArray(raidData)) {
     raidData.forEach(raid => {
       if (raid.identifier?.id) {
-        // Extract handle pattern (e.g., "10.82259/4tzj-am61")
-        const match = raid.identifier.id.match(/([^/]+\/[^/]+)(?:\/|$)/);
-        if (match) {
+        const id = raid.identifier.id;
+        // Try to match the sed pattern exactly: http://[^/]*/([^/]+/[^/]+).*
+        const match = id.match(/^http:\/\/[^\/]+\/([^\/]+\/[^\/]+)/);
+
+        if (match && match[1]) {
+          // If it matches the pattern, use the captured group
           handles.add(match[1]);
+        } else {
+          // If it doesn't match, use the original value (like sed does)
+          handles.add(id);
         }
       }
     });
   }
-  
+
   return Array.from(handles).sort();
 }
 // Export for use as a module
