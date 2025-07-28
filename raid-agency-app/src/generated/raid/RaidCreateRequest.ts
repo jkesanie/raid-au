@@ -11,9 +11,11 @@ import type { AlternateIdentifier } from './AlternateIdentifier';
 import type { Subject } from './Subject';
 import type { Id } from './Id';
 import type { AlternateUrl } from './AlternateUrl';
+import type { TraditionalKnowledgeLabel } from './TraditionalKnowledgeLabel';
 import type { SpatialCoverage } from './SpatialCoverage';
 
 export interface RaidCreateRequest {
+    traditionalKnowledgeLabel?: Array<TraditionalKnowledgeLabel>;
     metadata?: Metadata;
     identifier?: Id;
     title?: Array<Title>;
