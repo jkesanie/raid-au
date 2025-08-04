@@ -21,7 +21,7 @@ import { Search as SearchIcon } from "@mui/icons-material";
 
 const searchAPI = async (query: string) => {
   const response = await fetch(
-    `https://api.ror.org/organizations?query=${query}`
+    `https://api.ror.org/v1/organizations?query=${query}`
   );
   return response.json();
 };
