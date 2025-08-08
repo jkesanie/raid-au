@@ -76,7 +76,7 @@ public class RaidService {
 
         mintHandle(raid, servicePointRecord, 0);
 
-        raidListenerService.createOrUpdate(raid.getIdentifier().getId(), raid.getContributor());
+        raidListenerService.createOrUpdate(raid);
 
         final var raidDto = raidHistoryService.save(raid);
         raidIngestService.create(raidDto);
@@ -137,7 +137,7 @@ public class RaidService {
         contributorService.setStatus(raid.getContributor());
         mergeContributors(existing.getContributor(), raid.getContributor());
 
-        raidListenerService.createOrUpdate(raid.getIdentifier().getId(), raid.getContributor());
+        raidListenerService.createOrUpdate(raid);
 
         final var raidDto = raidHistoryService.save(raid);
 

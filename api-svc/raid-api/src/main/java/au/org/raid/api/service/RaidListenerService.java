@@ -2,7 +2,7 @@ package au.org.raid.api.service;
 
 import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
-import au.org.raid.idl.raidv2.model.Contributor;
+import au.org.raid.idl.raidv2.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,27 +19,33 @@ public class RaidListenerService {
     private final OrcidIntegrationClient orcidIntegrationClient;
     private final RaidListenerMessageFactory raidListenerMessageFactory;
 
-    public void createOrUpdate(final String handle, final List<Contributor> contributors) {
+    public void createOrUpdate(final RaidCreateRequest raid) {
+        createOrUpdate(raid.getIdentifier(), raid.getTitle(), raid.getContributor());
+    }
+
+    public void createOrUpdate(final RaidUpdateRequest raid) {
+        createOrUpdate(raid.getIdentifier(), raid.getTitle(), raid.getContributor());
+    }
+
+    private void createOrUpdate(final Id id, final List<Title> titles, final List<Contributor> contributors) {
+
         for (final var contributor : contributors) {
-            if (isBlank(contributor.getStatus()) || contributor.getStatus().equals("UNAUTHENTICATED")) {
-                log.debug("Looking up contributor by id {}", contributor.getId());
+            log.debug("Looking up contributor by id {}", contributor.getId());
 
-                final var response = orcidIntegrationClient.findByOrcid(contributor.getId());
+            final var response = orcidIntegrationClient.findByOrcid(contributor.getId());
 
-                if (response.isPresent()) {
-
-                    final var lookupResponse = response.get();
-
-                    log.debug("Received look up response: {orcid: {}, status: {}", lookupResponse.getOrcid(), lookupResponse.getStatus());
-
-                    contributor.status(lookupResponse.getStatus());
-                } else {
-                    contributor.status(ContributorStatus.AWAITING_AUTHENTICATION.name());
-                }
+            if (response.isPresent()) {
+                final var lookupResponse = response.get();
+                log.debug("Received look up response:{orcid: {}, status: {}", lookupResponse.getOrcid(), lookupResponse.getStatus());
+                contributor.status(lookupResponse.getStatus());
+            } else {
+                contributor.status(ContributorStatus.AWAITING_AUTHENTICATION.name());
             }
+
             final var message = raidListenerMessageFactory.create(
-                    handle,
-                    contributor
+                    id,
+                    contributor,
+                    titles
             );
             orcidIntegrationClient.post(message);
         }
