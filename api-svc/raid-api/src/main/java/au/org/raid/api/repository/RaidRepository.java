@@ -21,6 +21,7 @@ import static au.org.raid.db.jooq.tables.RaidOrganisation.RAID_ORGANISATION;
 @Repository
 @RequiredArgsConstructor
 public class RaidRepository {
+    private static final String ORCID_URI_FORMAT = "https://orcid.org/%s";
     private final DSLContext dslContext;
 
     public RaidRecord insert(final RaidRecord raid) {
@@ -125,7 +126,7 @@ public class RaidRepository {
                 .join(CONTRIBUTOR)
                 .on(RAID_CONTRIBUTOR.CONTRIBUTOR_ID.eq(CONTRIBUTOR.ID))
                 .where(
-                        CONTRIBUTOR.PID.eq(orcid).and(RAID.ACCESS_TYPE_ID.in(1, 4))
+                        CONTRIBUTOR.PID.eq(ORCID_URI_FORMAT.formatted(orcid))
                 )
                 .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
                 .fetchInto(RaidRecord.class);
