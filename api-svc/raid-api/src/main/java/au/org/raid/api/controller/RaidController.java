@@ -95,10 +95,12 @@ public class RaidController implements RaidApi {
         List<RaidDto> raids;
 
         if (TokenUtil.hasRole(TokenUtil.OPERATOR_ROLE)) {
+            log.debug("Fetching raids for operator");
             raids = raidIngestService.findAll()
                     .stream()
                 .toList();
         } else if (contributorId != null) {
+            log.debug("Fetching raids for contributor {}", contributorId);
             raids = raidIngestService.findAllByContributor(contributorId);
         } else if (organisationId != null) {
             raids = raidIngestService.findAllByOrganisation(organisationId);
