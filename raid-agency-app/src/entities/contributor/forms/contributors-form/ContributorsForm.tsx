@@ -11,7 +11,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -22,6 +22,8 @@ import {
 import { ContributorPositionsForm } from "@/entities/contributor-position/forms/contributor-positions-form";
 import { ContributorRolesForm } from "@/entities/contributor-role/forms/contributor-roles-form";
 import { ContributorDetailsForm } from "@/entities/contributor/forms/contributor-details-form";
+import { MetadataContext } from "@/components/raid-form/RaidForm";
+import { CustomTooltip } from "@/components/tooltips/ToolTip";
 
 export function ContributorsForm({
   control,
@@ -48,16 +50,25 @@ export function ContributorsForm({
     append(generator());
     trigger(key);
   };
-
+  const metadata = useContext(MetadataContext);
+  const tooltip = metadata?.[key]?.tooltip;
   return (
     <Card
       sx={{
         borderLeft: errors[key] ? "3px solid" : "none",
         borderLeftColor: "error.main",
+         overflow: "unset",
       }}
       id={key}
     >
-      <CardHeader title={labelPlural} />
+       <Stack direction="row" alignItems="center">
+          <CardHeader title={labelPlural} />
+          <CustomTooltip
+            title={label}
+            content={tooltip}
+            icon="info"
+          />
+        </Stack>
       <CardContent>
         <Stack gap={2} className={isRowHighlighted ? "add" : ""}>
           {errorMessage && (

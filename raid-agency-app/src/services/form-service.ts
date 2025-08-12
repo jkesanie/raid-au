@@ -1,12 +1,12 @@
 // src/services/form-service.ts
 export const formConfigService = () => {
     return {
-        getFormConfig: async (formId?: string) => {
+        getFormConfig: async () => {
             const url = `./raid-core-schema.json`; // Replace with actual URL or logic to get the form config URL
             const response = await fetch(url);
 
             if (!response.ok) {
-                throw new Error(`Form config for ${formId} could not be fetched`);
+                throw new Error(`Form config for could not be fetched`);
             }
             const json = await response.json();
             const formConfig = json.$defs;
@@ -21,7 +21,7 @@ interface TransformResult<T> {
   metadata: Record<string, { tooltip?: string }>;
 }
 
-export const transformFormData = (data: T, configData: any): TransformResult<T> => {
+export const transformFormData = <T>(data: T, configData: JSONObject): TransformResult<T> => {
     // Transform the data as needed for the form submission
     // This is a placeholder function; implement your transformation logic here
     if (!data || !configData) {
@@ -31,7 +31,7 @@ export const transformFormData = (data: T, configData: any): TransformResult<T> 
     const result = { ...data };
     const metadata: Record<string, { tooltip?: string }> = {};
     const convert = convertCase(configData, false);
-
+    console.log("Transforming data with config:", convert);
      Object.keys(result).forEach(key => {
     const configMatch = convert[key];
     

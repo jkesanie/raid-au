@@ -97,7 +97,7 @@ export const CustomStyledTooltip: React.FC<CustomTooltipProps> = ({
         onMouseLeave={() => setIsOpen(false)}
         ref={buttonRef}
       >
-        <div style={{ all: 'inherit' }} ref={tooltipRef}>
+        <div style={{ all: 'inherit', padding: 0 }} ref={tooltipRef}>
           {tooltipIcon}
         </div>
       </IconButton>
