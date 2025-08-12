@@ -6,7 +6,7 @@ export const formConfigService = () => {
             const response = await fetch(url);
 
             if (!response.ok) {
-                throw new Error(`Form config for could not be fetched`);
+                throw new Error(`Form config could not be fetched`);
             }
             const json = await response.json();
             const formConfig = json.$defs;
