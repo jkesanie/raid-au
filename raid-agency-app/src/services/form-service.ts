@@ -10,7 +10,6 @@ export const formConfigService = () => {
             }
             const json = await response.json();
             const formConfig = json.$defs;
-            console.log("Fetched form config:", formConfig);
             return formConfig;
         }
     }
@@ -31,7 +30,7 @@ export const transformFormData = <T>(data: T, configData: JSONObject): Transform
     const result = { ...data };
     const metadata: Record<string, { tooltip?: string }> = {};
     const convert = convertCase(configData, false);
-    console.log("Transforming data with config:", convert);
+
      Object.keys(result).forEach(key => {
     const configMatch = convert[key];
     
