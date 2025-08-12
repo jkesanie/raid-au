@@ -1,9 +1,6 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 # 2.5.4
-## ORCID Integration
-* Bug fixes and refactoring to improve stability
-
 ## App-client UI
 * Implemented DOI citation fetching from DOI.org with "Accept: text/x-bibliography", supporting DataCite, Crossref, and mEDRA formats
 * Added retry functionality for failed DOI citation requests to improve user experience
