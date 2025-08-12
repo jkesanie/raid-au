@@ -25,7 +25,10 @@ import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "../raid-form-error-message/ErrorContentUtils";
 import { formConfigService, transformFormData } from "@/services/form-service";
 import { createContext } from "react";
-import type { JSONObject } from "@/types/json";
+// Define JSON types locally since '@/types/json-types' is missing
+type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
+type JSONObject = { [key: string]: JSONValue };
+type JSONArray = JSONValue[];
 
 // Create MetadataContext if not already defined elsewhere
 export const MetadataContext = createContext<{ [key: string]: { tooltip?: string } }>({});
@@ -63,12 +66,12 @@ export const RaidForm = memo(
 
     const formConfig = formConfigService();
     const [formSchema, setFormSchema] = useState<JSONObject | null>(null);
-    
+
     useEffect(() => {
       formConfig.getFormConfig().then((schema: JSONObject) => setFormSchema(schema));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
 
     const formMethods = useForm<RaidDto>({

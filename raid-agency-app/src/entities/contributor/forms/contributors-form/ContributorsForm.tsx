@@ -23,7 +23,8 @@ import { ContributorPositionsForm } from "@/entities/contributor-position/forms/
 import { ContributorRolesForm } from "@/entities/contributor-role/forms/contributor-roles-form";
 import { ContributorDetailsForm } from "@/entities/contributor/forms/contributor-details-form";
 import { MetadataContext } from "@/components/raid-form/RaidForm";
-import { CustomTooltip } from "@/components/tooltips/ToolTip";
+import { CustomStyledTooltip } from "@/components/tooltips/StyledTooltip";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export function ContributorsForm({
   control,
@@ -57,18 +58,20 @@ export function ContributorsForm({
       sx={{
         borderLeft: errors[key] ? "3px solid" : "none",
         borderLeftColor: "error.main",
-         overflow: "unset",
       }}
       id={key}
     >
        <Stack direction="row" alignItems="center">
-          <CardHeader title={labelPlural} />
-          <CustomTooltip
-            title={label}
-            content={tooltip}
-            icon="info"
-          />
-        </Stack>
+        <CardHeader sx={{padding: "16px 0 16px 16px"}} title={labelPlural} />
+        <CustomStyledTooltip
+          title={label}
+          content={tooltip || ""}
+          variant="info"
+          placement="top"
+          tooltipIcon={<InfoOutlinedIcon />}
+        >
+        </CustomStyledTooltip>
+      </Stack>
       <CardContent>
         <Stack gap={2} className={isRowHighlighted ? "add" : ""}>
           {errorMessage && (
