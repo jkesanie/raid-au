@@ -23,6 +23,15 @@ import {ServicePointForm} from "@/entities/service-point/forms/ServicePointForm.
 import {useAuthHelper} from "@/auth/keycloak";
 import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "../raid-form-error-message/ErrorContentUtils";
+import { formConfigService, transformFormData } from "@/services/form-service";
+import { createContext } from "react";
+// Define JSON types locally since '@/types/json-types' is missing
+type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
+type JSONObject = { [key: string]: JSONValue };
+type JSONArray = JSONValue[];
+
+// Create MetadataContext if not already defined elsewhere
+export const MetadataContext = createContext<{ [key: string]: { tooltip?: string } }>({});
 
 /**
  * Main form component for creating and editing RAIDs
@@ -54,8 +63,19 @@ export const RaidForm = memo(
     const { isOperator } = useAuthHelper();
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const { openErrorDialog } = useErrorDialog();
+
+    const formConfig = formConfigService();
+    const [formSchema, setFormSchema] = useState<JSONObject | null>(null);
+
+    useEffect(() => {
+      formConfig.getFormConfig().then((schema: JSONObject) => setFormSchema(schema));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
+
     const formMethods = useForm<RaidDto>({
-      defaultValues: raidData,
+      defaultValues: transformedData,
       resolver: zodResolver(RaidValidationSchema),
       mode: "onChange",
       reValidateMode: "onChange",
@@ -90,6 +110,7 @@ export const RaidForm = memo(
     }, [formState.errors, formState.isSubmitted, openErrorDialog]);
 
     return (
+      <MetadataContext.Provider value={metadata}>
         <FormProvider {...formMethods}>
           <form
               onSubmit={formMethods.handleSubmit(handleSubmit)}
@@ -220,6 +241,7 @@ export const RaidForm = memo(
             <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
           </form>
         </FormProvider>
+      </MetadataContext.Provider>
     );
   }
 );

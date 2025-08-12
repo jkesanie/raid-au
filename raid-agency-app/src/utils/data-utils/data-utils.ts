@@ -164,9 +164,15 @@ export const newRaid: RaidCreateRequest = {
   title: [titleDataGenerator([{} as Title])],
   date: dateDataGenerator(),
   access: accessDataGenerator(),
-  organisation: [],
-  contributor: [],
-  alternateUrl: [],
+  organisation: [] as Organisation[],
+  contributor: [] as Contributor[],
+  alternateUrl: [] as AlternateUrl[],
+  relatedRaid: [] as RelatedRaid[],
+  description: [] as Description[],
+  relatedObject: [] as RelatedObject[],
+  alternateIdentifier: [] as AlternateIdentifier[],
+  spatialCoverage: [] as SpatialCoverage[],
+  subject: [] as Subject[],
 };
 
 /**
