@@ -1,5 +1,21 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
+# 2.5.4
+## App-client UI
+* Implemented DOI citation fetching from DOI.org with "Accept: text/x-bibliography", supporting DataCite, Crossref, and mEDRA formats
+* Added retry functionality for failed DOI citation requests to improve user experience
+* Built Node.js modules to fetch RAiD and DOI citation data for static page generation using Astro framework(static website)
+* Added caching mechanism to DOI citation functionality to store the citations for 5 days(configurable via .env file) in astro app(static website)
+* Implemented markdown rendering on landing pages for rich text content(static website)
+* Added comprehensive tooltip system across the entire RAiD application for improved user guidance
+* Integrated DOI citation display within the main RAiD application
+* Refactored React Hook Form implementation to properly handle controlled/uncontrolled component patterns and resolve console warnings
+* Updated embargoed AccessTypes interface data structure for better data handling
+* Updated ROR (Research Organization Registry) API routes to align with latest ROR.org changelog specifications
+* Fixed edge cases where DOI citations were failing without proper error handling
+
+## API
+
 
 # 2.5.3
 ## App-client UI
