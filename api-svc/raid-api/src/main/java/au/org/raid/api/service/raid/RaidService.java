@@ -147,7 +147,7 @@ public class RaidService {
     }
 
     @Transactional
-    public RaidDto patchContributors(final String prefix, final String suffix, List<Contributor> contributors) {
+    public RaidDto patchContributors(final String prefix, final String suffix, final List<Contributor> contributors) {
         final var handle = "%s/%s".formatted(prefix, suffix);
         final var raid = raidHistoryService.findByHandle(handle)
                 .orElseThrow(() -> new ResourceNotFoundException(handle));
@@ -158,6 +158,8 @@ public class RaidService {
                 .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
 
         raid.setContributor(contributors);
+
+        raidListenerService.createOrUpdate(raid);
 
         raidHistoryService.save(raid);
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
