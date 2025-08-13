@@ -148,6 +148,49 @@ class RaidServiceTest {
 
     }
 
+
+    @Test
+    @DisplayName("Patching contributors saves changes and returns updated raid")
+    void patchContributors() throws JsonProcessingException {
+
+        final var prefix = "10378.1";
+        final var suffix = "1696639";
+        final var handle = "%s/%s".formatted(prefix, suffix);
+        final var raidJson = raidJson();
+        final var servicePointId = 20_000_000L;
+        final var repositoryId = "repository-id";
+        final var password = "_password";
+        final var servicePointGroupId = "service-point-group-id";
+
+        final var servicePointRecord = new ServicePointRecord()
+                .setRepositoryId(repositoryId)
+                .setPassword(password);
+
+        final var contributor = new Contributor()
+                .id("https://orcid.org/0009-0002-5128-5184")
+                .schemaUri("https://orcid.org")
+                .contact(true)
+                .leader(true);
+
+        final var raidDto = objectMapper.readValue(raidJson, RaidDto.class);
+        final var expected = objectMapper.readValue(raidJson, RaidDto.class);
+
+        expected.contributor(List.of(contributor));
+
+        when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(expected));
+
+        when(raidHistoryService.save(expected)).thenReturn(expected);
+        when(raidIngestService.update(expected)).thenReturn(expected);
+
+        when(servicePointRepository.findById(servicePointId)).thenReturn(Optional.of(servicePointRecord));
+
+        final var result = raidService.patchContributors(prefix, suffix, List.of(contributor));
+        assertThat(result, Matchers.is(expected));
+
+        verify(dataciteService).update(expected, handle, repositoryId, password);
+        verify(raidListenerService).createOrUpdate(expected);
+    }
+
     @Test
     @DisplayName("Updating a raid saves changes and returns updated raid")
     void update() throws JsonProcessingException {

@@ -27,6 +27,10 @@ public class RaidListenerService {
         createOrUpdate(raid.getIdentifier(), raid.getTitle(), raid.getContributor());
     }
 
+    public void createOrUpdate(final RaidDto raid) {
+        createOrUpdate(raid.getIdentifier(), raid.getTitle(), raid.getContributor());
+    }
+
     private void createOrUpdate(final Id id, final List<Title> titles, final List<Contributor> contributors) {
 
         for (final var contributor : contributors) {
