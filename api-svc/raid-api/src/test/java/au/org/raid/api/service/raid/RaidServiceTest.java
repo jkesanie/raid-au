@@ -6,11 +6,7 @@ import au.org.raid.api.factory.IdFactory;
 import au.org.raid.api.factory.RaidRecordFactory;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.api.repository.ServicePointRepository;
-import au.org.raid.api.service.ContributorService;
-import au.org.raid.api.service.Handle;
-import au.org.raid.api.service.RaidHistoryService;
-import au.org.raid.api.service.RaidIngestService;
-import au.org.raid.api.service.RaidListenerService;
+import au.org.raid.api.service.*;
 import au.org.raid.api.service.datacite.DataciteService;
 import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.service.raid.id.IdentifierParser;
@@ -81,7 +77,7 @@ class RaidServiceTest {
     @Mock
     private DataciteService dataciteService;
     @Mock
-    private RaidListenerService raidListenerService;
+    private OrcidIntegrationService orcidIntegrationService;
     @Mock
     private HandleFactory handleFactory;
     @Mock
@@ -124,7 +120,8 @@ class RaidServiceTest {
             raidService.mint(createRaidRequest, servicePointId);
             verify(raidIngestService).create(raidDto);
             verify(dataciteService).mint(createRaidRequest, handle.toString(), repositoryId, password);
-            verify(raidListenerService).createOrUpdate(createRaidRequest);
+            verify(orcidIntegrationService).setContributorStatus(createRaidRequest.getContributor());
+            verify(orcidIntegrationService).updateOrcidRecord(raidDto);
         }
     }
 
@@ -145,7 +142,6 @@ class RaidServiceTest {
 
         final var result = raidService.findByHandle(handle);
         assertThat(result.get(), Matchers.is(expected));
-
     }
 
 
@@ -188,7 +184,8 @@ class RaidServiceTest {
         assertThat(result, Matchers.is(expected));
 
         verify(dataciteService).update(expected, handle, repositoryId, password);
-        verify(raidListenerService).createOrUpdate(expected);
+        verify(orcidIntegrationService).setContributorStatus(expected.getContributor());
+        verify(orcidIntegrationService).updateOrcidRecord(expected);
     }
 
     @Test
@@ -233,7 +230,8 @@ class RaidServiceTest {
             assertThat(result, Matchers.is(expected));
 
             verify(dataciteService).update(updateRequest, handle, repositoryId, password);
-            verify(raidListenerService).createOrUpdate(updateRequest);
+            verify(orcidIntegrationService).setContributorStatus(expected.getContributor());
+            verify(orcidIntegrationService).updateOrcidRecord(expected);
         }
     }
 

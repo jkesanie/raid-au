@@ -9,11 +9,7 @@ import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.IdFactory;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.api.repository.ServicePointRepository;
-import au.org.raid.api.service.ContributorService;
-import au.org.raid.api.service.Handle;
-import au.org.raid.api.service.RaidHistoryService;
-import au.org.raid.api.service.RaidIngestService;
-import au.org.raid.api.service.RaidListenerService;
+import au.org.raid.api.service.*;
 import au.org.raid.api.service.datacite.DataciteService;
 import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.util.SchemaValues;
@@ -60,8 +56,8 @@ public class RaidService {
     private final RaidIngestService raidIngestService;
     private final HandleFactory handleFactory;
     private final ContributorService contributorService;
-    private final RaidListenerService raidListenerService;
     private final KeycloakService keycloakService;
+    private final OrcidIntegrationService orcidIntegrationService;
 
     private final RaidRepository raidRepository;
 
@@ -76,13 +72,14 @@ public class RaidService {
 
         mintHandle(raid, servicePointRecord, 0);
 
-        raidListenerService.createOrUpdate(raid);
+        orcidIntegrationService.setContributorStatus(raid.getContributor());
 
         final var raidDto = raidHistoryService.save(raid);
         raidIngestService.create(raidDto);
 
         keycloakService.addHandleToAdminRaids(new Handle(raidDto.getIdentifier().getId()).toString());
 
+        orcidIntegrationService.updateOrcidRecord(raidDto);
         return raidDto;
     }
 
@@ -137,13 +134,15 @@ public class RaidService {
         contributorService.setStatus(raid.getContributor());
         mergeContributors(existing.getContributor(), raid.getContributor());
 
-        raidListenerService.createOrUpdate(raid);
+        orcidIntegrationService.setContributorStatus(raid.getContributor());
 
         final var raidDto = raidHistoryService.save(raid);
 
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
-        return raidIngestService.update(raidDto);
+        final var saved =  raidIngestService.update(raidDto);
+        orcidIntegrationService.updateOrcidRecord(saved);
+        return saved;
     }
 
     @Transactional
@@ -157,15 +156,16 @@ public class RaidService {
         final var servicePointRecord = servicePointRepository.findById(servicePointId)
                 .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
 
+        orcidIntegrationService.setContributorStatus(contributors);
         raid.setContributor(contributors);
-
-        raidListenerService.createOrUpdate(raid);
 
         raidHistoryService.save(raid);
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
-        return raidIngestService.update(raid);
+        final var saved = raidIngestService.update(raid);
 
+        orcidIntegrationService.updateOrcidRecord(saved);
+        return saved;
     }
 
     @Transactional(readOnly = true)
