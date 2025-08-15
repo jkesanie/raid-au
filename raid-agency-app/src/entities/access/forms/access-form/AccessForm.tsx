@@ -39,10 +39,11 @@ const AccessForm = memo(
     const currentSchemaUri = watch(schemaUriPath);
 
     useEffect(() => {
-      if (!currentSchemaUri && languageSchema?.[0]?.uri) {
+      const embargoed = accessTypeId?.includes("c_f1cf/");
+      if (!currentSchemaUri && embargoed && languageSchema?.[0]?.uri) {
         setValue(schemaUriPath, languageSchema[0].uri);
       }
-    }, [currentSchemaUri, setValue, schemaUriPath]);
+    }, [currentSchemaUri, setValue, schemaUriPath, accessTypeId]);
 
     const accessTypeOptions = generalMapping
       .filter((el) => el.field === "access.type.id")
