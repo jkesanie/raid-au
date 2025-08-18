@@ -1,9 +1,13 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.5.5
+# 2.5.6
 ## API
 * Fix NullPointerException when adding/removing contributors
+
+## App-client UI
+* Resolved schemaUri validation issues affecting Subject field.
+* Fixed validation handling for AccessType = Embargoed, ensuring correct schemaUri processing.
 
 # 2.5.5
 ## ORCID Integration
