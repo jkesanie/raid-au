@@ -1,7 +1,6 @@
 import {useErrorDialog} from "@/components/error-dialog";
 import {RaidForm} from "@/components/raid-form";
 import {RaidFormErrorMessage} from "@/components/raid-form-error-message";
-import {useKeycloak} from "@/contexts/keycloak-context";
 import {RaidDto} from "@/generated/raid";
 import {newRaid, raidRequest} from "@/utils/data-utils";
 import {Container, Stack} from "@mui/material";
@@ -14,7 +13,6 @@ import { messages } from "@/constants/messages";
 
 export const MintRaid = () => {
   const { openErrorDialog } = useErrorDialog();
-  const { token } = useKeycloak();
   const navigate = useNavigate();
   const snackbar = useSnackbar();
 
