@@ -145,7 +145,7 @@ export const RaidForm = memo(
                         color="primary"
                         component="button"
                         type="submit"
-                        disabled={isSubmitting || !isFormValid}
+                        disabled={isSubmitting} //Removed isFormValid check to allow submission even with errors to avoid deadlock
                         data-testid="save-raid-button"
                     >
                       <SaveIcon sx={{mr: 1}}/>

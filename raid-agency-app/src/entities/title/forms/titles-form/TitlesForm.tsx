@@ -3,7 +3,6 @@ import { TitleDetailsForm } from "@/entities/title/forms/title-details-form";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
 import {
-  Box,
   Button,
   Card,
   CardActions,

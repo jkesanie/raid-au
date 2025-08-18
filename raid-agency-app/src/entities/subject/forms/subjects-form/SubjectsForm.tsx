@@ -48,7 +48,6 @@ export function SubjectsForm({
     trigger(key);
   };
   const metadata = useContext(MetadataContext);
-  
   const tooltip = metadata?.[key]?.tooltip;
   return (
     <Card

@@ -4,16 +4,18 @@ import { TextSelectField } from "@/components/fields/TextSelectField";
 import { RaidDto } from "@/generated/raid";
 import generalMapping from "@/mapping/data/general-mapping.json";
 import { Card, CardContent, CardHeader, Grid, Stack } from "@mui/material";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 import {
   Control,
   FieldErrors,
+  useFormContext,
   UseFormTrigger,
   useWatch,
 } from "react-hook-form";
 import { MetadataContext } from "@/components/raid-form/RaidForm";
 import { CustomStyledTooltip } from "@/components/tooltips/StyledTooltip";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import languageSchema from "@/references/language_schema.json";
 
 const AccessForm = memo(
   ({
@@ -32,6 +34,16 @@ const AccessForm = memo(
       control,
       name: "access.type.id",
     });
+    const { setValue, watch } = useFormContext();
+    const schemaUriPath = `access.language.schemaUri`;
+    const currentSchemaUri = watch(schemaUriPath);
+
+    useEffect(() => {
+      const embargoed = accessTypeId?.includes("c_f1cf/");
+      if (!currentSchemaUri && embargoed && languageSchema?.[0]?.uri) {
+        setValue(schemaUriPath, languageSchema[0].uri);
+      }
+    }, [currentSchemaUri, setValue, schemaUriPath, accessTypeId]);
 
     const accessTypeOptions = generalMapping
       .filter((el) => el.field === "access.type.id")
