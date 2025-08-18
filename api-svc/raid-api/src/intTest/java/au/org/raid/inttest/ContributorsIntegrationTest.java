@@ -372,6 +372,120 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             }
         }
 
+        @Test
+        @DisplayName("Minting a RAiD with duplicate contributors fails")
+        void duplicateContributors() {
+            createRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(OTHER_PARTICIPANT_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            )),
+            new Contributor()
+                    .id(REAL_TEST_ORCID)
+                    .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                    .contact(true)
+                    .leader(true)
+                    .position(List.of(
+                            new ContributorPosition()
+                                    .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                    .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                    .id(OTHER_PARTICIPANT_POSITION)
+                    )).role(List.of(
+                            new ContributorRole()
+                                    .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                    .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                    ))
+            ));
+
+            try {
+                raidApi.mintRaid(createRequest);
+                fail("No exception thrown with duplicate contributors");
+            } catch (RaidApiValidationException e) {
+                final var failures = e.getFailures();
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
+                        new ValidationFailure()
+                                .fieldId("contributor[1].id")
+                                .errorType("duplicateValue")
+                                .message("an object with the same values appears in the list")
+                ));
+            }
+        }
+
+        @Test
+        @DisplayName("Removing a contributor passes")
+        void removeContributor() {
+            createRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(PRINCIPAL_INVESTIGATOR_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            )),
+                    new Contributor()
+                            .id("https://orcid.org/0009-0002-5128-5184")
+                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(OTHER_PARTICIPANT_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            ))
+            ));
+
+            final var response = raidApi.mintRaid(createRequest);
+
+            final var updateRequest = response.getBody();
+
+            updateRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(PRINCIPAL_INVESTIGATOR_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            ))
+            ));
+
+            try {
+                raidApi.mintRaid(createRequest);
+            } catch (Exception e) {
+                fail(e);
+            }
+        }
+
         @Nested
         @DisplayName("Position tests...")
         class ContributorPositionTests {

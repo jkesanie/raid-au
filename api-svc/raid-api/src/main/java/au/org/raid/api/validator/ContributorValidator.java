@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,10 +36,22 @@ public class ContributorValidator {
         }
 
         var failures = new ArrayList<ValidationFailure>();
+        var seenOrcids = new HashMap<String, Boolean>();
 
         IntStream.range(0, contributors.size())
                 .forEach(index -> {
                     final var contributor = contributors.get(index);
+
+                    if (seenOrcids.containsKey(contributor.getId())) {
+                        failures.add(
+                                new ValidationFailure()
+                                        .fieldId("contributor[%d].id".formatted(index))
+                                        .errorType(DUPLICATE_TYPE)
+                                        .message(DUPLICATE_MESSAGE)
+                        );
+                    } else {
+                        seenOrcids.put(contributor.getId(), Boolean.TRUE);
+                    }
 
                     if (isBlank(contributor.getId())) {
                         failures.add(

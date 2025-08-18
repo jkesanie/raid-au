@@ -132,7 +132,6 @@ public class RaidService {
         }
 
         contributorService.setStatus(raid.getContributor());
-        mergeContributors(existing.getContributor(), raid.getContributor());
 
         orcidIntegrationService.setContributorStatus(raid.getContributor());
 
@@ -252,18 +251,6 @@ public class RaidService {
         }
 
         return raids;
-    }
-
-    public void mergeContributors(final List<Contributor> existingContributors, final List<Contributor> newContributors) {
-        final var existingContributorMap = existingContributors.stream()
-                .collect(Collectors.toMap(Contributor::getUuid, contributor -> contributor));
-
-        newContributors.forEach(contributor -> {
-            final var existingContributor = existingContributorMap.get(contributor.getUuid());
-            if (existingContributor != null) {
-                contributor.setStatus(existingContributor.getStatus());
-            }
-        });
     }
 
     public void postToDatacite(@Valid RaidDto raid) {
