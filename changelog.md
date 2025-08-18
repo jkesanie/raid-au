@@ -1,7 +1,7 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.5.5
+# 2.5.6
 ## API
 * Fix NullPointerException when adding/removing contributors
 
