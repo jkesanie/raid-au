@@ -3,7 +3,7 @@ See the [Changelog audience](#changelog-audience) section for info about
 
 # 2.5.5
 ## API
-* Bug fix for contributor updates
+* Fix NullPointerException when adding/removing contributors
 
 # 2.5.5
 ## ORCID Integration
