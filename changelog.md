@@ -1,5 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
+
+# 2.5.5
+## API
+* Bug fix for contributor updates
+
 # 2.5.5
 ## ORCID Integration
 * Bug fixes and refactoring
