@@ -240,7 +240,7 @@ class ContributorValidatorTest {
 
         final var contributor2 = new Contributor()
                 .schemaUri(TestConstants.CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
-                .id(VALID_ORCID)
+                .id("https://orcid.org/0000-0000-0000-0002")
                 .role(List.of(role2))
                 .position(List.of(position2))
                 .leader(true)
@@ -249,6 +249,55 @@ class ContributorValidatorTest {
         final var failures = validationService.validate(List.of(contributor2, contributor1));
 
         assertThat(failures, empty());
+    }
+
+    @Test
+    @DisplayName("Validation fails with duplicate contributors")
+    void duplicateContributors() {
+        final var role1 = new ContributorRole()
+                .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
+                .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+
+        final var position1 = new ContributorPosition()
+                .schemaUri(TestConstants.CONTRIBUTOR_POSITION_SCHEMA_URI)
+                .id(TestConstants.LEADER_CONTRIBUTOR_POSITION)
+                .startDate("2020-01")
+                .endDate("2021-06");
+
+        final var contributor1 = new Contributor()
+                .schemaUri(TestConstants.CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                .id(VALID_ORCID)
+                .role(List.of(role1))
+                .position(List.of(position1))
+                .leader(true)
+                .contact(true);
+
+        final var role2 = new ContributorRole()
+                .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
+                .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+
+        final var position2 = new ContributorPosition()
+                .schemaUri(TestConstants.CONTRIBUTOR_POSITION_SCHEMA_URI)
+                .id(TestConstants.LEADER_CONTRIBUTOR_POSITION)
+                .startDate("2021-06")
+                .endDate("2023-06");
+
+        final var contributor2 = new Contributor()
+                .schemaUri(TestConstants.CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                .id(VALID_ORCID)
+                .role(List.of(role2))
+                .position(List.of(position2))
+                .leader(true)
+                .contact(true);
+
+        final var failures = validationService.validate(List.of(contributor2, contributor1));
+
+        assertThat(failures, is(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[1].id")
+                        .errorType("duplicateValue")
+                        .message("an object with the same values appears in the list")
+        )));
     }
 
     @Test
