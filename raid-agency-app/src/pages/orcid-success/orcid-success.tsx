@@ -81,6 +81,18 @@ const OrcidSuccess: React.FC<OrcidSuccessPageProps> = () => {
             >
               You have successfully authorised RAiD to interact with your ORCID Record as a trusted party
             </Typography>
+            <Typography 
+                variant="body2" 
+                sx={{
+                    color: 'text.secondary',
+                    mb: 4,
+                    lineHeight: 1.6,
+                    maxWidth: '600px',
+                    mx: 'auto',
+                }}
+            >
+                You can now safely close this tab
+            </Typography>
           </CardContent>
         </Card>
       </Container>
