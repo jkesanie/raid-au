@@ -19,4 +19,5 @@ export const ROUTES = {
     NOT_FOUND: "*",
     SERVICE_POINTS: "/service-points",
     SERVICE_POINT: "/service-points/:servicePointId",
+    ORCID_SUCCESS: "/orcid/success",
 }
