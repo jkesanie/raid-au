@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  IconButton,
   List,
   ListItemButton,
   ListItemText,
