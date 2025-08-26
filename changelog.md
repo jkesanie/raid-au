@@ -1,6 +1,14 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.7
+## App-client UI
+* Enhanced ROR Lookup UX: Redesigned Research Organization Registry lookup interface
+* Uplifted search functionality with free text or RORID, visual status feedback (loading, success, error states)
+
+## ORCID Integration
+* Add dedicated authentication success page rather than redirecting to app.
+
 # 2.5.6
 ## API
 * Fix NullPointerException when adding/removing contributors
