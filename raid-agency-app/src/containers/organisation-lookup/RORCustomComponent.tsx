@@ -199,22 +199,6 @@ export default function CustomizedInputBase({
     }
   };
 
-  const getStatusMessageColor = () => {
-    switch (searchMutation.status) {
-      case 'pending':
-        return 'text-blue-600';
-      case 'success':
-        return 'text-green-600';
-      case 'error':
-        return 'text-red-600';
-      case 'idle':
-        return 'text-yellow-600';
-      default:
-        return 'text-gray-500';
-    }
-  };
-
-
   return (
     <Stack spacing={2}>
       <Paper
@@ -249,14 +233,14 @@ export default function CustomizedInputBase({
         sx={{ mt: 1, left:0}}
       >
         {searchMutation.data?.items?.length === 0 && (
-          <Box sx={{ padding: 2, maxWidth: '400px' }}>
-            <Typography variant="body2" className="text-gray-500">
+          <Box sx={{ padding: 2, maxWidth: '400px'}}>
+            <Typography variant="body2" className="text-orange-500">
               No organizations found for "{inputText}"
             </Typography>
           </Box>
         )}
         {searchMutation.status === 'error' && (
-          <Box sx={{ padding: 2, maxWidth: '400px' }}>
+          <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
             <Typography variant="body2" className="text-red-500">
               Failed to fetch results for "{inputText}". Please try again.
             </Typography>
@@ -296,7 +280,7 @@ export default function CustomizedInputBase({
           )}
           {searchMutation.status === 'pending' && (
           <Box sx={{ padding: 2, minWidth: '350px' }}>
-            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} className={getStatusMessageColor()}>
+            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: getStatusColor() }}>
               {`Searching `} <PulseLoader color="#36a5dd" size={5} />
             </Typography>
           </Box>
