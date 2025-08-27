@@ -51,6 +51,12 @@ export function ContributorsForm({
     append(generator());
     trigger(key);
   };
+
+  const removeHandler = (index: number) => {
+    data.splice(index, 1); // Also remove from data array to keep in sync with form state
+    remove(index);
+  };
+
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   return (
@@ -95,7 +101,7 @@ export function ContributorsForm({
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
-                  handleRemoveItem={() => remove(index)}
+                  handleRemoveItem={() => removeHandler(index)}
                   index={index}
                   data={data}
                 />
