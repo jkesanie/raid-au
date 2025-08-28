@@ -11806,5 +11806,11 @@
     "key": "529999",
     "value": "Other psychology not elsewhere classified",
     "definition": "https://linked.data.gov.au/def/anzsrc-for/2020/529999"
+  },
+  {
+    "field": "subject.type.id",
+    "key": "4206",
+    "value": "Public health",
+    "definition": "https://linked.data.gov.au/def/anzsrc-for/2020/4206"
   }
 ]
