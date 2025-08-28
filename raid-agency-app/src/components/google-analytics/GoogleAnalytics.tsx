@@ -11,14 +11,22 @@ declare global {
 
 const GoogleAnalytics = () => {
   const location = useLocation();
-  const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  let gaId: string | undefined;
   
   // Check if we're in production based on URL
   const isProduction = window.location.hostname.includes('prod');
+  const isDemo = window.location.hostname.includes('demo');
+  if (isProduction) {
+    gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  } else if (isDemo) {
+    gaId = import.meta.env.VITE_GA_MEASUREMENT_ID_DEMO;
+  } else {
+    gaId = ""; // No GA in non-prod/non-demo
+  }
 
   // Initialize GA only in production
   useEffect(() => {
-    if (!gaId || !isProduction) return;
+    if (!gaId || (!isProduction && !isDemo)) return;
 
     // Load GA script
     const script = document.createElement('script');
@@ -35,16 +43,16 @@ const GoogleAnalytics = () => {
     
     gtag('js', new Date());
     gtag('config', gaId);
-  }, [gaId, isProduction]);
+  }, [gaId, isProduction, isDemo]);
 
   // Track route changes
   useEffect(() => {
-    if (gaId && isProduction && window.gtag) {
+    if (gaId && (isProduction || isDemo) && window.gtag) {
       window.gtag('config', gaId, {
         page_path: location.pathname + location.search,
       });
     }
-  }, [location, gaId, isProduction]);
+  }, [location, gaId, isProduction, isDemo]);
 
   // This component doesn't render anything
   return null;
