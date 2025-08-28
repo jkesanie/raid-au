@@ -14,6 +14,7 @@ import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
 import { KeycloakProvider } from "./contexts/keycloak-context";
+import GoogleAnalytics from "./components/google-analytics/GoogleAnalytics";
 
 export function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -66,11 +67,13 @@ export function App() {
   });
 
   return (
-    <KeycloakProvider>
-      <StrictMode>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <ErrorDialogProvider>
+    <>
+      <GoogleAnalytics />
+      <KeycloakProvider>
+        <StrictMode>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ErrorDialogProvider>
             <MappingProvider>
               <SnackbarProvider>
                 <QueryClientProvider client={queryClient}>
@@ -85,5 +88,6 @@ export function App() {
         </ThemeProvider>
       </StrictMode>
     </KeycloakProvider>
+    </>
   );
 }
