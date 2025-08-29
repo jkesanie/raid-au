@@ -14,11 +14,11 @@ import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
 import { KeycloakProvider } from "./contexts/keycloak-context";
-import GoogleAnalytics from "./components/google-analytics/GoogleAnalytics";
+import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
 
 export function App() {
+  useGoogleAnalytics();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
   const theme = useMemo(
     () =>
       createTheme({
@@ -68,7 +68,6 @@ export function App() {
 
   return (
     <>
-      <GoogleAnalytics />
       <KeycloakProvider>
         <StrictMode>
           <ThemeProvider theme={theme}>
