@@ -19,25 +19,13 @@
  */
 export function getApiEndpoint() {
   const hostname = window.location.hostname;
-  const baseDomain = "raid.org.au";
-  
-  // Determine environment based on hostname
-  const environment = hostname.includes("test")
-    ? "test"
-    : hostname.includes("demo")
-    ? "demo"
-    : hostname.includes("prod")
-    ? "prod"
-    : hostname.includes("stage")
-    ? "stage"
-    : "dev";
 
-  // Build the API endpoint URL
-  return `${environment === "dev" ? "http" : "https"}://${
-    environment === "dev"
-      ? "localhost:8080"
-      : `api.${environment}.${baseDomain}`
-  }`.replace(/\/+$/, ""); // Remove any trailing slashes
+  if (hostname === 'localhost') {
+    return 'http://localhost:8080';
+  }
+
+  // For any production domain, use the same subdomain pattern
+  return `https://api.${hostname.replace('app.', '')}`;
 }
 
 /**
