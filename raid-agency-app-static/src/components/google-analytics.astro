@@ -12,7 +12,7 @@ if (isProduction) {
   gaId = null; // No GA in dev environment
 }
 ---
-{isProduction && gaId && (
+{(isProduction || isDemo) && gaId && (
   <>
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
     <script define:vars={{ gaId }}>
