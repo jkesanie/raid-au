@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.8
+## API
+* Update scheme/host of `identifier.id` to 'https://raid.org' in all RAiDs 
+
 # 2.5.7
 ## App-client UI
 * Enhanced ROR Lookup UX: Redesigned Research Organization Registry lookup interface
