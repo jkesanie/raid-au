@@ -23,7 +23,7 @@ export const useGoogleAnalytics = () => {
       gaId = null;
     }
 
-    // Only proceed if we have GA ID (mirror Astro condition)
+    // Only proceed if we have GA ID and in prod/demo
     if (!((isProduction || isDemo) && gaId)) return;
     // Check if GA already loaded
     if (document.querySelector(`script[src*="gtag/js?id=${gaId}"]`)) {
