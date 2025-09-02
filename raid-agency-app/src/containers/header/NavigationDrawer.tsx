@@ -61,12 +61,12 @@ function CombinedMenu() {
       icon: <KeyIcon />,
       isNavLink: true,
     },
-    {
+    /* {
       label: "Your received invites",
       link: "/invites",
       icon: <GroupWorkIcon />,
       isNavLink: false,
-    },
+    }, */
     {
       label: "Cache Manager",
       link: "/cache-manager",
