@@ -5,6 +5,12 @@ See the [Changelog audience](#changelog-audience) section for info about
 ## API
 * Update scheme/host of `identifier.id` to 'https://raid.org' in all RAiDs 
 
+## App-client UI
+* Added missing subject('Public Health')-(HELP-2337).
+* Contributors Management Fix - Resolved issue where users couldn't delete existing contributors and add new ones
+* Removed Invitation feature due to quality concerns. It will return at a later date.
+* Added Google Analytics tracking to the application.
+
 # 2.5.7
 ## App-client UI
 * Enhanced ROR Lookup UX: Redesigned Research Organization Registry lookup interface
