@@ -1,68 +1,62 @@
-// hooks/useGoogleAnalytics.ts
+// hooks/useGoogleAnalytics.tsx
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
-    dataLayer: unknown[];
     gtag?: (...args: unknown[]) => void;
   }
 }
 
 export const useGoogleAnalytics = () => {
-  const location = useLocation();
-  
-  const getGaId = (): string | null => {
+  useEffect(() => {
     const hostname = window.location.hostname;
+    const isProduction = import.meta.env.PROD || hostname.includes('prod');
+    const isDemo = hostname.includes('demo');
     
-    if (hostname.includes('prod')) {
-      return import.meta.env.VITE_GA_MEASUREMENT_ID || null;
-    }
-    if (hostname.includes('demo')) {
-      return import.meta.env.VITE_GA_MEASUREMENT_ID_DEMO || null;
-    }
-    return null; // No GA in development
-  };
-
-  const gaId = getGaId();
-
-  // Initialize GA
-  useEffect(() => {
-    if (!gaId) return;
-
-    // Avoid loading script multiple times
-    if (window.gtag) return;
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-    document.head.appendChild(script);
-
-    window.dataLayer = window.dataLayer || [];
-    function gtag(...args: unknown[]) {
-      window.dataLayer.push(args);
-    }
-    window.gtag = gtag;
+    let gaId: string | null = null;
     
-    gtag('js', new Date());
-    gtag('config', gaId);
-  }, [gaId]);
+    if (isProduction) {
+      gaId = import.meta.env.VITE_GA_MEASUREMENT_ID || null;
+    } else if (isDemo) {
+      gaId = import.meta.env.VITE_GA_MEASUREMENT_ID_DEMO || null;
+    } else {
+      gaId = null;
+    }
 
-  // Track route changes
-  useEffect(() => {
-    if (!gaId || !window.gtag) return;
+    // Only proceed if we have GA ID (mirror Astro condition)
+    if (!((isProduction || isDemo) && gaId)) return;
+    // Check if GA already loaded
+    if (document.querySelector(`script[src*="gtag/js?id=${gaId}"]`)) {
+      return;
+    }
 
-    window.gtag('config', gaId, {
-      page_path: location.pathname + location.search,
-    });
-  }, [location, gaId]);
+    // Create the exact same script structure as Astro
+    const gtagScript = document.createElement('script');
+    gtagScript.async = true;
+    gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(gtagScript);
 
-  // Return tracking functions for manual events
-  const trackEvent = (eventName: string, parameters: Record<string, unknown> = {}) => {
-    if (gaId && window.gtag) {
-      window.gtag('event', eventName, parameters);
+    // Create the inline script
+    const inlineScript = document.createElement('script');
+    inlineScript.textContent = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', '${gaId}');
+    `;
+    document.head.appendChild(inlineScript);
+  }, []); // Run once only
+
+  // Simple track event function
+  const trackEvent = (eventName: string, parameters?: Record<string, unknown>) => {
+    if (window.gtag) {
+      window.gtag('event', eventName, parameters || {});
+    } else {
+      console.warn('GA: gtag not available for event:', eventName);
     }
   };
 
-  return { trackEvent, isEnabled: !!gaId };
+  return { trackEvent };
 };
+// Usage: Call useGoogleAnalytics() in your main App component to initialize GA
