@@ -52,7 +52,7 @@ export const RaidDisplayMenu = ({
           </Fab>
         </Tooltip>
 
-        <InviteButton setOpen={setIsInviteDialogOpen} />
+        {/* <InviteButton setOpen={setIsInviteDialogOpen} /> */}
         <InviteDialog
           title={title}
           open={isInviteDialogOpen}
