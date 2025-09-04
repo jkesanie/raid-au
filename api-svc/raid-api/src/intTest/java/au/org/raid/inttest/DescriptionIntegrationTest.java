@@ -4,12 +4,17 @@ import au.org.raid.idl.raidv2.model.Description;
 import au.org.raid.idl.raidv2.model.DescriptionType;
 import au.org.raid.idl.raidv2.model.Language;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
+import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
+import au.org.raid.inttest.service.Handle;
 import au.org.raid.inttest.service.RaidApiValidationException;
 import au.org.raid.inttest.service.TestConstants;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.List;
 
 import static au.org.raid.inttest.service.TestConstants.ALTERNATIVE_DESCRIPTION_TYPE;
 import static au.org.raid.inttest.service.TestConstants.DESCRIPTION_TYPE_SCHEMA_URI;
@@ -17,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class DescriptionIntegrationTest extends AbstractIntegrationTest {
+    @Autowired
+    private RaidUpdateRequestFactory updateRequestFactory;
 
     @Test
     @DisplayName("Minting a RAiD with a description with an null language schemaUri fails")
@@ -378,4 +385,181 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
                 );
     }
 
+    @Test
+    @DisplayName("All valid description types")
+    void happyPath() {
+        final var acknowledgements = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/392")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Acknowledgements")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var alternative = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/319")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Alternative")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+
+        final var primary = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/318")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Primary")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var brief = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/3")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Brief")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var methods = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/8")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Methods")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var objectives = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/7")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Objectives")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var other = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/6")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Other")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        final var significanceStatement = new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/9")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Significance Statement")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                );
+
+        createRequest.description(List.of(
+                acknowledgements,
+                alternative,
+                primary,
+                brief,
+                methods,
+                objectives,
+                other,
+                significanceStatement
+        ));
+
+        final var createResponse = raidApi.mintRaid(createRequest);
+        final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
+        final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
+        final var raidDto = readResponse.getBody();
+
+        assertThat(raidDto.getDescription()).contains(
+                acknowledgements,
+                alternative,
+                primary,
+                brief,
+                methods,
+                objectives,
+                other,
+                significanceStatement
+        );
+    }
+
+    @Test
+    @DisplayName("Description should handle multiple updates")
+    void multipleUpdates() {
+        final var mintResponse = raidApi.mintRaid(createRequest);
+
+        final var mintedRaid = mintResponse.getBody();
+
+        final var primaryDescription = mintedRaid.getDescription().get(0);
+
+        final var handle = new Handle(mintedRaid.getIdentifier().getId());
+
+        assertThat(mintedRaid.getDescription()).hasSize(1);
+
+        mintedRaid.getDescription().add(new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/392")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Acknowledgements")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                ));
+
+        final var updateResponse1 =
+                raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequestFactory.create(mintedRaid));
+
+        final var updatedRaid1 = updateResponse1.getBody();
+
+        assertThat(updatedRaid1.getDescription()).hasSize(2);
+
+        updatedRaid1.getDescription().add(new Description()
+                .type(new DescriptionType()
+                        .id("https://vocabulary.raid.org/description.type.schema/7")
+                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                )
+                .text("Objectives")
+                .language(new Language()
+                        .id("eng")
+                        .schemaUri("https://www.iso.org/standard/74575.html")
+                ));
+
+        final var updateResponse2 =
+                raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequestFactory.create(updatedRaid1));
+
+        final var updatedRaid2 = updateResponse2.getBody();
+
+        assertThat(updatedRaid2.getDescription()).hasSize(3);
+
+        updatedRaid2.description(List.of(primaryDescription));
+
+        final var updateResponse3 =
+                raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequestFactory.create(updatedRaid2));
+
+        final var updatedRaid3 = updateResponse3.getBody();
+        assertThat(updatedRaid2.getDescription()).hasSize(1);
+    }
 }
