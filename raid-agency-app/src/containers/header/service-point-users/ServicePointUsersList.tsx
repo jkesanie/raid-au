@@ -105,7 +105,7 @@ export const ServicePointUsersList = ({
             const roles = el.roles || [];
             const displayName =
               firstName || lastName
-                ? `${username} (${firstName} ${lastName} ${email})`
+                ? `${username} (${`${firstName || ''} ${lastName || ''} ${email || ''}`.trim()})`
                 : `${username}`;
             return (
               <ListItem
