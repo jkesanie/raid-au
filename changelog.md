@@ -5,6 +5,9 @@ See the [Changelog audience](#changelog-audience) section for info about
 ## API
 * Add 'Acknowledgements' as description type
 
+## App-client UI
+* Added attributes to the AAF-SAML identity provider in Keycloak to extract firstName, lastName, and email for displaying human-readable names in the UI(Service-points)
+
 # 2.5.8
 ## API
 * Update scheme/host of `identifier.id` to 'https://raid.org' in all RAiDs 
