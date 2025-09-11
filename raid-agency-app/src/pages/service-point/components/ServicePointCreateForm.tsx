@@ -176,7 +176,7 @@ export const ServicePointCreateForm = () => {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            {/* <Grid item xs={12} sm={6} md={4}>
               <Controller
                 name="servicePointCreateRequest.groupId"
                 control={form.control}
@@ -195,7 +195,7 @@ export const ServicePointCreateForm = () => {
                   />
                 )}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6} md={4}>
               <Controller
                 name="servicePointCreateRequest.identifierOwner"

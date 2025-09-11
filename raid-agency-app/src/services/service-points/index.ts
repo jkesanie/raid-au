@@ -90,6 +90,8 @@ export const fetchServicePointsWithMembers = async ({
         servicePoint.groupId,
         servicePointMembers.members as ServicePointMember[]
       );
+    } else {
+      members.set(servicePoint.groupId, []);
     }
   }
 
@@ -164,6 +166,8 @@ export const fetchServicePointWithMembers = async ({
       servicePoint.groupId,
       servicePointMembers.members as ServicePointMember[]
     );
+  } else {
+    members.set(servicePoint.groupId, []);
   }
 
   // Combine service point with its members
@@ -215,7 +219,30 @@ export const createServicePoint = async ({
   data: CreateServicePointRequest;
   token: string;
 }): Promise<ServicePoint> => {
+  let groupId;
   const url = new URL(API_CONSTANTS.SERVICE_POINT.ALL);
+  const groupUrl = `${kcUrl}/realms/${kcRealm}/group/create`;
+  const group = await authService.fetchWithAuth(groupUrl.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      name: data.servicePointCreateRequest.name,
+      path: `/groups/${data.servicePointCreateRequest.name}`
+    })
+  });
+  if (group.ok) {
+    const result = await group.json();
+    groupId = result.id;
+
+  console.log('Created group ID:', groupId);
+} else {
+  console.error('Failed to create group:', group.statusText);
+}
+  console.log("Group ID:", groupId);
+  data.servicePointCreateRequest.groupId = groupId;
   const response = await authService.fetchWithAuth(url.toString(), {
     method: "POST",
     headers: {
