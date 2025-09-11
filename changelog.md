@@ -1,16 +1,13 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.6.0
-## App-client UI
-* Added 'Acknowledgements' as description type in the Web App.
-
 # 2.5.9
 ## API
 * Add 'Acknowledgements' as description type
 
 ## App-client UI
 * Added attributes to the AAF-SAML identity provider in Keycloak to extract firstName, lastName, and email for displaying human-readable names in the UI(Service-points)
+* Added 'Acknowledgements' as description type in the Web App.
 
 # 2.5.8
 ## API
