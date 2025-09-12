@@ -3,23 +3,38 @@ import { createServicePoint } from "@/services/service-points";
 import { CreateServicePointRequest } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
   Button,
   FormControlLabel,
   FormGroup,
   Grid,
-  Snackbar,
   Switch,
+  Tabs,
   TextField,
+  Typography,
+  Tab,
+  Stack,
+  Paper,
+  styled,
+  Divider
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useSnackbar } from "@/components/snackbar";
+import { messages } from "@/constants/messages";
+import { Settings, User } from "lucide-react";
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
   const { token } = useKeycloak();
+  const snackbar = useSnackbar();
 
   const initalServicePointValues: CreateServicePointRequest = {
     servicePointCreateRequest: {
@@ -60,9 +75,9 @@ export const ServicePointCreateForm = () => {
 
   const handleCreateSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["servicePoints"] });
-    console.log("✅ Item created");
     form.reset();
-    setSnackbarOpen(true);
+    // Show success snackbar
+    snackbar.openSnackbar(messages.servicePointCreated, 3000, "success");
   };
 
   const handleCreateError = (error: Error) => {
@@ -78,12 +93,6 @@ export const ServicePointCreateForm = () => {
       },
       token: token!,
     });
-    // return await api.createServicePoint(servicePoint, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${keycloak.token}`,
-    //   },
-    // });
   };
 
   const createServicePointMutation = useMutation({
@@ -96,241 +105,310 @@ export const ServicePointCreateForm = () => {
     createServicePointMutation.mutate(item);
   };
 
-  const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
-
-  const handleSnackbarClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setSnackbarOpen(false);
-  };
+  const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme?.palette.text.secondary,
+  flexGrow: 1,
+  ...theme.applyStyles('dark', {
+    backgroundColor: '#1A2027',
+  }),
+  boxShadow: 'none',
+}));
 
   return (
     <>
-      <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.name"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest?.name
-                    }
-                    helperText={
-                      form.formState.errors?.servicePointCreateRequest?.name
-                        ?.message
-                    }
-                    label="Service point name"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.repositoryId"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Repository ID"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.repositoryId
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.prefix"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Prefix"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest?.prefix
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            {/* <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.groupId"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Group ID"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.groupId
-                    }
-                  />
-                )}
-              />
-            </Grid> */}
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.identifierOwner"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Identifier Owner"
-                    variant="outlined"
-                    helperText="ROR Identifier. e.g. https://ror.org/038sjwq14"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.identifierOwner
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.adminEmail"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Admin email"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.adminEmail
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.techEmail"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Tech email"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.techEmail
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="servicePointCreateRequest.password"
-                control={form.control}
-                render={({ field }) => (
-                  <TextField
-                    label="Password"
-                    type="password"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    {...field}
-                    value={field.value}
-                    error={
-                      !!form.formState.errors?.servicePointCreateRequest
-                        ?.password
-                    }
-                    helperText={
-                      form.formState.errors?.servicePointCreateRequest?.password
-                        ?.message
-                    }
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <Controller
-                name="servicePointCreateRequest.enabled"
-                control={form.control}
-                render={({ field }) => (
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Switch {...field} defaultChecked={!!field.value} />
+      <Accordion
+        disableGutters={true}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+          <Typography component="span">Create Service Point</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+              <Box sx={{ mb: 3, pb: 2, borderBottom: 1, borderColor: 'divider' }}>
+                <Controller
+                  name="servicePointCreateRequest.name"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TextField
+                      error={
+                        !!form.formState.errors?.servicePointCreateRequest?.name
                       }
-                      label="Service point enabled?"
-                    />
-                  </FormGroup>
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12}>
-              <Controller
-                name="servicePointCreateRequest.appWritesEnabled"
-                control={form.control}
-                render={({ field }) => (
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Switch {...field} defaultChecked={!!field.value} />
+                      helperText={
+                        form.formState.errors?.servicePointCreateRequest?.name
+                          ?.message
                       }
-                      label="Enable editing in app?"
+                      label="Service point name"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      {...field}
+                      value={field.value}
                     />
-                  </FormGroup>
-                )}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            variant="outlined"
-            type="submit"
-            sx={{ mt: 3 }}
-            disabled={Object.keys(form.formState.errors).length > 0}
-          >
-            Create service point
-          </Button>
-        </form>
-      </FormProvider>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message="✅ Service point created successfully"
-      />
+                  )}
+                />
+              </Box>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={2}
+                sx={{
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  mb: 3,
+                }}
+                divider={<Divider orientation="vertical" flexItem />}
+              >
+                <Item>
+                  <Tabs
+                    value={"one"}
+                    textColor="secondary"
+                    indicatorColor="secondary"
+                    aria-label="secondary tabs example"
+                  >
+                    <Tab
+                      value="one"
+                      label={<Typography variant="body2">Service Point Owner</Typography>}
+                      iconPosition="start"
+                      icon={<User fontSize="small" />}
+                      sx={{ minHeight: "40px" }}
+                    />
+                  </Tabs>
+                    <Box>
+                    <Stack
+                      spacing={{ xs: 1, sm: 2 }}
+                      direction="column"
+                      useFlexGap
+                      sx={{ mt: 2 }}
+                    >
+                    
+                      <div>
+                        <Controller
+                          name="servicePointCreateRequest.identifierOwner"
+                          control={form.control}
+                          render={({ field }) => (
+                            <TextField
+                              label="Identifier Owner"
+                              variant="outlined"
+                              helperText="ROR Identifier. e.g. https://ror.org/038sjwq14"
+                              size="small"
+                              fullWidth
+                              {...field}
+                              value={field.value}
+                              error={
+                                !!form.formState.errors?.servicePointCreateRequest
+                                  ?.identifierOwner
+                              }
+                            />
+                          )}
+                        />
+                      </div>
+                      <div >
+                        <Controller
+                          name="servicePointCreateRequest.adminEmail"
+                          control={form.control}
+                          render={({ field }) => (
+                            <TextField
+                              label="Admin email"
+                              variant="outlined"
+                              size="small"
+                              fullWidth
+                              {...field}
+                              value={field.value}
+                              error={
+                                !!form.formState.errors?.servicePointCreateRequest
+                                  ?.adminEmail
+                              }
+                            />
+                          )}
+                        />
+                      </div>
+                      <div >
+                        <Controller
+                          name="servicePointCreateRequest.techEmail"
+                          control={form.control}
+                          render={({ field }) => (
+                            <TextField
+                              label="Tech email"
+                              variant="outlined"
+                              size="small"
+                              fullWidth
+                              {...field}
+                              value={field.value}
+                              error={
+                                !!form.formState.errors?.servicePointCreateRequest
+                                  ?.techEmail
+                              }
+                            />
+                          )}
+                        />
+                      </div>
+                    </Stack>
+                  </Box>
+                </Item>
+                <Item>
+                  <Tabs
+                    value={"two"}
+                    textColor="secondary"
+                    indicatorColor="secondary"
+                    aria-label="secondary tabs example"
+                  >
+                    <Tab
+                      value="two"
+                      label={<Typography variant="body2">DataCite repository</Typography>}
+                      iconPosition="start"
+                      icon={<User fontSize="small" />}
+                      sx={{ minHeight: "40px" }}
+                    />
+                  </Tabs>
+                  <Box>
+                  <Stack
+                    spacing={{ xs: 1, sm: 2 }}
+                    direction="column"
+                    useFlexGap
+                    sx={{ mt: 2 }}
+                  >
+                    <div>
+                      <Controller
+                        name="servicePointCreateRequest.repositoryId"
+                        control={form.control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Repository ID"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            {...field}
+                            value={field.value}
+                            error={
+                              !!form.formState.errors?.servicePointCreateRequest
+                                ?.repositoryId
+                            }
+                          />
+                        )}
+                      />
+                    </div>
+                    <div >
+                      <Controller
+                        name="servicePointCreateRequest.prefix"
+                        control={form.control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Prefix"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            {...field}
+                            value={field.value}
+                            error={
+                              !!form.formState.errors?.servicePointCreateRequest?.prefix
+                            }
+                          />
+                        )}
+                      />
+                    </div>
+                    <div >
+                      <Controller
+                        name="servicePointCreateRequest.password"
+                        control={form.control}
+                        render={({ field }) => (
+                          <TextField
+                            label="Password"
+                            type="password"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            {...field}
+                            value={field.value}
+                            error={
+                              !!form.formState.errors?.servicePointCreateRequest
+                                ?.password
+                            }
+                            helperText={
+                              form.formState.errors?.servicePointCreateRequest?.password
+                                ?.message
+                            }
+                          />
+                        )}
+                      />
+                    </div>
+                  </Stack>
+                  </Box>
+                </Item>
+              </Stack>
+              <Item>
+                <Tabs
+                  value={"three"}
+                  textColor="secondary"
+                  indicatorColor="secondary"
+                  aria-label="secondary tabs example"
+                >
+                  <Tab
+                    value="three"
+                    label={<Typography variant="body2">Settings</Typography>}
+                    iconPosition="start"
+                    icon={<Settings fontSize="small" />}
+                    sx={{ minHeight: "40px" }}
+                  />
+                </Tabs>
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  sx={{ mb: 1 }}
+                >
+                  <Item>
+                    <Controller
+                      name="servicePointCreateRequest.enabled"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Switch {...field} defaultChecked={!!field.value} />
+                            }
+                            label="Enable service point?"
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </Item>
+                  <Item>
+                    <Controller
+                      name="servicePointCreateRequest.appWritesEnabled"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormGroup>
+                          <FormControlLabel
+                            control={
+                              <Switch {...field} defaultChecked={!!field.value} />
+                            }
+                            label="Enable minting and editing RAiDs using web app?"
+                          />
+                        </FormGroup>
+                      )}
+                    />
+                  </Item>
+                </Stack>
+              </Item>
+              <Button
+                variant="outlined"
+                type="submit"
+                sx={{ mt: 3 }}
+                disabled={Object.keys(form.formState.errors).length > 0}
+              >
+                Create service point
+              </Button>
+            </form>
+          </FormProvider>
+        </AccordionDetails>
+      </Accordion>
     </>
   );
 };

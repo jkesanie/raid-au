@@ -54,4 +54,10 @@ export const messages = {
     apiBadRequest: "Bad request, please check your input",
     apiUnauthorized: "Unauthorized access, please log in",
     apiForbidden: "You do not have permission to access this resource",
+
+    // Service Point messages
+    servicePointCreated: "Service point created successfully",
+    servicePointUpdated: "Service point updated successfully",
+    servicePointDeleted: "Service point deleted successfully",
+    servicePointNotFound: "Service point not found",
 }

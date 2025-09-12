@@ -35,12 +35,13 @@ export const ServicePointsOperatorView = () => {
 
   return (
     <Stack direction="column" gap={2}>
-      <Card>
+      {/* <Card>
         <CardHeader title="Create new service point" />
         <CardContent>
           <ServicePointCreateForm />
         </CardContent>
-      </Card>
+      </Card> */}
+      <ServicePointCreateForm />
       <Card>
         <CardHeader title="All service points" />
         <CardContent>
