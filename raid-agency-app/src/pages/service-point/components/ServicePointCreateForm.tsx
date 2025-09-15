@@ -10,7 +10,6 @@ import {
   Button,
   FormControlLabel,
   FormGroup,
-  Grid,
   Switch,
   Tabs,
   TextField,
@@ -24,12 +23,11 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useSnackbar } from "@/components/snackbar";
 import { messages } from "@/constants/messages";
-import { Settings, User } from "lucide-react";
+import { Building2, Settings, User, SquarePen } from "lucide-react";
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
@@ -128,12 +126,12 @@ export const ServicePointCreateForm = () => {
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          <Typography component="span">Create Service Point</Typography>
+          <SquarePen /><Typography sx={{ml: 1}}component="span">Create Service Point</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
-              <Box sx={{ mb: 3, pb: 2, borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ mb: 2, pb: 2, borderBottom: 1, borderColor: 'divider' }}>
                 <Controller
                   name="servicePointCreateRequest.name"
                   control={form.control}
@@ -188,7 +186,6 @@ export const ServicePointCreateForm = () => {
                       useFlexGap
                       sx={{ mt: 2 }}
                     >
-                    
                       <div>
                         <Controller
                           name="servicePointCreateRequest.identifierOwner"
@@ -264,7 +261,7 @@ export const ServicePointCreateForm = () => {
                       value="two"
                       label={<Typography variant="body2">DataCite repository</Typography>}
                       iconPosition="start"
-                      icon={<User fontSize="small" />}
+                      icon={<Building2 fontSize="small" />}
                       sx={{ minHeight: "40px" }}
                     />
                   </Tabs>
@@ -403,7 +400,7 @@ export const ServicePointCreateForm = () => {
                 sx={{ mt: 3 }}
                 disabled={Object.keys(form.formState.errors).length > 0}
               >
-                Create service point
+                <SquarePen />{" "} Create
               </Button>
             </form>
           </FormProvider>
