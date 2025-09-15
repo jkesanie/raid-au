@@ -1,3 +1,4 @@
+import React from "react";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { createServicePoint } from "@/services/service-points";
 import { CreateServicePointRequest } from "@/types";
@@ -28,11 +29,14 @@ import { z } from "zod";
 import { useSnackbar } from "@/components/snackbar";
 import { messages } from "@/constants/messages";
 import { Building2, Settings, User, SquarePen } from "lucide-react";
+import CustomizedInputBase from "@/containers/organisation-lookup/RORCustomComponent";
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
   const { token } = useKeycloak();
   const snackbar = useSnackbar();
+  const [selectedValue, setSelectedValue] = React.useState<{ id: string; name?: string } | null>(null);
+  const { setValue, getValues } = useForm();
 
   const initalServicePointValues: CreateServicePointRequest = {
     servicePointCreateRequest: {
@@ -100,6 +104,11 @@ export const ServicePointCreateForm = () => {
   });
 
   const onSubmit = (item: CreateServicePointRequest) => {
+    console.log("item", item);
+    if (selectedValue) {
+      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.id);
+      item.servicePointCreateRequest.identifierOwner = selectedValue.id;
+    }
     createServicePointMutation.mutate(item);
   };
 
@@ -155,7 +164,7 @@ export const ServicePointCreateForm = () => {
                 />
               </Box>
               <Stack
-                direction={{ xs: 'column', sm: 'row' }}
+                direction={{ xs: 'column', sm: 'row', md: 'row' }}
                 spacing={2}
                 sx={{
                   justifyContent: "flex-start",
@@ -181,7 +190,7 @@ export const ServicePointCreateForm = () => {
                   </Tabs>
                     <Box>
                     <Stack
-                      spacing={{ xs: 1, sm: 2 }}
+                      spacing={{ xs: 1, sm: 1, md: 2 }}
                       direction="column"
                       useFlexGap
                       sx={{ mt: 2 }}
@@ -191,18 +200,11 @@ export const ServicePointCreateForm = () => {
                           name="servicePointCreateRequest.identifierOwner"
                           control={form.control}
                           render={({ field }) => (
-                            <TextField
-                              label="Identifier Owner"
-                              variant="outlined"
-                              helperText="ROR Identifier. e.g. https://ror.org/038sjwq14"
-                              size="small"
-                              fullWidth
-                              {...field}
-                              value={field.value}
-                              error={
-                                !!form.formState.errors?.servicePointCreateRequest
-                                  ?.identifierOwner
-                              }
+                            <CustomizedInputBase
+                              setSelectedValue={setSelectedValue}
+                              name={`servicePointCreateRequest.identifierOwner.id`}
+                              defaultValue={selectedValue?.id || getValues(`servicePointCreateRequest.identifierOwner.id`)}
+                              styles={{ width: '100%' }}
                             />
                           )}
                         />
@@ -267,7 +269,7 @@ export const ServicePointCreateForm = () => {
                   </Tabs>
                   <Box>
                   <Stack
-                    spacing={{ xs: 1, sm: 2 }}
+                    spacing={{ xs: 1, sm: 1, md: 2 }}
                     direction="column"
                     useFlexGap
                     sx={{ mt: 2 }}
