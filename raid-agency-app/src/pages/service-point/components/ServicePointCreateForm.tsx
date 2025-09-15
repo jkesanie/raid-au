@@ -57,12 +57,12 @@ export const ServicePointCreateForm = () => {
     servicePointCreateRequest: z.object({
       name: z.string().min(3),
       identifierOwner: z.string(),
-      adminEmail: z.string(),
-      techEmail: z.string(),
+      adminEmail: z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      techEmail: z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
       enabled: z.boolean(),
       password: z.string().min(8),
-      prefix: z.string(),
-      repositoryId: z.string(),
+      prefix: z.string().regex(/^10\.\d+$/),
+      repositoryId: z.string().regex(/^[A-Z]+\.[A-Z]+$/),
       appWritesEnabled: z.boolean(),
       groupId: z.string(),
     }),
@@ -77,7 +77,6 @@ export const ServicePointCreateForm = () => {
 
   const handleCreateSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["servicePoints"] });
-    form.reset();
     // Show success snackbar
     snackbar.openSnackbar(messages.servicePointCreated, 3000, "success");
   };
@@ -104,7 +103,6 @@ export const ServicePointCreateForm = () => {
   });
 
   const onSubmit = (item: CreateServicePointRequest) => {
-    console.log("item", item);
     if (selectedValue) {
       setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.id);
       item.servicePointCreateRequest.identifierOwner = selectedValue.id;
@@ -225,6 +223,7 @@ export const ServicePointCreateForm = () => {
                                 !!form.formState.errors?.servicePointCreateRequest
                                   ?.adminEmail
                               }
+                              required={true}
                             />
                           )}
                         />
@@ -245,6 +244,7 @@ export const ServicePointCreateForm = () => {
                                 !!form.formState.errors?.servicePointCreateRequest
                                   ?.techEmail
                               }
+                              required={true}
                             />
                           )}
                         />
@@ -290,6 +290,7 @@ export const ServicePointCreateForm = () => {
                               !!form.formState.errors?.servicePointCreateRequest
                                 ?.repositoryId
                             }
+                            required={true}
                           />
                         )}
                       />
@@ -309,6 +310,7 @@ export const ServicePointCreateForm = () => {
                             error={
                               !!form.formState.errors?.servicePointCreateRequest?.prefix
                             }
+                            required={true}
                           />
                         )}
                       />
@@ -334,6 +336,7 @@ export const ServicePointCreateForm = () => {
                               form.formState.errors?.servicePointCreateRequest?.password
                                 ?.message
                             }
+                            required={true}
                           />
                         )}
                       />
