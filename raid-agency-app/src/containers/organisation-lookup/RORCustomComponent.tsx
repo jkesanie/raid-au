@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useFormContext } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { ListItemButton, Popover, Typography } from '@mui/material';
+import { FormHelperText, ListItemButton, Popover, Typography } from '@mui/material';
 import { Search, CheckCircle, AlertCircle } from 'lucide-react';
 import { ClipLoader, PulseLoader } from "react-spinners";
 
@@ -210,7 +210,7 @@ export default function CustomizedInputBase({
         {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}{getStatusIcon()}
         <InputBase
           sx={{ ml: 1, flex: 1 }}
-          placeholder="Search Text or lookup ROR ID"
+          placeholder="Search Text or lookup ROR ID *"
           inputProps={{ 'aria-label': 'Search Text or lookup ROR ID' }}
           value={inputText}
           onChange={(e) => {setInputText(e.target.value),clearSearchText(true)}}
@@ -226,6 +226,7 @@ export default function CustomizedInputBase({
           {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <TravelExploreIcon />}
         </IconButton>
       </Paper>
+      <FormHelperText>For e.g. "https://ror.org/123456" or "My Organization"</FormHelperText>
       <Popover
         open={dropBox}
         anchorEl={inputRef.current }

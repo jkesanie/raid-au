@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { createServicePoint } from "@/services/service-points";
 import { CreateServicePointRequest } from "@/types";
@@ -19,10 +19,12 @@ import {
   Stack,
   Paper,
   styled,
-  Divider
+  Divider,
+  FormHelperText,
+  CircularProgress
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
+import { RaidFormErrorMessage } from "@/components/raid-form-error-message";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,6 +32,9 @@ import { useSnackbar } from "@/components/snackbar";
 import { messages } from "@/constants/messages";
 import { Building2, Settings, User, SquarePen } from "lucide-react";
 import CustomizedInputBase from "@/containers/organisation-lookup/RORCustomComponent";
+import { useErrorDialog } from "@/components/error-dialog";
+import { transformErrorMessage } from "@/components/raid-form-error-message/ErrorContentUtils";
+import { ErrorItem } from '@/components/raid-form-error-message/types';
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
@@ -37,6 +42,12 @@ export const ServicePointCreateForm = () => {
   const snackbar = useSnackbar();
   const [selectedValue, setSelectedValue] = React.useState<{ id: string; name?: string } | null>(null);
   const { setValue, getValues } = useForm();
+  const { openErrorDialog } = useErrorDialog();
+  const [appState, setAppState] = React.useState({
+    loading: false,
+    loaded: false,
+    error: false,
+  });
 
   const initalServicePointValues: CreateServicePointRequest = {
     servicePointCreateRequest: {
@@ -49,24 +60,30 @@ export const ServicePointCreateForm = () => {
       prefix: "",
       repositoryId: "",
       appWritesEnabled: false,
-      groupId: "",
     },
   };
 
-  const createServicePointRequestValidationSchema = z.object({
-    servicePointCreateRequest: z.object({
-      name: z.string().min(3),
-      identifierOwner: z.string(),
-      adminEmail: z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      techEmail: z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      enabled: z.boolean(),
-      password: z.string().min(8),
-      prefix: z.string().regex(/^10\.\d+$/),
-      repositoryId: z.string().regex(/^[A-Z]+\.[A-Z]+$/),
-      appWritesEnabled: z.boolean(),
-      groupId: z.string(),
-    }),
-  });
+const createServicePointRequestValidationSchema = z.object({
+  servicePointCreateRequest: z.object({
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    identifierOwner: z.string(),
+    adminEmail: z.string()
+      .min(1, "Admin email is required")
+      .email("Invalid email format"), // Better than regex for emails
+    techEmail: z.string()
+      .min(1, "Tech email is required")
+      .email("Invalid email format"),
+    enabled: z.boolean(),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    prefix: z.string()
+      .min(1, "Prefix is required")
+      .regex(/^10\.\d+$/, "Prefix must follow format 10.xxx"),
+    repositoryId: z.string()
+      .min(1, "Repository ID is required")
+      .regex(/^[A-Z]+\.[A-Z]+$/, "Repository ID must be uppercase letters separated by dot"),
+    appWritesEnabled: z.boolean(),
+  }),
+});
 
   const form = useForm<CreateServicePointRequest>({
     resolver: zodResolver(createServicePointRequestValidationSchema),
@@ -78,11 +95,15 @@ export const ServicePointCreateForm = () => {
   const handleCreateSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["servicePoints"] });
     // Show success snackbar
+    setAppState({...appState, loading: false, loaded: true });
+    form.reset();
+    setSelectedValue(null);
     snackbar.openSnackbar(messages.servicePointCreated, 3000, "success");
   };
 
   const handleCreateError = (error: Error) => {
-    console.log("error", error);
+    setAppState({...appState, loading: false, error: true });
+    RaidFormErrorMessage(error, openErrorDialog);
   };
 
   const createServicePointHandler = async (
@@ -108,7 +129,16 @@ export const ServicePointCreateForm = () => {
       item.servicePointCreateRequest.identifierOwner = selectedValue.id;
     }
     createServicePointMutation.mutate(item);
+    setAppState({...appState, loading: true });
   };
+
+  useEffect(() => {
+    if (selectedValue) {
+      console.log("Selected value changed:", selectedValue);
+      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.name || selectedValue.id);
+      form.trigger(`servicePointCreateRequest.identifierOwner`);
+    }
+  }, [selectedValue, setValue, form]);
 
   const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -122,6 +152,17 @@ export const ServicePointCreateForm = () => {
   }),
   boxShadow: 'none',
 }));
+  const { formState } = form;
+  useEffect(() => {
+    console.log("Form errors:", formState.errors);
+    // This effect runs when the form is submitted
+    // and there are validation errors
+    if (formState.isSubmitted && Object.keys(formState.errors).length > 0) {
+      openErrorDialog(transformErrorMessage(formState.errors.servicePointCreateRequest as Record<string,  ErrorItem | ErrorItem[]>));
+    }
+    // This effect runs when there are validation errors
+    // and opens an error dialog with the transformed error message
+  }, [formState.errors, formState.isSubmitted, openErrorDialog]);
 
   return (
     <>
@@ -174,8 +215,8 @@ export const ServicePointCreateForm = () => {
                 <Item>
                   <Tabs
                     value={"one"}
-                    textColor="secondary"
-                    indicatorColor="secondary"
+                    textColor="primary"
+                    indicatorColor="primary"
                     aria-label="secondary tabs example"
                   >
                     <Tab
@@ -206,6 +247,9 @@ export const ServicePointCreateForm = () => {
                             />
                           )}
                         />
+                        <FormHelperText error>
+                          {form.formState.errors?.servicePointCreateRequest?.identifierOwner?.message}
+                        </FormHelperText>
                       </div>
                       <div >
                         <Controller
@@ -213,7 +257,7 @@ export const ServicePointCreateForm = () => {
                           control={form.control}
                           render={({ field }) => (
                             <TextField
-                              label="Admin email"
+                              label="Admin email (*)"
                               variant="outlined"
                               size="small"
                               fullWidth
@@ -223,7 +267,10 @@ export const ServicePointCreateForm = () => {
                                 !!form.formState.errors?.servicePointCreateRequest
                                   ?.adminEmail
                               }
-                              required={true}
+                              helperText={
+                                form.formState.errors?.servicePointCreateRequest?.adminEmail
+                                  ?.message
+                              }
                             />
                           )}
                         />
@@ -234,7 +281,7 @@ export const ServicePointCreateForm = () => {
                           control={form.control}
                           render={({ field }) => (
                             <TextField
-                              label="Tech email"
+                              label="Tech email (*)"
                               variant="outlined"
                               size="small"
                               fullWidth
@@ -244,7 +291,10 @@ export const ServicePointCreateForm = () => {
                                 !!form.formState.errors?.servicePointCreateRequest
                                   ?.techEmail
                               }
-                              required={true}
+                              helperText={
+                                form.formState.errors?.servicePointCreateRequest?.techEmail
+                                  ?.message
+                              }
                             />
                           )}
                         />
@@ -255,8 +305,8 @@ export const ServicePointCreateForm = () => {
                 <Item>
                   <Tabs
                     value={"two"}
-                    textColor="secondary"
-                    indicatorColor="secondary"
+                    textColor="primary"
+                    indicatorColor="primary"
                     aria-label="secondary tabs example"
                   >
                     <Tab
@@ -280,7 +330,7 @@ export const ServicePointCreateForm = () => {
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Repository ID"
+                            label="Repository ID (*)"
                             variant="outlined"
                             size="small"
                             fullWidth
@@ -290,7 +340,10 @@ export const ServicePointCreateForm = () => {
                               !!form.formState.errors?.servicePointCreateRequest
                                 ?.repositoryId
                             }
-                            required={true}
+                            helperText={
+                              form.formState.errors?.servicePointCreateRequest?.repositoryId
+                                ?.message
+                            }
                           />
                         )}
                       />
@@ -301,7 +354,7 @@ export const ServicePointCreateForm = () => {
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Prefix"
+                            label="Prefix (*)"
                             variant="outlined"
                             size="small"
                             fullWidth
@@ -310,7 +363,10 @@ export const ServicePointCreateForm = () => {
                             error={
                               !!form.formState.errors?.servicePointCreateRequest?.prefix
                             }
-                            required={true}
+                            helperText={
+                              form.formState.errors?.servicePointCreateRequest?.prefix
+                                ?.message
+                            }
                           />
                         )}
                       />
@@ -321,7 +377,7 @@ export const ServicePointCreateForm = () => {
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Password"
+                            label="Password (*)"
                             type="password"
                             variant="outlined"
                             size="small"
@@ -336,7 +392,6 @@ export const ServicePointCreateForm = () => {
                               form.formState.errors?.servicePointCreateRequest?.password
                                 ?.message
                             }
-                            required={true}
                           />
                         )}
                       />
@@ -348,8 +403,8 @@ export const ServicePointCreateForm = () => {
               <Item>
                 <Tabs
                   value={"three"}
-                  textColor="secondary"
-                  indicatorColor="secondary"
+                  textColor="primary"
+                  indicatorColor="primary"
                   aria-label="secondary tabs example"
                 >
                   <Tab
@@ -361,16 +416,14 @@ export const ServicePointCreateForm = () => {
                   />
                 </Tabs>
                 <Stack
-                  direction="row"
-                  spacing={3}
-                  sx={{ mb: 1 }}
+                  direction="column"
                 >
                   <Item>
                     <Controller
                       name="servicePointCreateRequest.enabled"
                       control={form.control}
                       render={({ field }) => (
-                        <FormGroup>
+                        <FormGroup sx={{ display: 'inline-flex' }}>
                           <FormControlLabel
                             control={
                               <Switch {...field} defaultChecked={!!field.value} />
@@ -402,10 +455,19 @@ export const ServicePointCreateForm = () => {
               <Button
                 variant="outlined"
                 type="submit"
-                sx={{ mt: 3 }}
-                disabled={Object.keys(form.formState.errors).length > 0}
+                sx={{ mt: 3, width: 120 }}
+                //disabled={Object.keys(form.formState.errors).length > 0}
               >
-                <SquarePen />{" "} Create
+                {appState.loading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <>
+                    <Box component="span" sx={{ mr: 1, display: "inline-flex", verticalAlign: "middle" }}>
+                      <SquarePen />
+                    </Box>
+                    Create
+                  </>
+                )}
               </Button>
             </form>
           </FormProvider>
