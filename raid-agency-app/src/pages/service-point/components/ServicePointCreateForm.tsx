@@ -36,6 +36,18 @@ import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "@/components/raid-form-error-message/ErrorContentUtils";
 import { ErrorItem } from '@/components/raid-form-error-message/types';
 
+  const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  color: theme?.palette.text.secondary,
+  flexGrow: 1,
+  ...theme.applyStyles('dark', {
+    backgroundColor: '#1A2027',
+  }),
+  boxShadow: 'none',
+}));
+
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
   const { token } = useKeycloak();
@@ -140,18 +152,7 @@ const createServicePointRequestValidationSchema = z.object({
     }
   }, [selectedValue, setValue, form]);
 
-  const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme?.palette.text.secondary,
-  flexGrow: 1,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#1A2027',
-  }),
-  boxShadow: 'none',
-}));
+
   const { formState } = form;
   useEffect(() => {
     console.log("Form errors:", formState.errors);
@@ -209,6 +210,7 @@ const createServicePointRequestValidationSchema = z.object({
                   justifyContent: "flex-start",
                   alignItems: "flex-start",
                   mb: 3,
+                  width: '100%'
                 }}
                 divider={<Divider orientation="vertical" flexItem />}
               >
@@ -439,7 +441,7 @@ const createServicePointRequestValidationSchema = z.object({
                       name="servicePointCreateRequest.appWritesEnabled"
                       control={form.control}
                       render={({ field }) => (
-                        <FormGroup>
+                        <FormGroup sx={{ display: 'inline-flex' }}>
                           <FormControlLabel
                             control={
                               <Switch {...field} defaultChecked={!!field.value} />
