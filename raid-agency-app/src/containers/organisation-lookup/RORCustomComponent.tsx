@@ -101,13 +101,15 @@ interface CustomizedInputBaseProps {
   name: string;
   defaultValue?: string;
   styles?: React.CSSProperties;
+  resetValue?: { id: string; name?: string } | null;
 }
 
 export default function CustomizedInputBase({
   setSelectedValue,
   name,
   defaultValue,
-  styles = { width: '400px' }
+  styles = { width: '400px' },
+  resetValue
 }: CustomizedInputBaseProps) {
   const [searchText, clearSearchText] = React.useState(false);
   const [inputText, setInputText] = React.useState(defaultValue || '');
@@ -115,6 +117,12 @@ export default function CustomizedInputBase({
   const { watch, formState: { isDirty } } = useFormContext();
   const value = watch(`${name}`);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (resetValue === null) {
+      setInputText('');
+    }
+  }, [resetValue]);
 
   React.useEffect(() => {
     if (isDirty && value) {
@@ -210,7 +218,7 @@ export default function CustomizedInputBase({
         {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}{getStatusIcon()}
         <InputBase
           sx={{ ml: 1, flex: 1 }}
-          placeholder="Search Text or lookup ROR ID *"
+          placeholder="Search Text or lookup ROR ID"
           inputProps={{ 'aria-label': 'Search Text or lookup ROR ID' }}
           value={inputText}
           onChange={(e) => {setInputText(e.target.value),clearSearchText(true)}}

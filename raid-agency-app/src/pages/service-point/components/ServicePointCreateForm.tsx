@@ -30,7 +30,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useSnackbar } from "@/components/snackbar";
 import { messages } from "@/constants/messages";
-import { Building2, Settings, User, SquarePen } from "lucide-react";
+import { Building2, Settings, SquarePen, Database } from "lucide-react";
 import CustomizedInputBase from "@/containers/organisation-lookup/RORCustomComponent";
 import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "@/components/raid-form-error-message/ErrorContentUtils";
@@ -53,7 +53,7 @@ export const ServicePointCreateForm = () => {
   const { token } = useKeycloak();
   const snackbar = useSnackbar();
   const [selectedValue, setSelectedValue] = React.useState<{ id: string; name?: string } | null>(null);
-  const { setValue, getValues } = useForm();
+  const { setValue } = useForm();
   const { openErrorDialog } = useErrorDialog();
   const [appState, setAppState] = React.useState({
     loading: false,
@@ -78,7 +78,7 @@ export const ServicePointCreateForm = () => {
 const createServicePointRequestValidationSchema = z.object({
   servicePointCreateRequest: z.object({
     name: z.string().min(3, "Name must be at least 3 characters"),
-    identifierOwner: z.string().min(1, "Service point owner is required"),
+    identifierOwner: z.string(),
     adminEmail: z.string()
       .min(1, "Admin email is required")
       .email("Invalid email format"), // Better than regex for emails
@@ -86,7 +86,7 @@ const createServicePointRequestValidationSchema = z.object({
       .min(1, "Tech email is required")
       .email("Invalid email format"),
     enabled: z.boolean(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
     prefix: z.string()
       .min(1, "Prefix is required")
       .regex(/^10\.\d+$/, "Prefix must follow format 10.xxx"),
@@ -104,13 +104,14 @@ const createServicePointRequestValidationSchema = z.object({
     defaultValues: { ...initalServicePointValues },
   });
 
-  const handleCreateSuccess = () => {
+  const handleCreateSuccess = async () => {
     queryClient.invalidateQueries({ queryKey: ["createServicePoint"] });
     // Show success snackbar
     setAppState({...appState, loading: false, loaded: true });
     form.reset();
     setSelectedValue(null);
     snackbar.openSnackbar(messages.servicePointCreated, 3000, "success");
+    await queryClient.invalidateQueries({ queryKey: ["servicePoints"] });
   };
 
   const handleCreateError = (error: Error) => {
@@ -138,26 +139,14 @@ const createServicePointRequestValidationSchema = z.object({
 
   const onSubmit = (item: CreateServicePointRequest) => {
     if (selectedValue) {
-      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue);
       item.servicePointCreateRequest.identifierOwner = selectedValue.id;
     }
     createServicePointMutation.mutate(item);
     setAppState({...appState, loading: true });
   };
 
-  useEffect(() => {
-    if (selectedValue) {
-      console.log("Selected value changed:", selectedValue);
-      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.id);
-      form.trigger(`servicePointCreateRequest.identifierOwner`);
-      console.log(getValues(`servicePointCreateRequest.identifierOwner`));
-    }
-  }, [selectedValue, setValue, form]);
-
-
   const { formState } = form;
   useEffect(() => {
-    console.log("Form errors:", formState.errors);
     // This effect runs when the form is submitted
     // and there are validation errors
     if (formState.isSubmitted && Object.keys(formState.errors).length > 0) {
@@ -195,7 +184,7 @@ const createServicePointRequestValidationSchema = z.object({
                         form.formState.errors?.servicePointCreateRequest?.name
                           ?.message
                       }
-                      label="Service point name"
+                      label="Service point name *"
                       variant="outlined"
                       size="small"
                       fullWidth
@@ -227,7 +216,7 @@ const createServicePointRequestValidationSchema = z.object({
                       value="one"
                       label={<Typography variant="body2">Service Point Owner</Typography>}
                       iconPosition="start"
-                      icon={<User fontSize="small" />}
+                      icon={<Building2 fontSize="small" />}
                       sx={{ minHeight: "40px" }}
                     />
                   </Tabs>
@@ -239,18 +228,12 @@ const createServicePointRequestValidationSchema = z.object({
                       sx={{ mt: 2 }}
                     >
                       <div>
-                       {/*  <Controller
-                          name="servicePointCreateRequest.identifierOwner"
-                          control={form.control}
-                          render={({ field }) => (
-                            
-                          )}
-                        /> */}
                         <CustomizedInputBase
                           setSelectedValue={setSelectedValue}
                           name={`servicePointCreateRequest.identifierOwner`}
-                          defaultValue={selectedValue?.id || getValues(`servicePointCreateRequest.identifierOwner.id`)}
+                          defaultValue={selectedValue?.id || ""}
                           styles={{ width: '100%' }}
+                          resetValue={selectedValue}
                         />
                         <FormHelperText error>
                           {form.formState.errors?.servicePointCreateRequest?.identifierOwner?.message}
@@ -262,7 +245,7 @@ const createServicePointRequestValidationSchema = z.object({
                           control={form.control}
                           render={({ field }) => (
                             <TextField
-                              label="Admin email (*)"
+                              label="Admin email *"
                               variant="outlined"
                               size="small"
                               fullWidth
@@ -286,7 +269,7 @@ const createServicePointRequestValidationSchema = z.object({
                           control={form.control}
                           render={({ field }) => (
                             <TextField
-                              label="Tech email (*)"
+                              label="Tech email *"
                               variant="outlined"
                               size="small"
                               fullWidth
@@ -318,7 +301,7 @@ const createServicePointRequestValidationSchema = z.object({
                       value="two"
                       label={<Typography variant="body2">DataCite repository</Typography>}
                       iconPosition="start"
-                      icon={<Building2 fontSize="small" />}
+                      icon={<Database fontSize="small" />}
                       sx={{ minHeight: "40px" }}
                     />
                   </Tabs>
@@ -335,7 +318,7 @@ const createServicePointRequestValidationSchema = z.object({
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Repository ID (*)"
+                            label="Repository ID *"
                             variant="outlined"
                             size="small"
                             fullWidth
@@ -359,7 +342,7 @@ const createServicePointRequestValidationSchema = z.object({
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Prefix (*)"
+                            label="Prefix *"
                             variant="outlined"
                             size="small"
                             fullWidth
@@ -382,7 +365,7 @@ const createServicePointRequestValidationSchema = z.object({
                         control={form.control}
                         render={({ field }) => (
                           <TextField
-                            label="Password (*)"
+                            label="Password *"
                             type="password"
                             variant="outlined"
                             size="small"
@@ -467,7 +450,7 @@ const createServicePointRequestValidationSchema = z.object({
                 variant="outlined"
                 type="submit"
                 sx={{ mt: 3, width: 120 }}
-                //disabled={Object.keys(form.formState.errors).length > 0}
+                disabled={appState.loading}
               >
                 {appState.loading ? (
                   <CircularProgress size={24} />
