@@ -78,7 +78,7 @@ export const ServicePointCreateForm = () => {
 const createServicePointRequestValidationSchema = z.object({
   servicePointCreateRequest: z.object({
     name: z.string().min(3, "Name must be at least 3 characters"),
-    identifierOwner: z.string(),
+    identifierOwner: z.string().min(1, "Service point owner is required"),
     adminEmail: z.string()
       .min(1, "Admin email is required")
       .email("Invalid email format"), // Better than regex for emails
@@ -92,7 +92,7 @@ const createServicePointRequestValidationSchema = z.object({
       .regex(/^10\.\d+$/, "Prefix must follow format 10.xxx"),
     repositoryId: z.string()
       .min(1, "Repository ID is required")
-      .regex(/^[A-Z]+\.[A-Z]+$/, "Repository ID must be uppercase letters separated by dot"),
+      .regex(/^[A-Z]+\.[A-Z]+$/, "Repository ID must be ABCD.EFGH format"),
     appWritesEnabled: z.boolean(),
   }),
 });
@@ -105,7 +105,7 @@ const createServicePointRequestValidationSchema = z.object({
   });
 
   const handleCreateSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ["servicePoints"] });
+    queryClient.invalidateQueries({ queryKey: ["createServicePoint"] });
     // Show success snackbar
     setAppState({...appState, loading: false, loaded: true });
     form.reset();
@@ -116,12 +116,13 @@ const createServicePointRequestValidationSchema = z.object({
   const handleCreateError = (error: Error) => {
     setAppState({...appState, loading: false, error: true });
     RaidFormErrorMessage(error, openErrorDialog);
+    snackbar.openSnackbar(messages.servicePointCreationFailed, 3000, "error");
   };
 
   const createServicePointHandler = async (
     servicePoint: CreateServicePointRequest
   ) => {
-    createServicePoint({
+    await createServicePoint({
       data: {
         servicePointCreateRequest: servicePoint.servicePointCreateRequest,
       },
@@ -137,7 +138,7 @@ const createServicePointRequestValidationSchema = z.object({
 
   const onSubmit = (item: CreateServicePointRequest) => {
     if (selectedValue) {
-      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.id);
+      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue);
       item.servicePointCreateRequest.identifierOwner = selectedValue.id;
     }
     createServicePointMutation.mutate(item);
@@ -147,8 +148,9 @@ const createServicePointRequestValidationSchema = z.object({
   useEffect(() => {
     if (selectedValue) {
       console.log("Selected value changed:", selectedValue);
-      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.name || selectedValue.id);
+      setValue(`servicePointCreateRequest.identifierOwner`, selectedValue.id);
       form.trigger(`servicePointCreateRequest.identifierOwner`);
+      console.log(getValues(`servicePointCreateRequest.identifierOwner`));
     }
   }, [selectedValue, setValue, form]);
 
@@ -237,17 +239,18 @@ const createServicePointRequestValidationSchema = z.object({
                       sx={{ mt: 2 }}
                     >
                       <div>
-                        <Controller
+                       {/*  <Controller
                           name="servicePointCreateRequest.identifierOwner"
                           control={form.control}
                           render={({ field }) => (
-                            <CustomizedInputBase
-                              setSelectedValue={setSelectedValue}
-                              name={`servicePointCreateRequest.identifierOwner.id`}
-                              defaultValue={selectedValue?.id || getValues(`servicePointCreateRequest.identifierOwner.id`)}
-                              styles={{ width: '100%' }}
-                            />
+                            
                           )}
+                        /> */}
+                        <CustomizedInputBase
+                          setSelectedValue={setSelectedValue}
+                          name={`servicePointCreateRequest.identifierOwner`}
+                          defaultValue={selectedValue?.id || getValues(`servicePointCreateRequest.identifierOwner.id`)}
+                          styles={{ width: '100%' }}
                         />
                         <FormHelperText error>
                           {form.formState.errors?.servicePointCreateRequest?.identifierOwner?.message}
@@ -428,7 +431,10 @@ const createServicePointRequestValidationSchema = z.object({
                         <FormGroup sx={{ display: 'inline-flex' }}>
                           <FormControlLabel
                             control={
-                              <Switch {...field} defaultChecked={!!field.value} />
+                              <Switch
+                                {...field}
+                                checked={Boolean(field.value)}
+                              />
                             }
                             label="Enable service point?"
                           />
@@ -444,7 +450,10 @@ const createServicePointRequestValidationSchema = z.object({
                         <FormGroup sx={{ display: 'inline-flex' }}>
                           <FormControlLabel
                             control={
-                              <Switch {...field} defaultChecked={!!field.value} />
+                              <Switch
+                                {...field}
+                                checked={Boolean(field.value)}
+                              />
                             }
                             label="Enable minting and editing RAiDs using web app?"
                           />

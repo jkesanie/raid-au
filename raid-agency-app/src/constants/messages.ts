@@ -60,4 +60,7 @@ export const messages = {
     servicePointUpdated: "Service point updated successfully",
     servicePointDeleted: "Service point deleted successfully",
     servicePointNotFound: "Service point not found",
+    servicePointCreationFailed: "Service point creation failed",
+    servicePointUpdateFailed: "Service point update failed",
+    servicePointDeletionFailed: "Service point deletion failed",
 }
