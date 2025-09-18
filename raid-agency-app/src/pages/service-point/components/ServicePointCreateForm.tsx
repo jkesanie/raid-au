@@ -137,13 +137,31 @@ const createServicePointRequestValidationSchema = z.object({
     onSuccess: handleCreateSuccess,
   });
 
-  const onSubmit = (item: CreateServicePointRequest) => {
-    if (selectedValue) {
-      item.servicePointCreateRequest.identifierOwner = selectedValue.id;
-    }
-    createServicePointMutation.mutate(item);
-    setAppState({...appState, loading: true });
-  };
+const onSubmit = (item: CreateServicePointRequest) => {
+  // Set identifier owner if selected
+  if (selectedValue) {
+    item.servicePointCreateRequest.identifierOwner = selectedValue.id;
+  }
+
+  // Check for duplicate repository ID
+  const apiData = queryClient.getQueryData<any[]>(["servicePoints"]);
+  const isDuplicateRepositoryID = apiData?.some(
+    (sp: { repositoryId: string }) => 
+      sp.repositoryId === item.servicePointCreateRequest.repositoryId
+  );
+
+  if (isDuplicateRepositoryID) {
+    form.setError("servicePointCreateRequest.repositoryId", {
+      type: "manual",
+      message: messages.servicePointUniqueRepositoryID
+    });
+    return;
+  }
+
+  // Proceed with mutation
+  createServicePointMutation.mutate(item);
+  setAppState({ ...appState, loading: true });
+};
 
   const { formState } = form;
   useEffect(() => {
