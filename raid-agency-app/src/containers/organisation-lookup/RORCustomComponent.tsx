@@ -101,6 +101,7 @@ interface CustomizedInputBaseProps {
   name: string;
   defaultValue?: string;
   styles?: React.CSSProperties;
+  resetValue?: { id: string; name?: string } | null;
 }
 
 export default function CustomizedInputBase({
@@ -116,6 +117,12 @@ export default function CustomizedInputBase({
   const { watch, formState: { isDirty } } = useFormContext();
   const value = watch(`${name}`);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (resetValue === null) {
+      setInputText('');
+    }
+  }, [resetValue]);
 
   React.useEffect(() => {
     if (isDirty && value) {
