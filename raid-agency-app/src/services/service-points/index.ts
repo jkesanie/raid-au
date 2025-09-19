@@ -243,7 +243,6 @@ export const createServicePoint = async ({
 
     const groupResult = await group.json();
     groupId = groupResult.id;
-    console.log('Created group ID:', groupId);
 
     // Update data with groupId
     data.servicePointCreateRequest.groupId = groupId;

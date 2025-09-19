@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { createServicePoint } from "@/services/service-points";
-import { CreateServicePointRequest } from "@/types";
+import { CreateServicePointRequest, ServicePointWithMembers } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
@@ -35,6 +35,7 @@ import CustomizedInputBase from "@/containers/organisation-lookup/RORCustomCompo
 import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "@/components/raid-form-error-message/ErrorContentUtils";
 import { ErrorItem } from '@/components/raid-form-error-message/types';
+import { ServicePoint } from "@/generated/raid";
 
   const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -53,7 +54,6 @@ export const ServicePointCreateForm = () => {
   const { token } = useKeycloak();
   const snackbar = useSnackbar();
   const [selectedValue, setSelectedValue] = React.useState<{ id: string; name?: string } | null>(null);
-  const { setValue } = useForm();
   const { openErrorDialog } = useErrorDialog();
   const [appState, setAppState] = React.useState({
     loading: false,
@@ -144,10 +144,9 @@ const onSubmit = (item: CreateServicePointRequest) => {
   }
 
   // Check for duplicate repository ID
-  const apiData = queryClient.getQueryData<any[]>(["servicePoints"]);
+  const apiData = queryClient.getQueryData<ServicePoint[]>(["servicePoints"]);
   const isDuplicateRepositoryID = apiData?.some(
-    (sp: { repositoryId: string }) => 
-      sp.repositoryId === item.servicePointCreateRequest.repositoryId
+    (sp) => sp.repositoryId === item.servicePointCreateRequest.repositoryId
   );
 
   if (isDuplicateRepositoryID) {
