@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { createServicePoint } from "@/services/service-points";
-import { CreateServicePointRequest, ServicePointWithMembers } from "@/types";
+import { CreateServicePointRequest } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
@@ -17,8 +17,6 @@ import {
   Typography,
   Tab,
   Stack,
-  Paper,
-  styled,
   Divider,
   FormHelperText,
   CircularProgress
@@ -36,18 +34,8 @@ import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "@/components/raid-form-error-message/ErrorContentUtils";
 import { ErrorItem } from '@/components/raid-form-error-message/types';
 import { ServicePoint } from "@/generated/raid";
-
-  const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  color: theme?.palette.text.secondary,
-  flexGrow: 1,
-  ...theme.applyStyles('dark', {
-    backgroundColor: '#1A2027',
-  }),
-  boxShadow: 'none',
-}));
+import { createServicePointRequestValidationSchema } from "@/pages/service-point/validation/Rules";
+import { StyledPaper as Item } from "./StyledComponent";
 
 export const ServicePointCreateForm = () => {
   const queryClient = useQueryClient();
@@ -75,28 +63,6 @@ export const ServicePointCreateForm = () => {
     },
   };
 
-const createServicePointRequestValidationSchema = z.object({
-  servicePointCreateRequest: z.object({
-    name: z.string().min(3, "Name must be at least 3 characters"),
-    identifierOwner: z.string(),
-    adminEmail: z.string()
-      .min(1, "Admin email is required")
-      .email("Invalid email format"), // Better than regex for emails
-    techEmail: z.string()
-      .min(1, "Tech email is required")
-      .email("Invalid email format"),
-    enabled: z.boolean(),
-    password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
-    prefix: z.string()
-      .min(1, "Prefix is required")
-      .regex(/^10\.\d+$/, "Prefix must follow format 10.xxx"),
-    repositoryId: z.string()
-      .min(1, "Repository ID is required")
-      .regex(/^[A-Z]+\.[A-Z]+$/, "Repository ID must be ABCD.EFGH format"),
-    appWritesEnabled: z.boolean(),
-  }),
-});
-
   const form = useForm<CreateServicePointRequest>({
     resolver: zodResolver(createServicePointRequestValidationSchema),
     mode: "onChange",
@@ -117,7 +83,6 @@ const createServicePointRequestValidationSchema = z.object({
   const handleCreateError = (error: Error) => {
     setAppState({...appState, loading: false, error: true });
     RaidFormErrorMessage(error, openErrorDialog);
-    snackbar.openSnackbar(messages.servicePointCreationFailed, 3000, "error");
   };
 
   const createServicePointHandler = async (
