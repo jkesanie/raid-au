@@ -1,13 +1,6 @@
 package au.org.raid.iam.provider.group;
 
-import au.org.raid.iam.provider.group.dto.Grant;
-import au.org.raid.iam.provider.group.dto.AddGroupAdminRequest;
-import au.org.raid.iam.provider.group.dto.RemoveGroupAdminRequest;
-import au.org.raid.iam.provider.group.dto.GroupJoinRequest;
-import au.org.raid.iam.provider.group.dto.GroupLeaveRequest;
-import au.org.raid.iam.provider.group.dto.SetActiveGroupRequest;
-import au.org.raid.iam.provider.group.dto.RemoveActiveGroupRequest;
-import au.org.raid.iam.provider.group.dto.CreateGroupRequest;
+import au.org.raid.iam.provider.group.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.*;
@@ -561,15 +554,16 @@ public class GroupController {
             }
 
             // Prepare response
-            final var responseBody = new HashMap<String, Object>();
-            responseBody.put("id", newGroup.getId());
-            responseBody.put("name", newGroup.getName());
-            responseBody.put("attributes", newGroup.getAttributes());
-            responseBody.put("message", "Group created successfully");
+            CreateGroupResponse response = new CreateGroupResponse(
+                    newGroup.getId(),
+                    newGroup.getName(),
+                    newGroup.getAttributes(),
+                    "Group created successfully"
+            );
 
             return buildCorsResponse("POST",
                     Response.status(Response.Status.CREATED)
-                            .entity(objectMapper.writeValueAsString(responseBody)));
+                            .entity(objectMapper.writeValueAsString(response)));
 
         } catch (Exception e) {
             log.error("Error creating group: {}", e.getMessage(), e);
