@@ -1,6 +1,13 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.10
+## API
+* Add 'AUTHENTICATION_REVOKED' contributor status for when ORCID owners remove permission for RAiD to update their record.
+
+## ORCID Integration
+* Set contributor status to 'AUTHENTICATION_REVOKED' if an update to ORCID record return a 401 status
+
 # 2.5.9
 ## API
 * Add 'Acknowledgements' as description type
