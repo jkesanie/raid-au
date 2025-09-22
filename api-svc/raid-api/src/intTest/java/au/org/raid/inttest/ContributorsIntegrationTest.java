@@ -1408,7 +1408,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         new ValidationFailure()
                                 .fieldId("contributor[0].status")
                                 .errorType("invalidValue")
-                                .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED")
+                                .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED, AUTHENTICATION_REVOKED")
                 ));
             }
         }
