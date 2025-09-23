@@ -13,6 +13,7 @@ import { useKeycloak } from "@/contexts/keycloak-context";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { ServicePointUpdateForm } from "./";
+import { RefreshCcw } from "lucide-react";
 
 export const ServicePoint = () => {
   const { isOperator } = useAuthHelper();
@@ -71,7 +72,7 @@ export const ServicePoint = () => {
       <Stack direction="column" gap={2}>
         <BreadcrumbsBar breadcrumbs={breadcrumbs} />
         <Card hidden={!isOperator} variant="outlined" sx={{ mt: 2 }}>
-          <CardHeader title="Update service point" />
+          <CardHeader title={<><RefreshCcw /> Update Service Point</>} />
           <CardContent>
             <ServicePointUpdateForm servicePoint={servicePointQuery.data!} />
           </CardContent>
