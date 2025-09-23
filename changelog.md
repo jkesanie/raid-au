@@ -4,9 +4,19 @@ See the [Changelog audience](#changelog-audience) section for info about
 # 2.5.10
 ## API
 * Add 'AUTHENTICATION_REVOKED' contributor status for when ORCID owners remove permission for RAiD to update their record.
+* Added POST endpoint for groupID creation
+* Added support to validate the unique repository_Id constraint.
 
 ## ORCID Integration
 * Set contributor status to 'AUTHENTICATION_REVOKED' if an update to ORCID record return a 401 status
+
+## App-client UI
+* Service Point Management: Added new UX/UI for service point creation and update functionality
+* ROR Integration: Integrated Research Organization Registry (ROR) search widget
+* Form Organization with Validation: Grouped form fields into logical sections (Service Point Owner, Data Cite Repository, Settings)
+* Collapsible Interface: Added accordion component for form sections (default collapsed)
+* Status Indicators: Added status indicators(loading/loaded/error) and graceful error handling on error scenarios.
+* Defect Fix: Fixed the toggle buttons on both create and update service points forms.
 
 # 2.5.9
 ## API
