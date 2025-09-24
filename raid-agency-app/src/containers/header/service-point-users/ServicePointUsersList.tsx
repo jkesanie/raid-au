@@ -106,7 +106,7 @@ export const ServicePointUsersList = ({
             const displayName =
               firstName || lastName
                 ? `${username} (${`${firstName || ''} ${lastName || ''} ${email || ''}`.trim()})`
-                : `${username}`;
+                : `${username} (${email || ''})`;
             return (
               <ListItem
                 key={el.id}
