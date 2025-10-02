@@ -85,7 +85,9 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui*/**", "/docs/**", "/actuator/**", "/error").permitAll()
 
                 // Upgrade endpoints
-                .requestMatchers(GET, "/upgradable/all").hasRole(RAID_UPGRADER_ROLE)
+                .requestMatchers(GET, "/legacy").hasRole(RAID_UPGRADER_ROLE)
+                .requestMatchers(POST, "/legacy").hasRole(RAID_UPGRADER_ROLE)
+                .requestMatchers(GET, "/upgrade").hasRole(RAID_UPGRADER_ROLE)
                 .requestMatchers(POST, "/upgrade").hasRole(RAID_UPGRADER_ROLE)
                 .requestMatchers(POST, RAID_API + "/post-to-datacite").hasRole(RAID_UPGRADER_ROLE)
 

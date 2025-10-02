@@ -4,7 +4,9 @@ import au.org.raid.api.endpoint.Constant;
 import au.org.raid.db.jooq.enums.Metaschema;
 import au.org.raid.db.jooq.tables.records.RaidRecord;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
+import org.jooq.DeleteConditionStep;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -155,6 +157,14 @@ public class RaidRepository {
                 .fetchInto(RaidRecord.class);
     }
 
+    public List<RaidRecord> findAllLegacy() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .where(RAID.METADATA_SCHEMA.in(Metaschema.legacy_metadata_schema_v1)).and(RAID.SERVICE_POINT_ID.eq(20000003L))
+                .fetchInto(RaidRecord.class);
+    }
+
     public List<RaidRecord> findAllPublic() {
         return dslContext.select()
                 .distinctOn(RAID.HANDLE)
@@ -163,6 +173,18 @@ public class RaidRepository {
                 .where(RAID.ACCESS_TYPE_ID.in(1, 4)
                         .and(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1, Metaschema.raido_metadata_schema_v1))
                 )
+                .fetchInto(RaidRecord.class);
+    }
+
+    public int deleteByHandle(final String handle) {
+        return dslContext.delete(RAID).where(RAID.HANDLE.eq(handle)).execute();
+    }
+
+    public List<RaidRecord> findAllByServicePointIdAndAccessTypeIdIn(final Long servicePointId,
+                                                                     final Integer... accessTypeIds) {
+        return dslContext.selectFrom(RAID)
+                .where(RAID.SERVICE_POINT_ID.eq(servicePointId))
+                .and(RAID.ACCESS_TYPE_ID.in(accessTypeIds))
                 .fetchInto(RaidRecord.class);
     }
 }

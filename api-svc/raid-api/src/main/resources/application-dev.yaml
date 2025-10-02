@@ -6,7 +6,7 @@ raid:
     password: supersecret
     host: localhost
     port: 7432
-    name: raido
+    name: raido_prod
     encryption-key: pB7MB3iuYmmjWMTOCK6HS0JetzWhCtBtKoNl39pBr3Q=
   iam:
     realm-uri: http://localhost:8001/realms/raid
@@ -15,7 +15,7 @@ raid:
     client-secret: 07ATOSG9hYs8oATcz5wcQAdRuoEsLzEY
 spring:
   flyway:
-    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/dev
+    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/prod
   security:
     oauth2:
       client:
