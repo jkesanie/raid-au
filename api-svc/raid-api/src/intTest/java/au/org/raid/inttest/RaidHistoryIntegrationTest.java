@@ -57,16 +57,16 @@ public class RaidHistoryIntegrationTest extends AbstractIntegrationTest {
             final var response = raidApi.findRaidByNameAndVersion(handle.getPrefix(), handle.getSuffix(), newVersion);
 
             try {
-                final var raidDto = objectMapper.readValue((String) response.getBody(), RaidDto.class);
+                final var raidDto = (LinkedHashMap<?, ?>) response.getBody();
                 assert raidDto != null;
 
-                assertThat(raidDto.getIdentifier().getVersion()).isEqualTo(newVersion);
-                assertThat(raidDto.getTitle().get(0).getText()).isEqualTo(text);
+//                assertThat(raidDto.getIdentifier().getVersion()).isEqualTo(newVersion);
+//                assertThat(raidDto.getTitle().get(0).getText()).isEqualTo(text);
 
 
 
-//                assertThat(getVersion(raidDto)).isEqualTo(newVersion);
-//                assertThat(getPrimaryTitleText(raidDto)).isEqualTo(text);
+                assertThat(getVersion(raidDto)).isEqualTo(newVersion);
+                assertThat(getPrimaryTitleText(raidDto)).isEqualTo(text);
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
@@ -76,11 +76,15 @@ public class RaidHistoryIntegrationTest extends AbstractIntegrationTest {
 
         final var response = raidApi.findRaidByNameAndVersion(handle.getPrefix(), handle.getSuffix(), version);
         try {
-            final var raidDto = objectMapper.readValue((String) response.getBody(), RaidDto.class);
+            final var raidDto = (LinkedHashMap<?, ?>) response.getBody();
             assert raidDto != null;
 
-            assertThat(raidDto.getIdentifier().getVersion()).isEqualTo(version);
-            assertThat(raidDto.getTitle().get(0).getText()).isEqualTo("Version %d".formatted(version));
+//            assertThat(raidDto.getIdentifier().getVersion()).isEqualTo(version);
+//            assertThat(raidDto.getTitle().get(0).getText()).isEqualTo("Version %d".formatted(version));
+
+            assertThat(getVersion(raidDto)).isEqualTo(version);
+            assertThat(getPrimaryTitleText(raidDto)).isEqualTo("Version %d".formatted(version));
+
 
             final var historyResponse = raidApi.raidHistory(handle.getPrefix(), handle.getSuffix());
 
