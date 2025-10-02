@@ -8,7 +8,7 @@ export const BASE_URL = getApiEndpoint();
 export const API_CONSTANTS = {
   SERVICE_POINT: {
     ALL: `${BASE_URL}/service-point/`,
-    BY_ID: (id:number) => `${BASE_URL}/service-point/${id}`,
+    BY_ID: (id: number) => `${BASE_URL}/service-point/${id}`,
   },
   RAID: {
     ALL: `${BASE_URL}/raid/`,

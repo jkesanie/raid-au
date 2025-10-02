@@ -34,7 +34,6 @@ export const ServicePointUsersList = ({
   servicePointWithMembers?: ServicePointWithMembers;
 }) => {
   const { token } = useKeycloak();
-
   const queryClient = useQueryClient();
   const snackbar = useSnackbar();
 
