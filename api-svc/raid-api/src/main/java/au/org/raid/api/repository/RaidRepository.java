@@ -179,4 +179,12 @@ public class RaidRepository {
     public int deleteByHandle(final String handle) {
         return dslContext.delete(RAID).where(RAID.HANDLE.eq(handle)).execute();
     }
+
+    public List<RaidRecord> findAllByServicePointIdAndAccessTypeIdIn(final Long servicePointId,
+                                                                     final Integer... accessTypeIds) {
+        return dslContext.selectFrom(RAID)
+                .where(RAID.SERVICE_POINT_ID.eq(servicePointId))
+                .and(RAID.ACCESS_TYPE_ID.in(accessTypeIds))
+                .fetchInto(RaidRecord.class);
+    }
 }

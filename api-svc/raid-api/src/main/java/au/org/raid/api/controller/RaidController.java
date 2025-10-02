@@ -67,11 +67,7 @@ public class RaidController implements RaidApi {
         final var handle = String.join("/", prefix, suffix);
         var raidOptional = raidHistoryService.findByHandleAndVersion(handle, version);
 
-        if (raidOptional.isPresent()) {
-            return ResponseEntity.ok(objectMapper.writeValueAsString(raidOptional.get()));
-        }
-
-        return ResponseEntity.notFound().build();
+        return raidOptional.<ResponseEntity<Object>>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override

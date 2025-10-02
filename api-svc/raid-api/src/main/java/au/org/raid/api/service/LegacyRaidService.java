@@ -96,7 +96,6 @@ public class LegacyRaidService {
                         .setRelatedIdentifierType("Handle")
                 );
 
-
         log.debug("POSTing Datacite request: {}", objectMapper.writeValueAsString(dataciteRequest));
 
         final HttpEntity<DataciteRequest> entity = httpEntityFactory.create(dataciteRequest, servicePoint.getRepositoryId(), servicePoint.getPassword());
