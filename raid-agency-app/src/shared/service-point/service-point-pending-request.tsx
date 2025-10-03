@@ -2,9 +2,8 @@
     
 import React from "react";
 import { useAuthHelper } from "@/auth/keycloak";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { CircularProgress } from "@mui/material";
 import { servicePointService } from "@/services/service-point-service";
 import { fetchServicePointMembersWithGroupId } from "@/services/service-points";
 import { Notifications } from "@/components/alert-notifications";
@@ -28,10 +27,11 @@ interface ServicePointResponse {
         groupId: string[];
     };
     id: string;
+    data: ServicePointResponse[];
 }
 
 const ServicePointPendingRequest = () => {
-    const { isOperator, groupId } = useAuthHelper();
+    const { isOperator, groupId, isGroupAdmin } = useAuthHelper();
     const { authenticated, isInitialized, token } = useKeycloak();
     const [servicePointsRequest, setServicePointsRequest] = React.useState<{ count: number; status: JSX.Element | null; color?: "error" | "default" }>({ count: 0, status: null });
    
@@ -43,7 +43,8 @@ const ServicePointPendingRequest = () => {
                 members: [],
                 name: "",
                 attributes: { groupId: [] },
-                id: ""
+                id: "",
+                data: []
             } as ServicePointResponse;
         }
         
@@ -55,15 +56,6 @@ const ServicePointPendingRequest = () => {
     enabled: isInitialized && authenticated && !!groupId && !!token,
 });
 
-/*     if (servicePointsQuery.isLoading) {
-        setServicePointsRequest({count: 0, status: <CircularProgress size={4} />});
-        //return null; // or a loading spinner
-    } */
-
- /*    if (servicePointsQuery.isError) {
-        setServicePointsRequest({count: 0, status: <CircleAlert />});
-        return null; // or an error icon
-    } */
     React.useEffect(() => {
         if (servicePointsQuery?.data) {
         const response = servicePointsQuery.data as unknown as ServicePointResponse;
@@ -83,7 +75,7 @@ const ServicePointPendingRequest = () => {
         }
     }, [servicePointsQuery?.data]);
     return (
-        isOperator && (
+        (isOperator || isGroupAdmin) && (
             <Notifications
                 count={servicePointsRequest.count}
                 status={servicePointsRequest.status}

@@ -12,30 +12,29 @@ interface INotifications {
     count?: number;
     color?: "error" | "default" | "primary" | "secondary" | "info" | "success" | "warning";
     IconColor?: string | undefined;
-    data? : ServicePointWithMembers[] | any;
+    data? : ServicePointWithMembers[] |  ServicePointWithMembers; // Adjust type as needed
 }
 
 export const Notifications = (props: INotifications) => {
-      const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-        props.data.name = "";
-        const pendingMembers = props?.data.members || []; // Replace with actual data fetching logic
-        const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const pendingMembers = Array.isArray(props?.data) ? props.data.flatMap(item => item.members) : props?.data?.members || [];
+    const open = Boolean(anchorEl);
 
-        const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-            setAnchorEl(anchorEl ? null : event.currentTarget);
-        };
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
 
-        const handleClose = () => {
-            setAnchorEl(null);
-        };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
-        const handleApprove = (memberId: any) => {
-            console.log('Approve:', memberId);
-        };
+    const handleApprove = (memberId: any) => {
+        console.log('Approve:', memberId);
+    };
 
-        const handleReject = (memberId: any) => {
-            console.log('Reject:', memberId);
-        };
+    const handleReject = (memberId: any) => {
+        console.log('Reject:', memberId);
+    };
     return (
     <>
       <Box>
@@ -67,7 +66,7 @@ export const Notifications = (props: INotifications) => {
                 }}>
                     <Box>
                         <Typography variant="h6" fontWeight={600}>
-                            Service Point Requests
+                            Service Point Pending Requests
                         </Typography>
                         <Typography variant="caption" sx={{ opacity: 0.9 }}>
                             {props.count} pending approval{props.count !== 1 ? 's' : ''}
@@ -140,12 +139,7 @@ export const Notifications = (props: INotifications) => {
                         </React.Fragment>
                     ))}
                     </List>
-                )}
-                <ServicePointUsersList
-                    key={pendingMembers[0]?.id}
-                    servicePointWithMembers={props.data} // Just an example, replace with actual logic
-                />
-                </Box>
+                )}</Box>
 
                 {/* Footer */}
                 {pendingMembers.length > 0 && (
