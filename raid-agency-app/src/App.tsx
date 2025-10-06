@@ -15,6 +15,7 @@ import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
 import { KeycloakProvider } from "./contexts/keycloak-context";
 import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
+import { NotificationProvider } from "./components/alert-notifications/notification-context/NotificationsProvider";
 
 export function App() {
   useGoogleAnalytics();
@@ -68,6 +69,7 @@ export function App() {
 
   return (
     <>
+      <NotificationProvider>
       <KeycloakProvider>
         <StrictMode>
           <ThemeProvider theme={theme}>
@@ -87,6 +89,7 @@ export function App() {
         </ThemeProvider>
       </StrictMode>
     </KeycloakProvider>
+    </NotificationProvider>
     </>
   );
 }

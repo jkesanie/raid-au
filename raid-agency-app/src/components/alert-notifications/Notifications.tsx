@@ -1,177 +1,223 @@
-import React, { useState } from "react";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import PropTypes from "prop-types";
-import { Avatar, Box, Button, ClickAwayListener, Divider, IconButton, List, ListItem, ListItemAvatar, ListItemText, Paper, Popper, Typography } from "@mui/material";
-import { Cancel, CheckCircle, Close, PersonAdd } from "@mui/icons-material";
-import { ServicePointUsersList } from "@/containers/header/service-point-users";
-import { ServicePointWithMembers } from "@/types";
+import React, { useState } from 'react';
+import {
+  Badge,
+  IconButton,
+  Popper,
+  Paper,
+  ClickAwayListener,
+  Box,
+  Typography,
+  Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Chip,
+} from '@mui/material';
+import {
+  Notifications as NotificationsIcon,
+  Close as CloseIcon,
+  ExpandMore as ExpandMoreIcon,
+} from '@mui/icons-material';
+import { useNotificationContext } from "./notification-context/NotificationContext";
 
-interface INotifications {
-    status?: React.ReactNode;
-    count?: number;
-    color?: "error" | "default" | "primary" | "secondary" | "info" | "success" | "warning";
-    IconColor?: string | undefined;
-    data? : ServicePointWithMembers[] |  ServicePointWithMembers; // Adjust type as needed
+interface NotificationBellProps {
+  className?: string;
 }
 
-export const Notifications = (props: INotifications) => {
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const pendingMembers = Array.isArray(props?.data) ? props.data.flatMap(item => item.members) : props?.data?.members || [];
-    const open = Boolean(anchorEl);
+export const NotificationBell: React.FC<NotificationBellProps> = ({ className }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
+  const { notifications, totalCount } = useNotificationContext();
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-    };
+  const open = Boolean(anchorEl);
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+  const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
 
-    const handleApprove = (memberId: any) => {
-        console.log('Approve:', memberId);
-    };
+  const handleClose = (): void => {
+    setAnchorEl(null);
+  };
 
-    const handleReject = (memberId: any) => {
-        console.log('Reject:', memberId);
-    };
-    return (
-    <>
-      <Box>
-        <IconButton onClick={handleClick} color="primary">
-            <Badge badgeContent={props.count} color="error">
-                <NotificationsIcon sx={{ color: props.IconColor || "grey" }} />
-            </Badge>
-        </IconButton>
-        <Popper open={open} anchorEl={anchorEl} placement="bottom-end" sx={{ zIndex: 1300 }}>
-            <ClickAwayListener onClickAway={handleClose}>
-            <Paper 
-                elevation={8} 
-                sx={{ 
-                width: 360, 
-                maxHeight: 500,
-                mt: 1,
-                borderRadius: 2,
-                overflow: 'hidden'
-                }}
+  const handleAccordionChange = (key: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [key]: isExpanded,
+    }));
+  };
+
+  return (
+    <Box className={className}>
+      <IconButton onClick={handleClick} color="primary" sx={{ position: 'relative' }}>
+        <Badge badgeContent={totalCount} color="error">
+          <NotificationsIcon />
+        </Badge>
+      </IconButton>
+
+      <Popper 
+        open={open} 
+        anchorEl={anchorEl} 
+        placement="bottom-end" 
+        sx={{ zIndex: 1300 }}
+      >
+        <ClickAwayListener onClickAway={handleClose}>
+          <Paper
+            elevation={8}
+            sx={{
+              width: 420,
+              maxWidth: '90vw',
+              maxHeight: 600,
+              mt: 1,
+              borderRadius: 2,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Header */}
+            <Box
+              sx={{
+                p: 2,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
             >
-                {/* Header */}
-                <Box sx={{
-                    p: 2, 
-                    bgcolor: 'primary.main', 
-                    color: 'white',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-                    <Box>
-                        <Typography variant="h6" fontWeight={600}>
-                            Service Point Pending Requests
-                        </Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                            {props.count} pending approval{props.count !== 1 ? 's' : ''}
-                        </Typography>
-                    </Box>
-                    <IconButton size="small" onClick={handleClose} sx={{ color: 'white' }}>
-                        <Close fontSize="small" />
-                    </IconButton>
+              <Box>
+                <Typography variant="h6" fontWeight={700}>
+                  Notifications
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                  {totalCount} total notifications
+                </Typography>
+              </Box>
+              <IconButton size="small" onClick={handleClose} sx={{ color: 'white' }}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
+
+            {/* Content */}
+            <Box sx={{ flex: 1, overflow: 'auto', bgcolor: 'background.default' }}>
+              {totalCount === 0 ? (
+                <Box sx={{ p: 8, textAlign: 'center' }}>
+                  <NotificationsIcon sx={{ fontSize: 64, color: 'action.disabled', mb: 2 }} />
+                  <Typography color="text.secondary">No notifications</Typography>
                 </Box>
-
-                {/* Content */}
-                <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
-                {pendingMembers.length === 0 ? (
-                    <Box sx={{ p: 4, textAlign: 'center' }}>
-                    <Typography color="text.secondary">
-                        No pending requests
-                    </Typography>
-                    </Box>
-                ) : (
-                    <List sx={{ p: 0 }}>
-                    {pendingMembers.map((member, index) => (
-                        <React.Fragment key={member.id}>
-                        <ListItem 
-                            sx={{ 
-                            py: 2,
-                            '&:hover': { bgcolor: 'action.hover' }
-                            }}
-                        >
-                            <ListItemAvatar>
-                            <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                                <PersonAdd />
-                            </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                            primary={
-                                <Typography fontWeight={500}>
-                                {member.attributes.firstName[0]} {member.attributes.lastName[0]}
-                                </Typography>
-                            }
-                            secondary={
-                                <>
-                                <Typography variant="body2" color="text.secondary">
-                                    @{member.attributes.username[0]}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                    {member.attributes.email[0]}
-                                </Typography>
-                                </>
-                            }
-                            />
-                            <Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
-                            <IconButton 
-                                size="small" 
-                                color="success"
-                                onClick={() => handleApprove(member.id)}
+              ) : (
+                <Box sx={{ p: 1 }}>
+                  {Object.entries(notifications).map(([key, notification]) => (
+                    <Accordion
+                      key={key}
+                      expanded={expandedSections[key] !== false}
+                      onChange={handleAccordionChange(key)}
+                      sx={{
+                        mb: 1,
+                        '&:before': { display: 'none' },
+                        boxShadow: 1,
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        sx={{
+                          borderLeft: 4,
+                          borderColor: 'primary.main',
+                          '&:hover': { bgcolor: 'action.hover' },
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                          <Typography variant="subtitle1" fontWeight={600} sx={{ flex: 1 }}>
+                            {notification.title}
+                          </Typography>
+                          <Chip
+                            label={notification.categories.length}
+                            size="small"
+                            color="primary"
+                            sx={{ minWidth: 32 }}
+                          />
+                        </Box>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: 0, bgcolor: 'background.default' }}>
+                        <List sx={{ p: 1 }}>
+                          {notification.categories.map((category, index) => (
+                            <ListItem
+                              key={index}
+                              sx={{
+                                bgcolor: 'background.paper',
+                                mb: 1,
+                                borderRadius: 1,
+                                border: 1,
+                                borderColor: 'divider',
+                                '&:hover': {
+                                  boxShadow: 2,
+                                },
+                                '&:last-child': {
+                                  mb: 0,
+                                },
+                              }}
                             >
-                                <CheckCircle fontSize="small" />
-                            </IconButton>
-                            <IconButton 
-                                size="small" 
-                                color="error"
-                                onClick={() => handleReject(member.id)}
-                            >
-                                <Cancel fontSize="small" />
-                            </IconButton>
-                            </Box>
-                        </ListItem>
-                        {index < pendingMembers.length - 1 && <Divider />}
-                        {/* If each 'member' is a ServicePointWithMembers, pass 'member' instead of 'pendingMembers' */}
-                        </React.Fragment>
-                    ))}
-                    </List>
-                )}</Box>
+                              <ListItemIcon sx={{ minWidth: 48 }}>
+                                <Box
+                                  sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {category.titleIcon}
+                                </Box>
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  <Typography variant="body1" fontWeight={600}>
+                                    {category.name}
+                                  </Typography>
+                                }
+                              />
+                              {category.actions && (
+                                <Box sx={{ display: 'flex', gap: 0.5, ml: 1 }}>
+                                  {category.actions}
+                                </Box>
+                              )}
+                              {category.button && (
+                                <Box sx={{ ml: 1 }}>
+                                  {category.button}
+                                </Box>
+                              )}
+                            </ListItem>
+                          ))}
+                        </List>
+                      </AccordionDetails>
+                    </Accordion>
+                  ))}
+                </Box>
+              )}
+            </Box>
 
-                {/* Footer */}
-                {pendingMembers.length > 0 && (
-                <>
-                    <Divider />
-                    <Box sx={{ p: 1.5, textAlign: 'center' }}>
-                    <Button size="small" fullWidth>
-                        <a href="/service-points/" style={{ textDecoration: 'none', color: 'inherit' }}>View All Requests</a>
-                    </Button>
-                    </Box>
-                </>
-                )}
-            </Paper>
-            </ClickAwayListener>
-        </Popper>
+            {/* Footer (Optional) */}
+            {totalCount > 0 && (
+              <>
+                <Divider />
+                <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: 'background.paper' }}>
+                  <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
+                    View All Notifications
+                  </Typography>
+                </Box>
+              </>
+            )}
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
     </Box>
-    </>
-    );
-};
-
-Notifications.propTypes = {
-    status: PropTypes.node,
-    count: PropTypes.number,
-    color: PropTypes.oneOf([
-        "error",
-        "default",
-        "primary",
-        "secondary",
-        "info",
-        "success",
-        "warning"
-    ]),
-    IconColor: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.object),
+  );
 };

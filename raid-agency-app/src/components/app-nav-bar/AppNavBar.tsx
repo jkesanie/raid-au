@@ -18,7 +18,7 @@ const AuthenticatedNavbarContent = () => {
   return (
     <Stack direction="row" alignItems="center" gap={1}>
       <ServicePointSwitcher />
-      <ServicePointPendingRequest />
+      <Notifications />
       <UserDropdown />
       <Chip
         label={import.meta.env.VITE_RAIDO_ENV.toUpperCase()}

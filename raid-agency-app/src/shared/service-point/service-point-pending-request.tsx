@@ -4,19 +4,17 @@ import React from "react";
 import { useAuthHelper } from "@/auth/keycloak";
 import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { servicePointService } from "@/services/service-point-service";
 import { fetchServicePointMembersWithGroupId } from "@/services/service-points";
-import { Notifications } from "@/components/alert-notifications";
+import { useServicePointNotification } from "./servicePointNotificationService";
 
 interface ServicePointMember {
     id: string;
     roles: string[];
     attributes: {
-        firstName: (string | null)[];
-        lastName: (string | null)[];
-        activeGroupId: string[];
-        email: (string | null)[];
+        firstName: string[];
+        lastName: string[];
         username: string[];
+        email: string[];
     };
 }
 
@@ -27,14 +25,12 @@ interface ServicePointResponse {
         groupId: string[];
     };
     id: string;
-    data: ServicePointResponse[];
 }
 
 const ServicePointPendingRequest = () => {
     const { isOperator, groupId, isGroupAdmin } = useAuthHelper();
     const { authenticated, isInitialized, token } = useKeycloak();
-    const [servicePointsRequest, setServicePointsRequest] = React.useState<{ count: number; status: JSX.Element | null; color?: "error" | "default" }>({ count: 0, status: null });
-   
+    const { transformMemberToNotification } = useServicePointNotification();
     const servicePointsQuery = useQuery({
     queryKey: ["service-point-request", groupId],
     queryFn: async () => {
@@ -53,36 +49,19 @@ const ServicePointPendingRequest = () => {
             token: token || "" 
         });
     },
-    enabled: isInitialized && authenticated && !!groupId && !!token,
-});
-
+        enabled: isInitialized && authenticated && !!groupId && !!token,
+    });
+// Update notifications when data changes
     React.useEffect(() => {
-        if (servicePointsQuery?.data) {
-        const response = servicePointsQuery.data as unknown as ServicePointResponse;
-            if (Array.isArray(response.members)) {
-                // Get pending users (those without service-point-user role)
-                const pendingRequests = response.members.filter((member) => {
-                    return !member.roles.includes("service-point-user");
-                });
-                setServicePointsRequest(
-                    {...servicePointService,
-                        count: pendingRequests.length,
-                        status: null,
-                        color: pendingRequests.length > 0 ? "error" : "default"
-                    }
-                );
-            }
+        if (servicePointsQuery.data && token) {
+            isOperator || isGroupAdmin ? transformMemberToNotification(servicePointsQuery.data as unknown as ServicePointResponse[], token as string) : null;
         }
-    }, [servicePointsQuery?.data]);
+    }, [servicePointsQuery.data, transformMemberToNotification]);
+
+
     return (
-        (isOperator || isGroupAdmin) && (
-            <Notifications
-                count={servicePointsRequest.count}
-                status={servicePointsRequest.status}
-                color={servicePointsRequest.color}
-                data={servicePointsQuery.data ?? []}
-            />
-        )
+        null
     );
 };
 export default ServicePointPendingRequest;
+
