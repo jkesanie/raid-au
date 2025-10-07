@@ -1,6 +1,16 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.11
+# API
+* Add temporary endpoints to uplift legacy RAiDs and RAiDs with GitHub vocabularies
+## App-client UI
+* RAiD App Notification: Added new UX/UI for Notification Service
+* Implemented notification service using React Context API for global state management, allowing any component to add or remove notifications without modifying core code
+* Fixed defect related to hamburger menu toggle and click-away functionality to properly hide the drawer when clicking outside or selecting menu items
+* Removed mandatory validation check for organisation field while minting a RAiD
+
+
 # 2.5.10
 ## API
 * Add 'AUTHENTICATION_REVOKED' contributor status for when ORCID owners remove permission for RAiD to update their record.
