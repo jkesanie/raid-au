@@ -38,7 +38,6 @@ export const useServicePointNotification = () => {
   const removeUserFromServicePointMutation = useRemoveUserFromServicePoint(IsnackBar);
   const transformMemberToNotification = (data: ServicePointResponse, token: string) => {
     // Filter members without 'service-point-user' role
-    console.log("Data received for transformation:", data);
     const pendingMembers = data?.members.filter(
       member => !member.roles.includes('service-point-user')
     );

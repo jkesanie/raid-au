@@ -68,28 +68,26 @@ export function App() {
   });
 
   return (
-    <>
-      <NotificationProvider>
       <KeycloakProvider>
-        <StrictMode>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <ErrorDialogProvider>
-            <MappingProvider>
-              <SnackbarProvider>
-                <QueryClientProvider client={queryClient}>
-                  <ReactErrorBoundary>
-                    <Box sx={{ pt: 3 }}></Box>
-                    <Outlet />
-                  </ReactErrorBoundary>
-                </QueryClientProvider>
-              </SnackbarProvider>
-            </MappingProvider>
-          </ErrorDialogProvider>
-        </ThemeProvider>
-      </StrictMode>
+        <NotificationProvider>
+          <StrictMode>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <ErrorDialogProvider>
+                <MappingProvider>
+                  <SnackbarProvider>
+                    <QueryClientProvider client={queryClient}>
+                      <ReactErrorBoundary>
+                        <Box sx={{ pt: 3 }}></Box>
+                      <Outlet />
+                    </ReactErrorBoundary>
+                  </QueryClientProvider>
+                </SnackbarProvider>
+              </MappingProvider>
+            </ErrorDialogProvider>
+          </ThemeProvider>
+        </StrictMode>
+      </NotificationProvider>
     </KeycloakProvider>
-    </NotificationProvider>
-    </>
   );
 }
