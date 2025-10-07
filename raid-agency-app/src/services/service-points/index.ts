@@ -454,3 +454,27 @@ export const removeUserFromServicePoint = async ({
     throw new Error(`Failed to remove user from SP`);
   }
 };
+
+
+export const fetchServicePointMembersWithGroupId = async ({
+  id,
+  token,
+}: {
+  id: string;
+  token: string;
+}): Promise<ServicePointWithMembers> => {
+  const url = `${kcUrl}/realms/${kcRealm}/group/?groupId=${id}`;
+
+  const response = await authService.fetchWithAuth(`${url}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch service point members`);
+  }
+  return response.json();
+};
