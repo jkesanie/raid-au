@@ -56,7 +56,7 @@ export const useServicePointPendingRequest = () => {
 
     React.useEffect(() => {
         isOperator || isGroupAdmin ? transformMemberToNotification(servicePointsQuery.data as unknown as ServicePointResponse, token as string) : null;
-        }, [servicePointsQuery.data]);
+        }, [servicePointsQuery.data, isOperator, isGroupAdmin ]);
       const refetch = () => {
             servicePointsQuery.refetch();
         };
