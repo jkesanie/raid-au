@@ -23,6 +23,7 @@ import {
   ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 import { useNotificationContext } from "./notification-context/NotificationsContext";
+import { useNavigate } from 'react-router';
 
 interface NotificationBellProps {
   className?: string;
@@ -33,7 +34,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
   const { notifications, totalCount } = useNotificationContext();
   const open = Boolean(anchorEl);
-
+  const navigate = useNavigate();
   const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
@@ -230,7 +231,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
             {totalCount > 0 && (
               <>
                 <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: 'background.paper' }}>
-                  <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
+                  <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }} onClick={() => {navigate("/service-points")}}>
                     View All Notifications
                   </Typography>
                 </Box>

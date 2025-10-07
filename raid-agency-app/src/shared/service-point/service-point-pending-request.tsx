@@ -11,10 +11,10 @@ interface ServicePointMember {
     id: string;
     roles: string[];
     attributes: {
-        firstName: string[];
-        lastName: string[];
-        username: string[];
-        email: string[];
+        firstName: string;
+        lastName: string;
+        username: string;
+        email: string;
     };
 }
 
@@ -50,7 +50,7 @@ export const useServicePointPendingRequest = () => {
         });
     },
         enabled: isInitialized && authenticated && !!groupId && !!token,
-        //refetchInterval: 30000, // Poll every 30 seconds
+        refetchInterval: 30000, // Poll every 30 seconds
         //refetchOnWindowFocus: true, // Refetch when user returns to tab
     });
 
