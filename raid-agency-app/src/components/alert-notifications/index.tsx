@@ -1,1 +1,1 @@
-export { NotificationsBell } from "./Notifications";
+export { NotificationBell } from "./Notifications";

@@ -1,9 +1,9 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { 
   PersonAdd as PersonAddIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
+  CheckCircleOutline as CheckCircleOutlineIcon,
+  GroupRemove as GroupRemoveIcon,
 } from '@mui/icons-material';
 import { useNotificationContext } from '@/components/alert-notifications/notification-context/NotificationsContext';
 import { useModifyUserAccess, useRemoveUserFromServicePoint } from '@/containers/header/service-point-users/useServicePointMutation';
@@ -14,10 +14,10 @@ export interface ServicePointMember {
   id: string;
   roles: string[];
   attributes: {
-    firstName: string[];
-    lastName: string[];
-    username: string[];
-    email: string[];
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
   };
 }
 
@@ -25,7 +25,7 @@ interface ServicePointResponse {
     members: ServicePointMember[];
     name: string;
     attributes: {
-        groupId: string[];
+        groupId: string;
     };
     id: string;
 }
@@ -36,9 +36,10 @@ export const useServicePointNotification = () => {
   const IsnackBar = snackbar as { openSnackbar: (message: string, duration?: number, severity?: string) => void };
   const modifyUserAccessMutation = useModifyUserAccess(IsnackBar);
   const removeUserFromServicePointMutation = useRemoveUserFromServicePoint(IsnackBar);
-  const transformMemberToNotification = (data: ServicePointResponse[], token: string) => {
+  const transformMemberToNotification = (data: ServicePointResponse, token: string) => {
     // Filter members without 'service-point-user' role
-    const pendingMembers = data?.[0]?.members.filter(
+    console.log("Data received for transformation:", data);
+    const pendingMembers = data?.members.filter(
       member => !member.roles.includes('service-point-user')
     );
 
@@ -50,41 +51,49 @@ export const useServicePointNotification = () => {
 
     // Transform to notification structure
     const notification = {
-      title: 'Service Point Requests',
+      title: 'Service Point Pending Requests',
       categories: pendingMembers?.map(member => ({
         titleIcon: <PersonAddIcon />,
-        name: `${member.attributes.username[0]} ${member.attributes.firstName[0]} ${member.attributes.lastName[0]}`,
+        name: `${member.attributes.username || ''} ${member.attributes.firstName || ''} ${member.attributes.lastName || ''}`.trim(),
         actions: [
-          <IconButton
-            key="approve"
-            size="small"
-            color="success"
-            onClick={() => handleApprove(data as unknown as ServicePointResponse, token as string)}
-            aria-label="Approve"
-            sx={{
-              bgcolor: 'success.lighter',
-              '&:hover': {
-                bgcolor: 'success.light',
-              },
-            }}
-          >
-            <CheckCircleIcon fontSize="small" />
-          </IconButton>,
-          <IconButton
-            key="reject"
-            size="small"
-            color="error"
-            onClick={() => handleReject(data as unknown as ServicePointResponse, token as string)}
-            aria-label="Reject"
-            sx={{
-              bgcolor: 'error.lighter',
-              '&:hover': {
-                bgcolor: 'error.light',
-              },
-            }}
-          >
-            <CancelIcon fontSize="small" />
-          </IconButton>,
+          <Tooltip title="Grant membership" placement="top" key="approve">
+            <span>
+            <IconButton
+              key="approve"
+              size="small"
+              color="success"
+              onClick={() => handleApprove(data as unknown as ServicePointResponse, member as ServicePointMember, token as string)}
+              aria-label="Approve"
+              sx={{
+                bgcolor: 'success.lighter',
+                '&:hover': {
+                  bgcolor: 'success.veryLighter',
+                },
+              }}
+            >
+              <CheckCircleOutlineIcon />
+            </IconButton>
+          </span>
+          </Tooltip>,
+          <Tooltip title="Permanently remove from SP" placement="top" key="reject">
+            <span>
+            <IconButton
+              key="reject"
+              size="small"
+              color="error"
+              onClick={() => handleReject(data as unknown as ServicePointResponse, member as ServicePointMember, token as string)}
+              aria-label="Reject"
+              sx={{
+                bgcolor: 'error.lighter',
+                '&:hover': {
+                  bgcolor: 'error.veryLighter',
+                },
+              }}
+            >
+              <GroupRemoveIcon />
+            </IconButton>
+          </span>
+          </Tooltip>
         ],
         // Additional data for future use
         email: member.attributes.email[0],
@@ -95,19 +104,19 @@ export const useServicePointNotification = () => {
     addNotification('servicePointRequests', notification);
   };
 
-  const handleApprove = (data: ServicePointResponse, token: string) => {
+  const handleApprove = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
     modifyUserAccessMutation.mutate({
-      userId: data?.members[0].id,
-      userGroupId: data?.attributes.groupId[0],
+      userId: member.id,
+      userGroupId: data?.attributes.groupId,
       operation: "grant",
       token: token as string,
     });
   };
 
-  const handleReject = (data: ServicePointResponse, token: string) => {
+  const handleReject = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
    removeUserFromServicePointMutation.mutate({
-        userId: data?.members[0].id,
-        groupId: data?.attributes.groupId[0],
+        userId: member.id,
+        groupId: data?.id,
         token: token as string,
     });
   };

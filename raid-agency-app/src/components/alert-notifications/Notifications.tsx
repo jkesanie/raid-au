@@ -22,7 +22,7 @@ import {
   Close as CloseIcon,
   ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
-import { useNotificationContext } from "./notification-context/NotificationContext";
+import { useNotificationContext } from "./notification-context/NotificationsContext";
 
 interface NotificationBellProps {
   className?: string;
@@ -32,7 +32,6 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
   const { notifications, totalCount } = useNotificationContext();
-
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
@@ -52,7 +51,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
 
   return (
     <Box className={className}>
-      <IconButton onClick={handleClick} color="primary" sx={{ position: 'relative' }}>
+      <IconButton onClick={handleClick} sx={{ position: 'relative', color: 'grey' }}>
         <Badge badgeContent={totalCount} color="error">
           <NotificationsIcon />
         </Badge>
@@ -113,6 +112,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                 <Box sx={{ p: 1 }}>
                   {Object.entries(notifications).map(([key, notification]) => (
                     <Accordion
+                      disableGutters={true}
                       key={key}
                       expanded={expandedSections[key] !== false}
                       onChange={handleAccordionChange(key)}
@@ -125,7 +125,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         sx={{
-                          borderLeft: 4,
+                          borderLeft: `${expandedSections[key] ? 4 : 0}px solid`,
                           borderColor: 'primary.main',
                           '&:hover': { bgcolor: 'action.hover' },
                         }}
@@ -138,12 +138,32 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                             label={notification.categories.length}
                             size="small"
                             color="primary"
-                            sx={{ minWidth: 32 }}
+                            sx={{ minWidth: 25 }}
                           />
                         </Box>
                       </AccordionSummary>
                       <AccordionDetails sx={{ p: 0, bgcolor: 'background.default' }}>
-                        <List sx={{ p: 1 }}>
+                        <List
+                          sx={{ 
+                            p: 1,
+                            maxHeight: 200, // Set maximum height (adjust as needed)
+                            overflowY: 'auto', // Enable vertical scrolling
+                            '&::-webkit-scrollbar': {
+                              width: '8px',
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              backgroundColor: 'background.default',
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              backgroundColor: 'action.hover',
+                              borderRadius: '4px',
+                              '&:hover': {
+                                backgroundColor: 'action.selected',
+                              },
+                            },
+                          }}
+                        >
                           {notification.categories.map((category, index) => (
                             <ListItem
                               key={index}
@@ -151,7 +171,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                                 bgcolor: 'background.paper',
                                 mb: 1,
                                 borderRadius: 1,
-                                border: 1,
+                                border: 0,
                                 borderColor: 'divider',
                                 '&:hover': {
                                   boxShadow: 2,
@@ -194,7 +214,9 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                                   {category.button}
                                 </Box>
                               )}
+                              <Divider />
                             </ListItem>
+                            
                           ))}
                         </List>
                       </AccordionDetails>
@@ -207,7 +229,6 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
             {/* Footer (Optional) */}
             {totalCount > 0 && (
               <>
-                <Divider />
                 <Box sx={{ p: 1.5, textAlign: 'center', bgcolor: 'background.paper' }}>
                   <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
                     View All Notifications

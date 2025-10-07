@@ -22,12 +22,12 @@ interface ServicePointResponse {
     members: ServicePointMember[];
     name: string;
     attributes: {
-        groupId: string[];
+        groupId: string;
     };
     id: string;
 }
 
-const ServicePointPendingRequest = () => {
+export const useServicePointPendingRequest = () => {
     const { isOperator, groupId, isGroupAdmin } = useAuthHelper();
     const { authenticated, isInitialized, token } = useKeycloak();
     const { transformMemberToNotification } = useServicePointNotification();
@@ -38,7 +38,7 @@ const ServicePointPendingRequest = () => {
             return {
                 members: [],
                 name: "",
-                attributes: { groupId: [] },
+                attributes: { groupId: "" },
                 id: "",
                 data: []
             } as ServicePointResponse;
@@ -50,18 +50,18 @@ const ServicePointPendingRequest = () => {
         });
     },
         enabled: isInitialized && authenticated && !!groupId && !!token,
+        //refetchInterval: 30000, // Poll every 30 seconds
+        //refetchOnWindowFocus: true, // Refetch when user returns to tab
     });
-// Update notifications when data changes
+
     React.useEffect(() => {
-        if (servicePointsQuery.data && token) {
-            isOperator || isGroupAdmin ? transformMemberToNotification(servicePointsQuery.data as unknown as ServicePointResponse[], token as string) : null;
-        }
-    }, [servicePointsQuery.data, transformMemberToNotification]);
-
-
+        isOperator || isGroupAdmin ? transformMemberToNotification(servicePointsQuery.data as unknown as ServicePointResponse, token as string) : null;
+        }, [servicePointsQuery.data]);
+      const refetch = () => {
+            servicePointsQuery.refetch();
+        };
     return (
-        null
+        refetch
     );
 };
-export default ServicePointPendingRequest;
 

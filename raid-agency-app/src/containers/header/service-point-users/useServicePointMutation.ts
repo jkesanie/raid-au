@@ -35,7 +35,7 @@ type UseServicePointMutationConfig<TVariables = Record<string, unknown>, TData =
 export const useServicePointMutation = <TVariables = Record<string, unknown>, TData = unknown, TContext = unknown>({
   mutationFn,
   successMessage,
-  invalidateQueries = ["servicePoints"],
+  invalidateQueries = ["servicePoints", "service-point-request"],
   onError,
   onSuccess,
   snackbar,
