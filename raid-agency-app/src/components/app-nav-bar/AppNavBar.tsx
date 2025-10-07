@@ -16,7 +16,7 @@ import { NotificationBell } from '../alert-notifications/Notifications';
 import { useServicePointPendingRequest } from "@/shared/service-point/service-point-pending-request";
 
 const AuthenticatedNavbarContent = () => {
-  const { refetch } = useServicePointPendingRequest();
+  useServicePointPendingRequest();
   return (
     <Stack direction="row" alignItems="center" gap={1}>
       <ServicePointSwitcher />

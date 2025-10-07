@@ -53,7 +53,7 @@ export const useServicePointNotification = () => {
       title: 'Service Point Pending Requests',
       categories: pendingMembers?.map(member => ({
         titleIcon: <PersonAddIcon />,
-        name: `${member.attributes.username || ''} ${member.attributes.firstName || ''} ${member.attributes.lastName || ''}`.trim(),
+        name: `${member.attributes.username || ''} (${member.attributes.firstName || ''} ${member.attributes.lastName || ''})`.replace(/\(\s*\)/g, '').trim(),
         actions: [
           <Tooltip title="Grant membership" placement="top" key="approve">
             <span>

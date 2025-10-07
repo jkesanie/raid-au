@@ -63,7 +63,7 @@ export const useServicePointMutation = <TVariables = Record<string, unknown>, TD
       // Show success notification
       if (snackbar) {
         // Replace all {variables.*} placeholders with corresponding variable values if present
-        const message = successMessage.replace(/\{variables\.([^\}]+)\}/g, (_, key) => {
+        const message = successMessage.replace(/\{variables\.([^}]+)\}/g, (_, key) => {
           const value = (variables as Record<string, unknown>)?.[key];
           const stringValue = String(value);
           return value !== undefined ? JSON.stringify(value).replace(/"/g, '').charAt(0).toUpperCase() + stringValue.slice(1) : '';
@@ -77,7 +77,7 @@ export const useServicePointMutation = <TVariables = Record<string, unknown>, TD
   });
 };
 
-// Example 1: Modify user access
+// 1: Modify user access
 export const useModifyUserAccess = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: updateUserServicePointUserRole,
@@ -86,7 +86,7 @@ export const useModifyUserAccess = (snackbar: { openSnackbar: (message: string, 
   });
 };
 
-// Example 2: Remove user from service point
+// 2: Remove user from service point
 export const useRemoveUserFromServicePoint = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: removeUserFromServicePoint,
@@ -95,7 +95,7 @@ export const useRemoveUserFromServicePoint = (snackbar: { openSnackbar: (message
   });
 };
 
-// Example 3: Remove user from group admins
+// 3: Remove user from group admins
 export const useRemoveUserFromGroupAdmins = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: removeUserFromGroupAdmins,
@@ -104,7 +104,7 @@ export const useRemoveUserFromGroupAdmins = (snackbar: { openSnackbar: (message:
   });
 };
 
-// Example 4: Add user to group admins
+// 4: Add user to group admins
 export const useAddUserToGroupAdmins = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: addUserToGroupAdmins,
