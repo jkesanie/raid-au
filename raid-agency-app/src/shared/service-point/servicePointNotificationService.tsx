@@ -106,7 +106,7 @@ export const useServicePointNotification = () => {
   const handleApprove = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
     modifyUserAccessMutation.mutate({
       userId: member.id,
-      userGroupId: data?.attributes.groupId,
+      userGroupId: data?.id,
       operation: "grant",
       token: token as string,
     });
