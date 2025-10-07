@@ -49,7 +49,7 @@ export const useServicePointMutation = <TVariables = Record<string, unknown>, TD
     onError: (error) => {
       console.error(error);
       const message = `Failed to perform operation: ${error instanceof Error ? error.message : String(error)}`;
-      snackbar && snackbar.openSnackbar(message, snackbarDuration, snackbarSeverity);
+      snackbar && snackbar.openSnackbar(message, snackbarDuration, "error");
       onError?.(error);
     },
     onSuccess: (data, variables, context) => {
@@ -81,7 +81,7 @@ export const useServicePointMutation = <TVariables = Record<string, unknown>, TD
 export const useModifyUserAccess = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: updateUserServicePointUserRole,
-    successMessage: '{variables.operation} user role service-point-user successfully',
+    successMessage: '{variables.operation} user role service-point-user',
     snackbar,
   });
 };
@@ -90,7 +90,7 @@ export const useModifyUserAccess = (snackbar: { openSnackbar: (message: string, 
 export const useRemoveUserFromServicePoint = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: removeUserFromServicePoint,
-    successMessage: 'Removed user from service point successfully',
+    successMessage: 'Removed user from service point',
     snackbar,
   });
 };
@@ -99,7 +99,7 @@ export const useRemoveUserFromServicePoint = (snackbar: { openSnackbar: (message
 export const useRemoveUserFromGroupAdmins = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: removeUserFromGroupAdmins,
-    successMessage: 'Removed user from group admins successfully',
+    successMessage: 'Removed user from group admins',
     snackbar,
   });
 };
@@ -108,7 +108,7 @@ export const useRemoveUserFromGroupAdmins = (snackbar: { openSnackbar: (message:
 export const useAddUserToGroupAdmins = (snackbar: { openSnackbar: (message: string, duration?: number, severity?: string) => void }) => {
   return useServicePointMutation({
     mutationFn: addUserToGroupAdmins,
-    successMessage: 'Added user to group admins successfully',
+    successMessage: 'Added user to group admins',
     snackbar,
   });
 };

@@ -217,7 +217,6 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                               )}
                               <Divider />
                             </ListItem>
-                            
                           ))}
                         </List>
                       </AccordionDetails>
