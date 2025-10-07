@@ -20,59 +20,6 @@ import { Stack } from "@mui/material";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { useAddUserToGroupAdmins, useModifyUserAccess, useRemoveUserFromGroupAdmins, useRemoveUserFromServicePoint } from "./useServicePointMutation";
 import { SnackbarContextInterface } from "@/components/snackbar/SnackbarContext";
-/* export const modifyUserAccessMutation = useMutation({
-    mutationFn: updateUserServicePointUserRole,
-    onError: (error) => {
-      console.error(error);
-    },
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["servicePoints"],
-      });
-      snackbar.openSnackbar(
-        `✅ Success: ${variables.operation} role service-point-user `
-      );
-    },
-  });
-
-export const removeUserFromServicePointMutation = useMutation({
-    mutationFn: removeUserFromServicePoint,
-    onError: (error) => {
-      console.error(error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["servicePoints"],
-      });
-      snackbar.openSnackbar(`Success: Removed user from service point`, 3000, "success");
-    },
-  });
-
-export const removeUserFromGroupAdminsMutation = useMutation({
-    mutationFn: removeUserFromGroupAdmins,
-    onError: (error) => {
-      console.error(error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["servicePoints"],
-      });
-      snackbar.openSnackbar(`Success: Removed user from group admins`, 3000, "success");
-    },
-  });
-
-export const addUserToGroupAdminsMutation = useMutation({
-    mutationFn: addUserToGroupAdmins,
-    onError: (error) => {
-      console.error(error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["servicePoints"],
-      });
-      snackbar.openSnackbar(`Success: Added user to group admins`, 3000, "success");
-    },
-  }); */
 
 export const ServicePointUsersList = ({
   servicePointWithMembers,
