@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.11
+# API
+* Add temporary endpoints to uplift legacy RAiDs and RAiDs with GitHub vocabularies
+
 # 2.5.10
 ## API
 * Add 'AUTHENTICATION_REVOKED' contributor status for when ORCID owners remove permission for RAiD to update their record.
