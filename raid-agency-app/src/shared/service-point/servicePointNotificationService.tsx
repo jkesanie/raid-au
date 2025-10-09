@@ -36,12 +36,14 @@ export const useServicePointNotification = () => {
   const IsnackBar = snackbar as { openSnackbar: (message: string, duration?: number, severity?: string) => void };
   const modifyUserAccessMutation = useModifyUserAccess(IsnackBar);
   const removeUserFromServicePointMutation = useRemoveUserFromServicePoint(IsnackBar);
+  const pendingMembers = [] as ServicePointMember[];
+  const adminGroupId = ''; 
   const transformMemberToNotification = (data: ServicePointResponse, token: string) => {
     // Filter members without 'service-point-user' role
-    const pendingMembers = data?.members.filter(
-      member => !member.roles.includes('service-point-user')
-    );
-
+    const requiredRoles = ["service-point-user", "group-admin", "operator"];
+    pendingMembers.push(...data?.members.filter(
+      member => !member.roles.some(role => requiredRoles.includes(role))) || pendingMembers);
+    // If no pending members, remove notification and return
     if (pendingMembers?.length === 0) {
       // Remove notification if no pending members
       removeNotification('servicePointRequests');
@@ -106,7 +108,7 @@ export const useServicePointNotification = () => {
   const handleApprove = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
     modifyUserAccessMutation.mutate({
       userId: member.id,
-      userGroupId: data?.id,
+      userGroupId: data?.id || member.id,
       operation: "grant",
       token: token as string,
     });
@@ -115,7 +117,7 @@ export const useServicePointNotification = () => {
   const handleReject = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
    removeUserFromServicePointMutation.mutate({
         userId: member.id,
-        groupId: data?.id,
+        groupId: data?.id || member.id,
         token: token as string,
     });
   };
