@@ -28,6 +28,7 @@ interface ServicePointResponse {
         groupId: string;
     };
     id: string;
+    groupId?: string;
 }
 
 export const useServicePointNotification = () => {
@@ -37,8 +38,8 @@ export const useServicePointNotification = () => {
   const modifyUserAccessMutation = useModifyUserAccess(IsnackBar);
   const removeUserFromServicePointMutation = useRemoveUserFromServicePoint(IsnackBar);
   const pendingMembers = [] as ServicePointMember[];
-  const adminGroupId = ''; 
-  const transformMemberToNotification = (data: ServicePointResponse, token: string) => {
+  // Transform service point members to notifications
+  const transformMemberToNotification = (data: ServicePointResponse, token: string, groupId?: string) => {
     // Filter members without 'service-point-user' role
     const requiredRoles = ["service-point-user", "group-admin", "operator"];
     pendingMembers.push(...data?.members.filter(
@@ -49,8 +50,9 @@ export const useServicePointNotification = () => {
       removeNotification('servicePointRequests');
       return;
     }
-
-    // Transform to notification structure
+    console.log('Pending Members:', pendingMembers);
+    console.log('Service Point ID:', data);
+    console.log('groupId:', groupId);
     const notification = {
       title: 'Service Point Pending Requests',
       categories: pendingMembers?.map(member => ({
@@ -63,7 +65,12 @@ export const useServicePointNotification = () => {
               key="approve"
               size="small"
               color="success"
-              onClick={() => handleApprove(data as unknown as ServicePointResponse, member as ServicePointMember, token as string)}
+              onClick={() => handleApprove({
+                data: data as ServicePointResponse,
+                member: member as ServicePointMember,
+                token: token as string,
+                groupId: groupId as string
+              })}
               aria-label="Approve"
               sx={{
                 bgcolor: 'success.lighter',
@@ -82,7 +89,12 @@ export const useServicePointNotification = () => {
               key="reject"
               size="small"
               color="error"
-              onClick={() => handleReject(data as unknown as ServicePointResponse, member as ServicePointMember, token as string)}
+              onClick={() => handleReject({
+                data: data as ServicePointResponse,
+                member: member as ServicePointMember,
+                token: token as string,
+                groupId: groupId as string,
+              })} 
               aria-label="Reject"
               sx={{
                 bgcolor: 'error.lighter',
@@ -105,22 +117,28 @@ export const useServicePointNotification = () => {
     addNotification('servicePointRequests', notification);
   };
 
-  const handleApprove = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
-    modifyUserAccessMutation.mutate({
-      userId: member.id,
-      userGroupId: data?.id || member.id,
-      operation: "grant",
-      token: token as string,
-    });
-  };
+  const handleApprove = ({data, member, token, groupId}: {
+    data: ServicePointResponse, 
+    member: ServicePointMember, 
+    token: string, 
+    groupId: string
+  }) => modifyUserAccessMutation.mutate({
+    userId: member.id,
+    userGroupId: groupId || data?.groupId as string,
+    operation: "grant",
+    token,
+  });
 
-  const handleReject = (data: ServicePointResponse, member: ServicePointMember, token: string) => {
-   removeUserFromServicePointMutation.mutate({
-        userId: member.id,
-        groupId: data?.id || member.id,
-        token: token as string,
-    });
-  };
+  const handleReject =({data, member, token, groupId}: {
+    data: ServicePointResponse, 
+    member: ServicePointMember, 
+    token: string, 
+    groupId: string
+  }) => removeUserFromServicePointMutation.mutate({
+    userId: member.id,
+    groupId: groupId || data?.groupId as string,
+    token: token as string,
+  });
 
   return {
     transformMemberToNotification,
