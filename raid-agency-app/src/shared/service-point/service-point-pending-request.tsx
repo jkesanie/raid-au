@@ -45,20 +45,27 @@ export const useServicePointPendingRequest = () => {
     });
 
     React.useEffect(() => {
-        const adminGroup = servicePointsQuery.data?.find((sp) => {
-            if (sp?.groupId && sp.groupId === groupId) {
+        //console.log('Service Points Data:', servicePointsQuery.data);
+/*         const adminGroup = servicePointsQuery.data?.find((sp) => {
+            console.log('Checking group:', sp);
+            if (!sp?.roles?.includes(['group-admin', 'operator']) && sp?.groupId === groupId) {
                 return sp;
             }
-        });
-        isOperator && servicePointsQuery.data?.filter((sp) => {
+        }); */
+        const accumulatedMembers = servicePointsQuery.data?.reduce((acc, sp) => {
+            //console.log('Checking service point:', sp);
             if (sp.members && sp.members.length > 0) {
-                isOperator && transformMemberToNotification(sp as unknown as ServicePointResponse, token as string);
+                const members = sp.members.map(member => ({
+                    ...member,
+                    groupId: sp.groupId
+                }));
+                return [...acc, ...members];
             }
-        });
-        console.log('Operator Groups:', adminGroup);
-        // Only transform if user is operator or group admin
-        //transformMemberToNotification(operatorGroup as unknown as ServicePointResponse, token as string);
-        isGroupAdmin && transformMemberToNotification(adminGroup as unknown as ServicePointResponse, token as string, groupId as string);
+            return acc;
+        }, [] as ServicePointMember[]);
+        console.log('Operator Groups:', accumulatedMembers);
+        isOperator && transformMemberToNotification(accumulatedMembers as unknown as ServicePointMember[], token as string);
+        //isGroupAdmin && transformMemberToNotification(adminGroup as unknown as ServicePointResponse, token as string, groupId as string);
     }, [servicePointsQuery.data, isOperator, isGroupAdmin]);
 
     const refetch = () => {
