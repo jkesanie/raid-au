@@ -16,12 +16,13 @@ interface ServicePointMember {
         username: string;
         email: string;
     };
+    groupId?: string;
 }
 
 interface ServicePointResponse {
     members: ServicePointMember[];
     name: string;
-    attributes: {
+    attributes?: {
         groupId: string;
     };
     id: string;
@@ -45,13 +46,15 @@ export const useServicePointPendingRequest = () => {
     });
 
     React.useEffect(() => {
-        //console.log('Service Points Data:', servicePointsQuery.data);
-/*         const adminGroup = servicePointsQuery.data?.find((sp) => {
-            console.log('Checking group:', sp);
-            if (!sp?.roles?.includes(['group-admin', 'operator']) && sp?.groupId === groupId) {
-                return sp;
+        // Find the service point where the user is an admin or operator
+        const adminGroup = servicePointsQuery.data?.find((sp) => {
+            if (sp?.groupId === groupId) {
+                sp.members.forEach((member) => {
+                    member.groupId = groupId;
+                });
+                return sp.members;
             }
-        }); */
+        });
         const accumulatedMembers = servicePointsQuery.data?.reduce((acc, sp) => {
             //console.log('Checking service point:', sp);
             if (sp.members && sp.members.length > 0) {
@@ -63,9 +66,8 @@ export const useServicePointPendingRequest = () => {
             }
             return acc;
         }, [] as ServicePointMember[]);
-        console.log('Operator Groups:', accumulatedMembers);
         isOperator && transformMemberToNotification(accumulatedMembers as unknown as ServicePointMember[], token as string);
-        //isGroupAdmin && transformMemberToNotification(adminGroup as unknown as ServicePointResponse, token as string, groupId as string);
+        isGroupAdmin && transformMemberToNotification(adminGroup?.members  as unknown as ServicePointMember[] || [], token as string);
     }, [servicePointsQuery.data, isOperator, isGroupAdmin]);
 
     const refetch = () => {
