@@ -101,6 +101,112 @@
       }
     }
   },
+
+
+
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/organizations/038sjwq14",
+      "headers": {
+        "Client-Id": ["08VB3D1YYHC63CQ8QHP0TBD0I6RULCHQ"],
+        "Content-Type": ["application/json"]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "data": {
+          "admin": {
+            "created": {
+              "date": "2019-02-17",
+              "schema_version": "1.0"
+            },
+            "last_modified": {
+              "date": "2024-12-11",
+              "schema_version": "2.1"
+            }
+          },
+          "domains": [],
+          "established": 2018,
+          "external_ids": [
+            {
+              "all": [
+                "100010581",
+                "501100020840"
+              ],
+              "preferred": "501100020840",
+              "type": "fundref"
+            },
+            {
+              "all": [
+                "grid.503071.0"
+              ],
+              "preferred": "grid.503071.0",
+              "type": "grid"
+            },
+            {
+              "all": [
+                "Q4824459"
+              ],
+              "preferred": null,
+              "type": "wikidata"
+            }
+          ],
+          "id": "https://ror.org/038sjwq14",
+          "links": [
+            {
+              "type": "website",
+              "value": "https://ardc.edu.au/"
+            }
+          ],
+          "locations": [
+            {
+              "geonames_details": {
+                "continent_code": "OC",
+                "continent_name": "Oceania",
+                "country_code": "AU",
+                "country_name": "Australia",
+                "country_subdivision_code": "VIC",
+                "country_subdivision_name": "Victoria",
+                "lat": -37.814,
+                "lng": 144.96332,
+                "name": "Melbourne"
+              },
+              "geonames_id": 2158177
+            }
+          ],
+          "names": [
+            {
+              "lang": null,
+              "types": [
+                "acronym"
+              ],
+              "value": "ARDC"
+            },
+            {
+              "lang": "en",
+              "types": [
+                "ror_display",
+                "label"
+              ],
+              "value": "Australian Research Data Commons"
+            }
+          ],
+          "relationships": [],
+          "status": "active",
+          "types": [
+            "funder",
+            "other"
+          ]
+        }
+      }
+    }
+  },
   {
     "httpRequest": {
       "method": "POST",
@@ -261,5 +367,4 @@
       }
     }
   }
-
 ]

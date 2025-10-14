@@ -1,6 +1,6 @@
-package au.org.raid.api.client.ror;
+package au.org.raid.api.client.isni;
 
-import au.org.raid.api.config.properties.RorClientProperties;
+import au.org.raid.api.config.properties.IsniClientProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,24 +18,21 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RequestEntityFactoryTest {
     @Mock
-    private RorClientProperties properties;
+    private IsniClientProperties properties;
     @InjectMocks
     private RequestEntityFactory requestEntityFactory;
 
     @Test
     @DisplayName("Should return RequestEntity with valid input")
     void returnsRequestEntity() {
-        final var baseUrl = "https://localhost/";
-        final var clientId = "client-id";
-        final var ror = "https://ror.org/038sjwq14";
+        final var urlFormat = "https://localhost/%s/details";
+        final var ror = "https://isni.org/isni/0000000078519858";
 
-        when(properties.getBaseUrl()).thenReturn(baseUrl);
-        when(properties.getClientId()).thenReturn(clientId);
+        when(properties.getUrlFormat()).thenReturn(urlFormat);
 
         final var request = requestEntityFactory.create(ror);
 
         assertThat(request.getMethod(), is(HttpMethod.GET));
-        assertThat(request.getHeaders().get("Client-Id").get(0), is(clientId));
-        assertThat(request.getUrl(), is(URI.create("https://localhost/organizations/038sjwq14")));
+        assertThat(request.getUrl(), is(URI.create("https://localhost/0000000078519858/details")));
     }
 }

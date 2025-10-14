@@ -1,6 +1,6 @@
-package au.org.raid.api.client.ror;
+package au.org.raid.api.client.orcid;
 
-import au.org.raid.api.config.properties.RorClientProperties;
+import au.org.raid.api.config.properties.OrcidClientProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RequestEntityFactoryTest {
     @Mock
-    private RorClientProperties properties;
+    private OrcidClientProperties properties;
     @InjectMocks
     private RequestEntityFactory requestEntityFactory;
 
@@ -26,16 +26,16 @@ class RequestEntityFactoryTest {
     @DisplayName("Should return RequestEntity with valid input")
     void returnsRequestEntity() {
         final var baseUrl = "https://localhost/";
-        final var clientId = "client-id";
-        final var ror = "https://ror.org/038sjwq14";
+        final var accessToken = "_access-token";
+        final var orcid = "https://orcid.org/0009-0002-5128-5184";
 
         when(properties.getBaseUrl()).thenReturn(baseUrl);
-        when(properties.getClientId()).thenReturn(clientId);
+        when(properties.getAccessToken()).thenReturn(accessToken);
 
-        final var request = requestEntityFactory.create(ror);
+        final var request = requestEntityFactory.create(orcid);
 
         assertThat(request.getMethod(), is(HttpMethod.GET));
-        assertThat(request.getHeaders().get("Client-Id").get(0), is(clientId));
-        assertThat(request.getUrl(), is(URI.create("https://localhost/organizations/038sjwq14")));
+        assertThat(request.getHeaders().get("Authorization").get(0), is("Bearer %s".formatted(accessToken)));
+        assertThat(request.getUrl(), is(URI.create("https://localhost/0009-0002-5128-5184/personal-details")));
     }
 }

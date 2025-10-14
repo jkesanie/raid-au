@@ -18,7 +18,7 @@ public class RequestEntityFactory {
 
 //get(properties.getBaseUrl() + "/organizations/" + id)
 
-        return RequestEntity.method(HttpMethod.GET, URI.create(properties.getBaseUrl() + "/organizations/" + id))
+        return RequestEntity.method(HttpMethod.GET, URI.create(properties.getBaseUrl() + "organizations/" + id))
                 .header("Client-Id", properties.getClientId())
                 .build();
     }

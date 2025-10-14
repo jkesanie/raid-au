@@ -1,7 +1,11 @@
 raid:
+  isni-client:
+    url-format: https://isni.oclc.org/sru/?query=pica.isn+%3D+%22%s%22&operation=searchRetrieve&recordSchema=isni-b
+  orcid-client:
+    base-url: https://api.sandbox.orcid.org/v3.0/
   ror-client:
     client-id: 08VB3D1YYHC63CQ8QHP0TBD0I6RULCHQ
-    base-url: https://api.ror.org/v2
+    base-url: https://api.ror.org/v2/
   orcid-integration:
     orcid-url-prefix: https://sandbox.orcid.org/
     host: http://localhost:1080
