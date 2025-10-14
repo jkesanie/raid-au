@@ -46,13 +46,12 @@ export const useServicePointPendingRequest = () => {
                 return sp.members;
             }
         }) as ServicePointWithMembers | undefined;
-        const accumulatedMembers = servicePointsQuery.data?.reduce((acc, sp) => {
+        const accumulatedMembers = servicePointsQuery.data?.reduce<ServicePointMember[]>((acc, sp) => {
             if (sp.members && sp.members.length > 0) {
                 const members = sp.members.map(member => ({
                     ...member,
                     groupId: sp.groupId,
-                    name: sp.name,
-                }));
+                } as unknown as ServicePointMember))
                 return [...acc, ...members];
             }
             return acc;
