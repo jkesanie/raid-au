@@ -41,6 +41,7 @@ type ServicePointMemberAttributes = {
  * Represents a member of a service point with roles and attributes
  */
 export type ServicePointMember = {
+  groupId: string | undefined;
   /** Roles assigned to this member within the service point */
   roles: string[];
   /** User attributes containing personal information and settings */

@@ -52,7 +52,7 @@ export const useServicePointNotification = () => {
       removeNotification('servicePointRequests');
       return;
     }
-
+    // Create notification object
     const notification = {
       title: 'Service Point Pending Requests',
       categories: pendingMembers?.map(member => ({
