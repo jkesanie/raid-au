@@ -4,8 +4,9 @@ import React from "react";
 import { useAuthHelper } from "@/auth/keycloak";
 import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { fetchServicePointMembersWithGroupId } from "@/services/service-points";
+import { fetchServicePointsWithMembers } from "@/services/service-points";
 import { useServicePointNotification } from "./servicePointNotificationService";
+import { ServicePointWithMembers } from "@/types";
 
 interface ServicePointMember {
     id: string;
@@ -16,52 +17,56 @@ interface ServicePointMember {
         username: string;
         email: string;
     };
-}
-
-interface ServicePointResponse {
-    members: ServicePointMember[];
-    name: string;
-    attributes: {
-        groupId: string;
-    };
-    id: string;
+    groupId?: string;
 }
 
 export const useServicePointPendingRequest = () => {
     const { isOperator, groupId, isGroupAdmin } = useAuthHelper();
     const { authenticated, isInitialized, token } = useKeycloak();
     const { transformMemberToNotification } = useServicePointNotification();
+
     const servicePointsQuery = useQuery({
-    queryKey: ["service-point-request", groupId],
+    queryKey: ["service-point-request"],
     queryFn: async () => {
-        if (!groupId) {
-            return {
-                members: [],
-                name: "",
-                attributes: { groupId: "" },
-                id: "",
-                data: []
-            } as ServicePointResponse;
-        }
-        
-        return await fetchServicePointMembersWithGroupId({ 
-            id: String(groupId), // Convert to string to match the function signature
+        return await fetchServicePointsWithMembers({
             token: token || "" 
         });
     },
-        enabled: isInitialized && authenticated && !!groupId && !!token,
-        refetchInterval: 30000, // Poll every 30 seconds
-        //refetchOnWindowFocus: true, // Refetch when user returns to tab
+    enabled: isInitialized && authenticated && !!groupId && !!token && (isOperator || isGroupAdmin),
+    refetchInterval: 30000, // Poll every 30 seconds
     });
 
     React.useEffect(() => {
-        isOperator || isGroupAdmin ? transformMemberToNotification(servicePointsQuery.data as unknown as ServicePointResponse, token as string) : null;
-        }, [servicePointsQuery.data, isOperator, isGroupAdmin ]);
-      const refetch = () => {
-            servicePointsQuery.refetch();
-        };
+        // Find the service point where the user is an admin or operator
+        const adminGroup = servicePointsQuery.data?.find((sp) => {
+            if (sp?.groupId === groupId) {
+                sp.members.forEach((member) => {
+                    member.groupId = groupId;
+                });
+                return sp.members;
+            }
+        }) as ServicePointWithMembers | undefined;
+        const accumulatedMembers = servicePointsQuery.data?.reduce((acc, sp) => {
+            if (sp.members && sp.members.length > 0) {
+                const members = sp.members.map(member => ({
+                    ...member,
+                    groupId: sp.groupId,
+                    name: sp.name,
+                }));
+                return [...acc, ...members];
+            }
+            return acc;
+        }, [] as ServicePointMember[]);
+        isOperator && transformMemberToNotification(accumulatedMembers as unknown as ServicePointMember[], token as string);
+        isGroupAdmin && transformMemberToNotification(adminGroup?.members  as unknown as ServicePointMember[] || [], token as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [servicePointsQuery.data, isOperator, isGroupAdmin]);
+
+    const refetch = () => {
+        servicePointsQuery.refetch();
+    };
+
     return (
         refetch
     );
 };
-
