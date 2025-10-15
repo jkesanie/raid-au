@@ -22,16 +22,6 @@ export interface ServicePointMember {
   groupId?: string;
 }
 
-interface ServicePointResponse {
-    members: ServicePointMember[];
-    name: string;
-    attributes: {
-        groupId: string;
-    };
-    id: string;
-    groupId?: string;
-}
-
 export const useServicePointNotification = () => {
   const { addNotification, removeNotification } = useNotificationContext();
   const snackbar: SnackbarContextInterface = useSnackbar();

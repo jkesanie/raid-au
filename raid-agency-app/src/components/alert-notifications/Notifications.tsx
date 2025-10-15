@@ -200,7 +200,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({ className })
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  <Typography variant="body1" fontWeight={600}>
+                                  <Typography variant="body1" fontWeight={600} sx={{ wordBreak: 'break-word' }}>
                                     {category.name}
                                   </Typography>
                                 }
