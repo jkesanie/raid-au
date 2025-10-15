@@ -1,5 +1,7 @@
 package au.org.raid.api.factory.datacite;
 
+import au.org.raid.api.client.isni.IsniClient;
+import au.org.raid.api.client.orcid.OrcidClient;
 import au.org.raid.api.dto.ContributorLookupResponse;
 import au.org.raid.api.exception.ResourceNotFoundException;
 import au.org.raid.api.model.datacite.DataciteCreator;
@@ -21,32 +23,37 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Slf4j
 @RequiredArgsConstructor
 public class DataciteCreatorFactory {
-    private final OrcidIntegrationClient orcidIntegrationClient;
+    private static final String ORCID_SCHEMA_URI = "https://orcid.org/";
+    private static final String ISNI_SCHEMA_URI = "https://isni.org/";
+    private final OrcidClient orcidClient;
+    private final IsniClient isniClient;
 
     private static final Map<String, String> NAME_IDENTIFIER_SCHEMA_MAP = Map.of(
-            "https://orcid.org/", "ORCID",
-            "https://isni.org/", "ISNI"
+            ORCID_SCHEMA_URI, "ORCID",
+            ISNI_SCHEMA_URI, "ISNI"
     );
 
     public DataciteCreator create(final Contributor contributor) {
         final var creator = new DataciteCreator();
+        String name;
 
-        if (contributor.getStatus() != null && contributor.getStatus().equals("AUTHENTICATED")) {
-            final var response = orcidIntegrationClient.findByOrcid(contributor.getId())
-                    .orElseThrow(() -> new IllegalStateException("No contributor found with id %s".formatted(contributor.getId())));
-
-            if (response.getOrcid() != null && response.getName() != null) {
-                creator.setName(response.getName());
-            }
-
-            creator.setNameType("Personal");
-            creator.setNameIdentifiers(List.of(
-                    new NameIdentifier()
-                            .setNameIdentifier(contributor.getId())
-                            .setSchemeUri(contributor.getSchemaUri())
-                            .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri()))
-            ));
+        if (contributor.getSchemaUri().equals(ORCID_SCHEMA_URI)) {
+            name = orcidClient.getName(contributor.getId());
+        } else if (contributor.getSchemaUri().equals(ISNI_SCHEMA_URI)) {
+            name = isniClient.getName(contributor.getId());
+        } else {
+            throw new RuntimeException("Unsupported contributor schema %s".formatted(contributor.getSchemaUri()));
         }
+
+        creator.setName(name);
+
+        creator.setNameType("Personal");
+        creator.setNameIdentifiers(List.of(
+                new NameIdentifier()
+                        .setNameIdentifier(contributor.getId())
+                        .setSchemeUri(contributor.getSchemaUri())
+                        .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri()))
+        ));
 
         return creator;
     }

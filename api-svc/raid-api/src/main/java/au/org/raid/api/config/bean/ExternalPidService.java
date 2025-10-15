@@ -26,11 +26,6 @@ public class ExternalPidService {
     private static final Log log = to(ExternalPidService.class);
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
     @Primary
     public RorService rorService(
             StubProperties stubProperties,

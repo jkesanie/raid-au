@@ -109,8 +109,10 @@ public class AbstractIntegrationTest {
                 .date(new Date().startDate(today.format(DateTimeFormatter.ISO_LOCAL_DATE)))
                 .description(descriptions)
 
-                .contributor(List.of(contributor(
-                        REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)))
+                .contributor(List.of(
+                        orcidContributor(
+                                REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)
+                ))
                 .organisation(List.of(organisation(
                         REAL_TEST_ROR, LEAD_RESEARCH_ORGANISATION, today)))
                 .access(new Access()
@@ -142,7 +144,7 @@ public class AbstractIntegrationTest {
                                         .text("ENES")
                                 ))));
     }
-    public Contributor contributor(
+    public Contributor orcidContributor(
             final String orcid,
             final String position,
             final String role,
@@ -153,7 +155,29 @@ public class AbstractIntegrationTest {
                 .id(orcid)
                 .contact(true)
                 .leader(true)
-                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                .schemaUri(ORCID_SCHEMA_URI)
+                .position(List.of(new ContributorPosition()
+                        .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                        .id(position)
+                        .startDate(startDate.format(DateTimeFormatter.ISO_LOCAL_DATE))))
+                .role(List.of(
+                        new ContributorRole()
+                                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                .id(role)));
+    }
+
+    public Contributor isniContributor(
+            final String isni,
+            final String position,
+            final String role,
+            final LocalDate startDate,
+            final String email
+    ) {
+        return new Contributor()
+                .id(isni)
+                .contact(true)
+                .leader(true)
+                .schemaUri(ISNI_SCHEMA_URI)
                 .position(List.of(new ContributorPosition()
                         .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
                         .id(position)

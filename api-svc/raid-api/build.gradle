@@ -14,22 +14,23 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version '3.2.6'
   id 'io.spring.dependency-management' version '1.1.6'
-//  id 'com.avast.gradle.docker-compose' version '0.17.6'
+  id 'org.jsonschema2pojo' version '1.2.1'
+  id 'com.github.bjornvester.xjc' version '1.8.2'
 }
 
 //apply plugin: 'docker-compose'
 
 ext {
   defaultSysProps = [
-    /* prod machines will always be set to UTC, but developer machines are set 
+    /* prod machines will always be set to UTC, but developer machines are set
     to whatever they want - so this forces it for gradle stuff. */
     'user.timezone': 'UTC',
     // platform specific, so force it
     'file.encoding': 'UTF-8',
-    // for consistency, rather than any specific reason 
+    // for consistency, rather than any specific reason
     "user.language":"", "user.country":"", "user.variant":"",
   ]
-  
+
   // the config loading config :/
   homeDir = System.properties['user.home']
   configPath = System.getProperty("RAIDO_APISVC_CONFIG_PATH",
@@ -47,14 +48,14 @@ if( file(configPath).exists() ){
 
 version = rootProject.version
 
-/* don't use groovy for prod code: dynamic typing, slow startup and poor 
+/* don't use groovy for prod code: dynamic typing, slow startup and poor
    historical upgrade compatibility */
 dependencies{
   compileOnly 'org.jetbrains:annotations:13.0'
   implementation project(':api-svc:db')
   implementation project(':api-svc:idl-raid-v2')
   implementation 'org.flywaydb:flyway-core:9.22.3'
-  // look in settings.gradle for version catalog specs 
+  // look in settings.gradle for version catalog specs
   implementation libs.bundles.springboot
   implementation libs.springdoc.openapi
 
@@ -71,10 +72,14 @@ dependencies{
 
   runtimeOnly 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
-  implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
+  implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
 
   implementation 'jakarta.json:jakarta.json-api:2.1.3'
   implementation 'org.eclipse.parsson:jakarta.json:1.1.5'
+
+  implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.4'
+  implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.6'
 
   testImplementation libs.bundles.springboot.test
 
@@ -93,15 +98,19 @@ dependencies{
   testImplementation 'com.jayway.jsonpath:json-path'
   testImplementation 'org.springframework.security:spring-security-test:6.2.2'
 
+  // XJC dependencies - need the actual compiler tools
+  xjc 'org.glassfish.jaxb:jaxb-xjc:3.0.2'
+  xjc 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+  xjc 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
 }
 
 compileJava {
   options.compilerArgs <<
-    // avoid warnings about spring classes using deprecated '-debug' 
+    // avoid warnings about spring classes using deprecated '-debug'
     "-parameters" <<
     // annoy people into not doing unchecked shenanigans 😒
     "-Xlint:unchecked" <<
-    // annoy people into fixing their deprecation warnings 
+    // annoy people into fixing their deprecation warnings
     "-Xlint:deprecation"
 }
 
@@ -123,7 +132,7 @@ testing{
 
         // for PostConstruct/PreDestroy - pkg: jakarta.annotation (used to be javax)
         implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
-        
+
         implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3"
 
         compileOnly 'org.projectlombok:lombok:1.18.28'
@@ -195,4 +204,62 @@ tasks.withType(Test) {
     showCauses = true
     showStackTraces = true
   }
+}
+
+jsonSchema2Pojo {
+  // Source directory containing your JSON schema files
+  source = files("${projectDir}/src/main/resources/ror_schema_v2_1.json")
+
+  // Target directory for generated Java classes
+  targetDirectory = file("${projectDir}/src/main/generated")
+
+  // Target package for generated classes
+  targetPackage = 'au.org.raid.api.client.ror.dto'
+
+  // Include generated sources in compilation
+  sourceType = 'jsonschema'
+
+  // Generate builder methods
+  generateBuilders = true
+
+  // Include JSR-303 annotations (@Valid, @NotNull, etc.)
+  useJakartaValidation = true
+  includeJsr303Annotations = true
+
+  // Jackson annotations are already included by default (annotationStyle = 'jackson')
+
+  // Date/time type configuration
+  dateTimeType = 'java.time.OffsetDateTime'
+
+  // Additional options
+  useLongIntegers = false
+  useDoubleNumbers = true
+  includeHashcodeAndEquals = true
+  includeToString = true
+  includeAllPropertiesConstructor = true
+  constructorsRequiredPropertiesOnly = false
+}
+
+sourceSets {
+  main {
+    java {
+      srcDir "${projectDir}/src/main/generated"
+    }
+  }
+}
+
+tasks.named('compileJava') {
+  dependsOn tasks.named('generateJsonSchema2Pojo')
+}
+
+xjc {
+  xsdDir.set(layout.projectDirectory.dir("src/main/resources/schema/xsd"))
+  bindingFiles.from("src/main/resources/schema/xsd/bindings.xjb")
+  outputJavaDir.set(layout.projectDirectory.dir("src/main/generated"))
+  defaultPackage.set("au.org.raid.api.client.isni.dto")
+}
+
+tasks.named('compileJava') {
+  dependsOn tasks.named('generateJsonSchema2Pojo')
+  dependsOn tasks.named('xjc')
 }
