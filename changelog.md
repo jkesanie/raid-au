@@ -1,9 +1,14 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.5.12
+# 2.5.13
 # API
 * Add names to creators when sending data to Datacite
+
+# 2.5.12
+## App-client UI
+* RAiD App Notification Service update: Users with "Operator" permission can now be able to see pending requests from all the service points.
+* View RAiD: RAiDs will no contributors can now see empty contributors block instead of "contributors not defined"
 
 # 2.5.11
 # API

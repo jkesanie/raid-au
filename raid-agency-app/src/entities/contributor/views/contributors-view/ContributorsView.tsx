@@ -41,17 +41,14 @@ const ContributorsView = memo(
         : null;
     };
 
-    // Display a message if no contributors available
-    if (!data || data.length === 0) {
-      return <NoItemsMessage entity="contributor" />;
-    }
-
     // Render contributors
     return (
       <DisplayCard
         data={data}
         labelPlural="Contributors"
         children={
+          <>
+          {data.length === 0 && <NoItemsMessage entity="contributor" />}
           <Stack gap={4} divider={<Divider />}>
             {data.map((contributor, index) => (
               <ContributorItemView
@@ -62,6 +59,7 @@ const ContributorsView = memo(
               />
             ))}
           </Stack>
+          </>
         }
       />
     );
