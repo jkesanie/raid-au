@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.12
+# API
+* Add names to creators when sending data to Datacite
+
 # 2.5.11
 # API
 * Add temporary endpoints to uplift legacy RAiDs and RAiDs with GitHub vocabularies
