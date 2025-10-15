@@ -1,10 +1,8 @@
 package au.org.raid.api.client.orcid;
 
 import au.org.raid.api.config.properties.OrcidClientProperties;
-import au.org.raid.api.config.properties.RorClientProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +10,7 @@ import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
-public class RequestEntityFactory {
+public class OrcidRequestEntityFactory {
     private final OrcidClientProperties properties;
 
     public RequestEntity<Void> create(final String orcid) {

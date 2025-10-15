@@ -16,11 +16,11 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RequestEntityFactoryTest {
+class OrcidRequestEntityFactoryTest {
     @Mock
     private OrcidClientProperties properties;
     @InjectMocks
-    private RequestEntityFactory requestEntityFactory;
+    private OrcidRequestEntityFactory requestEntityFactory;
 
     @Test
     @DisplayName("Should return RequestEntity with valid input")

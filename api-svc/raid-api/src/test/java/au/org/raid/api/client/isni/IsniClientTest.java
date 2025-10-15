@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class IsniClientTest {
     @Mock
-    private RequestEntityFactory requestEntityFactory;
+    private IsniRequestEntityFactory requestEntityFactory;
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks

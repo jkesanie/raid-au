@@ -7,16 +7,20 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
-public class RequestEntityFactory {
+public class IsniRequestEntityFactory {
     private final IsniClientProperties properties;
 
     public RequestEntity<Void> create(final String isni) {
         final var id = isni.substring(isni.lastIndexOf("/") + 1);
 
-        return RequestEntity.method(HttpMethod.GET, URI.create(properties.getUrlFormat().formatted(id)))
+        final var uri = properties.getUrlFormat().replace("__ISNI__", id);
+
+        return RequestEntity.method(HttpMethod.GET, URI.create(uri))
                 .build();
     }
 }

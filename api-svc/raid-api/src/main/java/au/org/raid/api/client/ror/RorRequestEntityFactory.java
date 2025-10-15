@@ -10,7 +10,7 @@ import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
-public class RequestEntityFactory {
+public class RorRequestEntityFactory {
     private final RorClientProperties properties;
 
     public RequestEntity<Void> create(final String ror) {

@@ -4,6 +4,7 @@ import au.org.raid.api.client.isni.dto.PersonalName;
 import au.org.raid.api.client.isni.dto.ResponseRecord;
 import au.org.raid.api.dto.isni.SearchRetrieveResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Element;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class IsniClient {
     private final RestTemplate restTemplate;
-    private final RequestEntityFactory requestEntityFactory;
+    private final IsniRequestEntityFactory requestEntityFactory;
 
     public Optional<ResponseRecord> getRecord(final String isni) {
         final var request = requestEntityFactory.create(isni);
@@ -30,6 +31,7 @@ public class IsniClient {
         return Optional.empty();
     }
 
+    @Cacheable(value="isni-name-cache", key="{#isni}")
     public String getName(final String isni) {
         return getRecord(isni).map(record -> {
                     final var personalNames = record.getISNIAssigned()

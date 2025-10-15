@@ -1,7 +1,6 @@
 package au.org.raid.api.client.ror;
 
 import au.org.raid.api.client.ror.dto.RorSchemaV21;
-import au.org.raid.api.config.properties.RorClientProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,7 +21,7 @@ class RorClientTest {
     @Mock
     private RestTemplate restTemplate;
     @Mock
-    private RequestEntityFactory requestEntityFactory;
+    private RorRequestEntityFactory requestEntityFactory;
     @InjectMocks
     private RorClient rorClient;
 

@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class RorClient {
     private final RestTemplate restTemplate;
-    private final RequestEntityFactory requestEntityFactory;
+    private final RorRequestEntityFactory requestEntityFactory;
 
     public RorSchemaV21 getOrganisation(final String ror) {
         final var request = requestEntityFactory.create(ror);

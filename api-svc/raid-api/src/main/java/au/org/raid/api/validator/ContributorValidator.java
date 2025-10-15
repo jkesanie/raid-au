@@ -21,12 +21,14 @@ import static au.org.raid.api.util.StringUtil.isBlank;
 @Component
 @RequiredArgsConstructor
 public class ContributorValidator {
-    private static final String ORCID_URL_PREFIX_PATTERN = "^https:\\/\\/orcid.org\\/.*";
+    private static final String ORCID_URL_PREFIX_PATTERN = "^https:\\/\\/(orcid|isni).org\\/.*";
     private static final String ORCID_URL_PREFIX = "https://orcid.org/";
+    private static final String ISNI_URL_PREFIX = "https://isni.org/";
 
     private final ContributorPositionValidator positionValidationService;
     private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
+    private final IsniValidator isniValidator;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -60,7 +62,17 @@ public class ContributorValidator {
                                     .errorType(NOT_SET_TYPE)
                                     .message(NOT_SET_MESSAGE)
                         );
-                    } else if (!contributor.getId().startsWith(ORCID_URL_PREFIX)) {
+                    } else if (contributor.getId().startsWith(ISNI_URL_PREFIX)) {
+                        if (!isniValidator.validate(contributor.getId())) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d].id".formatted(index))
+                                            .errorType(INVALID_VALUE_TYPE)
+                                            .message(INVALID_VALUE_MESSAGE)
+                            );
+                        }
+                    }
+                    else if (!contributor.getId().startsWith(ORCID_URL_PREFIX)) {
                         failures.add(
                                 new ValidationFailure()
                                         .fieldId("contributor[%d].id".formatted(index))
@@ -143,7 +155,6 @@ public class ContributorValidator {
                         );
                     }
 
-                        // uuid must be present
                     if (!isBlank(contributor.getId())) {
                         final var contributorOptional = contributorRepository.findByPid(
                                 contributor.getId()

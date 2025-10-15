@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 public class OrcidClient {
-    private final RequestEntityFactory requestEntityFactory;
+    private final OrcidRequestEntityFactory requestEntityFactory;
     private final RestTemplate restTemplate;
 
     public PersonalDetails getPersonalDetails(final String orcid) {
