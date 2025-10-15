@@ -4,7 +4,7 @@ import React from "react";
 import { useAuthHelper } from "@/auth/keycloak";
 import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@/contexts/keycloak-context";
-import { fetchServicePointsWithMembers } from "@/services/service-points";
+import { fetchServicePointsWithMembers, fetchServicePointMembersWithGroupId } from "@/services/service-points";
 import { useServicePointNotification } from "./servicePointNotificationService";
 import { ServicePointWithMembers } from "@/types";
 
@@ -26,27 +26,42 @@ export const useServicePointPendingRequest = () => {
     const { transformMemberToNotification } = useServicePointNotification();
 
     const servicePointsQuery = useQuery({
-    queryKey: ["service-point-request"],
-    queryFn: async () => {
-        return await fetchServicePointsWithMembers({
-            token: token || "" 
-        });
-    },
-    enabled: isInitialized && authenticated && !!groupId && !!token && (isOperator || isGroupAdmin),
-    refetchInterval: 30000, // Poll every 30 seconds
+        queryKey: ["service-point-request", groupId],
+        queryFn: async () => {
+            if (isOperator) {
+                return await fetchServicePointsWithMembers({
+                    token: token || ""
+                });
+            } else if (isGroupAdmin && groupId) {
+                return await fetchServicePointMembersWithGroupId({
+                    token: token || "",
+                    id: groupId
+                });
+            }
+            // This should never be reached due to the enabled condition
+            throw new Error("Invalid query state");
+        },
+        enabled: isInitialized && authenticated && !!token && (isOperator || (isGroupAdmin && !!groupId)),
+        refetchInterval: 30000, // Poll every 30 seconds
     });
 
     React.useEffect(() => {
+        if (!servicePointsQuery.data) return;
         // Find the service point where the user is an admin or operator
-        const adminGroup = servicePointsQuery.data?.find((sp) => {
-            if (sp?.groupId === groupId) {
+        const servicePoints = Array.isArray(servicePointsQuery.data)
+            ? servicePointsQuery.data
+            : [servicePointsQuery.data];
+
+        const adminGroup = servicePoints.find((sp) => {
+            if (sp?.id.toString() === groupId) {
                 sp.members.forEach((member) => {
                     member.groupId = groupId;
                 });
-                return sp.members;
+                return true;
             }
+            return false;
         }) as ServicePointWithMembers | undefined;
-        const accumulatedMembers = servicePointsQuery.data?.reduce<ServicePointMember[]>((acc, sp) => {
+        const accumulatedMembers = servicePoints?.reduce<ServicePointMember[]>((acc, sp) => {
             if (sp.members && sp.members.length > 0) {
                 const members = sp.members.map(member => ({
                     ...member,
