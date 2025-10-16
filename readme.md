@@ -31,7 +31,7 @@ npm install
 ## Running the Application
 1. Start the API
 ```bash
-./gradlew dockerComposeUp bootRun
+./gradlew dockerComposeUp bootRun -D spring.profiles.active=dev
 ```
 2. Start the app
 ```bash
