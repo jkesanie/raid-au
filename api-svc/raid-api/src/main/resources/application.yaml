@@ -1,4 +1,6 @@
 raid:
+  db:
+    name: raido
   isni-client:
     url-format: https://isni.oclc.org/sru/?query=pica.isn+%3D+%22__ISNI__%22&operation=searchRetrieve&recordSchema=isni-b
   orcid-client:
