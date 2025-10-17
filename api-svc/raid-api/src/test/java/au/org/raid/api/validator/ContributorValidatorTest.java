@@ -1,5 +1,7 @@
 package au.org.raid.api.validator;
 
+import au.org.raid.api.client.isni.IsniClient;
+import au.org.raid.api.client.orcid.OrcidClient;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.TestConstants;
 import au.org.raid.idl.raidv2.model.Contributor;
@@ -40,6 +42,12 @@ class ContributorValidatorTest {
     @Mock
     private IsniValidator isniValidator;
 
+    @Mock
+    private OrcidClient orcidClient;
+
+    @Mock
+    private IsniClient isniClient;
+
     @InjectMocks
     private ContributorValidator validationService;
 
@@ -57,6 +65,8 @@ class ContributorValidatorTest {
                 .role(List.of(role))
                 .leader(true)
                 .contact(true);
+
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -90,6 +100,8 @@ class ContributorValidatorTest {
                 .role(List.of(role))
                 .position(List.of(position))
                 .contact(true);
+
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -159,6 +171,8 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, empty());
@@ -199,6 +213,7 @@ class ContributorValidatorTest {
 
         when(roleValidationService.validate(role, 0, 0)).thenReturn(List.of(roleError));
         when(positionValidationService.validate(position, 0, 0)).thenReturn(List.of(positionError));
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -211,6 +226,8 @@ class ContributorValidatorTest {
     @Test
     @DisplayName("Validation passes with multiple lead position - year-month dates")
     void multipleLeadPositionsWithYearMonthDates() {
+
+        final var orcid = "https://orcid.org/0000-0000-0000-0002";
         final var role1 = new ContributorRole()
                 .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
                 .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
@@ -241,11 +258,14 @@ class ContributorValidatorTest {
 
         final var contributor2 = new Contributor()
                 .schemaUri(TestConstants.ORCID_SCHEMA_URI)
-                .id("https://orcid.org/0000-0000-0000-0002")
+                .id(orcid)
                 .role(List.of(role2))
                 .position(List.of(position2))
                 .leader(true)
                 .contact(true);
+
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidClient.exists(orcid)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor2, contributor1));
 
@@ -291,6 +311,8 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+
         final var failures = validationService.validate(List.of(contributor2, contributor1));
 
         assertThat(failures, is(List.of(
@@ -328,6 +350,7 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor1));
 
@@ -359,6 +382,7 @@ class ContributorValidatorTest {
                 .contact(true);
 
 //        when(contributorRepository.findByPid(VALID_ORCID)).thenReturn(Optional.of(new ContributorRecord()));
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -392,6 +416,8 @@ class ContributorValidatorTest {
                 .position(List.of(position))
                 .leader(true)
                 .contact(true);
+
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -427,6 +453,8 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, hasSize(1));
@@ -461,6 +489,8 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, hasSize(0));
@@ -491,6 +521,7 @@ class ContributorValidatorTest {
                 .contact(true);
 
         when(isniValidator.validate(VALID_ISNI)).thenReturn(true);
+        when(isniClient.exists(VALID_ISNI)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -522,6 +553,7 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -530,6 +562,41 @@ class ContributorValidatorTest {
         verify(roleValidationService).validate(role, 0, 0);
         verify(positionValidationService).validate(position, 0, 0);
         verifyNoInteractions(contributorRepository);
+    }
+
+    @Test
+    @DisplayName("Validation fails with non-existent ORCID")
+    void nonExistentOrcid() {
+        final var role = new ContributorRole()
+                .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
+                .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+
+        final var position = new ContributorPosition()
+                .schemaUri(TestConstants.CONTRIBUTOR_POSITION_SCHEMA_URI)
+                .id(TestConstants.LEADER_CONTRIBUTOR_POSITION)
+                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        final var contributor = new Contributor()
+                .schemaUri(TestConstants.ORCID_SCHEMA_URI)
+                .id(VALID_ORCID)
+                .role(List.of(role))
+                .position(List.of(position))
+                .leader(true)
+                .contact(true);
+
+        when(orcidClient.exists(VALID_ORCID)).thenReturn(false);
+
+        final var failures = validationService.validate(List.of(contributor));
+
+        assertThat(failures, hasSize(1));
+        assertThat(failures, contains(new ValidationFailure(
+                "contributor[0].id",
+                "notFound",
+                "This ORCID does not exist"
+        )));
+
+        verify(roleValidationService).validate(role, 0, 0);
+        verify(positionValidationService).validate(position, 0, 0);
     }
 
 }

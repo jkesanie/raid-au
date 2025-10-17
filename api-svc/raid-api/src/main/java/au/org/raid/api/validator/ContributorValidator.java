@@ -1,5 +1,7 @@
 package au.org.raid.api.validator;
 
+import au.org.raid.api.client.isni.IsniClient;
+import au.org.raid.api.client.orcid.OrcidClient;
 import au.org.raid.api.config.properties.OrcidIntegrationProperties;
 import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.repository.ContributorRepository;
@@ -29,6 +31,8 @@ public class ContributorValidator {
     private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
     private final IsniValidator isniValidator;
+    private final OrcidClient orcidClient;
+    private final IsniClient isniClient;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -70,9 +74,27 @@ public class ContributorValidator {
                                             .errorType(INVALID_VALUE_TYPE)
                                             .message(INVALID_VALUE_MESSAGE)
                             );
+                        } else {
+                            if (!isniClient.exists(contributor.getId())) {
+                                failures.add(
+                                        new ValidationFailure()
+                                                .fieldId("contributor[%d].id".formatted(index))
+                                                .errorType(NOT_FOUND_TYPE)
+                                                .message("This ISNI does not exist")
+                                );
+                            }
                         }
                     }
-                    else if (!contributor.getId().startsWith(ORCID_URL_PREFIX)) {
+                    else if (contributor.getId().startsWith(ORCID_URL_PREFIX)) {
+                        if (!orcidClient.exists(contributor.getId())) {
+                            failures.add(
+                                    new ValidationFailure()
+                                            .fieldId("contributor[%d].id".formatted(index))
+                                            .errorType(NOT_FOUND_TYPE)
+                                            .message("This ORCID does not exist")
+                            );
+                        }
+                    } else {
                         failures.add(
                                 new ValidationFailure()
                                         .fieldId("contributor[%d].id".formatted(index))

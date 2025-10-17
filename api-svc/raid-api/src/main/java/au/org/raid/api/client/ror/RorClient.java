@@ -5,7 +5,9 @@ import au.org.raid.api.client.ror.dto.Type;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -33,4 +35,18 @@ public class RorClient {
 
         return name.getValue();
     }
+
+    @Cacheable(value="valid-ror", key="{#ror}")
+    public boolean exists(final String ror) {
+        try {
+            getOrganisation(ror);
+        } catch (final HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return false;
+            }
+            throw e;
+        }
+        return true;
+    }
+
 }
