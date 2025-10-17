@@ -40,7 +40,7 @@ class IsniClientTest {
 
     @Test
     @DisplayName("should return ISNI record given a valid ISNI")
-    void shouldReturnResponseRecord() {
+    void shouldReturnSearchRetrieveResponse() {
         final var isni = "https://isni.org/isni/0000000078519858";
         final var requestEntity = new RequestEntity<Void>(HttpMethod.GET, URI.create("https://localhost"));
         final var recordWrapper = new RecordWrapper();
@@ -60,9 +60,9 @@ class IsniClientTest {
         when(requestEntityFactory.create(isni)).thenReturn(requestEntity);
         when(restTemplate.exchange(requestEntity, SearchRetrieveResponse.class)).thenReturn(responseEntity);
 
-        final var response = isniClient.getRecord(isni);
+        final var response = isniClient.search(isni);
 
-        assertThat(response.get(), is(responseRecord));
+        assertThat(response, is(searchRetrieveResponse));
     }
 
     @Test
@@ -81,6 +81,38 @@ class IsniClientTest {
         final var name = isniClient.getName(isni);
 
         assertThat(name, is("Taylor Swift"));
+    }
+
+    @Test
+    @DisplayName("exists method should return true if ISNI exists")
+    void shouldReturnTrueGivenExistingIsni() {
+        final var isni = "https://isni.org/isni/0000000078519858";
+        final var requestEntity = new RequestEntity<Void>(HttpMethod.GET, URI.create("https://localhost"));
+
+        final var searchRetrieveResponse = new SearchRetrieveResponse();
+        searchRetrieveResponse.setNumberOfRecords(1);
+        final var responseEntity = ResponseEntity.of(Optional.of(searchRetrieveResponse));
+
+        when(requestEntityFactory.create(isni)).thenReturn(requestEntity);
+        when(restTemplate.exchange(requestEntity, SearchRetrieveResponse.class)).thenReturn(responseEntity);
+
+        assertThat(isniClient.exists(isni), is(true));
+    }
+
+    @Test
+    @DisplayName("exists method should return false if ISNI does not exist")
+    void shouldReturnFalseGivenNonExistentIsni() {
+        final var isni = "https://isni.org/isni/0000000078519858";
+        final var requestEntity = new RequestEntity<Void>(HttpMethod.GET, URI.create("https://localhost"));
+
+        final var searchRetrieveResponse = new SearchRetrieveResponse();
+        searchRetrieveResponse.setNumberOfRecords(0);
+        final var responseEntity = ResponseEntity.of(Optional.of(searchRetrieveResponse));
+
+        when(requestEntityFactory.create(isni)).thenReturn(requestEntity);
+        when(restTemplate.exchange(requestEntity, SearchRetrieveResponse.class)).thenReturn(responseEntity);
+
+        assertThat(isniClient.exists(isni), is(false));
     }
 
     private SearchRetrieveResponse getResponse() throws JAXBException {

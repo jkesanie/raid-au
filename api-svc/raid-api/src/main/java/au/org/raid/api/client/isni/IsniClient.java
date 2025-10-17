@@ -3,6 +3,7 @@ package au.org.raid.api.client.isni;
 import au.org.raid.api.client.isni.dto.PersonalName;
 import au.org.raid.api.client.isni.dto.ResponseRecord;
 import au.org.raid.api.dto.isni.SearchRetrieveResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -17,41 +18,39 @@ public class IsniClient {
     private final RestTemplate restTemplate;
     private final IsniRequestEntityFactory requestEntityFactory;
 
-    public Optional<ResponseRecord> getRecord(final String isni) {
+    public SearchRetrieveResponse search(final String isni) {
         final var request = requestEntityFactory.create(isni);
 
         final var responseEntity = restTemplate.exchange(request, SearchRetrieveResponse.class);
 
-        final var response =  responseEntity.getBody();
-
-        if (response != null && response.getNumberOfRecords() >= 1) {
-            return Optional.of(response.getFirstRecord());
-        }
-
-        return Optional.empty();
+        return  responseEntity.getBody();
     }
 
     @Cacheable(value="isni-name-cache", key="{#isni}")
     public String getName(final String isni) {
-        return getRecord(isni).map(record -> {
-                    final var personalNames = record.getISNIAssigned()
-                            .getISNIMetadata()
-                            .getIdentity()
-                            .getPersonOrFiction()
-                            .getPersonalName();
+        final var result = search(isni);
 
-                    if (personalNames == null || personalNames.isEmpty()) {
-                        throw new RuntimeException("No name found for ISNI %s".formatted(isni));
-                    }
+        if (result.getNumberOfRecords() > 0) {
+            final var record = result.getFirstRecord();
 
-                    return personalNames.stream()
-                            .filter(personalName -> personalName.getNameUse().equalsIgnoreCase("legal") || personalName.getNameUse().equalsIgnoreCase("public"))
-                            .findFirst()
-                            .map(this::getFullName)
-                            .orElseThrow(() -> new RuntimeException("No name found for ISNI %s".formatted(isni)));
+            final var personalNames = record.getISNIAssigned()
+                    .getISNIMetadata()
+                    .getIdentity()
+                    .getPersonOrFiction()
+                    .getPersonalName();
 
-                })
-                .orElseThrow(() -> new RuntimeException("ISNI not found %s".formatted(isni)));
+            if (personalNames == null || personalNames.isEmpty()) {
+                throw new RuntimeException("No name found for ISNI %s".formatted(isni));
+            }
+
+            return personalNames.stream()
+                    .filter(personalName -> personalName.getNameUse().equalsIgnoreCase("legal") || personalName.getNameUse().equalsIgnoreCase("public"))
+                    .findFirst()
+                    .map(this::getFullName)
+                    .orElseThrow(() -> new RuntimeException("No name found for ISNI %s".formatted(isni)));
+        } else {
+            throw new RuntimeException("ISNI not found %s".formatted(isni));
+        }
     }
 
     private String getFullName(final PersonalName personalName) {
@@ -59,5 +58,11 @@ public class IsniClient {
         final var familyName = ((Element)personalName.getSurname()).getTextContent();
 
         return "%s %s".formatted(givenName, familyName);
+    }
+
+    @Cacheable(value="valid-isni", key="{#isni}")
+    public boolean exists(@NotNull String isni) {
+        final var result = this.search(isni);
+        return result.getNumberOfRecords() > 0;
     }
 }

@@ -32,7 +32,7 @@ class OrcidRequestEntityFactoryTest {
         when(properties.getBaseUrl()).thenReturn(baseUrl);
         when(properties.getAccessToken()).thenReturn(accessToken);
 
-        final var request = requestEntityFactory.create(orcid);
+        final var request = requestEntityFactory.createGetPersonalDetailsRequest(orcid);
 
         assertThat(request.getMethod(), is(HttpMethod.GET));
         assertThat(request.getHeaders().get("Authorization").get(0), is("Bearer %s".formatted(accessToken)));

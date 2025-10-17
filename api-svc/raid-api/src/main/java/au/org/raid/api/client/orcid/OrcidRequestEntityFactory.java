@@ -13,10 +13,18 @@ import java.net.URI;
 public class OrcidRequestEntityFactory {
     private final OrcidClientProperties properties;
 
-    public RequestEntity<Void> create(final String orcid) {
+    public RequestEntity<Void> createGetPersonalDetailsRequest(final String orcid) {
         final var id = orcid.substring(orcid.lastIndexOf("/") + 1);
 
         return RequestEntity.method(HttpMethod.GET, URI.create(properties.getBaseUrl() + id + "/personal-details"))
+                .header("Authorization", "Bearer %s".formatted(properties.getAccessToken()))
+                .build();
+    }
+
+    public RequestEntity<Void> createHeadRequest(final String orcid) {
+        final var id = orcid.substring(orcid.lastIndexOf("/") + 1);
+
+        return RequestEntity.method(HttpMethod.HEAD, URI.create(properties.getBaseUrl() + id ))
                 .header("Authorization", "Bearer %s".formatted(properties.getAccessToken()))
                 .build();
     }

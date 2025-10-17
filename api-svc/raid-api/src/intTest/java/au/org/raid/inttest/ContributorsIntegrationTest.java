@@ -114,7 +114,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void missingIdentifierSchemeUri() {
             createRequest.setContributor(List.of(
                     new Contributor()
-                            .id("https://orcid.org/0000-0000-0000-0001")
+                            .id(REAL_TEST_ORCID)
                             .contact(true)
                             .leader(true)
                             .position(List.of(
@@ -153,7 +153,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                             .schemaUri("")
                             .contact(true)
                             .leader(true)
-                            .id("https://orcid.org/0000-0000-0000-0001")
+                            .id(REAL_TEST_ORCID)
                             .position(List.of(
                                     new ContributorPosition()
                                             .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))

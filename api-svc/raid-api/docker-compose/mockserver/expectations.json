@@ -20,6 +20,18 @@
   {
     "httpRequest": {
       "method": "GET",
+      "path": "/v2/organizations/000000042",
+      "headers": {
+        "Client-Id": ["08VB3D1YYHC63CQ8QHP0TBD0I6RULCHQ"]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 404
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
       "path": "/v2/organizations/039se3q37",
       "headers": {
         "Client-Id": ["08VB3D1YYHC63CQ8QHP0TBD0I6RULCHQ"]
@@ -223,10 +235,18 @@
       }
     }
   },
-
-
-
-
+  {
+    "httpRequest": {
+      "method": "HEAD",
+      "path": "/v3.0/0009-0002-5128-5184",
+      "headers": {
+        "Authorization": "Bearer 32cacfb3-6dab-4554-ae51-22efd37a2463"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200
+    }
+  },
   {
     "httpRequest": {
       "method": "GET",
@@ -270,6 +290,18 @@
         "biography": null,
         "path": "/0009-0002-5128-5184/personal-details"
       }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "HEAD",
+      "path": "/v3.0/0009-0005-9091-4416",
+      "headers": {
+        "Authorization": "Bearer 32cacfb3-6dab-4554-ae51-22efd37a2463"
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200
     }
   },
   {
