@@ -1,5 +1,5 @@
 import { ErrorDialogContext } from "@/components/error-dialog";
-import { Alert, Button } from "@mui/material";
+import { Alert, Button, Card } from "@mui/material";
 import React, { PropsWithChildren, useState } from "react";
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -88,11 +88,15 @@ export const ErrorDialogProvider: React.FC<PropsWithChildren<unknown>> = ({
           <CloseIcon />
         </IconButton>
         <DialogContent >
-          <ul>
-            {errorDialogState.content.failures.map((message, index) => (
-              <li key={index}>{message}</li>
-            ))}
-          </ul>
+          {errorDialogState.content.failures.length <= 1 ? (
+            <Card sx={{boxShadow: "none", p: 2}}>{errorDialogState.content.failures[0]}</Card>
+          ) : (
+            <ul>
+              {errorDialogState.content.failures.map((message, index) => (
+                <li key={index}>{message}</li>
+              ))}
+            </ul>
+          )}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={closeErrorDialog}>

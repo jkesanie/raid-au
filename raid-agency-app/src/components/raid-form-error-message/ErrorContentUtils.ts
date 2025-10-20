@@ -1,3 +1,4 @@
+import { messages } from '@/constants/messages';
 import { ErrorItem, ErrorMessage } from './types';
 
 /**
@@ -20,14 +21,14 @@ export const transformErrorMessage = (errorData: Record<string, ErrorItem | Erro
       // This occurs when a single field has multiple validation errors
       value.forEach((error) => {
         // Extract error message with fallback chain: text.message -> message -> default
-        const message = error?.text?.message || error?.message || 'Unknown error';
+        const message = error?.text?.message || error?.message || messages.requestFailedContent;
         // Add formatted error message to failures array
         transformedError.failures.push(`${key} - ${message}`);
       });
     } else {
       // Handle single error object
       // This occurs when a field has only one validation error
-      const message = value?.message || 'Unknown error';
+      const message = value?.message || messages.requestFailedContent;
       // Add formatted error message to failures array
       transformedError.failures.push(`${key} - ${message}`);
     }
