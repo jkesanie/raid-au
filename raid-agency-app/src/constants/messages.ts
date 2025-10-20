@@ -67,5 +67,5 @@ export const messages = {
 
     //Generic messages
     requestFailedTitle: "Error while processing your request",
-    requestFailedContent: "Please try again or email: contact@raid.org.au"
+    requestFailedContent: "Please try again or email: contact@raid.org"
 }
