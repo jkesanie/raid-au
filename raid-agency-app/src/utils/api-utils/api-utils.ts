@@ -60,11 +60,11 @@ export function getEnv() {
     ? "test"
     : hostname.includes("demo")
     ? "demo"
-    : hostname.includes("prod")
-    ? "prod"
     : hostname.includes("stage")
     ? "stage"
-    : "dev";
+    : hostname.includes("dev") || hostname.includes("localhost")
+    ? "dev"
+    : "prod"; // Default to prod if no other keyword found
 
   return environment;
 }
