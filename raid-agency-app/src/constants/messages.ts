@@ -64,4 +64,8 @@ export const messages = {
     servicePointUpdateFailed: "Service point update failed",
     servicePointDeletionFailed: "Service point deletion failed",
     servicePointUniqueRepositoryID: "Repository ID must be unique. The provided Repository ID is already in use.",
+
+    //Generic messages
+    requestFailedTitle: "Error while processing your request",
+    requestFailedContent: "Please try again or email: contact@raid.org"
 }
