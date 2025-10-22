@@ -20,7 +20,7 @@
 export function getApiEndpoint() {
   const hostname = window.location.hostname;
   const baseDomain = "raid.org.au";
-  
+
   // Determine environment based on hostname
   const environment = hostname.includes("test")
     ? "test"
@@ -64,7 +64,9 @@ export function getEnv() {
     ? "stage"
     : hostname.includes("dev") || hostname.includes("localhost")
     ? "dev"
-    : "prod"; // Default to prod if no other keyword found
+    : hostname.includes("prod")
+    ? "prod"
+    : ""; // Default to empty if no other keyword found
 
   return environment;
 }
