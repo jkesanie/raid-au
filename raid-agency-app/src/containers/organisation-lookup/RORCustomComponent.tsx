@@ -71,7 +71,7 @@ const transformToGroupedData = (items: RORItem[] = []): GroupedData => {
   items.forEach((item) => {
     // Get the display name (prefer ror_display, fallback to label)
     const displayNameObj = item.names.find(name => 
-      name.types.includes("ror_display") || name.types.includes("label")
+      name.types.includes("ror_display")
     );
     
     if (!displayNameObj) return; // Skip items without display name
