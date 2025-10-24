@@ -3,7 +3,7 @@ See the [Changelog audience](#changelog-audience) section for info about
 
 # 2.5.16
 ## App-client UI
-* RAiD App Error handling: Added a generic message to the popup to display for the user instead of an empty popup with an unknown error
+* RAiD App Error handling: Added a generic message to the popup to display for the user instead of an empty popup with an unknown error in case of unexpected errors (400, 500, etc.)
 * ROR Widget: Updated selected ROR display results on UI to show ror_display type instead of label type
 * Contributors Get request Uri: Added a default case to render an empty uri value in case the instance doesn't contain any environment-specific keywords (demo, test, prod, etc.)
 
