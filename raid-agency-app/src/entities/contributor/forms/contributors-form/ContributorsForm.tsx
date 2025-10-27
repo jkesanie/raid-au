@@ -25,6 +25,7 @@ import { ContributorDetailsForm } from "@/entities/contributor/forms/contributor
 import { MetadataContext } from "@/components/raid-form/RaidForm";
 import { CustomStyledTooltip } from "@/components/tooltips/StyledTooltip";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import ORCIDLookup from "@/containers/orcid-lookup/ORCID";
 
 export function ContributorsForm({
   control,

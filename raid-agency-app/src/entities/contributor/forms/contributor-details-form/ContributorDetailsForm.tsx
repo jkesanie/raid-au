@@ -1,6 +1,7 @@
 import { DisplayItem } from "@/components/display-item";
 import { CheckboxField } from "@/components/fields/CheckboxField";
 import { TextInputField } from "@/components/fields/TextInputField";
+import ORCIDLookup from "@/containers/orcid-lookup/ORCID";
 import { Contributor } from "@/generated/raid";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
@@ -11,12 +12,15 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
   return (
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
-        <TextInputField
+        <>
+        {/* <TextInputField
           name={`contributor.${index}.id`}
           label="ORCID ID"
           placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
           width={12}
-        />
+        /> */}
+        <ORCIDLookup />
+        </>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
         <DisplayItem
