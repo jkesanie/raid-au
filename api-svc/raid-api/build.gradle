@@ -263,3 +263,7 @@ tasks.named('compileJava') {
   dependsOn tasks.named('generateJsonSchema2Pojo')
   dependsOn tasks.named('xjc')
 }
+
+bootRun {
+  systemProperties = System.properties
+}
