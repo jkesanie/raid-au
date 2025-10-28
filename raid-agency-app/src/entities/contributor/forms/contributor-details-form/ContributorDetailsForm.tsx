@@ -4,7 +4,7 @@ import { TextInputField } from "@/components/fields/TextInputField";
 import ORCIDLookup from "@/containers/orcid-lookup/ORCID";
 import { Contributor } from "@/generated/raid";
 import { IndeterminateCheckBox } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Stack, Tooltip, Typography, Box } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -12,7 +12,7 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
   return (
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
-        <>
+        <Box width="100%" mb={2}>
         {/* <TextInputField
           name={`contributor.${index}.id`}
           label="ORCID ID"
@@ -20,7 +20,7 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
           width={12}
         /> */}
         <ORCIDLookup />
-        </>
+        </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
         <DisplayItem
