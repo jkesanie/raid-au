@@ -12,14 +12,14 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
   return (
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
-        <Box width="100%" mb={2}>
+        <Box width="100%">
         {/* <TextInputField
           name={`contributor.${index}.id`}
           label="ORCID ID"
           placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
           width={12}
         /> */}
-        <ORCIDLookup />
+        <ORCIDLookup index={index} />
         </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
