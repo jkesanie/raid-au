@@ -17,18 +17,20 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ScanSearch } from 'lucide-react';
 import { ClipLoader } from 'react-spinners';
 import { useMutation } from '@tanstack/react-query';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import PulseLoader from "react-spinners/PulseLoader";
+import { CustomStyledTooltip } from '@/components/tooltips/StyledTooltip';
 
   // JSONP helper function
   const fetchJSONP = (url: string) => {
     return new Promise((resolve, reject) => {
       // Create a unique callback name
       const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-      
+
       // Create the script element
       const script = document.createElement('script');
       script.async = true;
@@ -36,7 +38,7 @@ import PulseLoader from "react-spinners/PulseLoader";
       // Typed window helper for JSONP callbacks
       type JSONPCallback = (data: unknown) => void;
       const win = window as unknown as Window & Record<string, JSONPCallback | undefined>;
-      
+
       // Set up the callback function
       win[uniqueCallback] = (data: unknown) => {
         // Clean up
@@ -48,7 +50,6 @@ import PulseLoader from "react-spinners/PulseLoader";
         }
         resolve(data);
       };
-      
       // Handle errors
       script.onerror = () => {
         try {
@@ -59,7 +60,7 @@ import PulseLoader from "react-spinners/PulseLoader";
         }
         reject(new Error('JSONP request failed: ' + url));
       };
-      
+
       // Add timeout
       const timeout = setTimeout(() => {
         try {
@@ -70,7 +71,7 @@ import PulseLoader from "react-spinners/PulseLoader";
         }
         reject(new Error('JSONP request timeout'));
       }, 10000);
-      
+
       // Override cleanup to clear timeout
       const originalCallback = win[uniqueCallback];
       win[uniqueCallback] = (data: unknown) => {
@@ -79,11 +80,11 @@ import PulseLoader from "react-spinners/PulseLoader";
           originalCallback(data);
         }
       };
-      
-      // Replace callback=? with our callback name (jQuery style)
+
+      // Replace callback=? with our callback name
       const finalUrl = url.replace('callback=?', `callback=${uniqueCallback}`);
       script.src = finalUrl;
-      
+
       // Append script to body to trigger the request
       document.body.appendChild(script);
     });
@@ -93,9 +94,6 @@ const searchAPI = async (url: string): Promise<unknown> => {
   const response = await fetchJSONP(
     url
   );
-/*   if (!response.ok) {
-    throw new Error('Search failed');
-  } */
   return response;
 };
 
@@ -186,7 +184,13 @@ export default function ORCIDLookup(index: number) {
       label: 'Custom Search',
       description: 'Search by name or keywords',
       icon: <PersonIcon />
-    }
+    },
+    tooltipContent: `After selecting an ORCID record, the Credit Name will be displayed if available. 
+    If no Credit Name is provided, the Given Name and Family Name will be shown instead. 
+    Some details may not appear due to the researcher’s visibility settings. 
+    For more information, see [ORCID Visibility Settings]  
+    {https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings}`,
+    genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
   const currentConfig = searchConfig[searchMode];
 
@@ -322,7 +326,17 @@ export default function ORCIDLookup(index: number) {
                 {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <ScanSearch />}
             </IconButton>
             </Paper>
-            <FormHelperText>{currentConfig?.description}</FormHelperText>
+            <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
+            <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
+            <CustomStyledTooltip
+                title={"ORCID Lookup Info"}
+                content={searchConfig.tooltipContent}
+                variant="info"
+                placement="top"
+                tooltipIcon={<InfoOutlinedIcon />}
+            >
+            </CustomStyledTooltip>
+            </Box>
             <Popover
                 open={dropBox}
                 anchorEl={inputRef.current }
@@ -521,7 +535,7 @@ export default function ORCIDLookup(index: number) {
                     {searchMutation.status === 'pending' && (
                         <Box sx={{ padding: 2, minWidth: '350px', width: '400px'}}>
                             <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: getStatusColor() }}>
-                                {`Searching `} <PulseLoader color="#36a5dd" size={5} />
+                                {`${searchMode.charAt(0).toUpperCase() + searchMode.slice(1)} `} <PulseLoader color="#36a5dd" size={5} />
                             </Typography>
                         </Box>
                     )}
