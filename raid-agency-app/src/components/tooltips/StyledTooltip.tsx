@@ -55,7 +55,7 @@ export const CustomStyledTooltip: React.FC<CustomTooltipProps> = ({
       const target = event.target as Node;
       if (tooltipRef.current && !tooltipRef.current.contains(target) &&
           buttonRef.current && !buttonRef.current.contains(target)) {
-        setIsOpen(false);
+          setIsOpen(false);
       }
     };
 
@@ -72,14 +72,14 @@ export const CustomStyledTooltip: React.FC<CustomTooltipProps> = ({
     }, [isOpen]);
 
   const customContent = (
-    <React.Fragment>
+    <div ref={tooltipRef}>
       <Typography color="primary" variant="subtitle1" sx={{ fontWeight: 600 }}>
         {title}
       </Typography>
       <Typography variant="body2" sx={{ mt: 1 }}>
         {content}
       </Typography>
-    </React.Fragment>
+    </div>
   );
 
   return (
@@ -93,8 +93,6 @@ export const CustomStyledTooltip: React.FC<CustomTooltipProps> = ({
         id="tooltip-button"
         color="primary"
         onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
         ref={buttonRef}
       >
         <div style={{ all: 'inherit', padding: 0 }} ref={tooltipRef}>
