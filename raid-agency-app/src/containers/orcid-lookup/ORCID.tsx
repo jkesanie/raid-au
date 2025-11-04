@@ -198,7 +198,7 @@ export default function ORCIDLookup(path: { name: string }) {
     genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
   const currentConfig = searchConfig[searchMode];
-  console.log("getValues", getValues(path.name));
+
   const handleSearch = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     setResults(null);
@@ -310,7 +310,7 @@ export default function ORCIDLookup(path: { name: string }) {
             return '#e0e0e0';
         }
     };
-    //console.log("ORCID Lookup render with searchValue:",searchValue.trim(),"and path.name:", path.name);
+
   return (
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>

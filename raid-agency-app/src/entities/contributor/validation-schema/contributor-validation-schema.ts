@@ -49,7 +49,7 @@ export const singleContributorValidationSchema = z.union([
       .optional(),
   }),
   baseContributorSchema.extend({
-    uuid: z.string().optional(),
+    uuid: z.string(),
   }),
   baseContributorSchema.extend({
     email: z.string().optional(),
