@@ -20,10 +20,11 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { ScanSearch } from 'lucide-react';
 import { ClipLoader } from 'react-spinners';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import PulseLoader from "react-spinners/PulseLoader";
 import { CustomStyledTooltip } from '@/components/tooltips/StyledTooltip';
+import { useFormContext } from 'react-hook-form';
 
   // JSONP helper function
   const fetchJSONP = (url: string) => {
@@ -97,9 +98,9 @@ const searchAPI = async (url: string): Promise<unknown> => {
   return response;
 };
 
-export default function ORCIDLookup(index: number) {
+export default function ORCIDLookup(path: { name: string }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
-  const [searchValue, setSearchValue] = useState('');
+  //const [searchValue, setSearchValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -108,7 +109,10 @@ export default function ORCIDLookup(index: number) {
     givenName?: string;
     lastName?: string;
   } | null>(null);
-
+  const { register, setValue, watch, getValues } = useFormContext();
+  const fieldName = path.name;
+  const registration = register(fieldName);
+  const searchValue = watch(fieldName) || '';
   // Typed shapes for results to allow safe access and narrowing
   type OrcidData = {
     orcid: string;
@@ -169,6 +173,7 @@ export default function ORCIDLookup(index: number) {
     | { type: 'search'; data: SearchPerson[] };
 
   const [results, setResults] = useState<ResultsState | null>(null);
+  const queryClient = useQueryClient();
 
   const searchConfig = {
     lookup: {
@@ -193,7 +198,7 @@ export default function ORCIDLookup(index: number) {
     genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
   const currentConfig = searchConfig[searchMode];
-
+  console.log("getValues", getValues(path.name));
   const handleSearch = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     setResults(null);
@@ -211,12 +216,24 @@ export default function ORCIDLookup(index: number) {
     searchMutation.mutate(currentConfig.endpoint);
     setDropBox(true);
   };
-
   const searchMutation = useMutation<unknown, Error, string>({
     mutationFn: searchAPI,
     onError: (error) => {
         console.error('Search error:', error);
     },
+    onSuccess: (data) => {
+      try {
+        // Try to get existing contributor names from react-query cache or localStorage
+        const existing: string[] = queryClient.getQueryData<string[]>(["contributorNames"]) || JSON.parse(localStorage.getItem("contributorNames") || "[]");
+        const candidate = (searchValue || "").trim();
+        // Build a deduplicated list, preferring the most recent candidate first when available
+        const newNames = candidate ? Array.from(new Set([candidate, ...existing])) : existing;
+        localStorage.setItem("contributorNames", JSON.stringify(newNames));
+        queryClient.setQueryData(["contributorNames"], newNames);
+      } catch (err) {
+        console.error('Error updating contributor names cache:', err);
+      }
+    }
   });
 
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -234,50 +251,50 @@ export default function ORCIDLookup(index: number) {
     if (searchMutation.data) {
         const data = searchMutation.data as unknown as LookupResponse | SearchResponse;
         try {
-        if (searchMode === 'lookup') {
-            // ORCID Lookup
-            const lookup = data as LookupResponse;
-            setResults({
-                type: 'orcid',
-                data: {
-                    orcid: lookup.orcid,
-                    creditName: lookup.person?.name?.['credit-name']?.value?.trim() || '',
-                    givenName: lookup.person?.name?.['given-names']?.value?.trim() || '',
-                    lastName: lookup.person?.name?.['family-name']?.value?.trim() || '',
-                    country: lookup.person?.addresses?.address?.[0]?.country?.value || '',
-                }
-            });
-        } else {
-            // Narrow the union to SearchResponse before indexing
-            const searchData = data as SearchResponse;
-            if (searchData && Array.isArray(searchData['orcid-search-results']) && searchData['orcid-search-results'].length > 0) {
-                const mappedResults = searchData['orcid-search-results'].map((item, index) => {
-                const given = item.person?.name?.['given-names']?.value || '';
-                const family = item.person?.name?.['family-name']?.value || '';
-                const credit = item.person?.name?.['credit-name']?.value || '';
-                const country = item.person?.addresses?.address?.[0]?.country?.value || '';
-                return {
-                        orcid: item.orcid,
-                        creditName: credit.trim() || '',
-                        givenName: given.trim() || '',
-                        lastName: family.trim() || '',
-                        country: country?.trim() || '',
-                        relevance: 95 - (index * 5) // Mock relevance based on position
-                    };
-                });
+            if (searchMode === 'lookup') {
+                // ORCID Lookup
+                const lookup = data as LookupResponse;
                 setResults({
-                    type: 'search',
-                    data: mappedResults
+                    type: 'orcid',
+                    data: {
+                        orcid: lookup.orcid,
+                        creditName: lookup.person?.name?.['credit-name']?.value?.trim() || '',
+                        givenName: lookup.person?.name?.['given-names']?.value?.trim() || '',
+                        lastName: lookup.person?.name?.['family-name']?.value?.trim() || '',
+                        country: lookup.person?.addresses?.address?.[0]?.country?.value || '',
+                    }
                 });
             } else {
-                setOrcidName(null);
+                // Narrow the union to SearchResponse before indexing
+                const searchData = data as SearchResponse;
+                if (searchData && Array.isArray(searchData['orcid-search-results']) && searchData['orcid-search-results'].length > 0) {
+                    const mappedResults = searchData['orcid-search-results'].map((item, index) => {
+                    const given = item.person?.name?.['given-names']?.value || '';
+                    const family = item.person?.name?.['family-name']?.value || '';
+                    const credit = item.person?.name?.['credit-name']?.value || '';
+                    const country = item.person?.addresses?.address?.[0]?.country?.value || '';
+                        return {
+                            orcid: item.orcid,
+                            creditName: credit.trim() || '',
+                            givenName: given.trim() || '',
+                            lastName: family.trim() || '',
+                            country: country?.trim() || '',
+                            relevance: 95 - (index * 5) // Mock relevance based on position
+                        };
+                    });
+                    setResults({
+                        type: 'search',
+                        data: mappedResults
+                    });
+                } else {
+                    setOrcidName(null);
+                }
             }
-        }
-    } catch (err) {
+        } catch (err) {
         console.error('Search error:', err);
+        }
     }
-    }
-    }, [searchMutation.data, searchMode]);
+  }, [searchMutation.data, searchMode]);
 
     const getStatusColor = () => {
         switch (searchMutation.status) {
@@ -293,7 +310,7 @@ export default function ORCIDLookup(index: number) {
             return '#e0e0e0';
         }
     };
-
+    //console.log("ORCID Lookup render with searchValue:",searchValue.trim(),"and path.name:", path.name);
   return (
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>
@@ -308,19 +325,20 @@ export default function ORCIDLookup(index: number) {
             >
             {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}{currentConfig.icon}
             <InputBase
-                name={`contributor.${index}.id`}
+                {...registration}
+                name={`${path.name}`}
                 sx={{ ml: 1, flex: 1 }}
                 placeholder={currentConfig?.placeholder}
                 inputProps={{ 'aria-label': 'search orcid' }}
                 value={searchValue}
-                onChange={(e) => {e.preventDefault(); setSearchValue(e.target.value),clearSearchText(true), onChangeMode(e)}}
+                onChange={(e) => {e.preventDefault(); setValue(fieldName, e.target.value), clearSearchText(true), onChangeMode(e)}}
                 onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                         handleSearch(e);
                     }
                 }}
             />
-            {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setSearchValue('')}} />}
+            {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, '')}} />}
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <IconButton  onClick={(e) => handleSearch(e)}  color="primary" sx={{ p: '10px' }} aria-label="directions">
                 {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <ScanSearch />}
@@ -385,7 +403,8 @@ export default function ORCIDLookup(index: number) {
                             '&:hover': { boxShadow: 2 }
                             }}
                             onClick={() => {
-                                setSearchValue(`https://orcid.org/${results?.data.orcid}`);
+                                const orcidUrl = `https://orcid.org/${results?.data.orcid}`;
+                                setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
                                 setDropBox(false);
                                 setOrcidName(results?.data);
                             }}
@@ -460,7 +479,8 @@ export default function ORCIDLookup(index: number) {
                                 '&:hover': { boxShadow: 2 }
                                 }}
                                 onClick={() => {
-                                    setSearchValue(`https://orcid.org/${person.orcid}`);
+                                    //setSearchValue(`https://orcid.org/${person.orcid}`);
+                                    setValue(fieldName, `https://orcid.org/${person.orcid}`, { shouldValidate: true, shouldDirty: true });
                                     setDropBox(false);
                                     setOrcidName(person);
                                 }}
@@ -470,7 +490,6 @@ export default function ORCIDLookup(index: number) {
                                     <Avatar sx={{ bgcolor: 'secondary.main' }}>
                                         <PersonIcon />
                                     </Avatar>
-                                    
                                     <Box sx={{ flex: 1 }}>
                                     <Box sx={{ 
                                         display: 'block', 

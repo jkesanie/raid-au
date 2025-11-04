@@ -174,6 +174,10 @@ export function CacheManager() {
     key: "organisationNames",
   });
 
+  const { data: contributorNames } = useCache({
+    key: "contributorNames",
+  });
+
   const handleDelete = ({
     key,
     storageKey,
@@ -224,6 +228,19 @@ export function CacheManager() {
                 storageKey="organisationNames"
               />
             )) || <Typography>No organisation names in cache</Typography>}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="ORCID names" />
+          <CardContent>
+            {(contributorNames?.size && (
+              <CachedItemsList
+                cachedMap={contributorNames}
+                handleDelete={handleDelete}
+                storageKey="contributorNames"
+              />
+            )) || <Typography>No ORCID names in cache</Typography>}
           </CardContent>
         </Card>
       </Stack>

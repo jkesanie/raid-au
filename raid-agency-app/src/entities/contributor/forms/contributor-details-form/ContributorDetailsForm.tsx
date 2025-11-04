@@ -19,7 +19,7 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
           placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
           width={12}
         /> */}
-        <ORCIDLookup index={index} />
+        <ORCIDLookup name={`contributor.${index}.id`} />
         </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
