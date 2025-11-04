@@ -82,7 +82,6 @@ export const RaidForm = memo(
     });
 
     const { control, trigger, formState } = formMethods;
-    const isFormValid = Object.keys(formState.errors).length === 0;
 
     const handleSubmit = useCallback(
       (data: RaidDto) => {
@@ -98,7 +97,7 @@ export const RaidForm = memo(
         setIsInitialLoad(false);
       }
     }, [isInitialLoad]);
-    console.log("formState.errors:", formState.errors);
+
     useEffect(() => {
       // This effect runs when the form is submitted
       // and there are validation errors

@@ -190,11 +190,11 @@ export default function ORCIDLookup(path: { name: string }) {
       description: 'Search by name or keywords',
       icon: <PersonIcon />
     },
-    tooltipContent: `After selecting an ORCID record, the Credit Name will be displayed if available. 
+    tooltipContent: ( <>After selecting an ORCID record, the Credit Name will be displayed if available. 
     If no Credit Name is provided, the Given Name and Family Name will be shown instead. 
     Some details may not appear due to the researcher’s visibility settings. 
-    For more information, see [ORCID Visibility Settings]  
-    {https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings}`,
+    For more information, see <a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="_blank" rel="noopener noreferrer">[ORCID Visibility Settings]</a></>
+    ),
     genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
   const currentConfig = searchConfig[searchMode];
