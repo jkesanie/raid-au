@@ -109,7 +109,7 @@ export default function ORCIDLookup(path: { name: string }) {
     givenName?: string;
     lastName?: string;
   } | null>(null);
-  const { register, setValue, watch, getValues } = useFormContext();
+  const { register, setValue, watch } = useFormContext();
   const fieldName = path.name;
   const registration = register(fieldName);
   const searchValue = watch(fieldName) || '';
