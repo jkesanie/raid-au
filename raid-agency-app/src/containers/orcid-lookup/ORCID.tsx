@@ -25,82 +25,120 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import PulseLoader from "react-spinners/PulseLoader";
 import { CustomStyledTooltip } from '@/components/tooltips/StyledTooltip';
 import { useFormContext } from 'react-hook-form';
+import { object } from 'zod';
 
   // JSONP helper function
   const fetchJSONP = (url: string) => {
-    return new Promise((resolve, reject) => {
-      // Create a unique callback name
-      const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+  return new Promise((resolve, reject) => {
+    const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement('script');
+    script.async = true;
+    
+    type JSONPCallback = (data: unknown) => void;
+    const win = window as unknown as Window & Record<string, JSONPCallback | undefined>;
 
-      // Create the script element
-      const script = document.createElement('script');
-      script.async = true;
+    win[uniqueCallback] = (data: unknown) => {
+      // Clean up
+      try {
+        delete win[uniqueCallback];
+        document.body.removeChild(script);
+      } catch (e) {
+        // Ignore cleanup errors
+      }
       
-      // Typed window helper for JSONP callbacks
-      type JSONPCallback = (data: unknown) => void;
-      const win = window as unknown as Window & Record<string, JSONPCallback | undefined>;
-
-      // Set up the callback function
-      win[uniqueCallback] = (data: unknown) => {
-        // Clean up
-        try {
-          delete win[uniqueCallback];
-          document.body.removeChild(script);
-        } catch (e) {
-          // Ignore cleanup errors
+      // Check if data contains an error before resolving
+      if (data && typeof data === 'object') {
+        const errorResponse = data as { 'response-code'?: number };
+        if (errorResponse['response-code'] && errorResponse['response-code'] >= 400) {
+          reject(new Error(`API Error ${errorResponse['response-code']}`));
+          return;
         }
-        resolve(data);
-      };
-      // Handle errors
-      script.onerror = () => {
-        try {
-          delete win[uniqueCallback];
-          document.body.removeChild(script);
-        } catch (e) {
-          throw new Error('JSONP cleanup failed');
-        }
-        reject(new Error('JSONP request failed: ' + url));
-      };
+      }
+      
+      resolve(data); // data should already be an object
+    };
 
-      // Add timeout
-      const timeout = setTimeout(() => {
-        try {
-          delete win[uniqueCallback];
-          document.body.removeChild(script);
-        } catch (e) {
-          // Ignore cleanup errors
-        }
-        reject(new Error('JSONP request timeout'));
-      }, 10000);
+    script.onerror = () => {
+      try {
+        delete win[uniqueCallback];
+        document.body.removeChild(script);
+      } catch (e) {
+        // Ignore cleanup errors
+      }
+      reject(new Error('JSONP request failed: ' + url));
+    };
 
-      // Override cleanup to clear timeout
-      const originalCallback = win[uniqueCallback];
-      win[uniqueCallback] = (data: unknown) => {
-        clearTimeout(timeout);
-        if (typeof originalCallback === 'function') {
-          originalCallback(data);
-        }
-      };
+    const timeout = setTimeout(() => {
+      try {
+        delete win[uniqueCallback];
+        document.body.removeChild(script);
+      } catch (e) {
+        // Ignore cleanup errors
+      }
+      reject(new Error('JSONP request timeout'));
+    }, 10000);
 
-      // Replace callback=? with our callback name
-      const finalUrl = url.replace('callback=?', `callback=${uniqueCallback}`);
-      script.src = finalUrl;
+    const originalCallback = win[uniqueCallback];
+    win[uniqueCallback] = (data: unknown) => {
+      clearTimeout(timeout);
+      if (typeof originalCallback === 'function') {
+        originalCallback(data);
+      }
+    };
 
-      // Append script to body to trigger the request
-      document.body.appendChild(script);
-    });
-  };
-
+    const finalUrl = url.replace('callback=?', `callback=${uniqueCallback}`);
+    script.src = finalUrl;
+    document.body.appendChild(script);
+  });
+};
+const getErrorMessage = (responseCode: number): string => {
+  switch (responseCode) {
+    case 404:
+      return 'ORCID iD not found. Please verify the ID format (e.g., 0000-0002-1825-0097) and try again.';
+    case 400:
+      return 'Invalid ORCID iD format. Please check your entry and try again.';
+    case 500:
+    case 503:
+      return 'ORCID service is temporarily unavailable. Please try again later.';
+    default:
+      return 'An error occurred while fetching ORCID data. Please try again.';
+  }
+};
 const searchAPI = async (url: string): Promise<unknown> => {
-  const response = await fetchJSONP(
-    url
-  );
-  return response;
+  try {
+    const response = await fetchJSONP(url);
+    console.log('JSONP response:', response);
+    
+    // Check if it's a string containing error info
+    if (typeof response === 'string') {
+      // Check for error patterns in the string
+      if (response.includes('404 Not Found')) {
+        throw new Error('ORCID iD not found. Please verify the ID format and try again.');
+      }
+      if (response.includes('500 Internal Server Error')) {
+        throw new Error('ORCID service is temporarily unavailable. Please try again later.');
+      }
+      
+      // Try to extract and parse JSON from the string
+      const jsonMatch = response.match(/(\{[^}]*"response-code"[^}]*\})/);
+      if (jsonMatch) {
+        const errorData = JSON.parse(jsonMatch[0]);
+        if (errorData['response-code'] >= 400) {
+          throw new Error(getErrorMessage(errorData['response-code']));
+        }
+      }
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('JSONP error:', error);
+    throw error;
+  }
 };
 
 export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
-  //const [searchValue, setSearchValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -109,9 +147,9 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     givenName?: string;
     lastName?: string;
   } | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { register, setValue, watch, formState } = useFormContext();
   const { errors } = formState;
-  console.log('ORCID Lookup Errors:', contributorIndex, errors);
   const fieldName = path?.name;
   const registration = register(fieldName);
   const searchValue = watch(fieldName) || '';
@@ -200,6 +238,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
   const currentConfig = searchConfig[searchMode];
+  // Helper function to get user-friendly error messages
 
   const handleSearch = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
@@ -224,6 +263,17 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
         console.error('Search error:', error);
     },
     onSuccess: (data) => {
+        console.log("Search success:", typeof data);
+    if (data && typeof data === 'object') {
+      const errorResponse = data as { 'response-code'?: number; 'developer-message'?: string };
+      
+      if (errorResponse['response-code'] && errorResponse['response-code'] >= 400) {
+        setApiError(getErrorMessage(errorResponse['response-code']));
+        setResults(null);
+        return;
+      }
+    }
+
       try {
         // Try to get existing contributor names from react-query cache or localStorage
         const existing: string[] = queryClient.getQueryData<string[]>(["contributorNames"]) || JSON.parse(localStorage.getItem("contributorNames") || "[]");
@@ -242,13 +292,14 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
+    console.log("onChangeMode value:", value, "orcid match:", orcid);
     if (orcid) {
       setSearchMode('lookup');
     } else {
       setSearchMode('search');
     }
   };
-
+  console.log("searchmode", searchMode);
   React.useMemo(() => {
     if (searchMutation.data) {
         const data = searchMutation.data as unknown as LookupResponse | SearchResponse;
@@ -256,6 +307,11 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             if (searchMode === 'lookup') {
                 // ORCID Lookup
                 const lookup = data as LookupResponse;
+                if(!lookup.orcid) {
+                    setOrcidName(null);
+                    setResults({ type: 'orcid', data: {} as OrcidData });
+                    return;
+                }
                 setResults({
                     type: 'orcid',
                     data: {
@@ -348,9 +404,8 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                 {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <ScanSearch />}
             </IconButton>
             </Paper>
-            <FormHelperText sx={{ fontSize: '0.875rem', color: 'error.main', mr: 1 }}>{helperTextError}</FormHelperText>
+            {searchMode === 'lookup' && <FormHelperText sx={{ fontSize: '0.875rem', color: 'error.main', mr: 1 }}>{helperTextError}</FormHelperText>}
             <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
-                
                 <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
                 <CustomStyledTooltip
                     title={"ORCID Lookup Info"}
@@ -383,16 +438,16 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                     </Typography>
                     </Box>
                 )}
-                {searchMutation.status === 'error' && (
-                    <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
-                    <Typography variant="body2" className="text-red-500">
-                        Failed to fetch results for "{searchValue}". Please try again.
-                    </Typography>
+                {searchMutation.error && (
+                    <Box sx={{ padding: 2, maxWidth: '400px' }}>
+                        <Typography variant="body2" sx={{ color: '#f44336' }}>
+                        {searchMutation.error.message}
+                        </Typography>
                     </Box>
                 )}
                 <Box sx={{ maxHeight: "350px", overflow: "auto", width: '400px' }} display={dropBox ? 'block' : 'none'}>
                             {/* Results Display */}
-                    {results?.data && (
+                    {results?.data && Object.keys(results.data).length > 0 && (
                     <Box>
                         <Typography variant="h6" sx={{ m: 2, fontWeight: 600 }}>
                         Search Results
@@ -485,7 +540,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                                 '&:hover': { boxShadow: 2 }
                                 }}
                                 onClick={() => {
-                                    //setSearchValue(`https://orcid.org/${person.orcid}`);
+                                    setSelectedValue(`https://orcid.org/${person.orcid}`);
                                     setValue(fieldName, `https://orcid.org/${person.orcid}`, { shouldValidate: true, shouldDirty: true });
                                     setDropBox(false);
                                     setOrcidName(person);
