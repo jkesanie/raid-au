@@ -98,7 +98,7 @@ const searchAPI = async (url: string): Promise<unknown> => {
   return response;
 };
 
-export default function ORCIDLookup(path: { name: string }) {
+export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
   //const [searchValue, setSearchValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
@@ -109,8 +109,10 @@ export default function ORCIDLookup(path: { name: string }) {
     givenName?: string;
     lastName?: string;
   } | null>(null);
-  const { register, setValue, watch } = useFormContext();
-  const fieldName = path.name;
+  const { register, setValue, watch, formState } = useFormContext();
+  const { errors } = formState;
+  console.log('ORCID Lookup Errors:', contributorIndex, errors);
+  const fieldName = path?.name;
   const registration = register(fieldName);
   const searchValue = watch(fieldName) || '';
   // Typed shapes for results to allow safe access and narrowing
@@ -310,6 +312,7 @@ export default function ORCIDLookup(path: { name: string }) {
             return '#e0e0e0';
         }
     };
+  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? errors.contributor[contributorIndex]?.id?.message as string : '';
 
   return (
     <Box sx={{ p: 1 }}>
@@ -331,29 +334,32 @@ export default function ORCIDLookup(path: { name: string }) {
                 placeholder={currentConfig?.placeholder}
                 inputProps={{ 'aria-label': 'search orcid' }}
                 value={searchValue}
-                onChange={(e) => {e.preventDefault(); setValue(fieldName, e.target.value), clearSearchText(true), onChangeMode(e)}}
+                onChange={(e) => {e.preventDefault(); setValue(fieldName, e.target.value, { shouldValidate: true, shouldDirty: true }), clearSearchText(true), onChangeMode(e)}}
                 onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                         handleSearch(e);
                     }
                 }}
+                error={!!errors[fieldName]}
             />
-            {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, '')}} />}
+            {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, '', { shouldValidate: true, shouldDirty: true })}} />}
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
             <IconButton  onClick={(e) => handleSearch(e)}  color="primary" sx={{ p: '10px' }} aria-label="directions">
                 {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <ScanSearch />}
             </IconButton>
             </Paper>
+            <FormHelperText sx={{ fontSize: '0.875rem', color: 'error.main', mr: 1 }}>{helperTextError}</FormHelperText>
             <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
-            <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
-            <CustomStyledTooltip
-                title={"ORCID Lookup Info"}
-                content={searchConfig.tooltipContent}
-                variant="info"
-                placement="top"
-                tooltipIcon={<InfoOutlinedIcon />}
-            >
-            </CustomStyledTooltip>
+                
+                <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
+                <CustomStyledTooltip
+                    title={"ORCID Lookup Info"}
+                    content={searchConfig.tooltipContent}
+                    variant="info"
+                    placement="top"
+                    tooltipIcon={<InfoOutlinedIcon />}
+                >
+                </CustomStyledTooltip>
             </Box>
             <Popover
                 open={dropBox}

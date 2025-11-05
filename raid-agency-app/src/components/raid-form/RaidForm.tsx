@@ -237,7 +237,16 @@ export const RaidForm = memo(
                 />
               </Stack>
             </Stack>
-            <pre>{JSON.stringify(formState.errors, null, 2)}</pre>
+            <pre>{JSON.stringify(
+                Object.fromEntries(
+                  Object.entries(formState.errors).map(([key, value]) => [
+                    key,
+                    { message: value?.message, type: value?.type }
+                  ])
+                ),
+                null,
+                2
+            )}</pre>
           </form>
         </FormProvider>
       </MetadataContext.Provider>
