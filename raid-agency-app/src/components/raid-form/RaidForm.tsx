@@ -82,7 +82,6 @@ export const RaidForm = memo(
     });
 
     const { control, trigger, formState } = formMethods;
-    const isFormValid = Object.keys(formState.errors).length === 0;
 
     const handleSubmit = useCallback(
       (data: RaidDto) => {

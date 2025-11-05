@@ -36,7 +36,6 @@ export const RaidFormErrorMessage = (
     // If parsing fails, handle the error message as a plain string
     message.failures.push(error.message);
   }
-
   if (messageParsed) {
     message.title = messageParsed.title || messages.requestFailedTitle;
     if (messageParsed.failures && Array.isArray(messageParsed.failures)) {
