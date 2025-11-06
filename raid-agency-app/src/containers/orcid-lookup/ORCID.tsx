@@ -240,9 +240,6 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const handleSearch = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     setResults(null);
-    /* if (!searchValue.trim()) {
-      return;
-    } */
     const orcid = searchValue.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -362,7 +359,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             return '#e0e0e0';
         }
     };
-  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? errors.contributor[contributorIndex]?.id?.message as string : '';
+  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? "Invalid ORCID iD, enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
 
   return (
     <Box sx={{ p: 1 }}>
