@@ -20,8 +20,8 @@ export const transformErrorMessage = (errorData: Record<string, ErrorItem | Erro
       // This occurs when a single field has multiple validation errors
       value.forEach((error, index) => {
         // Extract error message with fallback chain: text.message -> {key}.message -> error.message -> default
-        const extractKey = Object.keys(error)[index] as keyof ErrorItem;
-        const nested = (error as Record<string, ErrorItem | undefined>)[extractKey as string];
+        const extractKey = Object.keys(error);
+        const nested = (error as Record<string, ErrorItem | undefined>)[extractKey as unknown as string];
         const message = error?.text?.message || nested?.message || (error as ErrorItem)?.message || messages.requestFailedContent;
         // Add formatted error message to failures array
         transformedError.failures.push(`${key} - ${message}`);

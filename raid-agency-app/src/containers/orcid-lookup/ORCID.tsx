@@ -65,7 +65,7 @@ import { object } from 'zod';
       } catch (e) {
         // Ignore cleanup errors
       }
-      reject(new Error('JSONP request failed: ' + url));
+      reject(new Error('ORCID Search request failed: ' + url));
     };
 
     const timeout = setTimeout(() => {
@@ -75,7 +75,7 @@ import { object } from 'zod';
       } catch (e) {
         // Ignore cleanup errors
       }
-      reject(new Error('JSONP request timeout'));
+      reject(new Error('ORCID Search request timeout'));
     }, 10000);
 
     const originalCallback = win[uniqueCallback];
@@ -107,7 +107,6 @@ const getErrorMessage = (responseCode: number): string => {
 const searchAPI = async (url: string): Promise<unknown> => {
   try {
     const response = await fetchJSONP(url);
-    console.log('JSONP response:', response);
     
     // Check if it's a string containing error info
     if (typeof response === 'string') {
@@ -138,7 +137,6 @@ const searchAPI = async (url: string): Promise<unknown> => {
 
 export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
-  const [selectedValue, setSelectedValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -147,7 +145,6 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     givenName?: string;
     lastName?: string;
   } | null>(null);
-  const [apiError, setApiError] = useState<string | null>(null);
   const { register, setValue, watch, formState } = useFormContext();
   const { errors } = formState;
   const fieldName = path?.name;
@@ -243,9 +240,9 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const handleSearch = async (e?: React.SyntheticEvent) => {
     e?.preventDefault();
     setResults(null);
-    if (!searchValue.trim()) {
+    /* if (!searchValue.trim()) {
       return;
-    }
+    } */
     const orcid = searchValue.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -263,12 +260,10 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
         console.error('Search error:', error);
     },
     onSuccess: (data) => {
-        console.log("Search success:", typeof data);
-    if (data && typeof data === 'object') {
+      if (data && typeof data === 'object') {
       const errorResponse = data as { 'response-code'?: number; 'developer-message'?: string };
       
       if (errorResponse['response-code'] && errorResponse['response-code'] >= 400) {
-        setApiError(getErrorMessage(errorResponse['response-code']));
         setResults(null);
         return;
       }
@@ -287,19 +282,17 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       }
     }
   });
-
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
-    console.log("onChangeMode value:", value, "orcid match:", orcid);
     if (orcid) {
       setSearchMode('lookup');
     } else {
       setSearchMode('search');
     }
   };
-  console.log("searchmode", searchMode);
+
   React.useMemo(() => {
     if (searchMutation.data) {
         const data = searchMutation.data as unknown as LookupResponse | SearchResponse;
@@ -346,6 +339,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                     });
                 } else {
                     setOrcidName(null);
+                    setResults({ type: 'search', data: [] });
                 }
             }
         } catch (err) {
@@ -425,16 +419,16 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                 sx={{ mt: 1, left:0, width: '400px' }}
                 >
                 {(results?.type === 'search' && results.data.length === 0) && (
-                    <Box sx={{ padding: 2, maxWidth:'400px'}}>
+                    <Box sx={{ padding: 2, maxWidth:'400px', textAlign: 'center' }}>
                     <Typography variant="body2" className="text-orange-500">
-                        No results found for "{searchValue}"
+                        No results found for {searchValue && `"${searchValue}"`}
                     </Typography>
                     </Box>
                 )}
                 {(results?.type === 'orcid' && [results.data].length === 0) && (
-                    <Box sx={{ padding: 2, maxWidth:'400px'}}>
+                    <Box sx={{ padding: 2, maxWidth:'400px', textAlign: 'center' }}>
                     <Typography variant="body2" className="text-orange-500">
-                        No results found for "{searchValue}"
+                        No results found for {searchValue && `"${searchValue}"`}
                     </Typography>
                     </Box>
                 )}
@@ -540,7 +534,6 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                                 '&:hover': { boxShadow: 2 }
                                 }}
                                 onClick={() => {
-                                    setSelectedValue(`https://orcid.org/${person.orcid}`);
                                     setValue(fieldName, `https://orcid.org/${person.orcid}`, { shouldValidate: true, shouldDirty: true });
                                     setDropBox(false);
                                     setOrcidName(person);
