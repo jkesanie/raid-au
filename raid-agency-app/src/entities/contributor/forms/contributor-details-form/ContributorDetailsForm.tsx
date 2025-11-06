@@ -12,7 +12,7 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
         <Box width="100%">
-        <ORCIDLookup name={`contributor.${index}.id`} />
+          <ORCIDLookup path={{ name: `contributor.${index}.id` }} contributorIndex={index} />
         </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
