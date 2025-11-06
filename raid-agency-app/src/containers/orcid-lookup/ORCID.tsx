@@ -359,7 +359,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             return '#e0e0e0';
         }
     };
-  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? "Invalid ORCID iD, enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
+  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
 
   return (
     <Box sx={{ p: 1 }}>
