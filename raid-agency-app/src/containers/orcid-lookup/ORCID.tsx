@@ -129,14 +129,7 @@ const searchAPI = async (url: string): Promise<unknown> => {
         }
       }
       throw new Error('An unknown error occurred while fetching ORCID data.');
-    } else {
-      // If the response is empty or null
-      if (!response || response == null) {
-        console.log('ORCID response is empty or null');
-        throw new Error('No data returned from ORCID API');
-      }
     }
-    
     return response;
   } catch (error) {
     console.error('JSONP error:', error);
@@ -150,7 +143,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const { setValue } = useFormContext();
+  const { setValue, formState: { errors } } = useFormContext();
   const [verifiedORCID, setVerifiedORCID] = useState<boolean | null>(false);
   const fieldName = path?.name;
   // Typed shapes for results to allow safe access and narrowing
@@ -379,7 +372,8 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     setVerifiedORCID(true);
     setDropBox(false);
   }
-
+  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? 
+  "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
   return (
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>
@@ -412,6 +406,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : verifiedORCID ? <CircleCheckBig color='green'/> : <ScanSearch />}
           </IconButton>
         </Paper>
+        {searchMode === 'lookup' && <FormHelperText sx={{ fontSize: '0.875rem', color: 'error.main', mr: 1 }}>{helperTextError}</FormHelperText>}
         <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
           <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
           <CustomStyledTooltip
@@ -448,7 +443,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
           {searchMutation.status === 'error' && (
               <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
                 <Typography variant="body2" className="text-red-500">
-                    Failed to fetch results. Please try again.
+                    {searchMutation.error?.message && `${searchMutation.error.message}`}
                 </Typography>
               </Box>
           )}
