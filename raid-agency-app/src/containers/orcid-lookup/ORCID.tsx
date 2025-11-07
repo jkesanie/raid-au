@@ -111,7 +111,7 @@ const searchAPI = async (url: string): Promise<unknown> => {
     if (typeof response === 'string') {
       // Check for error patterns in the string
       if (response.includes('404 Not Found')) {
-        throw new Error('ORCID iD not found. Please verify the ID format and try again.');
+        throw new Error('ORCID iD not found. Please verify the ID and try again.');
       }
       if (response.includes('500 Internal Server Error')) {
         throw new Error('ORCID service is temporarily unavailable. Please try again later.');
@@ -288,6 +288,18 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       setSearchMode('search');
     }
   };
+  type SearchResultItem = SearchResponse['orcid-search-results'][number];
+
+  const getCountryName = (data: LookupResponse | SearchResultItem) => {
+    const regionNamesInEnglish = new Intl.DisplayNames(["en"], { type: "region" });
+    // Both LookupResponse and a single SearchResponse item include a `.person` field,
+    // so check both shapes safely.
+    const countryCode =
+      (data as LookupResponse).person?.addresses?.address?.[0]?.country?.value ||
+      (data as SearchResultItem).person?.addresses?.address?.[0]?.country?.value;
+    const countryName = countryCode ? (regionNamesInEnglish.of(countryCode) || '') : '';
+    return countryName;
+  }
 
   React.useMemo(() => {
     if (searchMutation.data) {
@@ -303,7 +315,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
               creditName: lookup.person?.name?.['credit-name']?.value?.trim() || '',
               givenName: lookup.person?.name?.['given-names']?.value?.trim() || '',
               lastName: lookup.person?.name?.['family-name']?.value?.trim() || '',
-              country: lookup.person?.addresses?.address?.[0]?.country?.value || '',
+              country: getCountryName(lookup),
             }
           });
         } else {
@@ -314,15 +326,15 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             const given = item.person?.name?.['given-names']?.value || '';
             const family = item.person?.name?.['family-name']?.value || '';
             const credit = item.person?.name?.['credit-name']?.value || '';
-            const country = item.person?.addresses?.address?.[0]?.country?.value || '';
-                return {
-                    orcid: item.orcid,
-                    creditName: credit.trim() || '',
-                    givenName: given.trim() || '',
-                    lastName: family.trim() || '',
-                    country: country?.trim() || '',
-                    relevance: 95 - (index * 5) // Mock relevance based on position
-                };
+            const country = getCountryName(item);
+              return {
+                orcid: item.orcid,
+                creditName: credit.trim() || '',
+                givenName: given.trim() || '',
+                lastName: family.trim() || '',
+                country: country?.trim() || '',
+                relevance: 95 - (index * 5) // Mock relevance based on position
+              };
             });
             setResults({
               type: 'search',
