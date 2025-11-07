@@ -110,7 +110,6 @@ const getErrorMessage = (responseCode: number): string => {
 const searchAPI = async (url: string): Promise<unknown> => {
   try {
     const response = await fetchJSONP(url);
-    console.log("ORCID response", response);
     // Check if it's a string containing error info
     if (typeof response === 'string') {
       // Check for error patterns in the string
@@ -132,7 +131,7 @@ const searchAPI = async (url: string): Promise<unknown> => {
       throw new Error('An unknown error occurred while fetching ORCID data.');
     } else {
       // If the response is empty or null
-      if (response.length === 0 || response == null) {
+      if (!response || response == null) {
         console.log('ORCID response is empty or null');
         throw new Error('No data returned from ORCID API');
       }
@@ -151,12 +150,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [orcidName, setOrcidName] = useState<{
-    creditName?: string;
-    givenName?: string;
-    lastName?: string;
-  } | null>(null);
-  const { setValue, getValues } = useFormContext();
+  const { setValue } = useFormContext();
   const [verifiedORCID, setVerifiedORCID] = useState<boolean | null>(false);
   const fieldName = path?.name;
   // Typed shapes for results to allow safe access and narrowing
@@ -220,7 +214,6 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
 
   const [results, setResults] = useState<ResultsState | null>(null);
   const queryClient = useQueryClient();
-  console.log("getValues", getValues(fieldName));
   const searchConfig = {
     lookup: {
       placeholder: 'Enter ORCID ID (e.g., 0000-0002-1825-0097)',
@@ -292,8 +285,8 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
     setSearchValue(value);
-    setOrcidName({ creditName: value });
-    setVerifiedORCID(value === '' ? false : true);
+    setVerifiedORCID(value === '' && false);
+    setValue(fieldName, value);
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -354,7 +347,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
               data: mappedResults
             });
           } else {
-            setOrcidName(null);
+            setVerifiedORCID(false);
           }
         }
       } catch (err) {
@@ -377,6 +370,15 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
         return '#e0e0e0';
     }
   };
+
+  const selectOrcid = (item: OrcidData | SearchPerson) => {
+    const orcidUrl = `https://orcid.org/${item?.orcid}`;
+    const orcidName = item?.creditName ? item.creditName : `${item?.givenName || ''} ${item?.lastName || ''}`.trim();
+    setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
+    setSearchValue(orcidName);
+    setVerifiedORCID(true);
+    setDropBox(false);
+  }
 
   return (
     <Box sx={{ p: 1 }}>
@@ -446,7 +448,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
           {searchMutation.status === 'error' && (
               <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
                 <Typography variant="body2" className="text-red-500">
-                    Failed to fetch results for "{searchValue}". Please try again.
+                    Failed to fetch results. Please try again.
                 </Typography>
               </Box>
           )}
@@ -469,13 +471,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                     '&:hover': { boxShadow: 2 }
                     }}
                     onClick={() => {
-                        const orcidUrl = `https://orcid.org/${results?.data.orcid}`;
-                        const orcidName = results?.data.creditName ? results?.data.creditName : `${results?.data.givenName} ${results?.data.lastName}`;
-                        setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
-                        setDropBox(false);
-                        setOrcidName(results?.data);
-                        setSearchValue(orcidName);
-                        setVerifiedORCID(true);
+                      selectOrcid(results.data);
                     }}
                 >
                   <CardContent>
@@ -548,12 +544,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                           '&:hover': { boxShadow: 2 }
                           }}
                           onClick={() => {
-                              const orcidName = person.creditName ? person.creditName : `${person.givenName} ${person.lastName}`;
-                              setValue(fieldName, `https://orcid.org/${person.orcid}`, { shouldValidate: true, shouldDirty: true });
-                              setDropBox(false);
-                              setOrcidName(person);
-                              setSearchValue(orcidName);
-                              setVerifiedORCID(true);
+                            selectOrcid(person);
                           }}
                       >
                           <CardContent>
