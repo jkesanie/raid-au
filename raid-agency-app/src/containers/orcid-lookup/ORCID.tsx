@@ -18,7 +18,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { ScanSearch } from 'lucide-react';
+import { CircleCheckBig, ScanSearch, TicketCheck } from 'lucide-react';
 import { ClipLoader } from 'react-spinners';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -53,7 +53,11 @@ import { useFormContext } from 'react-hook-form';
           return;
         }
       }
-      
+      if(!data) {
+        reject(new Error('No data returned from ORCID API'));
+        return;
+      }
+
       resolve(data); // data should already be an object
     };
 
@@ -106,7 +110,7 @@ const getErrorMessage = (responseCode: number): string => {
 const searchAPI = async (url: string): Promise<unknown> => {
   try {
     const response = await fetchJSONP(url);
-    
+    console.log("ORCID response", response);
     // Check if it's a string containing error info
     if (typeof response === 'string') {
       // Check for error patterns in the string
@@ -125,6 +129,13 @@ const searchAPI = async (url: string): Promise<unknown> => {
           throw new Error(getErrorMessage(errorData['response-code']));
         }
       }
+      throw new Error('An unknown error occurred while fetching ORCID data.');
+    } else {
+      // If the response is empty or null
+      if (response.length === 0 || response == null) {
+        console.log('ORCID response is empty or null');
+        throw new Error('No data returned from ORCID API');
+      }
     }
     
     return response;
@@ -136,6 +147,7 @@ const searchAPI = async (url: string): Promise<unknown> => {
 
 export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
+  const [searchValue, setSearchValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -144,11 +156,9 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     givenName?: string;
     lastName?: string;
   } | null>(null);
-  const { register, setValue, watch, formState } = useFormContext();
-  const { errors } = formState;
+  const { setValue, getValues } = useFormContext();
+  const [verifiedORCID, setVerifiedORCID] = useState<boolean | null>(false);
   const fieldName = path?.name;
-  const registration = register(fieldName);
-  const searchValue = watch(fieldName) || '';
   // Typed shapes for results to allow safe access and narrowing
   type OrcidData = {
     orcid: string;
@@ -210,7 +220,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
 
   const [results, setResults] = useState<ResultsState | null>(null);
   const queryClient = useQueryClient();
-
+  console.log("getValues", getValues(fieldName));
   const searchConfig = {
     lookup: {
       placeholder: 'Enter ORCID ID (e.g., 0000-0002-1825-0097)',
@@ -281,6 +291,9 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
+    setSearchValue(value);
+    setOrcidName({ creditName: value });
+    setVerifiedORCID(value === '' ? false : true);
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -369,9 +382,9 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>
         <Box sx={{ mb: 1 }}>
-          <Typography variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+          {/* <Typography variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
               Full Name: {orcidName && (`${orcidName.creditName ? orcidName.creditName : orcidName.givenName + ' ' + orcidName.lastName}`)}
-          </Typography>
+          </Typography> */}
         </Box>
         <Paper
           sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '400px', border: 1, borderColor: getStatusColor() }}
@@ -379,23 +392,22 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
         >
           {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}{currentConfig.icon}
           <InputBase
-            {...registration}
-            name={`${path.name}`}
+            name={fieldName}
             sx={{ ml: 1, flex: 1 }}
             placeholder={currentConfig?.placeholder}
             inputProps={{ 'aria-label': 'search orcid' }}
             value={searchValue}
-            onChange={(e) => {e.preventDefault(); setValue(fieldName, e.target.value), clearSearchText(true), onChangeMode(e)}}
+            onChange={(e) => {e.preventDefault(), clearSearchText(true), onChangeMode(e)}}
             onKeyDown={(e) => {
             if (e.key === 'Enter') {
                     handleSearch(e);
                 }
             }}
           />
-          {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, '')}} />}
+          {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, ''), setSearchValue(''), setVerifiedORCID(false)}} />}
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           <IconButton  onClick={(e) => handleSearch(e)}  color="primary" sx={{ p: '10px' }} aria-label="directions">
-            {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : <ScanSearch />}
+            {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : verifiedORCID ? <CircleCheckBig color='green'/> : <ScanSearch />}
           </IconButton>
         </Paper>
         <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
@@ -458,9 +470,12 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                     }}
                     onClick={() => {
                         const orcidUrl = `https://orcid.org/${results?.data.orcid}`;
+                        const orcidName = results?.data.creditName ? results?.data.creditName : `${results?.data.givenName} ${results?.data.lastName}`;
                         setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
                         setDropBox(false);
                         setOrcidName(results?.data);
+                        setSearchValue(orcidName);
+                        setVerifiedORCID(true);
                     }}
                 >
                   <CardContent>
@@ -533,10 +548,12 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
                           '&:hover': { boxShadow: 2 }
                           }}
                           onClick={() => {
-                              //setSearchValue(`https://orcid.org/${person.orcid}`);
+                              const orcidName = person.creditName ? person.creditName : `${person.givenName} ${person.lastName}`;
                               setValue(fieldName, `https://orcid.org/${person.orcid}`, { shouldValidate: true, shouldDirty: true });
                               setDropBox(false);
                               setOrcidName(person);
+                              setSearchValue(orcidName);
+                              setVerifiedORCID(true);
                           }}
                       >
                           <CardContent>
