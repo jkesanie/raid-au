@@ -17,29 +17,19 @@
  * 
  * @returns The complete API endpoint URL without trailing slashes
  */
-export function getApiEndpoint() {
-  const hostname = window.location.hostname;
-  const baseDomain = "raid.org.au";
+export function getApiEndpoint(hostname = window.location.hostname): string {
+  // Special case for localhost
+  if (hostname === 'localhost') {
+    return 'http://localhost:8080';
+  }
 
-  // Determine environment based on hostname
-  const environment = hostname.includes("test")
-    ? "test"
-    : hostname.includes("demo")
-    ? "demo"
-    : hostname.includes("prod")
-    ? "prod"
-    : hostname.includes("stage")
-    ? "stage"
-    : "dev";
+  const parts = hostname.split('.');
 
-  // Build the API endpoint URL
-  return `${environment === "dev" ? "http" : "https"}://${
-    environment === "dev"
-      ? "localhost:8080"
-      : `api.${environment}.${baseDomain}`
-  }`.replace(/\/+$/, ""); // Remove any trailing slashes
+  // Replace the service (first part) with 'api'
+  parts[0] = 'api';
+
+  return `https://${parts.join('.')}`
 }
-
 /**
  * Determines the current environment based on the hostname
  * 
