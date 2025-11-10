@@ -209,14 +209,14 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const queryClient = useQueryClient();
   const searchConfig = {
     lookup: {
-      placeholder: 'Enter ORCID ID (e.g., 0000-0002-1825-0097)',
+      placeholder: 'Type to search',
       endpoint: `https://researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(searchValue)}/?api_key=public&callback=?`,
       label: 'ORCID ID',
       description: 'Search by unique ORCID identifier',
       icon: <FingerprintIcon />
     },
     search: {
-      placeholder: 'Enter contributor name (e.g., John Smith)',
+      placeholder: 'Type to search',
       endpoint: `https://researchdata.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`,
       label: 'Custom Search',
       description: 'Search by name or keywords',
@@ -238,7 +238,10 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     const orcid = searchValue.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
-      currentConfig.endpoint = `https://researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(orcid[0])}/?api_key=public&callback=?`;
+      const orcidParts = orcid[0].includes('-')
+        ? orcid[0]
+        : (orcid[0].match(/.{1,4}/g)?.join('-') || orcid[0]);
+      currentConfig.endpoint = `https://researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(orcidParts)}/?api_key=public&callback=?`;
     } else {
       setSearchMode('search');
     }
@@ -246,6 +249,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     searchMutation.mutate(currentConfig.endpoint);
     setDropBox(true);
   };
+
   const searchMutation = useMutation<unknown, Error, string>({
     mutationFn: searchAPI,
     onError: (error) => {
@@ -274,6 +278,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       }
     }
   });
+
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
@@ -377,11 +382,6 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   return (
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>
-        <Box sx={{ mb: 1 }}>
-          {/* <Typography variant="body1" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-              Full Name: {orcidName && (`${orcidName.creditName ? orcidName.creditName : orcidName.givenName + ' ' + orcidName.lastName}`)}
-          </Typography> */}
-        </Box>
         <Paper
           sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '400px', border: 1, borderColor: getStatusColor() }}
           className={getStatusColor()}
