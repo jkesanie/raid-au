@@ -1,5 +1,6 @@
 package au.org.raid.iam.provider.group;
 
+import au.org.raid.iam.provider.cors.Cors;
 import au.org.raid.iam.provider.group.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,17 +23,6 @@ import java.util.List;
 @Slf4j
 @Provider
 public class GroupController {
-    private static final List<String> ALLOWED_ORIGINS = List.of(
-            "http://localhost:7080",
-            "https://app.test.raid.org.au",
-            "https://app3.test.raid.org.au",
-            "https://app.demo.raid.org.au",
-            "https://app3.demo.raid.org.au",
-            "https://app.stage.raid.org.au",
-            "https://app3.stage.raid.org.au",
-            "https://app.prod.raid.org.au"
-    );
-
     private static final String OPERATOR_ROLE_NAME = "operator";
     private static final String GROUP_ADMIN_ROLE_NAME = "group-admin";
     private static final String SERVICE_POINT_USER_ROLE = "service-point-user";
@@ -40,56 +30,18 @@ public class GroupController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final KeycloakSession session;
+    private final Cors cors;
 
     public GroupController(final KeycloakSession session) {
         this.session = session;
         this.auth = new AppAuthManager.BearerTokenAuthenticator(session).authenticate();
-    }
-
-
-    @SneakyThrows
-    private Response buildCorsResponse(String method, Response.ResponseBuilder responseBuilder) {
-        String origin = session.getContext().getRequestHeaders().getHeaderString("Origin");
-
-        // Only set the Origin header if it's in our allowed list
-        if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
-            responseBuilder.header("Access-Control-Allow-Origin", origin);
-            responseBuilder.header("Access-Control-Allow-Credentials", "true");
-        }
-
-        responseBuilder.header("Access-Control-Allow-Methods", String.join(", ", method));
-        responseBuilder.header("Access-Control-Allow-Headers", "Authorization,Content-Type");
-        responseBuilder.header("Access-Control-Max-Age", "3600");
-
-        final var response = responseBuilder.build();
-        log.debug("Returning response {}", objectMapper.writeValueAsString(response));
-        return response;
-    }
-
-    @SneakyThrows
-    private Response buildOptionsResponse(String... methods) {
-        String origin = session.getContext().getRequestHeaders().getHeaderString("Origin");
-        Response.ResponseBuilder builder = Response.ok();
-
-        // Only set the Origin header if it's in our allowed list
-        if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
-            builder.header("Access-Control-Allow-Origin", origin);
-            builder.header("Access-Control-Allow-Credentials", "true");
-        }
-
-        builder.header("Access-Control-Allow-Methods", String.join(", ", methods));
-        builder.header("Access-Control-Allow-Headers", "Authorization,Content-Type");
-        builder.header("Access-Control-Max-Age", "3600");
-
-        final var response = builder.build();
-        log.debug("Returning response {}", objectMapper.writeValueAsString(response));
-        return response;
+        this.cors = new Cors(session, objectMapper);
     }
 
     @OPTIONS
     @Path("/all")
     public Response getGroupsPreflight() {
-        return buildOptionsResponse("GET", "PUT", "OPTIONS");
+        return cors.buildOptionsResponse("GET", "PUT", "OPTIONS");
     }
 
     @GET
@@ -121,14 +73,14 @@ public class GroupController {
         final var responseBody = new HashMap<String, Object>();
         responseBody.put("groups", groups);
 
-        return buildCorsResponse("GET",
+        return cors.buildCorsResponse("GET",
                 Response.ok().entity(objectMapper.writeValueAsString(responseBody)));
     }
 
     @OPTIONS
     @Path("")
     public Response preflight() {
-        return buildOptionsResponse("GET", "PUT", "OPTIONS");
+        return cors.buildOptionsResponse("GET", "PUT", "OPTIONS");
     }
 
     @GET
@@ -186,14 +138,14 @@ public class GroupController {
             .toList();
             
         responseBody.put("members", members);
-        return buildCorsResponse("GET",
+        return cors.buildCorsResponse("GET",
             Response.ok().entity(objectMapper.writeValueAsString(responseBody)));
     }
 
     @OPTIONS
     @Path("/grant")
     public Response grantPreflight() {
-        return buildOptionsResponse("PUT");
+        return cors.buildOptionsResponse("PUT");
     }
 
     @PUT
@@ -228,14 +180,14 @@ public class GroupController {
 
         groupUser.grantRole(servicePointUserRole);
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/revoke")
     public Response revokePreflight() {
-        return buildOptionsResponse("PUT");
+        return cors.buildOptionsResponse("PUT");
     }
 
     @PUT
@@ -270,14 +222,14 @@ public class GroupController {
 
         groupUser.deleteRoleMapping(servicePointUserRole);
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/group-admin")
     public Response grantGroupAdminPreflight() {
-        return buildOptionsResponse("PUT", "DELETE");
+        return cors.buildOptionsResponse("PUT", "DELETE");
     }
 
     @DELETE
@@ -312,7 +264,7 @@ public class GroupController {
 
         groupUser.deleteRoleMapping(groupAdminUserRole);
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
@@ -348,14 +300,14 @@ public class GroupController {
 
         groupUser.grantRole(groupAdminUserRole);
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/join")
     public Response joinPreflight() {
-        return buildOptionsResponse("PUT");
+        return cors.buildOptionsResponse("PUT");
     }
 
     @PUT
@@ -370,14 +322,14 @@ public class GroupController {
         final var user = auth.getSession().getUser();
         user.joinGroup(session.groups().getGroupById(session.getContext().getRealm(), request.getGroupId()));
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/leave")
     public Response leavePreflight() {
-        return buildOptionsResponse("PUT");
+        return cors.buildOptionsResponse("PUT");
     }
 
     @PUT
@@ -392,14 +344,14 @@ public class GroupController {
         final var user = session.users().getUserById(realm, request.getUserId());
         user.leaveGroup(session.groups().getGroupById(session.getContext().getRealm(), request.getGroupId()));
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/active-group")
     public Response setActiveGroupPreflight() {
-        return buildOptionsResponse("PUT", "DELETE");
+        return cors.buildOptionsResponse("PUT", "DELETE");
     }
 
     @PUT
@@ -413,7 +365,7 @@ public class GroupController {
         final var user = auth.getSession().getUser();
         user.setAttribute("activeGroupId", List.of(request.getActiveGroupId()));
 
-        return buildCorsResponse("PUT",
+        return cors.buildCorsResponse("PUT",
                 Response.ok().entity("{}"));
     }
 
@@ -429,14 +381,14 @@ public class GroupController {
         final var user = session.users().getUserById(realm, request.getUserId());
         user.removeAttribute("activeGroupId");
 
-        return buildCorsResponse("DELETE",
+        return cors.buildCorsResponse("DELETE",
                 Response.ok().entity("{}"));
     }
 
     @OPTIONS
     @Path("/user-groups")
     public Response userGroupsPreflight() {
-        return buildOptionsResponse("GET");
+        return cors.buildOptionsResponse("GET");
     }
 
     @GET
@@ -453,7 +405,7 @@ public class GroupController {
                 .map(g -> new GroupDetails(g.getId(), g.getName()))
                 .toList();
 
-        return buildCorsResponse("GET",
+        return cors.buildCorsResponse("GET",
                 Response.ok().entity(objectMapper.writeValueAsString(userGroups)));
     }
 
@@ -480,7 +432,7 @@ public class GroupController {
     @OPTIONS
     @Path("/create")
     public Response createGroupPreflight() {
-        return buildOptionsResponse("POST", "OPTIONS");
+        return cors.buildOptionsResponse("POST", "OPTIONS");
     }
     @POST
     @Path("/create")
@@ -561,7 +513,7 @@ public class GroupController {
                     "Group created successfully"
             );
 
-            return buildCorsResponse("POST",
+            return cors.buildCorsResponse("POST",
                     Response.status(Response.Status.CREATED)
                             .entity(objectMapper.writeValueAsString(response)));
 
