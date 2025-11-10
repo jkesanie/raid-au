@@ -1,5 +1,87 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
+
+# 2.5.16
+## App-client UI
+* RAiD App Error handling: Added a generic message to the popup to display for the user instead of an empty popup with an unknown error in case of unexpected errors (400, 500, etc.)
+* ROR Widget: Updated selected ROR display results on UI to show ror_display type instead of label type
+* Contributors Get request Uri: Added a default case to render an empty uri value in case the instance doesn't contain any environment-specific keywords (demo, test, prod, etc.)
+
+# 2.5.15
+## API
+* Check ORCIDs and ISNIs exist before sending to Datacite
+
+# 2.5.14
+## API
+* Add names to creators when sending data to Datacite
+
+# 2.5.13
+> Note: This release jumps directly from 2.5.11 to 2.5.13 due to a deployment issue. There is no version 2.5.12.
+## App-client UI
+* RAiD App Notification Service update: Users with "Operator" permission can now be able to see pending requests from all the service points.
+* View RAiD: RAiDs will no contributors can now see empty contributors block instead of "contributors not defined"
+
+# 2.5.11
+## API
+* Add temporary endpoints to uplift legacy RAiDs and RAiDs with GitHub vocabularies
+## App-client UI
+* RAiD App Notification: Added new UX/UI for Notification Service
+* Implemented notification service using React Context API for global state management, allowing any component to add or remove notifications without modifying core code
+* Fixed defect related to hamburger menu toggle and click-away functionality to properly hide the drawer when clicking outside or selecting menu items
+* Removed mandatory validation check for organisation field while minting a RAiD
+
+
+# 2.5.10
+## API
+* Add 'AUTHENTICATION_REVOKED' contributor status for when ORCID owners remove permission for RAiD to update their record.
+* Added POST endpoint for groupID creation
+* Added support to validate the unique repository_Id constraint.
+
+## ORCID Integration
+* Set contributor status to 'AUTHENTICATION_REVOKED' if an update to ORCID record return a 401 status
+
+## App-client UI
+* Service Point Management: Added new UX/UI for service point creation and update functionality
+* ROR Integration: Integrated Research Organization Registry (ROR) search widget
+* Form Organization with Validation: Grouped form fields into logical sections (Service Point Owner, Data Cite Repository, Settings)
+* Collapsible Interface: Added accordion component for form sections (default collapsed)
+* Status Indicators: Added status indicators(loading/loaded/error) and graceful error handling on error scenarios.
+* Defect Fix: Fixed the toggle buttons on both create and update service points forms.
+
+# 2.5.9
+## API
+* Add 'Acknowledgements' as description type
+
+## App-client UI
+* Added attributes to the AAF-SAML identity provider in Keycloak to extract firstName, lastName, and email for displaying human-readable names in the UI(Service-points)
+* Added 'Acknowledgements' as description type in the Web App.
+
+# 2.5.8
+## API
+* Update scheme/host of `identifier.id` to 'https://raid.org' in all RAiDs 
+
+## App-client UI
+* Added missing subject('Public Health')-(HELP-2337).
+* Contributors Management Fix - Resolved issue where users couldn't delete existing contributors and add new ones
+* Removed Invitation feature due to quality concerns. It will return at a later date.
+* Added Google Analytics tracking to the application.
+
+# 2.5.7
+## App-client UI
+* Enhanced ROR Lookup UX: Redesigned Research Organization Registry lookup interface
+* Uplifted search functionality with free text or RORID, visual status feedback (loading, success, error states)
+
+## ORCID Integration
+* Add dedicated authentication success page rather than redirecting to app.
+
+# 2.5.6
+## API
+* Fix NullPointerException when adding/removing contributors
+
+## App-client UI
+* Resolved schemaUri validation issues affecting Subject field.
+* Fixed validation handling for AccessType = Embargoed, ensuring correct schemaUri processing.
+
 # 2.5.5
 ## ORCID Integration
 * Bug fixes and refactoring

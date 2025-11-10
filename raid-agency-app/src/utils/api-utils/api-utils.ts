@@ -17,17 +17,19 @@
  * 
  * @returns The complete API endpoint URL without trailing slashes
  */
-export function getApiEndpoint() {
-  const hostname = window.location.hostname;
-
+export function getApiEndpoint(hostname = window.location.hostname): string {
+  // Special case for localhost
   if (hostname === 'localhost') {
     return 'http://localhost:8080';
   }
 
-  // For any production domain, use the same subdomain pattern
-  return `https://api.${hostname.replace('app.', '')}`;
-}
+  const parts = hostname.split('.');
 
+  // Replace the service (first part) with 'api'
+  parts[0] = 'api';
+
+  return `https://${parts.join('.')}`
+}
 /**
  * Determines the current environment based on the hostname
  * 
@@ -48,11 +50,13 @@ export function getEnv() {
     ? "test"
     : hostname.includes("demo")
     ? "demo"
-    : hostname.includes("prod")
-    ? "prod"
     : hostname.includes("stage")
     ? "stage"
-    : "dev";
+    : hostname.includes("dev") || hostname.includes("localhost")
+    ? "dev"
+    : hostname.includes("prod")
+    ? "prod"
+    : ""; // Default to empty if no other keyword found
 
   return environment;
 }

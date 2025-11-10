@@ -12,11 +12,17 @@ import { Link } from "react-router-dom";
 import { ServicePointSwitcher } from "../../containers/header/service-point-switcher";
 import { NavigationDrawer } from "../../containers/header/NavigationDrawer";
 import { UserDropdown } from "../../containers/header/UserDropdown";
+import { NotificationBell } from '../alert-notifications/Notifications';
+import { useServicePointPendingRequest } from "@/shared/service-point/service-point-pending-request";
+import { useAuthHelper } from "@/auth/keycloak";
 
 const AuthenticatedNavbarContent = () => {
+  const { isOperator, isGroupAdmin } = useAuthHelper();
+  useServicePointPendingRequest();
   return (
     <Stack direction="row" alignItems="center" gap={1}>
       <ServicePointSwitcher />
+      {isOperator || isGroupAdmin ? <NotificationBell /> : null}
       <UserDropdown />
       <Chip
         label={import.meta.env.VITE_RAIDO_ENV.toUpperCase()}

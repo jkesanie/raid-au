@@ -3,7 +3,7 @@ import { useAuthHelper } from "@/auth/keycloak";
 import {
   Add as AddIcon,
   ExitToApp as ExitToAppIcon,
-  GroupWork as GroupWorkIcon,
+  //GroupWork as GroupWorkIcon,
   Home as HomeIcon,
   Hub as HubIcon,
   Key as KeyIcon,
@@ -25,7 +25,7 @@ import {
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
-function CombinedMenu() {
+function CombinedMenu({ setDrawerOpen }: { setDrawerOpen: (open: boolean) => void }) {
   const { isOperator, isGroupAdmin } = useAuthHelper();
   const { logout } = useKeycloak();
 
@@ -61,12 +61,12 @@ function CombinedMenu() {
       icon: <KeyIcon />,
       isNavLink: true,
     },
-    {
+    /* {
       label: "Your received invites",
       link: "/invites",
       icon: <GroupWorkIcon />,
       isNavLink: false,
-    },
+    }, */
     {
       label: "Cache Manager",
       link: "/cache-manager",
@@ -102,6 +102,7 @@ function CombinedMenu() {
                 component={NavLink}
                 to={item.link || ""}
                 disabled={item.hidden}
+                onClick={() => setDrawerOpen(false)}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.label} />
@@ -111,6 +112,7 @@ function CombinedMenu() {
                 component={Link}
                 to={item.link || ""}
                 disabled={item.hidden}
+                onClick={() => setDrawerOpen(false)}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.label} />
@@ -124,11 +126,7 @@ function CombinedMenu() {
 }
 
 export function NavigationDrawer() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setDrawerOpen(newOpen);
-  };
+  const [drawerOpen, setDrawerOpen] = React.useState<boolean>(false as boolean);
 
   return (
     <>
@@ -136,14 +134,14 @@ export function NavigationDrawer() {
         size="large"
         edge="start"
         aria-label="toggle drawer"
-        onClick={toggleDrawer(true)}
+        onClick={() => setDrawerOpen(!drawerOpen)}
       >
         <MenuIcon />
       </IconButton>
       <Drawer
         anchor="right"
         open={drawerOpen}
-        onClose={toggleDrawer(false)}
+        onClose={() => setDrawerOpen(!drawerOpen)}
         sx={{
           flexShrink: 0,
           "& .MuiDrawer-paper": {
@@ -153,7 +151,9 @@ export function NavigationDrawer() {
         }}
       >
         <Toolbar />
-        <CombinedMenu />
+        <CombinedMenu
+          setDrawerOpen={setDrawerOpen}
+        />
       </Drawer>
     </>
   );

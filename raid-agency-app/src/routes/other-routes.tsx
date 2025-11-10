@@ -77,7 +77,7 @@ export const otherRoutes: RouteObject[] = [
       },
     ],
   },
-  {
+  /* {
     path: ROUTES.INVITES,
     // ProtectedRoute ensures that only authenticated users can access this page
     element: <ProtectedRoute />,
@@ -88,7 +88,7 @@ export const otherRoutes: RouteObject[] = [
         element: <Invites />,
       },
     ],
-  },
+  }, */
   {
     path: ROUTES.CACHE_MANAGER,
     // ProtectedRoute ensures that only authenticated users can access this page

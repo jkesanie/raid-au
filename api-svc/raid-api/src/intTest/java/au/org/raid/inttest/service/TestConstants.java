@@ -1,7 +1,8 @@
 package au.org.raid.inttest.service;
 
 public class TestConstants {
-    public static final String REAL_TEST_ORCID = "https://orcid.org/0009-0000-9306-3120";
+    public static final String REAL_TEST_ORCID = "https://orcid.org/0009-0002-5128-5184";
+    public static final String REAL_TEST_ISNI = "https://isni.org/isni/0000000078519858";
     public static final String REAL_TEST_ROR = "https://ror.org/038sjwq14";
 
     public static final String INPUT_RELATED_OBJECT_CATEGORY =
@@ -48,7 +49,8 @@ public class TestConstants {
     public static final String DESCRIPTION_TYPE_SCHEMA_URI =
             "https://vocabulary.raid.org/description.type.schema/320";
 
-    public static final String CONTRIBUTOR_IDENTIFIER_SCHEMA_URI = "https://orcid.org/";
+    public static final String ORCID_SCHEMA_URI = "https://orcid.org/";
+    public static final String ISNI_SCHEMA_URI = "https://isni.org/";
 
     public static final String CONTRIBUTOR_POSITION_SCHEMA_URI =
             "https://vocabulary.raid.org/contributor.position.schema/305";

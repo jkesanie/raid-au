@@ -19,6 +19,7 @@ import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.RaidCreateRequest;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import au.org.raid.idl.raidv2.model.RaidUpdateRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -58,6 +59,7 @@ public class RaidService {
     private final ContributorService contributorService;
     private final KeycloakService keycloakService;
     private final OrcidIntegrationService orcidIntegrationService;
+    private final ObjectMapper objectMapper;
 
     private final RaidRepository raidRepository;
 
@@ -121,8 +123,10 @@ public class RaidService {
 
         final var handle = new Handle(raid.getIdentifier().getId()).toString();
 
-        final var existing = raidHistoryService.findByHandleAndVersion(handle, version)
+        final var raidString = raidHistoryService.findByHandleAndVersion(handle, version)
                 .orElseThrow(() -> new ResourceNotFoundException(handle));
+
+        final var existing = objectMapper.readValue(raidString, RaidDto.class);
 
         final var existingChecksum = checksumService.fromRaidDto(existing);
         final var updateChecksum = checksumService.fromRaidUpdateRequest(raid);
@@ -132,7 +136,6 @@ public class RaidService {
         }
 
         contributorService.setStatus(raid.getContributor());
-        mergeContributors(existing.getContributor(), raid.getContributor());
 
         orcidIntegrationService.setContributorStatus(raid.getContributor());
 
@@ -252,18 +255,6 @@ public class RaidService {
         }
 
         return raids;
-    }
-
-    public void mergeContributors(final List<Contributor> existingContributors, final List<Contributor> newContributors) {
-        final var existingContributorMap = existingContributors.stream()
-                .collect(Collectors.toMap(Contributor::getUuid, contributor -> contributor));
-
-        newContributors.forEach(contributor -> {
-            final var existingContributor = existingContributorMap.get(contributor.getUuid());
-            if (existingContributor != null) {
-                contributor.setStatus(existingContributor.getStatus());
-            }
-        });
     }
 
     public void postToDatacite(@Valid RaidDto raid) {

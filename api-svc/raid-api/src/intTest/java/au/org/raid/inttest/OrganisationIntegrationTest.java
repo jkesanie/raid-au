@@ -231,8 +231,8 @@ public class OrganisationIntegrationTest extends AbstractIntegrationTest {
                 assertThat(failures).contains(
                         new ValidationFailure()
                                 .fieldId("organisation[0].id")
-                                .errorType("invalidValue")
-                                .message("uri not found")
+                                .errorType("notFound")
+                                .message("This ROR does not exist")
                 );
             } catch (Exception e) {
                 fail("Expected RaidApiValidationException");

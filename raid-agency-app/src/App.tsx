@@ -14,10 +14,12 @@ import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
 import { KeycloakProvider } from "./contexts/keycloak-context";
+import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
+import { NotificationProvider } from "./components/alert-notifications/notification-context/NotificationsProvider";
 
 export function App() {
+  useGoogleAnalytics();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
   const theme = useMemo(
     () =>
       createTheme({
@@ -66,24 +68,26 @@ export function App() {
   });
 
   return (
-    <KeycloakProvider>
-      <StrictMode>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <ErrorDialogProvider>
-            <MappingProvider>
-              <SnackbarProvider>
-                <QueryClientProvider client={queryClient}>
-                  <ReactErrorBoundary>
-                    <Box sx={{ pt: 3 }}></Box>
-                    <Outlet />
-                  </ReactErrorBoundary>
-                </QueryClientProvider>
-              </SnackbarProvider>
-            </MappingProvider>
-          </ErrorDialogProvider>
-        </ThemeProvider>
-      </StrictMode>
+      <KeycloakProvider>
+        <NotificationProvider>
+          <StrictMode>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <ErrorDialogProvider>
+                <MappingProvider>
+                  <SnackbarProvider>
+                    <QueryClientProvider client={queryClient}>
+                      <ReactErrorBoundary>
+                        <Box sx={{ pt: 3 }}></Box>
+                      <Outlet />
+                    </ReactErrorBoundary>
+                  </QueryClientProvider>
+                </SnackbarProvider>
+              </MappingProvider>
+            </ErrorDialogProvider>
+          </ThemeProvider>
+        </StrictMode>
+      </NotificationProvider>
     </KeycloakProvider>
   );
 }

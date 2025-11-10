@@ -481,7 +481,7 @@ class RaidControllerTest {
 
         when(raidService.findByHandle(String.join("/", PREFIX, SUFFIX))).thenReturn(Optional.of(raid));
         when(raidHistoryService.findByHandleAndVersion(String.join("/", PREFIX, SUFFIX), version))
-                .thenReturn(Optional.of(raid));
+                .thenReturn(Optional.of(objectMapper.writeValueAsString(raid)));
 
         final MvcResult mvcResult = mockMvc.perform(get(String.format("/raid/%s/%s", PREFIX, SUFFIX))
                         .queryParam("version", String.valueOf(version))

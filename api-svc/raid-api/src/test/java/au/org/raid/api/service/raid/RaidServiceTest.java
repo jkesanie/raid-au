@@ -205,7 +205,9 @@ class RaidServiceTest {
         final var updateRequest = objectMapper.readValue(raidJson, RaidUpdateRequest.class);
         final var expected = objectMapper.readValue(raidJson, RaidDto.class);
 
-        when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(expected));
+        when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(objectMapper.writeValueAsString(expected)));
+
+        when(mapper.readValue(anyString(), eq(RaidDto.class))).thenReturn(expected);
 
         when(checksumService.fromRaidUpdateRequest(updateRequest)).thenReturn("a");
         when(checksumService.fromRaidDto(expected)).thenReturn("b");
@@ -262,7 +264,9 @@ class RaidServiceTest {
         when(checksumService.fromRaidDto(expected)).thenReturn("1");
         when(checksumService.fromRaidUpdateRequest(updateRequest)).thenReturn("1");
 
-        when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(expected));
+        when(raidHistoryService.findByHandleAndVersion(handle, 1)).thenReturn(Optional.of(objectMapper.writeValueAsString(expected)));
+
+        when(mapper.readValue(anyString(), eq(RaidDto.class))).thenReturn(expected);
 
         try (MockedStatic<SecurityContextHolder> securityContextHolder = mockStatic(SecurityContextHolder.class)) {
             final var securityContext = mock(SecurityContext.class);

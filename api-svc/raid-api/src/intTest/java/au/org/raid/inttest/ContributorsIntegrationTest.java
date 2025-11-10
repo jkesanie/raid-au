@@ -38,15 +38,36 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("Contributor create tests")
     class ContributorCreateTests {
         @Test
-        @DisplayName("Email address should not be visible after create")
+        @DisplayName("Should create a RAiD with a valid contributor")
         void happyPath() {
             final var createResponse = raidApi.mintRaid(createRequest);
             final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
             final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
             final var raidDto = readResponse.getBody();
 
-            assertThat(raidDto.getContributor().get(0).getEmail(), is(nullValue()));
+            assertThat(raidDto.getContributor().get(0).getId(), is(REAL_TEST_ORCID));
         }
+
+        @Test
+        @DisplayName("Should create a RAiD with a contributor with an ISNI id")
+        void raidWithIsniContributor() {
+
+            createRequest.contributor(List.of(
+                    isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)));
+
+            try {
+                final var createResponse = raidApi.mintRaid(createRequest);
+                final var handle = new Handle(createResponse.getBody().getIdentifier().getId());
+                final var readResponse = raidApi.findRaidByName(handle.getPrefix(), handle.getSuffix());
+                final var raidDto = readResponse.getBody();
+
+                assertThat(raidDto.getContributor().get(0).getId(), is(REAL_TEST_ISNI));
+            } catch (RaidApiValidationException e) {
+                fail(e.getMessage());
+            }
+        }
+
+
 
         @Test
         @DisplayName("Minting a RAiD with no contributor fails")
@@ -93,7 +114,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void missingIdentifierSchemeUri() {
             createRequest.setContributor(List.of(
                     new Contributor()
-                            .id("https://orcid.org/0000-0000-0000-0001")
+                            .id(REAL_TEST_ORCID)
                             .contact(true)
                             .leader(true)
                             .position(List.of(
@@ -132,7 +153,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                             .schemaUri("")
                             .contact(true)
                             .leader(true)
-                            .id("https://orcid.org/0000-0000-0000-0001")
+                            .id(REAL_TEST_ORCID)
                             .position(List.of(
                                     new ContributorPosition()
                                             .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
@@ -166,7 +187,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void missingId() {
             createRequest.setContributor(List.of(
                     new Contributor()
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
                             .position(List.of(
@@ -203,7 +224,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             createRequest.setContributor(List.of(
                     new Contributor()
                             .id(REAL_TEST_ORCID)
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
                             .id("")
@@ -242,7 +263,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                     new Contributor()
                             .id(REAL_TEST_ORCID)
                             .email(CONTRIBUTOR_EMAIL)
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
                             .role(List.of(
@@ -273,7 +294,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             createRequest.setContributor(List.of(
                     new Contributor()
                             .id(REAL_TEST_ORCID)
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .contact(true)
                             .leader(true)
                             .email(CONTRIBUTOR_EMAIL)
@@ -306,7 +327,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             createRequest.setContributor(List.of(
                     new Contributor()
                             .id(REAL_TEST_ORCID)
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .email(CONTRIBUTOR_EMAIL)
                             .leader(true)
                             .position(List.of(
@@ -342,7 +363,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             createRequest.setContributor(List.of(
                     new Contributor()
                             .id(REAL_TEST_ORCID)
-                            .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                            .schemaUri(ORCID_SCHEMA_URI)
                             .email(CONTRIBUTOR_EMAIL)
                             .contact(true)
                             .position(List.of(
@@ -372,6 +393,120 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
             }
         }
 
+        @Test
+        @DisplayName("Minting a RAiD with duplicate contributors fails")
+        void duplicateContributors() {
+            createRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(ORCID_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(OTHER_PARTICIPANT_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            )),
+            new Contributor()
+                    .id(REAL_TEST_ORCID)
+                    .schemaUri(ORCID_SCHEMA_URI)
+                    .contact(true)
+                    .leader(true)
+                    .position(List.of(
+                            new ContributorPosition()
+                                    .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                    .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                    .id(OTHER_PARTICIPANT_POSITION)
+                    )).role(List.of(
+                            new ContributorRole()
+                                    .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                    .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                    ))
+            ));
+
+            try {
+                raidApi.mintRaid(createRequest);
+                fail("No exception thrown with duplicate contributors");
+            } catch (RaidApiValidationException e) {
+                final var failures = e.getFailures();
+                assertThat(failures, hasSize(1));
+                assertThat(failures, contains(
+                        new ValidationFailure()
+                                .fieldId("contributor[1].id")
+                                .errorType("duplicateValue")
+                                .message("an object with the same values appears in the list")
+                ));
+            }
+        }
+
+        @Test
+        @DisplayName("Removing a contributor passes")
+        void removeContributor() {
+            createRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(ORCID_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(PRINCIPAL_INVESTIGATOR_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            )),
+                    new Contributor()
+                            .id("https://orcid.org/0009-0005-9091-4416")
+                            .schemaUri(ORCID_SCHEMA_URI)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(OTHER_PARTICIPANT_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            ))
+            ));
+
+            final var response = raidApi.mintRaid(createRequest);
+
+            final var updateRequest = response.getBody();
+
+            updateRequest.setContributor(List.of(
+                    new Contributor()
+                            .id(REAL_TEST_ORCID)
+                            .schemaUri(ORCID_SCHEMA_URI)
+                            .contact(true)
+                            .leader(true)
+                            .position(List.of(
+                                    new ContributorPosition()
+                                            .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                                            .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
+                                            .id(PRINCIPAL_INVESTIGATOR_POSITION)
+                            )).role(List.of(
+                                    new ContributorRole()
+                                            .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
+                                            .id(SOFTWARE_CONTRIBUTOR_ROLE)
+                            ))
+            ));
+
+            try {
+                raidApi.mintRaid(createRequest);
+            } catch (Exception e) {
+                fail(e);
+            }
+        }
+
         @Nested
         @DisplayName("Position tests...")
         class ContributorPositionTests {
@@ -383,7 +518,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .email("https://orcid.org/0000-0000-0000-0001")
                                 .position(List.of(
                                         new ContributorPosition()
@@ -417,7 +552,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 createRequest.setContributor(List.of(
                         new Contributor()
                                 .id(REAL_TEST_ORCID)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
                                 .email(CONTRIBUTOR_EMAIL)
@@ -454,7 +589,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 createRequest.setContributor(List.of(
                         new Contributor()
                                 .id(REAL_TEST_ORCID)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
                                 .email(CONTRIBUTOR_EMAIL)
@@ -494,7 +629,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .email(CONTRIBUTOR_EMAIL)
                                 .position(List.of(
                                         new ContributorPosition()
@@ -532,7 +667,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .email(CONTRIBUTOR_EMAIL)
                                 .position(List.of(
                                         new ContributorPosition()
@@ -576,7 +711,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 createRequest.setContributor(List.of(
                         new Contributor()
                                 .id(REAL_TEST_ORCID)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
                                 .email(CONTRIBUTOR_EMAIL)
@@ -614,7 +749,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 createRequest.setContributor(List.of(
                         new Contributor()
                                 .id(REAL_TEST_ORCID)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .email(CONTRIBUTOR_EMAIL)
                                 .contact(true)
                                 .leader(true)
@@ -651,7 +786,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 createRequest.setContributor(List.of(
                         new Contributor()
                                 .id(REAL_TEST_ORCID)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .contact(true)
                                 .leader(true)
                                 .email(CONTRIBUTOR_EMAIL)
@@ -691,7 +826,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                 .id(REAL_TEST_ORCID)
                                 .contact(true)
                                 .leader(true)
-                                .schemaUri(CONTRIBUTOR_IDENTIFIER_SCHEMA_URI)
+                                .schemaUri(ORCID_SCHEMA_URI)
                                 .email(CONTRIBUTOR_EMAIL)
                                 .position(List.of(
                                         new ContributorPosition()
@@ -1294,7 +1429,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         new ValidationFailure()
                                 .fieldId("contributor[0].status")
                                 .errorType("invalidValue")
-                                .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED")
+                                .message("Contributor status should be one of AUTHENTICATED, UNAUTHENTICATED, AWAITING_AUTHENTICATION, AUTHENTICATION_FAILED, AUTHENTICATION_REVOKED")
                 ));
             }
         }

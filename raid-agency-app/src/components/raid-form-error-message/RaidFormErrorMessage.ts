@@ -1,3 +1,4 @@
+import { messages } from "@/constants/messages";
 import { Failure, ErrorMessage, ParsedErrorMessage } from "./";
 
 /**
@@ -35,9 +36,8 @@ export const RaidFormErrorMessage = (
     // If parsing fails, handle the error message as a plain string
     message.failures.push(error.message);
   }
-
   if (messageParsed) {
-    message.title = messageParsed.title || "Error";
+    message.title = messageParsed.title || messages.requestFailedTitle;
     if (messageParsed.failures && Array.isArray(messageParsed.failures)) {
       // Ensure failures is an array before processing
       if (messageParsed.failures.length > 0) {
@@ -46,11 +46,14 @@ export const RaidFormErrorMessage = (
           if (failure.fieldId && failure.message) {
             message.failures.push(`${failure.fieldId}: ${failure.message}`);
           } else {
-            message.failures.push('Invalid failure format');
+            message.failures.push(messages.requestFailedContent);
           }
         });
       }
     }
+  } else {
+    message.title = messages.requestFailedTitle;
+    message.failures = [messages.requestFailedContent];
   }
   openErrorDialog(message);
   return message;

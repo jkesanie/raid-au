@@ -6,6 +6,7 @@ import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import CustomizedInputBase from "@/containers/organisation-lookup/RORCustomComponent";
 
 function FieldGrid({
   index,
@@ -42,20 +43,17 @@ function FieldGrid({
     <Grid container spacing={2} className={isRowHighlighted ? "remove" : ""}>
       <Grid item xs={12} sm={12}>
         <Typography variant="subtitle2" gutterBottom>
-          Current value:{" "}
+          Name:{" "}
           {organisationNames?.size &&
             organisationNames?.get(getValues(`organisation.${index}.id`))
               ?.value || selectedValue?.name}
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
-          <TextInputField
+          <CustomizedInputBase
+            setSelectedValue={setSelectedValue}
             name={`organisation.${index}.id`}
-            label="ROR ID"
-            placeholder="ROR ID"
-            required={true}
-            width={6}
+            defaultValue={getValues(`organisation.${index}.id`)}
           />
-          <OrganisationLookupButton setOpen={setOpen} />
         </Stack>
       </Grid>
       <OrganisationLookupDialog

@@ -18,7 +18,7 @@ import { z } from "zod";
 
 // The ORCID regex pattern used in multiple places
 const orcidPattern =
-  "^https://(sandbox\\.)?orcid\\.org/\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$";
+  "^(?:https://(sandbox\\.)?orcid\\.org/)?\\d{4}-?\\d{4}-?\\d{4}-?\\d{3}[0-9X]$";
 const orcidErrorMsg =
   "Invalid ORCID ID, must be full url, e.g. https://orcid.org/0000-0000-0000-0000";
 
@@ -45,10 +45,8 @@ export const singleContributorValidationSchema = z.union([
     id: z
       .string()
       .trim()
-      .regex(
-        new RegExp("^https://orcid.org/\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$"),
-        { message: orcidErrorMsg }
-      ),
+      .regex(/^(?:https:\/\/orcid\.org\/)?\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/, { message: orcidErrorMsg })
+      .optional(),
   }),
   baseContributorSchema.extend({
     uuid: z.string(),

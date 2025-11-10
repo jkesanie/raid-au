@@ -1,9 +1,9 @@
 import { DisplayItem } from "@/components/display-item";
 import { CheckboxField } from "@/components/fields/CheckboxField";
-import { TextInputField } from "@/components/fields/TextInputField";
+import ORCIDLookup from "@/containers/orcid-lookup/ORCID";
 import { Contributor } from "@/generated/raid";
 import { IndeterminateCheckBox } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Stack, Tooltip, Typography, Box } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -11,17 +11,14 @@ function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
   return (
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
-        <TextInputField
-          name={`contributor.${index}.id`}
-          label="ORCID ID"
-          placeholder="Full ORCID ID, e.g. https://orcid.org/0000-0000-0000-0000"
-          width={12}
-        />
+        <Box width="100%">
+          <ORCIDLookup path={{ name: `contributor.${index}.id` }} contributorIndex={index} />
+        </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (
         <DisplayItem
           label="Contributor Status"
-          value={"status" in data[index] ? String((data[index] as any).status) : ""}
+          value={"status" in data[index] ? String((data[index] as Contributor).status) : ""}
           width={12}
         />
       )}
