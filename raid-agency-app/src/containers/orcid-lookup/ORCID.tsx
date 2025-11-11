@@ -301,8 +301,9 @@ export default function ORCIDLookup({
       setSearchMode('search');
     }
   };
+
   type SearchResultItem = SearchResponse['orcid-search-results'][number];
-  
+
   const getCountryName = (data: LookupResponse | SearchResultItem) => {
     const regionNamesInEnglish = new Intl.DisplayNames(["en"], { type: "region" });
     // Both LookupResponse and a single SearchResponse item include a `.person` field,
@@ -387,7 +388,8 @@ export default function ORCIDLookup({
     setDropBox(false);
     setOrcidDetails(item)
   }
-  const helperTextError = Array.isArray(formMethods?.formState?.errors?.contributor) && formMethods?.formState?.errors?.[`${path.name}`]?.message ? 
+  const _errors = formMethods?.formState?.errors as Record<string, any> | undefined;
+  const helperTextError = Array.isArray(_errors?.contributor) && _errors?.[path.name]?.message ?
   "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
   return (
     <Box sx={{ p: 1 }}>
