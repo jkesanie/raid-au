@@ -21,6 +21,7 @@ const orcidPattern =
   "^(?:https://(sandbox\\.)?orcid\\.org/)?\\d{4}-?\\d{4}-?\\d{4}-?\\d{3}[0-9X]$";
 const orcidErrorMsg =
   "Invalid ORCID ID, must be full url, e.g. https://orcid.org/0000-0000-0000-0000";
+const orcidEmptyMsg = "must be a validated ORCID with a green check mark"
 
 // Base schema for contributors
 const baseContributorSchema = z.object({
@@ -29,6 +30,7 @@ const baseContributorSchema = z.object({
   id: z
     .string()
     .trim()
+    .min(1, {message: orcidEmptyMsg})
     .regex(new RegExp(orcidPattern), { message: orcidErrorMsg })
     .optional(),
   leader: z.boolean(),
@@ -45,8 +47,9 @@ export const singleContributorValidationSchema = z.union([
     id: z
       .string()
       .trim()
+      .min(1, { message: orcidEmptyMsg })
       .regex(/^(?:https:\/\/orcid\.org\/)?\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/, { message: orcidErrorMsg })
-      .optional(),
+      .optional()
   }),
   baseContributorSchema.extend({
     uuid: z.string(),
