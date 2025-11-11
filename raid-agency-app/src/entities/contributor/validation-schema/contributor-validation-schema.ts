@@ -27,12 +27,7 @@ const orcidEmptyMsg = "must be a validated ORCID with a green check mark"
 const baseContributorSchema = z.object({
   contact: z.boolean(),
   email: z.string().optional(),
-  id: z
-    .string()
-    .trim()
-    .min(1, {message: orcidEmptyMsg})
-    .regex(new RegExp(orcidPattern), { message: orcidErrorMsg })
-    .optional(),
+   id: z.string().optional(),
   leader: z.boolean(),
   position: contributorPositionValidationSchema,
   role: contributorRoleValidationSchema,
@@ -62,4 +57,25 @@ export const singleContributorValidationSchema = z.union([
 // Array of contributors with at least one element
 export const contributorValidationSchema = z
   .array(singleContributorValidationSchema)
-  .min(1);
+  .min(1)
+  .superRefine((contributors, ctx) => {
+    contributors.forEach((contributor, index) => {
+      // Check if ORCID field exists and is empty
+      if ('id' in contributor && contributor.id !== undefined) {
+        const trimmedId = contributor.id.trim();
+        if (trimmedId === '') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `#${index + 1}: ${orcidEmptyMsg}`,
+            path: [index, 'id'],
+          });
+        } else if (!new RegExp(orcidPattern).test(trimmedId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `#${index + 1}: ${orcidErrorMsg}`,
+            path: [index, 'id'],
+          });
+        }
+      }
+    });
+  });
