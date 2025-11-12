@@ -9,13 +9,13 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 function FieldGrid({ index, data }: { index: number; data: Contributor[] }) {
-  const [orcidDetails, setOrcidDetails] = React.useState<any>();
+  const [orcidDetails, setOrcidDetails] = React.useState<unknown>();
   const formMethods = useFormContext();
   return (
     <Grid container spacing={2}>
       {(!data || !data[index] || !Object.hasOwn(data[index], "status")) && (
         <Box width="100%">
-          <ORCIDLookup path={{ name: `contributor.${index}.id` }} setOrcidDetails={setOrcidDetails} formMethods={formMethods} index={index}/>
+          <ORCIDLookup path={{ name: `contributor.${index}.id` }} setOrcidDetails={setOrcidDetails} formMethods={formMethods}/>
         </Box>
       )}
       {data[index] && Object.hasOwn(data[index], "status") && (

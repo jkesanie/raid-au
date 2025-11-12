@@ -389,7 +389,7 @@ export default function ORCIDLookup({
     setOrcidDetails(item)
   }
   const _errors = formMethods?.formState?.errors as Record<string, unknown> | undefined;
-  const helperTextError = Array.isArray(_errors?.contributor) && _errors?.[path.name]?.message ?
+  const helperTextError = Array.isArray((_errors as Record<string, any>)?.contributor) && !!((_errors as Record<string, any>)[path.name]?.message) ?
   "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
   return (
     <Box sx={{ p: 1 }}>
