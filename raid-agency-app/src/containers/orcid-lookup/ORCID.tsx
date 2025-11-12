@@ -388,7 +388,7 @@ export default function ORCIDLookup({
     setDropBox(false);
     setOrcidDetails(item)
   }
-  const _errors = formMethods?.formState?.errors as Record<string, any> | undefined;
+  const _errors = formMethods?.formState?.errors as Record<string, unknown> | undefined;
   const helperTextError = Array.isArray(_errors?.contributor) && _errors?.[path.name]?.message ?
   "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
   return (
