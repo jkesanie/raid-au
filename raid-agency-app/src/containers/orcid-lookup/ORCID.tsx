@@ -18,13 +18,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { CircleCheckBig, ScanSearch, TicketCheck } from 'lucide-react';
+import { CircleCheckBig, ScanSearch } from 'lucide-react';
 import { ClipLoader } from 'react-spinners';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import PulseLoader from "react-spinners/PulseLoader";
 import { CustomStyledTooltip } from '@/components/tooltips/StyledTooltip';
-import { useFormContext } from 'react-hook-form';
 
   // JSONP helper function
   const fetchJSONP = (url: string) => {
@@ -137,13 +136,23 @@ const searchAPI = async (url: string): Promise<unknown> => {
   }
 };
 
-export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
+export default function ORCIDLookup({
+    path,
+    setOrcidDetails,
+    formMethods,
+  }:{
+    path: { name: string };
+    setOrcidDetails: React.Dispatch<React.SetStateAction<unknown>>;
+    formMethods?: Partial<{
+      setValue: (name: string, value: unknown, options?: { shouldValidate?: boolean; shouldDirty?: boolean }) => void;
+      formState?: { errors?: Record<string, unknown> };
+    }>;
+  }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
   const [searchValue, setSearchValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const { setValue, formState: { errors } } = useFormContext();
   const [verifiedORCID, setVerifiedORCID] = useState<boolean | null>(false);
   const fieldName = path?.name;
   // Typed shapes for results to allow safe access and narrowing
@@ -284,7 +293,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
     const value = (event.target as HTMLInputElement).value || '';
     setSearchValue(value);
     setVerifiedORCID(value === '' && false);
-    setValue(fieldName, value);
+    formMethods?.setValue?.(fieldName, value);
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -292,6 +301,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       setSearchMode('search');
     }
   };
+
   type SearchResultItem = SearchResponse['orcid-search-results'][number];
 
   const getCountryName = (data: LookupResponse | SearchResultItem) => {
@@ -372,12 +382,14 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
   const selectOrcid = (item: OrcidData | SearchPerson) => {
     const orcidUrl = `https://orcid.org/${item?.orcid}`;
     const orcidName = item?.creditName ? item.creditName : `${item?.givenName || ''} ${item?.lastName || ''}`.trim();
-    setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
+    formMethods?.setValue?.(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
     setSearchValue(orcidName);
     setVerifiedORCID(true);
     setDropBox(false);
+    setOrcidDetails(item)
   }
-  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? 
+  const _errors = formMethods?.formState?.errors as Record<string, unknown> | undefined;
+  const helperTextError = Array.isArray((_errors as Record<string, any>)?.contributor) && !!((_errors as Record<string, any>)[path.name]?.message) ?
   "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
   return (
     <Box sx={{ p: 1 }}>
@@ -393,14 +405,14 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
             placeholder={currentConfig?.placeholder}
             inputProps={{ 'aria-label': 'search orcid' }}
             value={searchValue}
-            onChange={(e) => {e.preventDefault(), clearSearchText(true), onChangeMode(e)}}
+            onChange={(e) => { e.preventDefault(); clearSearchText(true); onChangeMode(e); }}
             onKeyDown={(e) => {
             if (e.key === 'Enter') {
                     handleSearch(e);
                 }
             }}
           />
-          {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, ''), setSearchValue(''), setVerifiedORCID(false)}} />}
+          {searchText && <CloseRoundedIcon onClick={() => { clearSearchText(false); formMethods?.setValue?.(fieldName, ''); setSearchValue(''); setVerifiedORCID(false); }} />}
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           <IconButton  onClick={(e) => handleSearch(e)}  color="primary" sx={{ p: '10px' }} aria-label="directions">
             {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : verifiedORCID ? <CircleCheckBig color='green'/> : <ScanSearch />}
