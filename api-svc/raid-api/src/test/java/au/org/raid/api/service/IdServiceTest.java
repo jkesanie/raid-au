@@ -37,7 +37,7 @@ class IdServiceTest {
 
         final var namePrefix = "name-prefix";
         final var registrationAgencyIdentifier = "registration-agency-identifier";
-        final var handleUrlPrefix = "handle-url-prefix";
+        final var landingPrefix = "landing-prefix";
 
         final var registrationAgencySchemaUri = "registration-agency-schema-uri";
         final var ownerUri = "owner-uri";
@@ -50,7 +50,7 @@ class IdServiceTest {
 
         when(identifierProperties.getNamePrefix()).thenReturn(namePrefix);
         when(identifierProperties.getRegistrationAgencyIdentifier()).thenReturn(registrationAgencyIdentifier);
-        when(identifierProperties.getHandleUrlPrefix()).thenReturn(handleUrlPrefix);
+        when(identifierProperties.getLandingPrefix()).thenReturn(landingPrefix);
 
         final var raidRecord = new RaidRecord()
                 .setRegistrationAgencyOrganisationId(registrationAgencyOrganisationId)
@@ -78,6 +78,6 @@ class IdServiceTest {
         assertThat(result.getOwner(), is(expectedOwner));
         assertThat(result.getLicense(), is(license));
         assertThat(result.getVersion(), is(version));
-        assertThat(result.getRaidAgencyUrl(), is(handleUrlPrefix + handle));
+        assertThat(result.getRaidAgencyUrl(), is(landingPrefix + handle));
     }
 }
