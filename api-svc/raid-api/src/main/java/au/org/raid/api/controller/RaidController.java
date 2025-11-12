@@ -176,6 +176,11 @@ public class RaidController implements RaidApi {
         return ResponseEntity.ok(raidService.findAllPublic());
     }
 
+    @GetMapping(value="/raid/non-legacy")
+    public ResponseEntity<List<RaidDto>> findAllNonLegacy() {
+        return ResponseEntity.ok(raidService.findAllPublic());
+    }
+
     private long getServicePointId() {
 
         final var token = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken();

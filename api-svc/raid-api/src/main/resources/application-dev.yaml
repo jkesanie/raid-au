@@ -1,4 +1,5 @@
 raid:
+  environment: dev
   isni-client:
     url-format: http://localhost:1080/sru/?query=pica.isn+%3D+%22__ISNI__%22&operation=searchRetrieve&recordSchema=isni-b
   orcid-client:
@@ -7,8 +8,6 @@ raid:
   ror-client:
     client-id: 08VB3D1YYHC63CQ8QHP0TBD0I6RULCHQ
     base-url: http://localhost:1080/v2/
-  identifier:
-    name-prefix: http://localhost:8080/
   db:
     user: postgres
     password: supersecret
@@ -22,8 +21,6 @@ raid:
     client-id: raid-permissions-admin
     client-secret: 07ATOSG9hYs8oATcz5wcQAdRuoEsLzEY
 spring:
-  flyway:
-    locations: classpath:db/env/api_user,classpath:db/migration,classpath:db/env/dev
   security:
     oauth2:
       client:

@@ -176,6 +176,15 @@ public class RaidRepository {
                 .fetchInto(RaidRecord.class);
     }
 
+    public List<RaidRecord> findAllNonLegacyRaids() {
+        return dslContext.select()
+                .distinctOn(RAID.HANDLE)
+                .from(RAID)
+                .join(RAID_HISTORY).on(RAID_HISTORY.HANDLE.eq(RAID.HANDLE))
+                .where(RAID.HANDLE.startsWith("10."))
+                .fetchInto(RaidRecord.class);
+    }
+
     public int deleteByHandle(final String handle) {
         return dslContext.delete(RAID).where(RAID.HANDLE.eq(handle)).execute();
     }

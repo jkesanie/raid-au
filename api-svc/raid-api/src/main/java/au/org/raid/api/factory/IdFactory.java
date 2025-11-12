@@ -29,7 +29,7 @@ public class IdFactory {
                         .schemaUri(SchemaValues.ROR_SCHEMA_URI.getUri())
                         .servicePoint(servicePointRecord.getId())
                 )
-                .raidAgencyUrl(String.format("%s%s", identifierProperties.getHandleUrlPrefix(), handle))
+                .raidAgencyUrl(String.format("%s%s", identifierProperties.getLandingPrefix(), handle))
                 .license(identifierProperties.getLicense())
                 .version(1);
     }

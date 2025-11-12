@@ -257,6 +257,19 @@ public class RaidService {
         return raids;
     }
 
+    public List<RaidDto> findAllNonLegacy() {
+        final var raidRecords = raidRepository.findAllNonLegacyRaids();
+        final var raids = new ArrayList<RaidDto>();
+
+        for (final var record : raidRecords) {
+            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+            raids.add(raidDto);
+        }
+
+        return raids;
+    }
+
     public void postToDatacite(@Valid RaidDto raid) {
         final var handle = new Handle(raid.getIdentifier().getId());
 
