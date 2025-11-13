@@ -175,7 +175,7 @@ export function CacheManager() {
   });
 
   const { data: contributorNames } = useCache({
-    key: "contributorNames",
+    key: "orcidCache",
   });
 
   const handleDelete = ({
@@ -238,7 +238,7 @@ export function CacheManager() {
               <CachedItemsList
                 cachedMap={contributorNames}
                 handleDelete={handleDelete}
-                storageKey="contributorNames"
+                storageKey="orcid_lookup_cache"
               />
             )) || <Typography>No ORCID names in cache</Typography>}
           </CardContent>
