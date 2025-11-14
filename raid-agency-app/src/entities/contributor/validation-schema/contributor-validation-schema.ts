@@ -18,10 +18,10 @@ import { z } from "zod";
 
 // The ORCID regex pattern used in multiple places
 const orcidPattern =
-  "^(?:https://(sandbox\\.)?orcid\\.org/)?\\d{4}-?\\d{4}-?\\d{4}-?\\d{3}[0-9X]$";
+  "^(?:https://(sandbox\\.)?orcid\\.org/)\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]$";
 const orcidErrorMsg =
   "Invalid ORCID ID, must be full url, e.g. https://orcid.org/0000-0000-0000-0000";
-const orcidEmptyMsg = "must be a validated ORCID with a green check mark"
+//const orcidEmptyMsg = "must be a validated ORCID with a green check mark"
 
 // Base schema for contributors
 const baseContributorSchema = z.object({
@@ -42,8 +42,8 @@ export const singleContributorValidationSchema = z.union([
     id: z
       .string()
       .trim()
-      .min(1, { message: orcidEmptyMsg })
-      .regex(/^(?:https:\/\/orcid\.org\/)?\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/, { message: orcidErrorMsg })
+      //.min(1, { message: orcidEmptyMsg })
+      .regex(/^(?:https:\/\/orcid\.org\/)\d{4}-\d{4}-\d{4}-\d{3}[0-9X]$/, { message: orcidErrorMsg })
       .optional()
   }),
   baseContributorSchema.extend({
@@ -63,16 +63,16 @@ export const contributorValidationSchema = z
       // Check if ORCID field exists and is empty
       if ('id' in contributor && contributor.id !== undefined) {
         const trimmedId = contributor.id.trim();
-        if (trimmedId === '') {
+        /* if (trimmedId === '') {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `#${index + 1}: ${orcidEmptyMsg}`,
             path: [index, 'id'],
           });
-        } else if (!new RegExp(orcidPattern).test(trimmedId)) {
+        } else */ if (!new RegExp(orcidPattern).test(trimmedId)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: `#${index + 1}: ${orcidErrorMsg}`,
+            message: `${orcidErrorMsg}`,
             path: [index, 'id'],
           });
         }
