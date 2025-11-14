@@ -1,6 +1,11 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.18
+> Note: This release jumps directly from 2.5.11 to 2.5.13 due to a deployment issue. There is no version 2.5.12.
+## API
+* Migration to fix raidAgencyUrl field
+
 # 2.5.16
 ## App-client UI
 * RAiD App Error handling: Added a generic message to the popup to display for the user instead of an empty popup with an unknown error in case of unexpected errors (400, 500, etc.)
