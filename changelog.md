@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.19
+## API
+* Fix security config for non-legacy endpoint
+
 # 2.5.18
 > Note: This release jumps directly from 2.5.16 to 2.5.18 due to a deployment issue. There is no version 2.5.17.
 ## API
