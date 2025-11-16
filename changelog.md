@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.20
+## API
+* Bug fix in non-legacy endpoint
+
 # 2.5.19
 ## API
 * Add migration to remove null values from history
