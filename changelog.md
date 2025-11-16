@@ -4,6 +4,7 @@ See the [Changelog audience](#changelog-audience) section for info about
 # 2.5.19
 ## API
 * Add migration to remove null values from history
+* Fix security config for non-legacy endpoint
 
 # 2.5.18
 > Note: This release jumps directly from 2.5.16 to 2.5.18 due to a deployment issue. There is no version 2.5.17.
