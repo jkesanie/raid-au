@@ -178,7 +178,7 @@ public class RaidController implements RaidApi {
 
     @GetMapping(value="/raid/non-legacy")
     public ResponseEntity<List<RaidDto>> findAllNonLegacy() {
-        return ResponseEntity.ok(raidService.findAllPublic());
+        return ResponseEntity.ok(raidService.findAllNonLegacy());
     }
 
     private long getServicePointId() {
