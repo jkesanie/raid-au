@@ -18,16 +18,121 @@ import PersonIcon from '@mui/icons-material/Person';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { CircleCheckBig, ScanSearch, TicketCheck } from 'lucide-react';
+import { CircleCheckBig, ScanSearch } from 'lucide-react';
 import { ClipLoader } from 'react-spinners';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import PulseLoader from "react-spinners/PulseLoader";
 import { CustomStyledTooltip } from '@/components/tooltips/StyledTooltip';
-import { useFormContext } from 'react-hook-form';
 
-  // JSONP helper function
-  const fetchJSONP = (url: string) => {
+// localStorage keys
+const ORCID_CACHE_KEY = 'orcidCache';
+const CACHE_EXPIRY_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+// localStorage utility functions for ORCID lookups only
+type OrcidCacheEntry = {
+  data: unknown;
+  value: string;
+  cachedAt: number;
+  timestamp: number;
+  expiresAt: number;
+  source: string;
+};
+
+const orcidLookupCache = {
+  // Get data from localStorage
+  get: <T,>(orcidId: string): T | null => {
+    try {
+      const cacheData = localStorage.getItem(ORCID_CACHE_KEY);
+      if (!cacheData) return null;
+
+      // Parse as Map structure (typed)
+      const cache = new Map<string, OrcidCacheEntry>(JSON.parse(cacheData) as [string, OrcidCacheEntry][]);
+      const normalizedId = normalizeOrcidId(orcidId);
+      const entry = cache.get(normalizedId);
+
+      if (!entry) return null;
+
+      // Check if cache has expired
+      if (Date.now() > entry.expiresAt) {
+        // Remove expired entry
+        cache.delete(normalizedId);
+        localStorage.setItem(ORCID_CACHE_KEY, JSON.stringify(Array.from(cache)));
+        return null;
+      }
+
+      return entry.data as T;
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      return null;
+    }
+  },
+
+  // Set data in localStorage
+  set: <T,>(orcidId: string, data: T, displayName: string): void => {
+    try {
+      const cacheData = localStorage.getItem(ORCID_CACHE_KEY);
+      const cache = cacheData
+        ? new Map<string, OrcidCacheEntry>(JSON.parse(cacheData) as [string, OrcidCacheEntry][])
+        : new Map<string, OrcidCacheEntry>();
+      const normalizedId = normalizeOrcidId(orcidId);
+
+      cache.set(normalizedId, {
+        data,
+        value: displayName, // Add display name for cache manager
+        cachedAt: Date.now(),
+        timestamp: Date.now(),
+        expiresAt: Date.now() + CACHE_EXPIRY_MS,
+        source: 'ORCID Lookup',
+      });
+
+      localStorage.setItem(ORCID_CACHE_KEY, JSON.stringify(Array.from(cache)));
+    } catch (error) {
+      console.error('Error writing to localStorage:', error);
+    }
+  },
+
+  // Clear expired entries
+  cleanup: (): void => {
+    try {
+      const cacheData = localStorage.getItem(ORCID_CACHE_KEY);
+      if (!cacheData) return;
+
+      const cache = new Map<string, OrcidCacheEntry>(JSON.parse(cacheData) as [string, OrcidCacheEntry][]);
+      const now = Date.now();
+      let hasChanges = false;
+
+      cache.forEach((entry, orcidId) => {
+        if (entry.expiresAt < now) {
+          cache.delete(orcidId);
+          hasChanges = true;
+        }
+      });
+
+      if (hasChanges) {
+        localStorage.setItem(ORCID_CACHE_KEY, JSON.stringify(Array.from(cache)));
+      }
+    } catch (error) {
+      console.error('Error cleaning up localStorage:', error);
+    }
+  },
+  // Clear all cache
+  clear: (): void => {
+    try {
+      localStorage.removeItem(ORCID_CACHE_KEY);
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+    }
+  }
+};
+
+// Helper to normalize ORCID ID
+const normalizeOrcidId = (orcid: string): string => {
+  return orcid.trim().replace('https://orcid.org/', '').replace('http://orcid.org/', '');
+};
+
+// JSONP helper function
+const fetchJSONP = (url: string) => {
   return new Promise((resolve, reject) => {
     const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     const script = document.createElement('script');
@@ -58,7 +163,7 @@ import { useFormContext } from 'react-hook-form';
         return;
       }
 
-      resolve(data); // data should already be an object
+      resolve(data);
     };
 
     script.onerror = () => {
@@ -94,6 +199,7 @@ import { useFormContext } from 'react-hook-form';
     document.body.appendChild(script);
   });
 };
+
 const getErrorMessage = (responseCode: number): string => {
   switch (responseCode) {
     case 404:
@@ -107,12 +213,11 @@ const getErrorMessage = (responseCode: number): string => {
       return 'An error occurred while fetching ORCID data. Please try again.';
   }
 };
+
 const searchAPI = async (url: string): Promise<unknown> => {
   try {
     const response = await fetchJSONP(url);
-    // Check if it's a string containing error info
     if (typeof response === 'string') {
-      // Check for error patterns in the string
       if (response.includes('404 Not Found')) {
         throw new Error('ORCID iD not found. Please verify the ID and try again.');
       }
@@ -120,7 +225,6 @@ const searchAPI = async (url: string): Promise<unknown> => {
         throw new Error('ORCID service is temporarily unavailable. Please try again later.');
       }
       
-      // Try to extract and parse JSON from the string
       const jsonMatch = response.match(/(\{[^}]*"response-code"[^}]*\})/);
       if (jsonMatch) {
         const errorData = JSON.parse(jsonMatch[0]);
@@ -137,16 +241,35 @@ const searchAPI = async (url: string): Promise<unknown> => {
   }
 };
 
-export default function ORCIDLookup({ path, contributorIndex }: { path: { name: string }; contributorIndex: number }) {
+export default function ORCIDLookup({
+    path,
+    setOrcidDetails,
+    formMethods,
+  }:{
+    path: { name: string };
+    setOrcidDetails: React.Dispatch<React.SetStateAction<unknown>>;
+    formMethods?: Partial<{
+      setValue: (name: string, value: unknown, options?: { shouldValidate?: boolean; shouldDirty?: boolean }) => void;
+      formState?: { errors?: Record<string, unknown> };
+    }>;
+  }) {
   const [searchMode, setSearchMode] = useState<'lookup' | 'search'>('lookup');
   const [searchValue, setSearchValue] = useState('');
   const [searchText, clearSearchText] = useState(false);
   const [dropBox, setDropBox] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const { setValue, formState: { errors } } = useFormContext();
   const [verifiedORCID, setVerifiedORCID] = useState<boolean | null>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [cachedResult, setCachedResult] = useState<boolean>(false);
   const fieldName = path?.name;
-  // Typed shapes for results to allow safe access and narrowing
+
+  // Cleanup expired cache on mount
+  React.useEffect(() => {
+    orcidLookupCache.cleanup();
+  }, []);
+
+  // Typed shapes for results
   type OrcidData = {
     orcid: string;
     creditName: string;
@@ -207,6 +330,7 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
 
   const [results, setResults] = useState<ResultsState | null>(null);
   const queryClient = useQueryClient();
+
   const searchConfig = {
     lookup: {
       placeholder: 'Type to search',
@@ -222,69 +346,107 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       description: 'Search by name or keywords',
       icon: <PersonIcon />
     },
-    tooltipContent: ( <>After selecting an ORCID record, the Credit Name will be displayed if available. 
-    If no Credit Name is provided, the Given Name and Family Name will be shown instead. 
-    Some details may not appear due to the researcher’s visibility settings. 
-    For more information, see <a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="_blank" rel="noopener noreferrer">[ORCID Visibility Settings]</a></>
+    tooltipContent: (
+      <>After selecting an ORCID record, the Credit Name will be displayed if available.
+      If no Credit Name is provided, the Given Name and Family Name will be shown instead.
+      Some details may not appear due to the researcher's visibility settings.
+      For more information, see <a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="_blank" rel="noopener noreferrer">[ORCID Visibility Settings]</a></>
     ),
     genericPlaceholder: `You can search by full ORCID iD or by contributor name (e.g., John Smith).`
   };
+
   const currentConfig = searchConfig[searchMode];
-  // Helper function to get user-friendly error messages
 
   const handleSearch = async (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
-    setResults(null);
-    const orcid = searchValue.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
-    if (orcid) {
-      setSearchMode('lookup');
-      const orcidParts = orcid[0].includes('-')
-        ? orcid[0]
-        : (orcid[0].match(/.{1,4}/g)?.join('-') || orcid[0]);
-      currentConfig.endpoint = `https://researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(orcidParts)}/?api_key=public&callback=?`;
-    } else {
-      setSearchMode('search');
+  e?.preventDefault();
+  setResults(null);
+  setCachedResult(false);
+  setError(null);
+
+  const orcid = searchValue.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
+
+  if (orcid) {
+    // LOOKUP MODE
+    setSearchMode('lookup');
+    const orcidParts = orcid[0].includes('-')
+      ? orcid[0]
+      : (orcid[0].match(/.{1,4}/g)?.join('-') || orcid[0]);
+
+    // Check localStorage first
+    const cachedData = orcidLookupCache.get<LookupResponse>(orcidParts);
+    if (cachedData) {
+      console.log(`✅ Using cached data for ORCID: ${orcidParts}`);
+      setCachedResult(true);
+      processSearchData(cachedData, 'lookup');
+      setDropBox(true);
+      return;
     }
-    // Pass a single object matching the mutationFn signature
-    searchMutation.mutate(currentConfig.endpoint);
+
+    // Fetch from API
+    setIsLoading(true);
     setDropBox(true);
-  };
+    try {
+      const endpoint = `https://researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(orcidParts)}/?api_key=public&callback=?`;
+      const data = await searchAPI(endpoint) as LookupResponse;
 
-  const searchMutation = useMutation<unknown, Error, string>({
-    mutationFn: searchAPI,
-    onError: (error) => {
-        console.error('Search error:', error);
-    },
-    onSuccess: (data) => {
-      if (data && typeof data === 'object') {
-      const errorResponse = data as { 'response-code'?: number; 'developer-message'?: string };
-      
-      if (errorResponse['response-code'] && errorResponse['response-code'] >= 400) {
-        setResults(null);
-        return;
-      }
+      // Create display name
+      const creditName = data.person?.name?.['credit-name']?.value || '';
+      const givenName = data.person?.name?.['given-names']?.value || '';
+      const familyName = data.person?.name?.['family-name']?.value || '';
+      const displayName = creditName || `${givenName} ${familyName}`.trim();
+
+      // Save to cache with display name
+      orcidLookupCache.set(orcidParts, data, displayName);
+      console.log(`💾 Saved ORCID lookup to cache: ${orcidParts}`);
+
+      processSearchData(data, 'lookup');
+      setDropBox(true);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
     }
+  } else {
+    // SEARCH MODE - No caching
+    setSearchMode('search');
+    setIsLoading(true);
+    setDropBox(true);
+    try {
+      const endpoint = `https://researchdata.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`;
+      const data = await searchAPI(endpoint) as SearchResponse;
+      processSearchData(data, 'search');
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+};
 
-      try {
-        // Try to get existing contributor names from react-query cache or localStorage
-        const existing: string[] = queryClient.getQueryData<string[]>(["contributorNames"]) || JSON.parse(localStorage.getItem("contributorNames") || "[]");
-        const candidate = (searchValue || "").trim();
-        // Build a deduplicated list, preferring the most recent candidate first when available
-        const newNames = candidate ? Array.from(new Set([candidate, ...existing])) : existing;
+  // Update contributor names cache
+  const updateContributorNamesCache = React.useCallback((searchTerm: string) => {
+    try {
+      const existing: string[] = queryClient.getQueryData(['contributorNames']) ||
+                                 JSON.parse(localStorage.getItem("contributorNames") || "[]");
+      const candidate = searchTerm.trim();
+
+      if (candidate) {
+        const newNames = Array.from(new Set([candidate, ...existing])).slice(0, 50);
         localStorage.setItem("contributorNames", JSON.stringify(newNames));
-        queryClient.setQueryData(["contributorNames"], newNames);
-      } catch (err) {
-        console.error('Error updating contributor names cache:', err);
+        queryClient.setQueryData(['contributorNames'], newNames);
       }
+    } catch (err) {
+      console.error('Error updating contributor names cache:', err);
     }
-  });
+  }, [queryClient]);
 
   const onChangeMode = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     event.preventDefault();
     const value = (event.target as HTMLInputElement).value || '';
     setSearchValue(value);
     setVerifiedORCID(value === '' && false);
-    setValue(fieldName, value);
+    formMethods?.setValue?.(fieldName, value);
+
     const orcid = value.trim().replace('https://orcid.org/', '').match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[0-9X]$/);
     if (orcid) {
       setSearchMode('lookup');
@@ -292,330 +454,390 @@ export default function ORCIDLookup({ path, contributorIndex }: { path: { name: 
       setSearchMode('search');
     }
   };
+
   type SearchResultItem = SearchResponse['orcid-search-results'][number];
 
   const getCountryName = (data: LookupResponse | SearchResultItem) => {
     const regionNamesInEnglish = new Intl.DisplayNames(["en"], { type: "region" });
-    // Both LookupResponse and a single SearchResponse item include a `.person` field,
-    // so check both shapes safely.
     const countryCode =
       (data as LookupResponse).person?.addresses?.address?.[0]?.country?.value ||
       (data as SearchResultItem).person?.addresses?.address?.[0]?.country?.value;
-    const countryName = countryCode ? (regionNamesInEnglish.of(countryCode) || '') : '';
+    const countryName = countryCode?.length === 2 ? (regionNamesInEnglish.of(countryCode) || '') : countryCode;
     return countryName;
   }
 
-  React.useMemo(() => {
-    if (searchMutation.data) {
-      const data = searchMutation.data as unknown as LookupResponse | SearchResponse;
-      try {
-        if (searchMode === 'lookup') {
-          // ORCID Lookup
-          const lookup = data as LookupResponse;
-          setResults({
-            type: 'orcid',
-            data: {
-              orcid: lookup.orcid,
-              creditName: lookup.person?.name?.['credit-name']?.value?.trim() || '',
-              givenName: lookup.person?.name?.['given-names']?.value?.trim() || '',
-              lastName: lookup.person?.name?.['family-name']?.value?.trim() || '',
-              country: getCountryName(lookup),
-            }
-          });
-        } else {
-          // Narrow the union to SearchResponse before indexing
-          const searchData = data as SearchResponse;
-          if (searchData && Array.isArray(searchData['orcid-search-results']) && searchData['orcid-search-results'].length > 0) {
-            const mappedResults = searchData['orcid-search-results'].map((item, index) => {
+  // Process search data
+  const processSearchData = (data: LookupResponse | SearchResponse, mode: 'lookup' | 'search') => {
+    console.log("mode", mode)
+    try {
+      if (mode === 'lookup') {
+        const lookup = data as LookupResponse;
+        setResults({
+          type: 'orcid',
+          data: {
+            orcid: lookup.orcid,
+            creditName: lookup.person?.name?.['credit-name']?.value?.trim() || '',
+            givenName: lookup.person?.name?.['given-names']?.value?.trim() || '',
+            lastName: lookup.person?.name?.['family-name']?.value?.trim() || '',
+            country: getCountryName(lookup),
+          }
+        });
+        console.log("iside")
+        updateContributorNamesCache(searchValue);
+      } else {
+        const searchData = data as SearchResponse;
+        if (searchData && Array.isArray(searchData['orcid-search-results']) && searchData['orcid-search-results'].length > 0) {
+          const mappedResults = searchData['orcid-search-results'].map((item, index) => {
             const given = item.person?.name?.['given-names']?.value || '';
             const family = item.person?.name?.['family-name']?.value || '';
             const credit = item.person?.name?.['credit-name']?.value || '';
             const country = getCountryName(item);
-              return {
-                orcid: item.orcid,
-                creditName: credit.trim() || '',
-                givenName: given.trim() || '',
-                lastName: family.trim() || '',
-                country: country?.trim() || '',
-                relevance: 95 - (index * 5) // Mock relevance based on position
-              };
-            });
-            setResults({
-              type: 'search',
-              data: mappedResults
-            });
-          } else {
-            setVerifiedORCID(false);
-          }
-        }
-      } catch (err) {
-      console.error('Search error:', err);
-      }
-    }
-  }, [searchMutation.data, searchMode]);
+            return {
+              orcid: item.orcid,
+              creditName: credit.trim() || '',
+              givenName: given.trim() || '',
+              lastName: family.trim() || '',
+              country: country?.trim() || '',
+              relevance: 95 - (index * 5)
+            };
+          });
+          setResults({
+            type: 'search',
+            data: mappedResults
+          });
 
-  const getStatusColor = () => {
-    switch (searchMutation.status) {
-    case 'pending':
-        return '#36a5dd';
-    case 'success':
-        return '#4caf50';
-    case 'error':
-        return '#f44336';
-    case 'idle':
-        return '#e0e0e0';
-    default:
-        return '#e0e0e0';
+          updateContributorNamesCache(searchValue);
+        } else {
+          setVerifiedORCID(false);
+        }
+      }
+    } catch (err) {
+      console.error('Search error:', err);
     }
   };
 
-  const selectOrcid = (item: OrcidData | SearchPerson) => {
-    const orcidUrl = `https://orcid.org/${item?.orcid}`;
-    const orcidName = item?.creditName ? item.creditName : `${item?.givenName || ''} ${item?.lastName || ''}`.trim();
-    setValue(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
-    setSearchValue(orcidName);
-    setVerifiedORCID(true);
-    setDropBox(false);
-  }
-  const helperTextError = Array.isArray(errors.contributor) && errors.contributor[contributorIndex]?.id?.message ? 
+  const getStatusColor = () => {
+    if (isLoading && !cachedResult) return '#36a5dd';
+    if (error) return '#f44336';
+    if (results || cachedResult) return '#4caf50';
+    return '#e0e0e0';
+  };
+
+const selectOrcid = (item: OrcidData | SearchPerson) => {
+  const orcidUrl = `https://orcid.org/${item?.orcid}`;
+  const orcidName = item?.creditName ? item.creditName : `${item?.givenName || ''} ${item?.lastName || ''}`.trim();
+
+  // Save selected ORCID to localStorage
+  const lookupData: LookupResponse = {
+    orcid: item.orcid,
+    person: {
+      name: {
+        'credit-name': { value: item.creditName },
+        'given-names': { value: item.givenName },
+        'family-name': { value: item.lastName },
+      },
+      addresses: item.country ? {
+        address: [{
+          country: { value: item.country }
+        }]
+      } : undefined
+    }
+  };
+
+  // Save with display name
+  orcidLookupCache.set(item.orcid, lookupData, orcidName);
+
+  formMethods?.setValue?.(fieldName, orcidUrl, { shouldValidate: true, shouldDirty: true });
+  setSearchValue(orcidName);
+  setVerifiedORCID(true);
+  setDropBox(false);
+  setOrcidDetails(item);
+
+  updateContributorNamesCache(orcidName);
+}
+  const _errors = formMethods?.formState?.errors as Record<string, unknown> | undefined;
+  const helperTextError = Array.isArray((_errors as Record<string, any>)?.contributor) && !!((_errors as Record<string, any>)[path.name]?.message) ?
   "Enter a valid ORCID iD e.g. 0000-0002-1825-0097 or free text to search" as string : '';
+
   return (
     <Box sx={{ p: 1 }}>
       <Paper elevation={0} sx={{ p: 1, borderRadius: 2 }}>
         <Paper
-          sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '400px', border: 1, borderColor: getStatusColor() }}
+          sx={{
+            p: '2px 4px',
+            display: 'flex',
+            alignItems: 'center',
+            width: '400px',
+            border: 1,
+            borderColor: getStatusColor(),
+            position: 'relative'
+          }}
           className={getStatusColor()}
         >
-          {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}{currentConfig.icon}
+          {cachedResult && searchMode === 'lookup' && (
+            <Chip
+              label="Cached"
+              size="small"
+              sx={{
+                position: 'absolute',
+                top: -10,
+                right: 10,
+                fontSize: '0.65rem',
+                height: '18px',
+                bgcolor: '#4caf50',
+                color: 'white'
+              }}
+            />
+          )}
+          {<span style={{ height: "40px", margin:"-1px", marginRight:"8px" }} ref={inputRef}></span>}
+          {currentConfig.icon}
           <InputBase
             name={fieldName}
             sx={{ ml: 1, flex: 1 }}
             placeholder={currentConfig?.placeholder}
             inputProps={{ 'aria-label': 'search orcid' }}
             value={searchValue}
-            onChange={(e) => {e.preventDefault(), clearSearchText(true), onChangeMode(e)}}
+            onChange={(e) => { e.preventDefault(); clearSearchText(true); onChangeMode(e); }}
             onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-                    handleSearch(e);
-                }
+              if (e.key === 'Enter') {
+                handleSearch(e);
+              }
             }}
           />
-          {searchText && <CloseRoundedIcon onClick={() => {clearSearchText(false), setValue(fieldName, ''), setSearchValue(''), setVerifiedORCID(false)}} />}
+          {searchText && (
+            <CloseRoundedIcon
+              onClick={() => {
+                clearSearchText(false);
+                formMethods?.setValue?.(fieldName, '');
+                setSearchValue('');
+                setVerifiedORCID(false);
+                setResults(null);
+                setCachedResult(false);
+                setError(null);
+              }}
+            />
+          )}
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-          <IconButton  onClick={(e) => handleSearch(e)}  color="primary" sx={{ p: '10px' }} aria-label="directions">
-            {searchMutation.status === 'pending' ? <ClipLoader color="#36a5dd" size={25}/> : verifiedORCID ? <CircleCheckBig color='green'/> : <ScanSearch />}
+          <IconButton onClick={(e) => handleSearch(e)} color="primary" sx={{ p: '10px' }} aria-label="directions">
+            {(isLoading && !cachedResult) ? <ClipLoader color="#36a5dd" size={25}/> : verifiedORCID ? <CircleCheckBig color='green'/> : <ScanSearch />}
           </IconButton>
         </Paper>
         {searchMode === 'lookup' && <FormHelperText sx={{ fontSize: '0.875rem', color: 'error.main', mr: 1 }}>{helperTextError}</FormHelperText>}
-        <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'end' }}>
+        <Box sx={{mt: 1, mb: 1, display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'space-between' }}>
           <FormHelperText sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>{searchConfig?.genericPlaceholder}</FormHelperText>
-          <CustomStyledTooltip
-            title={"ORCID Lookup Info"}
-            content={searchConfig.tooltipContent}
-            variant="info"
-            placement="top"
-            tooltipIcon={<InfoOutlinedIcon />}
-          >
-          </CustomStyledTooltip>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <CustomStyledTooltip
+              title={"ORCID Lookup Info"}
+              content={searchConfig.tooltipContent}
+              variant="info"
+              placement="top"
+              tooltipIcon={<InfoOutlinedIcon />}
+            >
+            </CustomStyledTooltip>
+          </Box>
         </Box>
         <Popover
           open={dropBox}
-          anchorEl={inputRef.current }
+          anchorEl={inputRef.current}
           onClose={() => setDropBox(false)}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          sx={{ mt: 1, left:0, width: '400px' }}
+          sx={{ mt: 1, left:0, width: '400px', backgroundColor: 'text.dark' }}
         >
           {(results?.type === 'search' && results.data.length === 0) && (
-              <Box sx={{ padding: 2, maxWidth:'400px'}}>
-                <Typography variant="body2" className="text-orange-500">
-                    No results found for "{searchValue}"
-                </Typography>
-              </Box>
+            <Box sx={{ padding: 2, maxWidth:'400px'}}>
+              <Typography variant="body2" className="text-orange-500">
+                No results found for "{searchValue}"
+              </Typography>
+            </Box>
           )}
           {(results?.type === 'orcid' && [results.data].length === 0) && (
-              <Box sx={{ padding: 2, maxWidth:'400px'}}>
-                <Typography variant="body2" className="text-orange-500">
-                    No results found for "{searchValue}"
-                </Typography>
-              </Box>
+            <Box sx={{ padding: 2, maxWidth:'400px'}}>
+              <Typography variant="body2" className="text-orange-500">
+                No results found for "{searchValue}"
+              </Typography>
+            </Box>
           )}
-          {searchMutation.status === 'error' && (
-              <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
-                <Typography variant="body2" className="text-red-500">
-                    {searchMutation.error?.message && `${searchMutation.error.message}`}
-                </Typography>
-              </Box>
+          {error && (
+            <Box sx={{ padding: 2, maxWidth: '400px', color: getStatusColor() }}>
+              <Typography variant="body2" className="text-red-500">
+                {error}
+              </Typography>
+            </Box>
           )}
-            <Box sx={{ maxHeight: "350px", overflow: "auto", width: '400px' }} display={dropBox ? 'block' : 'none'}>
-              {/* Results Display */}
-              {results?.data && (
+          <Box sx={{ maxHeight: "350px", overflow: "auto", width: '400px' }} display={dropBox ? 'block' : 'none'}>
+            {results?.data && (
               <Box>
-                <Typography variant="h6" sx={{ m: 2, fontWeight: 600 }}>
-                  Search Results
-                </Typography>
-
-                {results?.type === 'orcid' ? (
-                // Single ORCID Result
-                <Card 
-                    variant="outlined" 
-                    sx={{ 
-                    mb: 2,
-                    cursor: 'pointer',
-                    background: 'linear-gradient(to right, #eff6ff, #ffffff)',
-                    '&:hover': { boxShadow: 2 }
-                    }}
-                    onClick={() => {
-                      selectOrcid(results.data);
-                    }}
-                >
-                  <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'start', gap: 2 }}>
-                    <Avatar 
-                        sx={{ 
-                            bgcolor: 'secondary.main',
+                <Box sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center', m: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Search Results
+                  </Typography>
+                  {cachedResult && searchMode === 'lookup' && (
+                    <>
+                      <Chip
+                        label="Cached"
+                        size="small"
+                        sx={{
+                          bgcolor: '#4caf50',
+                          color: 'white',
+                          fontSize: '0.7rem',
+                          marginLeft: '10px'
                         }}
-                    >
-                    <PersonIcon sx={{ fontSize: 32 }} />
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2" fontWeight={600}>
-                        {results?.data?.creditName && `Published Name: ${results?.data?.creditName}`}
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        Given Names: {results?.data?.givenName}
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        Family Name: {results?.data?.lastName}
-                      </Typography>
-                      <Typography variant="body2" fontWeight={600}>
-                        {results?.data?.country}
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                      />
+                    </>
+                  )}
+                </Box>
+                {results?.type === 'orcid' ? (
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      mb: 2,
+                      cursor: 'pointer',
+                      background: 'inherit',
+                          '&:hover': { boxShadow: 2 }
+                    }}
+                    onClick={() => selectOrcid(results.data)}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'start', gap: 2 }}>
+                        <Avatar sx={{ bgcolor: 'secondary.main' }}>
+                          <PersonIcon sx={{ fontSize: 32 }} />
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
                           <Typography variant="body2" fontWeight={600}>
-                              ORCID:
+                            {results?.data?.creditName && `Published Name: ${results?.data?.creditName}`}
                           </Typography>
-                          <Chip
-                          label={results?.data.orcid}
-                          size="small"
-                          variant="outlined"
-                          icon={
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2z"/>
-                              </svg>
-                          }
-                          />
-                          <Link
-                          href={`https://orcid.org/${results?.data.orcid}`}
-                          target="_blank"
-                          rel="noopener"
-                          sx={{ 
-                              fontSize: '0.875rem',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 0.5
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          >
-                          View Profile
-                          <OpenInNewIcon sx={{ fontSize: 16 }} />
-                          </Link>
+                          <Typography variant="body2" fontWeight={600}>
+                            Given Names: {results?.data?.givenName}
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>
+                            Family Name: {results?.data?.lastName}
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>
+                            {results?.data?.country}
+                          </Typography>
+                          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                            <Typography variant="body2" fontWeight={600}>
+                              ORCID:
+                            </Typography>
+                            <Chip
+                              label={results?.data.orcid}
+                              size="small"
+                              variant="outlined"
+                              icon={
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2z"/>
+                                </svg>
+                              }
+                            />
+                            <Link
+                              href={`https://orcid.org/${results?.data.orcid}`}
+                              target="_blank"
+                              rel="noopener"
+                              sx={{ 
+                                fontSize: '0.875rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 0.5
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              View Profile
+                              <OpenInNewIcon sx={{ fontSize: 16 }} />
+                            </Link>
+                          </Box>
+                        </Box>
                       </Box>
-                    </Box>
-                  </Box>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
                 ) : (
-                  // Multiple Search Results
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     {results?.data.map((person, index) => (
-                      <Card 
-                          key={index} 
-                          variant="outlined" 
-                          sx={{ 
-                          mb: 2,
+                      <Card
+                        key={index}
+                        variant="outlined"
+                        sx={{
+                          mb: 1,
                           cursor: 'pointer',
-                          background: 'linear-gradient(to right, #eff6ff, #ffffff)',
+                          background: 'inherit',
                           '&:hover': { boxShadow: 2 }
-                          }}
-                          onClick={() => {
-                            selectOrcid(person);
-                          }}
+                        }}
+                        onClick={() => selectOrcid(person)}
                       >
-                          <CardContent>
+                        <CardContent>
                           <Box sx={{ display: 'flex', alignItems: 'start', gap: 2 }}>
-                              <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                                  <PersonIcon />
-                              </Avatar>
-                              <Box sx={{ flex: 1 }}>
-                              <Box sx={{ 
-                                  display: 'block', 
-                                  justifyContent: 'space-between', 
-                                  alignItems: 'start',
-                                  flexWrap: 'wrap',
-                                  gap: 1,
-                                  mb: 0.5 
+                            <Avatar sx={{ bgcolor: 'secondary.main' }}>
+                              <PersonIcon />
+                            </Avatar>
+                            <Box sx={{ flex: 1 }}>
+                              <Box sx={{
+                                display: 'block',
+                                justifyContent: 'space-between',
+                                alignItems: 'start',
+                                flexWrap: 'wrap',
+                                gap: 1,
+                                mb: 0.5
                               }}>
-                                  <Typography variant="body2" fontWeight={600}>
+                                <Typography variant="body2" fontWeight={600}>
                                   {person.creditName && `Published Name: ${person.creditName}`}
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600}>
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600}>
                                   Given Names: {person.givenName}
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600}>
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600}>
                                   Family Name: {person.lastName}
-                                  </Typography>
-                                  <Typography variant="body2" fontWeight={600}>
+                                </Typography>
+                                <Typography variant="body2" fontWeight={600}>
                                   {person.country}
-                                  </Typography>
+                                </Typography>
                               </Box>
                               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-                                  <Typography variant="body2" fontWeight={600}>
+                                <Typography variant="body2" fontWeight={600}>
                                   ORCID:
-                                  </Typography>
-                                  <Chip
+                                </Typography>
+                                <Chip
                                   label={person.orcid}
                                   size="small"
                                   variant="outlined"
                                   icon={
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v2h-2zm0 4h2v6h-2z"/>
-                                      </svg>
+                                    </svg>
                                   }
-                                  />
-                                  <Link
+                                />
+                                <Link
                                   href={`https://orcid.org/${person.orcid}`}
                                   target="_blank"
                                   rel="noopener"
-                                  sx={{ 
-                                      fontSize: '0.875rem',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: 0.5
+                                  sx={{
+                                    fontSize: '0.875rem',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 0.5
                                   }}
                                   onClick={(e) => e.stopPropagation()}
-                                  >
+                                >
                                   View Profile
                                   <OpenInNewIcon sx={{ fontSize: 16 }} />
-                                  </Link>
+                                </Link>
                               </Box>
-                              </Box>
+                            </Box>
                           </Box>
-                          </CardContent>
+                        </CardContent>
                       </Card>
                     ))}
                   </Box>
                 )}
               </Box>
-              )}
-              {searchMutation.status === 'pending' && (
-                <Box sx={{ padding: 2, minWidth: '350px', width: '400px'}}>
-                  <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: getStatusColor() }}>
-                      {`${searchMode.charAt(0).toUpperCase() + searchMode.slice(1)} `} <PulseLoader color="#36a5dd" size={5} />
-                  </Typography>
-                </Box>
-              )}
-            </Box>
+            )}
+            {(isLoading) && (
+              <Box sx={{ padding: 2, minWidth: '350px', width: '400px'}}>
+                <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: getStatusColor() }}>
+                  {`${searchMode.charAt(0).toUpperCase() + searchMode.slice(1)} `} <PulseLoader color="#36a5dd" size={5} />
+                </Typography>
+              </Box>
+            )}
+          </Box>
         </Popover>
       </Paper>
     </Box>
