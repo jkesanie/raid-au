@@ -17,27 +17,27 @@ CLIENT_SECRET="$3"
 case $ENVIRONMENT in
     local)
         TOKEN_URL="http://localhost:8001/realms/raid/protocol/openid-connect/token"
-        GET_URL="http://localhost:8080/raid/all-public"
+        GET_URL="http://localhost:8080/raid/non-legacy"
         POST_URL="http://localhost:8080/raid/post-to-datacite"
         ;;
     test)
         TOKEN_URL="https://iam.test.raid.org.au/realms/raid/protocol/openid-connect/token"
-        GET_URL="https://api.test.raid.org.au/raid/all-public"
+        GET_URL="https://api.test.raid.org.au/raid/non-legacy"
         POST_URL="https://api.test.raid.org.au/raid/post-to-datacite"
         ;;
     demo)
         TOKEN_URL="https://iam.demo.raid.org.au/realms/raid/protocol/openid-connect/token"
-        GET_URL="https://api.demo.raid.org.au/raid/all-public"
+        GET_URL="https://api.demo.raid.org.au/raid/non-legacy"
         POST_URL="https://api.demo.raid.org.au/raid/post-to-datacite"
         ;;
     stage)
         TOKEN_URL="https://iam.stage.raid.org.au/realms/raid/protocol/openid-connect/token"
-        GET_URL="https://api.test.stage.org.au/raid/all-public"
-        POST_URL="https://api.test.stage.org.au/raid/post-to-datacite"
+        GET_URL="https://api.stage.raid.org.au/raid/non-legacy"
+        POST_URL="https://api.stage.raid.org.au/raid/post-to-datacite"
         ;;
     prod)
         TOKEN_URL="https://iam.prod.raid.org.au/realms/raid/protocol/openid-connect/token"
-        GET_URL="https://api.prod.raid.org.au/raid/all-public"
+        GET_URL="https://api.prod.raid.org.au/raid/non-legacy"
         POST_URL="https://api.prod.raid.org.au/raid/post-to-datacite"
         ;;
     *)
@@ -59,15 +59,18 @@ token_response=$(curl -s -X POST "$TOKEN_URL" -H "Content-Type: application/x-ww
 
 # Extract the access token
 access_token=$(echo "$token_response" | jq -r '.access_token')
-#echo $access_token
+echo $access_token
 
 if [ -z "$access_token" ]; then
     echo "Failed to obtain access token"
     exit 1
 fi
 
+echo
+
 # Make the GET request with the token and store the response
 response=$(curl -s "$GET_URL" -H "Authorization: Bearer $access_token")
+echo "$response"
 
 # Parse the JSON response and iterate through each resource
 echo "$response" | jq -c '.[]' | while read -r resource; do
