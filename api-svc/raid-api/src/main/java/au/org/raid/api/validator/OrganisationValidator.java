@@ -40,20 +40,6 @@ public class OrganisationValidator {
 
         var failures = new ArrayList<ValidationFailure>();
 
-        final var organisationCountMap = organisations.stream()
-                .collect(Collectors.groupingBy(Organisation::getId, Collectors.counting()));
-
-        for (final String id : organisationCountMap.keySet()) {
-            final var occurrences = organisationCountMap.get(id);
-            if (occurrences > 1) {
-                failures.add(new ValidationFailure()
-                        .fieldId("organisation")
-                        .errorType(DUPLICATE_TYPE)
-                        .message("An organisation can appear only once. There are %d occurrences of %s".formatted(occurrences, id))
-                );
-            }
-        }
-
         IntStream.range(0, organisations.size()).forEach(i -> {
             final var organisation = organisations.get(i);
 
@@ -99,6 +85,21 @@ public class OrganisationValidator {
                 failures.addAll(roleValidationService.validate(role, i, roleIndex));
             });
         });
+
+        final var organisationCountMap = organisations.stream()
+                .filter(org -> org.getId() != null)
+                .collect(Collectors.groupingBy(Organisation::getId, Collectors.counting()));
+
+        for (final String id : organisationCountMap.keySet()) {
+            final var occurrences = organisationCountMap.get(id);
+            if (occurrences > 1) {
+                failures.add(new ValidationFailure()
+                        .fieldId("organisation")
+                        .errorType(DUPLICATE_TYPE)
+                        .message("An organisation can appear only once. There are %d occurrences of %s".formatted(occurrences, id))
+                );
+            }
+        }
 
         return failures;
     }
