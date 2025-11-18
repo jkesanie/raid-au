@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.21
+## API
+* Add validation to prevent duplicate organizations appearing in a RAiD
+
 # 2.5.20
 ## API
 * Bug fix in non-legacy endpoint
