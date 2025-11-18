@@ -1,6 +1,7 @@
 package au.org.raid.api.validator;
 
 import au.org.raid.api.client.ror.RorClient;
+import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.Organisation;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static au.org.raid.api.endpoint.message.ValidationMessage.*;
@@ -83,6 +85,21 @@ public class OrganisationValidator {
                 failures.addAll(roleValidationService.validate(role, i, roleIndex));
             });
         });
+
+        final var organisationCountMap = organisations.stream()
+                .filter(org -> org.getId() != null)
+                .collect(Collectors.groupingBy(Organisation::getId, Collectors.counting()));
+
+        for (final String id : organisationCountMap.keySet()) {
+            final var occurrences = organisationCountMap.get(id);
+            if (occurrences > 1) {
+                failures.add(new ValidationFailure()
+                        .fieldId("organisation")
+                        .errorType(DUPLICATE_TYPE)
+                        .message("An organisation can appear only once. There are %d occurrences of %s".formatted(occurrences, id))
+                );
+            }
+        }
 
         return failures;
     }

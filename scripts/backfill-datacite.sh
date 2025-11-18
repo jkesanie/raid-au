@@ -76,6 +76,20 @@ echo "$response"
 echo "$response" | jq -c '.[]' | while read -r resource; do
     echo 'Posting to Datacite'
     echo "$resource"
+
+    token_response=$(curl -s -X POST "$TOKEN_URL" -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=client_credentials" -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET")
+
+    #echo $token_response
+
+    # Extract the access token
+    access_token=$(echo "$token_response" | jq -r '.access_token')
+    echo $access_token
+
+    if [ -z "$access_token" ]; then
+        echo "Failed to obtain access token"
+        exit 1
+    fi
+
     # Make POST request with the current resource as the body and the token
     post_response=$(curl -vvv -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $access_token" -d "$resource" "$POST_URL")
     echo "Response: $post_response"

@@ -56,6 +56,34 @@ class OrganisationValidatorTest {
     }
 
     @Test
+    @DisplayName("Validation fails with duplicate organisations")
+    void duplicateOrganisation() {
+        final var role = new OrganisationRole()
+                .schemaUri(TestConstants.ORGANISATION_ROLE_SCHEMA_URI)
+                .id(TestConstants.LEAD_RESEARCH_ORGANISATION_ROLE)
+                .startDate(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .endDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        final var organisation = new Organisation()
+                .id(TestConstants.VALID_ROR)
+                .schemaUri(TestConstants.HTTPS_ROR_ORG)
+                .role(List.of(role));
+
+        when(rorClient.exists(TestConstants.VALID_ROR)).thenReturn(true);
+
+        final var failures = validationService.validate(List.of(organisation, organisation));
+
+        assertThat(failures, hasSize(1));
+        assertThat(failures, hasItem(
+                new ValidationFailure()
+                        .fieldId("organisation")
+                        .errorType("duplicateValue")
+                        .message("An organisation can appear only once. There are 2 occurrences of https://ror.org/038sjwq14")
+        ));
+        verify(roleValidationService).validate(role, 0, 0);
+    }
+
+    @Test
     @DisplayName("Validation fails with missing schemaUri")
     void missingIdentifierSchemeUri() {
         final var organisation = new Organisation()
