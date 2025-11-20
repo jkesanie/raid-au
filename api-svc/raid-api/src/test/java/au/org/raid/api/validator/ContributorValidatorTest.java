@@ -2,12 +2,14 @@ package au.org.raid.api.validator;
 
 import au.org.raid.api.client.isni.IsniClient;
 import au.org.raid.api.client.orcid.OrcidClient;
+import au.org.raid.api.config.properties.ContributorValidationProperties;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.TestConstants;
 import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.ContributorPosition;
 import au.org.raid.idl.raidv2.model.ContributorRole;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,8 +50,18 @@ class ContributorValidatorTest {
     @Mock
     private IsniClient isniClient;
 
+    @Mock
+    private ContributorValidationProperties validationProperties;
+
     @InjectMocks
     private ContributorValidator validationService;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(validationProperties.getIsniUrlPrefix()).thenReturn("https://isni.org/");
+        lenient().when(validationProperties.getOrcidUrlPrefix()).thenReturn("https://orcid.org/");
+        lenient().when(validationProperties.getPattern()).thenReturn("^https:\\/\\/(orcid|isni).org\\/.*");
+    }
 
     @Test
     @DisplayName("Validation fails with missing position")
