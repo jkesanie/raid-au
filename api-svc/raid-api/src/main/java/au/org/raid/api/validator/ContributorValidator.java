@@ -2,7 +2,7 @@ package au.org.raid.api.validator;
 
 import au.org.raid.api.client.isni.IsniClient;
 import au.org.raid.api.client.orcid.OrcidClient;
-import au.org.raid.api.config.properties.OrcidIntegrationProperties;
+import au.org.raid.api.config.properties.ContributorValidationProperties;
 import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.DateUtil;
@@ -23,16 +23,14 @@ import static au.org.raid.api.util.StringUtil.isBlank;
 @Component
 @RequiredArgsConstructor
 public class ContributorValidator {
-    private static final String ORCID_URL_PREFIX_PATTERN = "^https:\\/\\/(orcid|isni).org\\/.*";
-    private static final String ORCID_URL_PREFIX = "https://orcid.org/";
-    private static final String ISNI_URL_PREFIX = "https://isni.org/";
-
     private final ContributorPositionValidator positionValidationService;
     private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
     private final IsniValidator isniValidator;
     private final OrcidClient orcidClient;
     private final IsniClient isniClient;
+    private final ContributorValidationProperties validationProperties;
+
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -66,7 +64,7 @@ public class ContributorValidator {
                                     .errorType(NOT_SET_TYPE)
                                     .message(NOT_SET_MESSAGE)
                         );
-                    } else if (contributor.getId().startsWith(ISNI_URL_PREFIX)) {
+                    } else if (contributor.getId().startsWith(validationProperties.getIsniUrlPrefix())) {
                         if (!isniValidator.validate(contributor.getId())) {
                             failures.add(
                                     new ValidationFailure()
@@ -85,7 +83,7 @@ public class ContributorValidator {
                             }
                         }
                     }
-                    else if (contributor.getId().startsWith(ORCID_URL_PREFIX)) {
+                    else if (contributor.getId().startsWith(validationProperties.getOrcidUrlPrefix())) {
                         if (!orcidClient.exists(contributor.getId())) {
                             failures.add(
                                     new ValidationFailure()
@@ -99,7 +97,7 @@ public class ContributorValidator {
                                 new ValidationFailure()
                                         .fieldId("contributor[%d].id".formatted(index))
                                         .errorType(INVALID_VALUE_TYPE)
-                                        .message("id should start with " + ORCID_URL_PREFIX_PATTERN)
+                                        .message("id should start with " + validationProperties.getPattern())
                         );
                     }
 
@@ -111,7 +109,7 @@ public class ContributorValidator {
                                         .message(NOT_SET_MESSAGE)
                         );
                     }
-                    else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
+                    else if (!contributor.getSchemaUri().matches(validationProperties.getPattern())) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)
@@ -206,11 +204,11 @@ public class ContributorValidator {
                                         .errorType(NOT_SET_TYPE)
                                         .message(NOT_SET_MESSAGE)
                         );
-                    } else if (!contributor.getSchemaUri().matches(ORCID_URL_PREFIX_PATTERN)) {
+                    } else if (!contributor.getSchemaUri().matches(validationProperties.getPattern())) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)
-                                .message(INVALID_VALUE_MESSAGE + " - should match " + ORCID_URL_PREFIX_PATTERN)
+                                .message(INVALID_VALUE_MESSAGE + " - should match " + validationProperties.getPattern())
                         );
                     }
 
