@@ -1,5 +1,7 @@
 package au.org.raid.api.client.isni;
 
+import au.org.raid.api.client.contributor.isni.IsniClient;
+import au.org.raid.api.client.contributor.isni.IsniRequestEntityFactory;
 import au.org.raid.api.client.isni.dto.ResponseRecord;
 import au.org.raid.api.dto.isni.RecordData;
 import au.org.raid.api.dto.isni.RecordWrapper;

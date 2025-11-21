@@ -1,7 +1,5 @@
 package au.org.raid.api.validator;
 
-import au.org.raid.api.client.isni.IsniClient;
-import au.org.raid.api.client.orcid.OrcidClient;
 import au.org.raid.api.config.properties.ContributorValidationProperties;
 import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.TestConstants;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,45 +19,60 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
-import static au.org.raid.api.endpoint.message.ValidationMessage.NOT_SET_MESSAGE;
-import static au.org.raid.api.endpoint.message.ValidationMessage.NOT_SET_TYPE;
 import static au.org.raid.api.util.TestConstants.VALID_ISNI;
 import static au.org.raid.api.util.TestConstants.VALID_ORCID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ContributorValidatorTest {
-    @Mock
-    private ContributorRoleValidator roleValidationService;
-
-    @Mock
-    private ContributorPositionValidator positionValidationService;
 
     @Mock
     private ContributorRepository contributorRepository;
 
     @Mock
-    private IsniValidator isniValidator;
+    private ContributorTypeValidator isniValidator;
 
     @Mock
-    private OrcidClient orcidClient;
-
-    @Mock
-    private IsniClient isniClient;
+    private ContributorTypeValidator orcidValidator;
 
     @Mock
     private ContributorValidationProperties validationProperties;
 
-    @InjectMocks
+    @Mock
+    private ContributorRoleValidator roleValidator;
+
+    @Mock
+    private ContributorPositionValidator positionValidator;
+
     private ContributorValidator validationService;
 
     @BeforeEach
     void setUp() {
-        lenient().when(validationProperties.getIsniUrlPrefix()).thenReturn("https://isni.org/");
-        lenient().when(validationProperties.getOrcidUrlPrefix()).thenReturn("https://orcid.org/");
-        lenient().when(validationProperties.getPattern()).thenReturn("^https:\\/\\/(orcid|isni).org\\/.*");
+        final var orcidProperties = ContributorValidationProperties.ContributorTypeValidationProperties.builder()
+                .urlPrefix(TestConstants.ORCID_SCHEMA_URI)
+                .schemaUri(TestConstants.ORCID_SCHEMA_URI)
+                .build();
+
+        final var isniProperties = ContributorValidationProperties.ContributorTypeValidationProperties.builder()
+                .urlPrefix(TestConstants.ISNI_SCHEMA_URI)
+                .schemaUri(TestConstants.ISNI_SCHEMA_URI)
+                .build();
+
+        lenient().when(validationProperties.getOrcid()).thenReturn(orcidProperties);
+        lenient().when(validationProperties.getIsni()).thenReturn(isniProperties);
+
+        validationService = new ContributorValidator(
+                contributorRepository,
+                isniValidator,
+                orcidValidator,
+                validationProperties,
+                roleValidator,
+                positionValidator
+        );
     }
 
     @Test
@@ -78,7 +90,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0]")
+                        .errorType("notSet")
+                        .message("A contributor must have a position")
+        ));
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -90,8 +107,7 @@ class ContributorValidatorTest {
                         .message("A contributor must have a position")
         ));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verifyNoInteractions(positionValidationService);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -113,7 +129,7 @@ class ContributorValidatorTest {
                 .position(List.of(position))
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -125,8 +141,7 @@ class ContributorValidatorTest {
                         .message("At least one contributor must be flagged as a project leader")
         ));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -142,8 +157,8 @@ class ContributorValidatorTest {
                         .message("field must be set")
         ));
 
-        verifyNoInteractions(roleValidationService);
-        verifyNoInteractions(positionValidationService);
+        verifyNoInteractions(orcidValidator);
+        verifyNoInteractions(isniValidator);
     }
 
     @Test
@@ -159,8 +174,8 @@ class ContributorValidatorTest {
                         .message("field must be set")
         ));
 
-        verifyNoInteractions(roleValidationService);
-        verifyNoInteractions(positionValidationService);
+        verifyNoInteractions(orcidValidator);
+        verifyNoInteractions(isniValidator);
     }
 
     @Test
@@ -183,14 +198,13 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, empty());
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -215,24 +229,21 @@ class ContributorValidatorTest {
 
         final var roleError = new ValidationFailure()
                 .fieldId("contributor[0].roles[0].role")
-                .errorType(NOT_SET_TYPE)
-                .message(NOT_SET_MESSAGE);
+                .errorType("notSet")
+                .message("field must be set");
 
         final var positionError = new ValidationFailure()
                 .fieldId("contributor[0].position[0].position")
-                .errorType(NOT_SET_TYPE)
-                .message(NOT_SET_MESSAGE);
+                .errorType("notSet")
+                .message("field must be set");
 
-        when(roleValidationService.validate(role, 0, 0)).thenReturn(List.of(roleError));
-        when(positionValidationService.validate(position, 0, 0)).thenReturn(List.of(positionError));
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(roleError, positionError));
 
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, hasSize(2));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -276,8 +287,7 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
-        when(orcidClient.exists(orcid)).thenReturn(true);
+        when(orcidValidator.validate(any(Contributor.class), anyInt())).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor2, contributor1));
 
@@ -323,7 +333,7 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(any(Contributor.class), anyInt())).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor2, contributor1));
 
@@ -362,7 +372,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor1, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].position[1].startDate")
+                        .errorType("invalidValue")
+                        .message("Contributors can only hold one position at any given time. This position conflicts with contributor[0].position[0]")
+        ));
 
         final var failures = validationService.validate(List.of(contributor1));
 
@@ -393,8 +408,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-//        when(contributorRepository.findByPid(VALID_ORCID)).thenReturn(Optional.of(new ContributorRecord()));
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].schemaUri")
+                        .errorType("notSet")
+                        .message("field must be set")
+        ));
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -406,9 +425,9 @@ class ContributorValidatorTest {
                         .message("field must be set")
         ));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
+
     @Test
     @DisplayName("Validation fails with empty schemaUri")
     void emptyIdentifierSchemeUri() {
@@ -429,7 +448,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].schemaUri")
+                        .errorType("notSet")
+                        .message("field must be set")
+        ));
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -441,8 +465,7 @@ class ContributorValidatorTest {
                         .message("field must be set")
         ));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -465,7 +488,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].schemaUri")
+                        .errorType("invalidValue")
+                        .message("has invalid/unsupported value - should be https://orcid.org/")
+        ));
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -477,8 +505,7 @@ class ContributorValidatorTest {
                         .message("has invalid/unsupported value - should be https://orcid.org/")
         ));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
     @Test
@@ -501,14 +528,13 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, hasSize(0));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
         verifyNoInteractions(contributorRepository);
     }
 
@@ -532,16 +558,13 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(isniValidator.validate(VALID_ISNI)).thenReturn(true);
-        when(isniClient.exists(VALID_ISNI)).thenReturn(true);
+        when(isniValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, hasSize(0));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
-        verify(isniValidator).validate(VALID_ISNI);
+        verify(isniValidator).validate(contributor, 0);
         verifyNoInteractions(contributorRepository);
     }
 
@@ -565,14 +588,13 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(true);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
 
         final var failures = validationService.validate(List.of(contributor));
 
         assertThat(failures, empty());
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
         verifyNoInteractions(contributorRepository);
     }
 
@@ -596,7 +618,12 @@ class ContributorValidatorTest {
                 .leader(true)
                 .contact(true);
 
-        when(orcidClient.exists(VALID_ORCID)).thenReturn(false);
+        when(orcidValidator.validate(contributor, 0)).thenReturn(List.of(
+                new ValidationFailure()
+                        .fieldId("contributor[0].id")
+                        .errorType("notFound")
+                        .message("This id does not exist")
+        ));
 
         final var failures = validationService.validate(List.of(contributor));
 
@@ -604,11 +631,43 @@ class ContributorValidatorTest {
         assertThat(failures, contains(new ValidationFailure(
                 "contributor[0].id",
                 "notFound",
-                "This ORCID does not exist"
+                "This id does not exist"
         )));
 
-        verify(roleValidationService).validate(role, 0, 0);
-        verify(positionValidationService).validate(position, 0, 0);
+        verify(orcidValidator).validate(contributor, 0);
     }
 
+    @Test
+    @DisplayName("Validation fails with missing contact")
+    void missingContact() {
+        final var role = new ContributorRole()
+                .schemaUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI)
+                .id(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+
+        final var position = new ContributorPosition()
+                .schemaUri(TestConstants.CONTRIBUTOR_POSITION_SCHEMA_URI)
+                .id(TestConstants.LEADER_CONTRIBUTOR_POSITION)
+                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        final var contributor = new Contributor()
+                .schemaUri(TestConstants.ORCID_SCHEMA_URI)
+                .id(VALID_ORCID)
+                .role(List.of(role))
+                .position(List.of(position))
+                .leader(true);
+
+        when(orcidValidator.validate(contributor, 0)).thenReturn(Collections.emptyList());
+
+        final var failures = validationService.validate(List.of(contributor));
+
+        assertThat(failures, hasSize(1));
+        assertThat(failures, hasItem(
+                new ValidationFailure()
+                        .fieldId("contributor")
+                        .errorType("notSet")
+                        .message("At least one contributor must be flagged as a project contact")
+        ));
+
+        verify(orcidValidator).validate(contributor, 0);
+    }
 }

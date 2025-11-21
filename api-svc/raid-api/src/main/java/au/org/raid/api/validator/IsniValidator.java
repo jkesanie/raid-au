@@ -3,7 +3,6 @@ package au.org.raid.api.validator;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class IsniValidator {
 
     public boolean validate(String isni) {

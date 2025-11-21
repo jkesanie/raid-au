@@ -1,5 +1,6 @@
-package au.org.raid.api.client.orcid;
+package au.org.raid.api.client.contributor.orcid;
 
+import au.org.raid.api.client.contributor.ContributorClient;
 import au.org.raid.api.dto.orcid.PersonalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @RequiredArgsConstructor
-public class OrcidClient {
+public class OrcidClient implements ContributorClient {
     private final OrcidRequestEntityFactory requestEntityFactory;
     private final RestTemplate restTemplate;
 
