@@ -1,4 +1,4 @@
-package au.org.raid.api.client.orcid;
+package au.org.raid.api.client.contributor.orcid;
 
 import au.org.raid.api.config.properties.OrcidClientProperties;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,5 @@
 package au.org.raid.api.validator;
 
-import au.org.raid.api.client.isni.IsniClient;
-import au.org.raid.api.client.orcid.OrcidClient;
 import au.org.raid.api.config.properties.ContributorValidationProperties;
 import au.org.raid.api.dto.ContributorStatus;
 import au.org.raid.api.repository.ContributorRepository;
@@ -23,14 +21,12 @@ import static au.org.raid.api.util.StringUtil.isBlank;
 @Component
 @RequiredArgsConstructor
 public class ContributorValidator {
-    private final ContributorPositionValidator positionValidationService;
-    private final ContributorRoleValidator roleValidationService;
     private final ContributorRepository contributorRepository;
-    private final IsniValidator isniValidator;
-    private final OrcidClient orcidClient;
-    private final IsniClient isniClient;
+    private final ContributorTypeValidator isniValidator;
+    private final ContributorTypeValidator orcidValidator;
     private final ContributorValidationProperties validationProperties;
-
+    private final ContributorRoleValidator roleValidator;
+    private final ContributorPositionValidator positionValidator;
 
     public List<ValidationFailure> validate(
             List<Contributor> contributors
@@ -57,86 +53,28 @@ public class ContributorValidator {
                         seenOrcids.put(contributor.getId(), Boolean.TRUE);
                     }
 
-                    if (isBlank(contributor.getId())) {
-                        failures.add(
-                            new ValidationFailure()
-                                    .fieldId("contributor[%d].id".formatted(index))
-                                    .errorType(NOT_SET_TYPE)
-                                    .message(NOT_SET_MESSAGE)
-                        );
-                    } else if (contributor.getId().startsWith(validationProperties.getIsniUrlPrefix())) {
-                        if (!isniValidator.validate(contributor.getId())) {
-                            failures.add(
-                                    new ValidationFailure()
-                                            .fieldId("contributor[%d].id".formatted(index))
-                                            .errorType(INVALID_VALUE_TYPE)
-                                            .message(INVALID_VALUE_MESSAGE)
-                            );
-                        } else {
-                            if (!isniClient.exists(contributor.getId())) {
-                                failures.add(
-                                        new ValidationFailure()
-                                                .fieldId("contributor[%d].id".formatted(index))
-                                                .errorType(NOT_FOUND_TYPE)
-                                                .message("This ISNI does not exist")
-                                );
-                            }
-                        }
-                    }
-                    else if (contributor.getId().startsWith(validationProperties.getOrcidUrlPrefix())) {
-                        if (!orcidClient.exists(contributor.getId())) {
-                            failures.add(
-                                    new ValidationFailure()
-                                            .fieldId("contributor[%d].id".formatted(index))
-                                            .errorType(NOT_FOUND_TYPE)
-                                            .message("This ORCID does not exist")
-                            );
-                        }
+                    if (isOrcid(contributor)) {
+                        failures.addAll(orcidValidator.validate(contributor, index));
+                    } else if (isIsni(contributor)) {
+                        failures.addAll(isniValidator.validate(contributor, index));
                     } else {
-                        failures.add(
-                                new ValidationFailure()
-                                        .fieldId("contributor[%d].id".formatted(index))
-                                        .errorType(INVALID_VALUE_TYPE)
-                                        .message("id should start with " + validationProperties.getPattern())
-                        );
-                    }
 
-                    if (isBlank(contributor.getSchemaUri())) {
-                        failures.add(
-                                new ValidationFailure()
-                                        .fieldId("contributor[%d].schemaUri".formatted(index))
-                                        .errorType(NOT_SET_TYPE)
-                                        .message(NOT_SET_MESSAGE)
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d].id".formatted(index))
+                                .errorType(INVALID_VALUE_TYPE)
+                                .message(INVALID_VALUE_MESSAGE + " - should begin with %s or %s".formatted(
+                                        validationProperties.getOrcid().getUrlPrefix(),
+                                        validationProperties.getIsni().getUrlPrefix()
+                                ))
                         );
-                    }
-                    else if (!contributor.getSchemaUri().matches(validationProperties.getPattern())) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)
-                                .message(INVALID_VALUE_MESSAGE + " - should be https://orcid.org/")
+                                .message(INVALID_VALUE_MESSAGE + " - should be %s or %s".formatted(
+                                        validationProperties.getOrcid().getSchemaUri(),
+                                        validationProperties.getIsni().getSchemaUri()
+                                ))
                         );
-                    }
-
-                    IntStream.range(0, contributor.getRole().size())
-                            .forEach(roleIndex -> {
-                                final var role = contributor.getRole().get(roleIndex);
-                                failures.addAll(roleValidationService.validate(role, index, roleIndex));
-                            });
-
-                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
-                        failures.add(new ValidationFailure()
-                                .fieldId("contributor[%d]".formatted(index))
-                                .errorType(NOT_SET_TYPE)
-                                .message("A contributor must have a position")
-                        );
-                    } else {
-                        IntStream.range(0, contributor.getPosition().size())
-                                .forEach(positionIndex -> {
-                                    final var position = contributor.getPosition().get(positionIndex);
-                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
-                                });
-
-                        failures.addAll(validatePositions(contributor.getPosition(), index));
                     }
                 });
 
@@ -144,6 +82,26 @@ public class ContributorValidator {
         failures.addAll(validateContact(contributors));
 
         return failures;
+    }
+
+    private boolean isOrcid(final Contributor contributor) {
+        if (contributor.getId() != null && contributor.getId().startsWith(validationProperties.getOrcid().getUrlPrefix())) {
+            return true;
+        }
+        if (contributor.getSchemaUri() != null && contributor.getSchemaUri().equals(validationProperties.getOrcid().getSchemaUri())) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isIsni(final Contributor contributor) {
+        if (contributor.getId() != null && contributor.getId().startsWith(validationProperties.getIsni().getUrlPrefix())) {
+            return true;
+        }
+        if (contributor.getSchemaUri() != null && contributor.getSchemaUri().equals(validationProperties.getIsni().getSchemaUri())) {
+            return true;
+        }
+        return false;
     }
 
     public List<ValidationFailure> validateForPatch(
@@ -174,64 +132,27 @@ public class ContributorValidator {
                                         )
                         );
                     }
-
-                    if (!isBlank(contributor.getId())) {
-                        final var contributorOptional = contributorRepository.findByPid(
-                                contributor.getId()
-                        );
-
-                        if (contributorOptional.isEmpty()) {
-                            failures.add(
-                                    new ValidationFailure()
-                                            .fieldId("contributor[%d].id".formatted(index))
-                                            .errorType(NOT_FOUND_TYPE)
-                                            .message("Contributor not found with id (%s)"
-                                                    .formatted(contributor.getId())));
-
-                        }
+                    if (isOrcid(contributor)) {
+                        failures.addAll(orcidValidator.validate(contributor, index));
+                    } else if (isIsni(contributor)) {
+                        failures.addAll(orcidValidator.validate(contributor, index));
                     } else {
-                        failures.add(
-                                new ValidationFailure()
-                                        .fieldId("contributor[%d].id".formatted(index))
-                                        .errorType(NOT_SET_TYPE)
-                                        .message("id is required"));
-                    }
-
-                    if (isBlank(contributor.getSchemaUri())) {
-                        failures.add(
-                                new ValidationFailure()
-                                        .fieldId("contributor[%d].schemaUri".formatted(index))
-                                        .errorType(NOT_SET_TYPE)
-                                        .message(NOT_SET_MESSAGE)
+                        failures.add(new ValidationFailure()
+                                .fieldId("contributor[%d].id".formatted(index))
+                                .errorType(INVALID_VALUE_TYPE)
+                                .message(INVALID_VALUE_MESSAGE + " - should begin with %s or %s".formatted(
+                                        validationProperties.getOrcid().getUrlPrefix(),
+                                        validationProperties.getIsni().getUrlPrefix()
+                                ))
                         );
-                    } else if (!contributor.getSchemaUri().matches(validationProperties.getPattern())) {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].schemaUri".formatted(index))
                                 .errorType(INVALID_VALUE_TYPE)
-                                .message(INVALID_VALUE_MESSAGE + " - should match " + validationProperties.getPattern())
+                                .message(INVALID_VALUE_MESSAGE + " - should be %s or %s".formatted(
+                                        validationProperties.getOrcid().getSchemaUri(),
+                                        validationProperties.getIsni().getSchemaUri()
+                                ))
                         );
-                    }
-
-                    IntStream.range(0, contributor.getRole().size())
-                            .forEach(roleIndex -> {
-                                final var role = contributor.getRole().get(roleIndex);
-                                failures.addAll(roleValidationService.validate(role, index, roleIndex));
-                            });
-
-                    if (contributor.getPosition() == null || contributor.getPosition().isEmpty()) {
-                        failures.add(new ValidationFailure()
-                                .fieldId("contributor[%d]".formatted(index))
-                                .errorType(NOT_SET_TYPE)
-                                .message("A contributor must have a position")
-                        );
-                    } else {
-                        IntStream.range(0, contributor.getPosition().size())
-                                .forEach(positionIndex -> {
-                                    final var position = contributor.getPosition().get(positionIndex);
-                                    failures.addAll(positionValidationService.validate(position, index, positionIndex));
-                                });
-
-                        failures.addAll(validatePositions(contributor.getPosition(), index));
                     }
                 });
 

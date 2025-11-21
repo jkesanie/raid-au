@@ -1,4 +1,4 @@
-package au.org.raid.api.client.isni;
+package au.org.raid.api.client.contributor.isni;
 
 import au.org.raid.api.config.properties.IsniClientProperties;
 import lombok.RequiredArgsConstructor;

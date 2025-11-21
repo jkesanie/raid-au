@@ -1,5 +1,7 @@
 package au.org.raid.api.client.orcid;
 
+import au.org.raid.api.client.contributor.orcid.OrcidClient;
+import au.org.raid.api.client.contributor.orcid.OrcidRequestEntityFactory;
 import au.org.raid.api.dto.orcid.OrcidName;
 import au.org.raid.api.dto.orcid.OrcidStringValue;
 import au.org.raid.api.dto.orcid.PersonalDetails;

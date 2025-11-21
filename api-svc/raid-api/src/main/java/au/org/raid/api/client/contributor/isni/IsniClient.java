@@ -1,7 +1,7 @@
-package au.org.raid.api.client.isni;
+package au.org.raid.api.client.contributor.isni;
 
+import au.org.raid.api.client.contributor.ContributorClient;
 import au.org.raid.api.client.isni.dto.PersonalName;
-import au.org.raid.api.client.isni.dto.ResponseRecord;
 import au.org.raid.api.dto.isni.SearchRetrieveResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Element;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
-public class IsniClient {
+public class IsniClient implements ContributorClient {
     private final RestTemplate restTemplate;
     private final IsniRequestEntityFactory requestEntityFactory;
 

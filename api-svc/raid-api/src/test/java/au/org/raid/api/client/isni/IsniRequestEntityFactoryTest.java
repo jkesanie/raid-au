@@ -1,5 +1,6 @@
 package au.org.raid.api.client.isni;
 
+import au.org.raid.api.client.contributor.isni.IsniRequestEntityFactory;
 import au.org.raid.api.config.properties.IsniClientProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

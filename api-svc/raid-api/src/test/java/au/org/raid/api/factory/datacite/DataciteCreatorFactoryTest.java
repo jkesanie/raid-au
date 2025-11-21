@@ -1,9 +1,7 @@
 package au.org.raid.api.factory.datacite;
 
-import au.org.raid.api.client.isni.IsniClient;
-import au.org.raid.api.client.orcid.OrcidClient;
-import au.org.raid.api.dto.ContributorLookupResponse;
-import au.org.raid.api.service.OrcidIntegrationClient;
+import au.org.raid.api.client.contributor.isni.IsniClient;
+import au.org.raid.api.client.contributor.orcid.OrcidClient;
 import au.org.raid.idl.raidv2.model.Contributor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

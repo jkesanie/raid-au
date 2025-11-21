@@ -1,23 +1,16 @@
 package au.org.raid.api.factory.datacite;
 
-import au.org.raid.api.client.isni.IsniClient;
-import au.org.raid.api.client.orcid.OrcidClient;
-import au.org.raid.api.dto.ContributorLookupResponse;
-import au.org.raid.api.exception.ResourceNotFoundException;
+import au.org.raid.api.client.contributor.isni.IsniClient;
+import au.org.raid.api.client.contributor.orcid.OrcidClient;
 import au.org.raid.api.model.datacite.DataciteCreator;
 import au.org.raid.api.model.datacite.NameIdentifier;
-import au.org.raid.api.service.OrcidIntegrationClient;
 import au.org.raid.idl.raidv2.model.Contributor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 @Slf4j

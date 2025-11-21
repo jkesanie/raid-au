@@ -1,5 +1,6 @@
 package au.org.raid.api.client.orcid;
 
+import au.org.raid.api.client.contributor.orcid.OrcidRequestEntityFactory;
 import au.org.raid.api.config.properties.OrcidClientProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

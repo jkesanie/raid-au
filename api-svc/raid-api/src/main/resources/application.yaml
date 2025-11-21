@@ -16,9 +16,12 @@ raid:
     origins:
       - http://localhost:7080
   contributor-validation:
-    pattern: ^https:\/\/(orcid|isni).org\/.*
-    orcid-url-prefix: https://orcid.org/
-    isni-url-prefix: https://isni.org/
+    orcid:
+      url-prefix: https://orcid.org/
+      schema-uri: https://orcid.org/
+    isni:
+      url-prefix: https://isni.org/
+      schema-uri: https://isni.org/
   orcid-integration:
     orcid-url-prefix: https://sandbox.orcid.org/
     host: http://localhost:1080
