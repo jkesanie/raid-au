@@ -105,26 +105,26 @@ function docker_create_config() {
 
 _make_conffile internal_attributes.yaml '{
   "attributes": {
-    "displayname": {
-      "saml": ["displayName", "urn:oid:2.16.840.1.113730.3.1.241"]
-    },
-    "givenname": {
-      "saml": ["givenName", "urn:oid:2.5.4.42"]
-    },
     "mail": {
       "saml": ["mail", "email", "emailAddress", "urn:oid:0.9.2342.19200300.100.1.3"]
     },
-    "surname": {
+    "givenName": {
+      "saml": ["givenName", "urn:oid:2.5.4.42"]
+    },
+    "sn": {
       "saml": ["sn", "surname", "urn:oid:2.5.4.4"]
     },
-    "edupersonprincipalname": {
+    "displayName": {
+      "saml": ["displayName", "urn:oid:2.16.840.1.113730.3.1.241"]
+    },
+    "eduPersonPrincipalName": {
       "saml": ["eduPersonPrincipalName", "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"]
     },
-    "edupersontargetedid": {
+    "eduPersonTargetedID": {
       "saml": ["eduPersonTargetedID", "urn:oid:1.3.6.1.4.1.5923.1.1.1.10"]
     },
-    "edupersonorcid": {
-    "saml": ["eduPersonOrcid", "orcid", "urn:oid:1.3.6.1.4.1.5923.1.1.1.16"]
+    "eduPersonOrcid": {
+      "saml": ["eduPersonOrcid", "urn:oid:1.3.6.1.4.1.5923.1.1.1.16"]
     }
   }
 }'
