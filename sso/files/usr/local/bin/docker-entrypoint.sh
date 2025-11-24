@@ -103,9 +103,31 @@ function docker_create_config() {
 			| .FRONTEND_MODULES = [ "plugins/frontends/saml2_frontend.yaml", "plugins/frontends/ping_frontend.yaml" ]
 	'
 
-	_make_conffile internal_attributes.yaml '
-		del(.hash, .user_id_from_attrs, .user_id_to_attr)
-	'
+_make_conffile internal_attributes.yaml '{
+  "attributes": {
+    "displayname": {
+      "saml": ["displayName", "urn:oid:2.16.840.1.113730.3.1.241"]
+    },
+    "givenname": {
+      "saml": ["givenName", "urn:oid:2.5.4.42"]
+    },
+    "mail": {
+      "saml": ["mail", "email", "emailAddress", "urn:oid:0.9.2342.19200300.100.1.3"]
+    },
+    "surname": {
+      "saml": ["sn", "surname", "urn:oid:2.5.4.4"]
+    },
+    "edupersonprincipalname": {
+      "saml": ["eduPersonPrincipalName", "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"]
+    },
+    "edupersontargetedid": {
+      "saml": ["eduPersonTargetedID", "urn:oid:1.3.6.1.4.1.5923.1.1.1.10"]
+    },
+    "edupersonorcid": {
+    "saml": ["eduPersonOrcid", "orcid", "urn:oid:1.3.6.1.4.1.5923.1.1.1.16"]
+    }
+  }
+}'
 
 	_make_conffile plugins/backends/saml2_backend.yaml '
 		del(.config.acr_mapping, .config.idp_blacklist_file, .config.sp_config.metadata.local)
