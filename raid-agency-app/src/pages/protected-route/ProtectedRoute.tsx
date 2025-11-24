@@ -1,3 +1,4 @@
+import Banner from "@/components/alert-notifications/banner/Banner";
 import { AppNavBar } from "@/components/app-nav-bar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
@@ -29,6 +30,11 @@ export const ProtectedRoute = memo(() => {
   return authenticated ? (
     <>
       <AppNavBar authenticated={true} />
+      <Banner
+        variant="warning"
+        message="This is not a production system. Australian and New Zealand organisations can request access to the production system."
+        dismissible={false}
+      />
       <Box sx={{ height: "3em" }} />
       <Outlet />
     </>
