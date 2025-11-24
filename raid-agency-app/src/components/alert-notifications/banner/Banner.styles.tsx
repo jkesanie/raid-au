@@ -218,6 +218,40 @@ export const bannerStyleSheet = `
     margin: 0;
     line-height: 1.5;
   }
+    .notification-banner__message a {
+    color: #2563eb;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .notification-banner__message a:hover {
+    color: #1d4ed8;
+  }
+
+  .notification-banner--warning .notification-banner__message a {
+    color: #d97706;
+  }
+
+  .notification-banner--warning .notification-banner__message a:hover {
+    color: #b45309;
+  }
+
+  .notification-banner--error .notification-banner__message a {
+    color: #dc2626;
+  }
+
+  .notification-banner--error .notification-banner__message a:hover {
+    color: #b91c1c;
+  }
+
+  .notification-banner--success .notification-banner__message a {
+    color: #059669;
+  }
+
+  .notification-banner--success .notification-banner__message a:hover {
+    color: #047857;
+  }
 
   .notification-banner__actions {
     display: flex;

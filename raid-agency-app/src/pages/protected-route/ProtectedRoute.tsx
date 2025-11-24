@@ -18,6 +18,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 export const ProtectedRoute = memo(() => {
   const { isInitialized, authenticated } = useKeycloak();
   const location = useLocation();
+  const isProduction = import.meta.env.VITE_RAIDO_ENV === 'prod';
 
   if (!isInitialized) {
     return (
@@ -30,11 +31,21 @@ export const ProtectedRoute = memo(() => {
   return authenticated ? (
     <>
       <AppNavBar authenticated={true} />
-      <Banner
-        variant="warning"
-        message="This is not a production system. Australian and New Zealand organisations can request access to the production system."
-        dismissible={false}
-      />
+      {!isProduction && (
+        <Banner
+          variant="warning"
+          message={
+            <>
+              This is not a production system. Australian and New Zealand organisations can{' '}
+              <a href="https://documentation.ardc.edu.au/raid/request-a-raid-production-service-point" target="_blank" rel="noopener noreferrer">
+                request access
+              </a>
+              {' '}to the production system.
+            </>
+          }
+          dismissible={false}
+        />
+      )}
       <Box sx={{ height: "3em" }} />
       <Outlet />
     </>

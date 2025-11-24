@@ -5,7 +5,7 @@ type BannerVariant = 'info' | 'warning' | 'success' | 'error';
 
 interface BannerProps {
   title?: string;
-  message?: string;
+  message?: string | React.ReactNode;
   variant?: BannerVariant;
   dismissible?: boolean;
   onDismiss?: () => void;
