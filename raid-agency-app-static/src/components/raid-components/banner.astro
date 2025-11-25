@@ -17,84 +17,77 @@ const {
   actionHref,
 } = Astro.props;
 
-// Only show banner in non-production environments
-// Check RAID_ENV environment variable
-const raidEnv = import.meta.env.RAID_ENV || import.meta.env.PUBLIC_RAID_ENV;
-const isProduction = raidEnv === 'prod';
-const shouldRender = !isProduction;
 ---
 
-{shouldRender && (
-  <div 
-    class={`notification-banner notification-banner--${variant}`}
-    role="banner"
-    aria-live="polite"
-    data-dismissible={dismissible}
-  >
-    <div class="notification-banner__container">
-      <div class="notification-banner__icon">
-        {variant === 'info' && (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M12 16v-4m0-4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        )}
-        {variant === 'warning' && (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        )}
-        {variant === 'success' && (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        )}
-        {variant === 'error' && (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9l-6 6m0-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        )}
-      </div>
+<div 
+  class={`notification-banner notification-banner--${variant}`}
+  role="banner"
+  aria-live="polite"
+  data-dismissible={dismissible}
+>
+  <div class="notification-banner__container">
+    <div class="notification-banner__icon">
+      {variant === 'info' && (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 16v-4m0-4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      )}
+      {variant === 'warning' && (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      )}
+      {variant === 'success' && (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      )}
+      {variant === 'error' && (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M15 9l-6 6m0-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      )}
+    </div>
 
-      <div class="notification-banner__content">
-        {title && <div class="notification-banner__title">{title}</div>}
-        {message && <div class="notification-banner__message" set:html={message} />}
-      </div>
+    <div class="notification-banner__content">
+      {title && <div class="notification-banner__title">{title}</div>}
+      {message && <div class="notification-banner__message" set:html={message} />}
+    </div>
 
-      <div class="notification-banner__actions">
-        {actionHref && actionLabel && (
-          <a 
-            href={actionHref}
-            class="notification-banner__button"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {actionLabel}
-          </a>
-        )}
-        
-        {dismissible && (
-          <button 
-            class="notification-banner__dismiss"
-            aria-label="Dismiss notification"
-            data-dismiss-banner
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path 
-                d="M6 6l8 8M14 6l-8 8" 
-                stroke="currentColor" 
-                stroke-width="1.5" 
-                stroke-linecap="round"
-              />
-            </svg>
-          </button>
-        )}
-      </div>
+    <div class="notification-banner__actions">
+      {actionHref && actionLabel && (
+        <a 
+          href={actionHref}
+          class="notification-banner__button"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {actionLabel}
+        </a>
+      )}
+      
+      {dismissible && (
+        <button 
+          class="notification-banner__dismiss"
+          aria-label="Dismiss notification"
+          data-dismiss-banner
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path 
+              d="M6 6l8 8M14 6l-8 8" 
+              stroke="currentColor" 
+              stroke-width="1.5" 
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      )}
     </div>
   </div>
-)}
+</div>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
