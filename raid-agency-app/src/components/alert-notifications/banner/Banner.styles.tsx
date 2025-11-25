@@ -213,7 +213,7 @@ export const bannerStyleSheet = `
 
   .notification-banner__message {
     font-size: 0.875rem;
-    color: #111827;
+    color: #000000de;
     margin: 0;
     line-height: 1.5;
   }
