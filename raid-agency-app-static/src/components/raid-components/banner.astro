@@ -16,6 +16,7 @@ const {
   actionLabel,
   actionHref,
 } = Astro.props;
+
 ---
 
 <div 
@@ -169,7 +170,7 @@ const {
 
   .notification-banner__message {
     font-size: 0.875rem;
-    color: #111827;
+    color: #000000de;
     margin: 0;
     line-height: 1.5;
   }
@@ -272,19 +273,3 @@ const {
     }
   }
 </style>
-
-<script>
-  // Client-side script for dismiss functionality --> for future use if dismissible is true
-  document.addEventListener('DOMContentLoaded', () => {
-    const dismissButtons = document.querySelectorAll('[data-dismiss-banner]');
-    
-    dismissButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const banner = button.closest('.notification-banner');
-        if (banner) {
-          banner.style.display = 'none';
-        }
-      });
-    });
-  });
-</script>

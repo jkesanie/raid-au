@@ -78,7 +78,7 @@ export function App() {
                   <SnackbarProvider>
                     <QueryClientProvider client={queryClient}>
                       <ReactErrorBoundary>
-                        <Box sx={{ pt: 3 }}></Box>
+                        <Box sx={{ pt: 7.4 }}></Box>
                       <Outlet />
                     </ReactErrorBoundary>
                   </QueryClientProvider>

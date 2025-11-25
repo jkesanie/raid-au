@@ -1,3 +1,4 @@
+import Banner from "@/components/alert-notifications/banner/Banner";
 import { AppNavBar } from "@/components/app-nav-bar";
 import { useKeycloak } from "@/contexts/keycloak-context";
 import { Loading } from "@/pages/loading";
@@ -17,6 +18,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 export const ProtectedRoute = memo(() => {
   const { isInitialized, authenticated } = useKeycloak();
   const location = useLocation();
+  const isProduction = import.meta.env.VITE_RAIDO_ENV === 'prod';
 
   if (!isInitialized) {
     return (
@@ -29,6 +31,17 @@ export const ProtectedRoute = memo(() => {
   return authenticated ? (
     <>
       <AppNavBar authenticated={true} />
+      {!isProduction && (
+        <Banner
+          variant="warning"
+          message={
+            <>
+              This is not a production system. Research organisations can request access to the production system.
+            </>
+          }
+          dismissible={false}
+        />
+      )}
       <Box sx={{ height: "3em" }} />
       <Outlet />
     </>
