@@ -36,11 +36,7 @@ export const ProtectedRoute = memo(() => {
           variant="warning"
           message={
             <>
-              This is not a production system. Australian and New Zealand organisations can{' '}
-              <a href="https://documentation.ardc.edu.au/raid/request-a-raid-production-service-point" target="_blank" rel="noopener noreferrer">
-                request access
-              </a>
-              {' '}to the production system.
+              This is not a production system. Research organisations can request access to the production system.
             </>
           }
           dismissible={false}

@@ -147,7 +147,7 @@ export const bannerStyleSheet = `
   }
 
   .notification-banner--warning {
-    background: #fed7aa;
+    background: #f5c955;
     border-left: 4px solid #f59e0b;
   }
 
@@ -164,7 +164,7 @@ export const bannerStyleSheet = `
   .notification-banner__container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0.5rem 1.5rem;
+    padding: 0.2rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -186,7 +186,6 @@ export const bannerStyleSheet = `
   }
 
   .notification-banner--warning .notification-banner__icon {
-    background: #fbbf24;
     color: #92400e;
   }
 
