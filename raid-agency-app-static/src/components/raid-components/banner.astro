@@ -274,19 +274,3 @@ const {
     }
   }
 </style>
-
-<script>
-  // Client-side script for dismiss functionality
-  document.addEventListener('DOMContentLoaded', () => {
-    const dismissButtons = document.querySelectorAll('[data-dismiss-banner]');
-    
-    dismissButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const banner = button.closest('.notification-banner');
-        if (banner) {
-          banner.style.display = 'none';
-        }
-      });
-    });
-  });
-</script>
