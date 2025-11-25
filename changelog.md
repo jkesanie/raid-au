@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.22
+## SSO
+* Update mappings from AAF to allow usernames to be shown in UI
+
 # 2.5.21
 ## API
 * Add validation to prevent duplicate organizations appearing in a RAiD
