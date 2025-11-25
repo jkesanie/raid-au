@@ -13,7 +13,7 @@ interface Props {
 const { title } = Astro.props;
 // Only show banner in non-production environments
 // Check RAID_ENV environment variable
-const raidEnv = import.meta.env.RAID_ENV || import.meta.env.PUBLIC_RAID_ENV;
+const raidEnv = import.meta.env.RAID_ENV;
 const isProduction = raidEnv === 'prod';
 const shouldRender = !isProduction;
 ---
