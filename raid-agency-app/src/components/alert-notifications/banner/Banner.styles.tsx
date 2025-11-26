@@ -139,6 +139,9 @@ export const bannerStyleSheet = `
     font-family: 'Inter', system-ui, sans-serif;
     width: 100%;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    text-align: center;
+    justify-content: center;
   }
 
   .notification-banner--info {
