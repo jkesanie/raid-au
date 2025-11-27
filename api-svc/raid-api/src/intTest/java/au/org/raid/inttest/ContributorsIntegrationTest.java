@@ -439,7 +439,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                         new ValidationFailure()
                                 .fieldId("contributor[1].id")
                                 .errorType("duplicateValue")
-                                .message("an object with the same values appears in the list")
+                                .message("A contributor can appear only once. There are 2 occurrences of https://sandbox.orcid.org/0009-0002-5128-5184")
                 ));
             }
         }
@@ -464,7 +464,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                                             .id(SOFTWARE_CONTRIBUTOR_ROLE)
                             )),
                     new Contributor()
-                            .id("https://orcid.org/0009-0005-9091-4416")
+                            .id("https://sandbox.orcid.org/0009-0005-9091-4416")
                             .schemaUri(ORCID_SCHEMA_URI)
                             .position(List.of(
                                     new ContributorPosition()

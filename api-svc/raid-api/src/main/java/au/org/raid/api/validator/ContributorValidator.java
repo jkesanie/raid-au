@@ -6,6 +6,7 @@ import au.org.raid.api.repository.ContributorRepository;
 import au.org.raid.api.util.DateUtil;
 import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.ContributorPosition;
+import au.org.raid.idl.raidv2.model.Organisation;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -36,22 +37,26 @@ public class ContributorValidator {
         }
 
         var failures = new ArrayList<ValidationFailure>();
-        var seenOrcids = new HashMap<String, Boolean>();
+
+        final var contributorCountMap = contributors.stream()
+                .filter(org -> org.getId() != null)
+                .collect(Collectors.groupingBy(Contributor::getId, Collectors.counting()));
+
+        for (final String id : contributorCountMap.keySet()) {
+            final var occurrences = contributorCountMap.get(id);
+            if (occurrences > 1) {
+                failures.add(new ValidationFailure()
+                        .fieldId("contributor[1].id")
+                        .errorType(DUPLICATE_TYPE)
+                        .message("A contributor can appear only once. There are %d occurrences of %s".formatted(occurrences, id))
+                );
+            }
+        }
+
 
         IntStream.range(0, contributors.size())
                 .forEach(index -> {
                     final var contributor = contributors.get(index);
-
-                    if (seenOrcids.containsKey(contributor.getId())) {
-                        failures.add(
-                                new ValidationFailure()
-                                        .fieldId("contributor[%d].id".formatted(index))
-                                        .errorType(DUPLICATE_TYPE)
-                                        .message(DUPLICATE_MESSAGE)
-                        );
-                    } else {
-                        seenOrcids.put(contributor.getId(), Boolean.TRUE);
-                    }
 
                     if (isOrcid(contributor)) {
                         failures.addAll(orcidValidator.validate(contributor, index));
