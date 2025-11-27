@@ -66,13 +66,13 @@ export const contributorValidationSchema = z
         if (trimmedId === '') {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: `#${index + 1}: ${orcidEmptyMsg}`,
+            message: `${index + 1}: ${orcidEmptyMsg}`,
             path: [index, 'id'],
           });
         } else if (!new RegExp(orcidPattern).test(trimmedId)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: `${orcidErrorMsg}`,
+            message: `${index + 1}: ${orcidErrorMsg}`,
             path: [index, 'id'],
           });
         }
