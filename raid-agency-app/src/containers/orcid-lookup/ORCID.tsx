@@ -133,7 +133,7 @@ const normalizeOrcidId = (orcid: string): string => {
 };
 
 // JSONP helper function
-/* const fetchJSONP = (url: string) => {
+const fetchJSONP = (url: string) => {
   return new Promise((resolve, reject) => {
     const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
     const script = document.createElement('script');
@@ -143,7 +143,6 @@ const normalizeOrcidId = (orcid: string): string => {
     const win = window as unknown as Window & Record<string, JSONPCallback | undefined>;
 
     win[uniqueCallback] = (data: unknown) => {
-      console.log("data", data);
       // Clean up
       try {
         delete win[uniqueCallback];
@@ -200,74 +199,6 @@ const normalizeOrcidId = (orcid: string): string => {
     script.src = finalUrl;
     document.body.appendChild(script);
   });
-}; */
-
-const fetchJSONP = (url: string) => {
-  return new Promise((resolve, reject) => {
-    console.log('Attempting to fetch ORCID data from:', url); // Add this
-    
-    const uniqueCallback = `jsonp_callback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-    const script = document.createElement('script');
-    script.async = true;
-    
-    type JSONPCallback = (data: unknown) => void;
-    const win = window as unknown as Window & Record<string, JSONPCallback | undefined>;
-
-    win[uniqueCallback] = (data: unknown) => {
-      console.log("JSONP callback received, data:", data);
-      clearTimeout(timeout); // Move this here to ensure timeout is cleared
-      
-      // Clean up
-      try {
-        delete win[uniqueCallback];
-        document.body.removeChild(script);
-      } catch (e) {
-        console.error('Cleanup error:', e); // Add logging
-      }
-      
-      if (data && typeof data === 'object') {
-        const errorResponse = data as { 'response-code'?: number };
-        if (errorResponse['response-code'] && errorResponse['response-code'] >= 400) {
-          reject(new Error(`API Error ${errorResponse['response-code']}`));
-          return;
-        }
-      }
-      if(!data) {
-        reject(new Error('No data returned from ORCID API'));
-        return;
-      }
-
-      resolve(data);
-    };
-
-    script.onerror = (error) => {
-      console.error('Script loading error:', error); // Better logging
-      clearTimeout(timeout);
-      try {
-        delete win[uniqueCallback];
-        document.body.removeChild(script);
-      } catch (e) {
-        console.error('Cleanup error:', e);
-      }
-      reject(new Error('ORCID Search request failed: ' + url));
-    };
-
-    const timeout = setTimeout(() => {
-      console.error('ORCID request timeout after 10s'); // Add logging
-      try {
-        delete win[uniqueCallback];
-        document.body.removeChild(script);
-      } catch (e) {
-        console.error('Cleanup error:', e);
-      }
-      reject(new Error('ORCID Search request timeout'));
-    }, 10000);
-
-    const finalUrl = url.replace('callback=?', `callback=${uniqueCallback}`);
-    console.log('Final URL with callback:', finalUrl); // Add this
-    script.src = finalUrl;
-    document.body.appendChild(script);
-  });
 };
 
 const getErrorMessage = (responseCode: number): string => {
@@ -285,7 +216,6 @@ const getErrorMessage = (responseCode: number): string => {
 };
 
 const searchAPI = async (url: string): Promise<unknown> => {
-  console.log(`Fetching ORCID data from: ${url}`);
   try {
     const response = await fetchJSONP(url);
     if (typeof response === 'string') {
@@ -360,9 +290,9 @@ export default function ORCIDLookup({
         'family-name': { value: string };
       };
       addresses?: {
-          address?: {
-              country: { value: string };
-          }[];
+        address?: {
+            country: { value: string };
+        }[];
       };
     };
   }
@@ -405,14 +335,14 @@ export default function ORCIDLookup({
   const searchConfig = {
     lookup: {
       placeholder: 'Type to search',
-      endpoint: `https://${env}researchdata.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(searchValue)}/?api_key=public&callback=?`,
+      endpoint: `https://${env}researchdata.ardc.edu.au/api/v2.0/orcid.jsonp/lookup/${encodeURIComponent(searchValue)}/?api_key=public&callback=?`,
       label: 'ORCID ID',
       description: 'Search by unique ORCID identifier',
       icon: <FingerprintIcon />
     },
     search: {
       placeholder: 'Type to search',
-      endpoint: `https://${env}researchdata.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`,
+      endpoint: `https://${env}researchdata.ardc.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`,
       label: 'Custom Search',
       description: 'Search by name or keywords',
       icon: <PersonIcon />
@@ -446,7 +376,6 @@ export default function ORCIDLookup({
     // Check localStorage first
     const cachedData = orcidLookupCache.get<LookupResponse>(orcidParts);
     if (cachedData) {
-      console.log(`✅ Using cached data for ORCID: ${orcidParts}`);
       setCachedResult(true);
       processSearchData(cachedData, 'lookup');
       setDropBox(true);
@@ -468,8 +397,6 @@ export default function ORCIDLookup({
 
       // Save to cache with display name
       orcidLookupCache.set(orcidParts, data, displayName);
-      console.log(`💾 Saved ORCID lookup to cache: ${orcidParts}`);
-
       processSearchData(data, 'lookup');
       setDropBox(true);
     } catch (err) {
@@ -483,7 +410,7 @@ export default function ORCIDLookup({
     setIsLoading(true);
     setDropBox(true);
     try {
-      const endpoint = `https://${env}researchdata.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`;
+      const endpoint = `https://${env}researchdata.ardc.edu.au/api/v2.0/orcid.jsonp/search?api_key=public&q=${encodeURIComponent(searchValue)}&start=0&rows=10&wt=json&callback=?`;
       const data = await searchAPI(endpoint) as SearchResponse;
       processSearchData(data, 'search');
     } catch (err) {
@@ -538,7 +465,6 @@ export default function ORCIDLookup({
 
   // Process search data
   const processSearchData = (data: LookupResponse | SearchResponse, mode: 'lookup' | 'search') => {
-    console.log("mode", mode)
     try {
       if (mode === 'lookup') {
         const lookup = data as LookupResponse;
@@ -552,7 +478,6 @@ export default function ORCIDLookup({
             country: getCountryName(lookup),
           }
         });
-        console.log("iside")
         updateContributorNamesCache(searchValue);
       } else {
         const searchData = data as SearchResponse;
@@ -622,7 +547,6 @@ const selectOrcid = (item: OrcidData | SearchPerson) => {
   setVerifiedORCID(true);
   setDropBox(false);
   setOrcidDetails(item);
-
   updateContributorNamesCache(orcidName);
 }
   const _errors = formMethods?.formState?.errors as Record<string, unknown> | undefined;
