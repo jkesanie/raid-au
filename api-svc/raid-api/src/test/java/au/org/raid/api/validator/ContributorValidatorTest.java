@@ -341,7 +341,7 @@ class ContributorValidatorTest {
                 new ValidationFailure()
                         .fieldId("contributor[1].id")
                         .errorType("duplicateValue")
-                        .message("an object with the same values appears in the list")
+                        .message("A contributor can appear only once. There are 2 occurrences of https://orcid.org/0000-0000-0000-0001")
         )));
     }
 

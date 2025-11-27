@@ -1,7 +1,7 @@
 package au.org.raid.inttest.service;
 
 public class TestConstants {
-    public static final String REAL_TEST_ORCID = "https://orcid.org/0009-0002-5128-5184";
+    public static final String REAL_TEST_ORCID = "https://sandbox.orcid.org/0009-0002-5128-5184";
     public static final String REAL_TEST_ISNI = "https://isni.org/isni/0000000078519858";
     public static final String REAL_TEST_ROR = "https://ror.org/038sjwq14";
 

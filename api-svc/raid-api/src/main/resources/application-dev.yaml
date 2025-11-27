@@ -20,6 +20,9 @@ raid:
   raid-permissions:
     client-id: raid-permissions-admin
     client-secret: 07ATOSG9hYs8oATcz5wcQAdRuoEsLzEY
+  contributor-validation:
+    orcid:
+      url-prefix: https://sandbox.orcid.org/
 spring:
   security:
     oauth2:
