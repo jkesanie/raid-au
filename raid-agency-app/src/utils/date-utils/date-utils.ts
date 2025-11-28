@@ -46,7 +46,7 @@ export function addDays(d: Date | undefined, days: number): Date {
  * - Full date: YYYY-MM-DD (with proper month/day range validation)
  */
 export const combinedPattern =
-  /^(?:\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|02-(?:0[1-9]|1\d|2[0-8]))|\d{4}-(?:0[1-9]|1[0-2])|\d{4})?$/;
+  /^(?:\d{2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}-\d{4})$/i;
 
 /**
  * Pattern for validating year-only format (YYYY)
@@ -126,4 +126,31 @@ export const dateDisplayFormatter = (input?: string) => {
   }
 
   return "---";
+};
+
+export const formatDate = (timestamp: number, time: boolean) => {
+  const date = new Date(timestamp * 1000);
+  
+  const parts = new Intl.DateTimeFormat(undefined, {
+    timeZone: "UTC",
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  }).formatToParts(date);
+
+  const getValue = (type: string) => parts.find(p => p.type === type)?.value;
+  
+  // Automatically detect date order from locale
+  const monthIndex = parts.findIndex(p => p.type === 'month');
+  const dayIndex = parts.findIndex(p => p.type === 'day');
+  
+  const datePart = monthIndex < dayIndex
+    ? `${getValue('month')}-${getValue('day')}-${getValue('year')}`  // Month first (US, Japan, etc.)
+    : `${getValue('day')}-${getValue('month')}-${getValue('year')}`;  // Day first (AU, UK, EU, etc.)
+
+  return `${datePart} ${time ? `${getValue('hour')}:${getValue('minute')}:${getValue('second')} ${getValue('dayPeriod')}` : ''}`;
 };
