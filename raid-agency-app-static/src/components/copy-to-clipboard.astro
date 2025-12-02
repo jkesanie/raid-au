@@ -24,9 +24,12 @@ const {
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
   </svg>
   
-  <svg class="icon check-icon" xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>
+  <span class="success-wrapper" hidden>
+    <svg class="icon check-icon" xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span class="success-text">Copied to clipboard</span>
+  </span>
 </button>
 
 <style>
@@ -36,11 +39,13 @@ const {
     justify-content: center;
     background: none;
     border: none;
-    padding: 0 4px;
+    padding: 0;
+    margin: 0 0.30rem;
     cursor: pointer;
     color: #6b7280;
     transition: color 0.2s;
     vertical-align: middle;
+    line-height: 1;
   }
 
   .copy-to-clipboard:hover {
@@ -75,6 +80,20 @@ const {
   .copy-to-clipboard.copied .check-icon {
     display: block;
   }
+
+ .success-wrapper {
+    display: none;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .copy-to-clipboard.copied .success-wrapper {
+    display: flex;
+  }
+
+  .success-text {
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
 </style>
 
 <script>
@@ -101,15 +120,15 @@ const {
           await navigator.clipboard.writeText(text);
           
           newButton.classList.add('copied');
-          const checkIcon = newButton.querySelector('.check-icon');
+          const successWrapper = newButton.querySelector('.success-wrapper');
           const copyIcon = newButton.querySelector('.copy-icon');
-          
-          if (checkIcon) checkIcon.removeAttribute('hidden');
+
+          if (successWrapper) successWrapper.removeAttribute('hidden');
           if (copyIcon) copyIcon.setAttribute('hidden', '');
           
           setTimeout(() => {
             newButton.classList.remove('copied');
-            if (checkIcon) checkIcon.setAttribute('hidden', '');
+            if (successWrapper) successWrapper.setAttribute('hidden', '');
             if (copyIcon) copyIcon.removeAttribute('hidden');
           }, 2000);
         } catch (err: unknown) {
