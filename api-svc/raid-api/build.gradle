@@ -14,7 +14,7 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version '3.2.6'
   id 'io.spring.dependency-management' version '1.1.6'
-  id 'org.jsonschema2pojo' version '1.2.1'
+  id 'org.jsonschema2pojo' version '1.2.2'
   id 'com.github.bjornvester.xjc' version '1.8.2'
 }
 
@@ -162,7 +162,7 @@ intTest {
 
 task buildInfo(type: WriteProperties) {
   description = "Write build-info.properties file"
-  outputFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
+  destinationFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
   encoding = "UTF-8"
   comment = "This file built by Gradle task buildInfo"
 
