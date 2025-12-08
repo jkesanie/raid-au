@@ -153,7 +153,7 @@ test {
 }
 
 intTest {
-//  useJUnitPlatform()
+  useJUnitPlatform()
   systemProperties defaultSysProps
   testLogging.showStandardStreams = true
 }
