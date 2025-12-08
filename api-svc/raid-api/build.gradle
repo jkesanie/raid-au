@@ -12,7 +12,8 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'org.springframework.boot' version '3.2.6'
+  id 'jvm-test-suite'
+  id 'org.springframework.boot' version '3.5.0'
   id 'io.spring.dependency-management' version '1.1.6'
   id 'org.jsonschema2pojo' version '1.2.2'
   id 'com.github.bjornvester.xjc' version '1.8.2'
@@ -115,11 +116,8 @@ compileJava {
 }
 
 testing{
-  //noinspection GroovyAssignabilityCheck
   suites{
-    //noinspection GroovyAssignabilityCheck
     intTest(JvmTestSuite){
-      testType = TestSuiteType.INTEGRATION_TEST
       dependencies{
         implementation project(':api-svc:idl-raid-v2')
 
@@ -160,16 +158,16 @@ intTest {
   testLogging.showStandardStreams = true
 }
 
-task buildInfo(type: WriteProperties) {
-  description = "Write build-info.properties file"
-  destinationFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
-  encoding = "UTF-8"
-  comment = "This file built by Gradle task buildInfo"
+tasks.register('buildInfo', WriteProperties) {
+    description = "Write build-info.properties file"
+    destinationFile = file("${sourceSets.main.output.resourcesDir}/META-INF/build-info.properties")
+    encoding = "UTF-8"
+    comment = "This file built by Gradle task buildInfo"
 
-  property("build.version", project.version)
+    property("build.version", project.version)
 //  property("build.commitId", rootProject.gitCommitHash)
-  // we don't use it for stuff, it's for people, so format it nice
-  property("build.buildDate", new Date().toString())
+    // we don't use it for stuff, it's for people, so format it nice
+    property("build.buildDate", new Date().toString())
 }
 processResources.dependsOn buildInfo
 
