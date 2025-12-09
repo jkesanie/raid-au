@@ -55,8 +55,8 @@ if( file(configPath).exists() ){
 }
 
 dependencies{
-  runtimeOnly libs.pgjdbc
-  jooqGenerator libs.pgjdbc
+  runtimeOnly libs.postgresql
+  jooqGenerator libs.postgresql
 }
 
 compileJava {
