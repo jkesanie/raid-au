@@ -43,36 +43,42 @@ springdoc = "2.1.0"
 xjc = "1.8.2"
 
 [libraries]
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+assertj = { group = 'org.assertj', name = "assertj-core", version.ref = "assertj" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commons-compress" }
+commons-math3 = { group = "org.apache.commons", name = "commons-math3", version.ref = "commons-math3" }
+feign-okhttp = { group = 'io.github.openfeign', name = 'feign-okhttp', version.ref = 'feign' }
+feign-jackson = { group = 'io.github.openfeign', name = 'feign-jackson', version.ref = 'feign' }
+feign-slf4j = { group = 'io.github.openfeign', name = 'feign-slf4j', version.ref = 'feign' }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+hamcrest = { group = "org.hamcrest", name = "hamcrest", version.ref = "hamcrest" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson-databind" }
+jackson-dataformat-xml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml", version.ref = "jackson-annotations" }
+jakarta-validation-api = { group = "jakarta.validation", name = "jakarta.validation-api", version.ref = "jakarta-validation-api" }
+flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
+geonames-ws-client = { group = "org.geonames", name = "geonames-ws-client", version.ref = "geonames-ws-client" }
+jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson-datatype-jsr310" }
+jackson-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson-annotations" }
+jakarta-jakartaee-web-api = { group = "jakarta.platform", name = "jakarta.jakartaee-web-api", version.ref = "jakarta-jakartaee-web-api" }
+jakarta-json-api = { group = "jakarta.json", name = "jakarta.json-api", version.ref = "jakarta-json-api" }
+jakarta-json = { group = "org.eclipse.parsson", name = "jakarta.json", version.ref = "jakarta-json" }
+jakarta-xml-bind-api = { group = "jakarta.xml.bind", name = "jakarta.xml.bind-api", version.ref = "jakarta-xml-bind-api" }
+jaxb-runtime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref = "jaxb-runtime" }
+jaxb-xjc = { group = "org.glassfish.jaxb", name = "jaxb-xjc", version.ref = "jaxb-xjc" }
+jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotation-api", version.ref = "jakarta-annotation-api" }
+jena-arq = { group = "org.apache.jena", name = "jena-arq", version.ref = "jena-arq" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit-jupiter" }
 keycloak-server-spi = { group = "org.keycloak", name = "keycloak-server-spi", version.ref = "keycloak-server-spi" }
 keycloak-server-spi-private = { group = "org.keycloak", name = "keycloak-server-spi-private", version.ref = "keycloak-server-spi-private" }
 keycloak-core = { group = "org.keycloak", name = "keycloak-core", version.ref = "keycloak-core" }
 keycloak-services = { group = "org.keycloak", name = "keycloak-services", version.ref = "keycloak-services" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
-jakarta-jakartaee-web-api = { group = "jakarta.platform", name = "jakarta.jakartaee-web-api", version.ref = "jakarta-jakartaee-web-api" }
-slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j-simple" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito-core" }
-hamcrest = { group = "org.hamcrest", name = "hamcrest", version.ref = "hamcrest" }
-commons-math3 = { group = "org.apache.commons", name = "commons-math3", version.ref = "commons-math3" }
-guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
-jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson-databind" }
-jakarta-validation-api = { group = "jakarta.validation", name = "jakarta.validation-api", version.ref = "jakarta-validation-api" }
-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
-geonames-ws-client = { group = "org.geonames", name = "geonames-ws-client", version.ref = "geonames-ws-client" }
-jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson-datatype-jsr310" }
-jackson-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson-annotations" }
-jakarta-json-api = { group = "jakarta.json", name = "jakarta.json-api", version.ref = "jakarta-json-api" }
-jakarta-json = { group = "org.eclipse.parsson", name = "jakarta.json", version.ref = "jakarta-json" }
-jakarta-xml-bind-api = { group = "jakarta.xml.bind", name = "jakarta.xml.bind-api", version.ref = "jakarta-xml-bind-api" }
-jaxb-runtime = { group = "org.glassfish.jaxb", name = "jaxb-runtime", version.ref = "jaxb-runtime" }
+mockito-junit-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito-core" }
 mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-inline" }
-spring-security-test = { group = "org.springframework.security", name = "spring-security-test", version.ref = "spring-security-test" }
-jaxb-xjc = { group = "org.glassfish.jaxb", name = "jaxb-xjc", version.ref = "jaxb-xjc" }
-jakarta-annotation-api = { group = "jakarta.annotation", name = "jakarta.annotation-api", version.ref = "jakarta-annotation-api" }
-jena-arq = { group = "org.apache.jena", name = "jena-arq", version.ref = "jena-arq" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
-commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commons-compress" }
+slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j-simple" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springboot" }
 spring-boot-starter-oauth2-resource-server = { group = "org.springframework.boot", name = "spring-boot-starter-oauth2-resource-server", version.ref = "springboot" }
 spring-boot-starter-jooq = { group = "org.springframework.boot", name = "spring-boot-starter-jooq", version.ref = "springboot" }
@@ -83,18 +89,15 @@ spring-boot-starter-oauth2-client = { group = "org.springframework.boot", name =
 spring-cloud-starter-openfeign = { group = "org.springframework.cloud", name = "spring-cloud-starter-openfeign", version.ref = "springcloud" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springboot" }
 springdoc-openapi = { group = 'org.springdoc', name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
-assertj = { group = 'org.assertj', name = "assertj-core", version.ref = "assertj" }
-feign-okhttp = { group = 'io.github.openfeign', name = 'feign-okhttp', version.ref = 'feign' }
-feign-jackson = { group = 'io.github.openfeign', name = 'feign-jackson', version.ref = 'feign' }
-feign-slf4j = { group = 'io.github.openfeign', name = 'feign-slf4j', version.ref = 'feign' }
+spring-security-test = { group = "org.springframework.security", name = "spring-security-test", version.ref = "spring-security-test" }
 
 [plugins]
 flyway = { id = 'org.flywaydb.flyway', version.ref = "flyway-core" }
 jooq = { id = 'nu.studer.jooq', version.ref = "jooq" }
-openapi-generator = { id = 'org.openapi.generator', version.ref = 'openapi-generator' }
-spring-boot = { id = 'org.springframework.boot', version.ref = "springboot-plugin" }
-spring-dependency-management = { id = 'io.spring.dependency-management', version.ref = "spring-dependency-management" }
 jsonschema2pojo = { id = 'org.jsonschema2pojo', version.ref = "jsonschema2pojo" }
+openapi-generator = { id = 'org.openapi.generator', version.ref = 'openapi-generator' }
+spring-dependency-management = { id = 'io.spring.dependency-management', version.ref = "spring-dependency-management" }
+spring-boot = { id = 'org.springframework.boot', version.ref = "springboot-plugin" }
 xjc = { id = 'com.github.bjornvester.xjc', version.ref = "xjc" }
 
 [bundles]

@@ -63,16 +63,16 @@ dependencies{
   implementation 'jakarta.annotation:jakarta.annotation-api'
 
   implementation libs.geonames.ws.client
-  compileOnly 'org.projectlombok:lombok'
-  annotationProcessor 'org.projectlombok:lombok'
+  compileOnly libs.lombok
+  annotationProcessor libs.lombok
 
-  testCompileOnly 'org.projectlombok:lombok'
-  testAnnotationProcessor 'org.projectlombok:lombok'
+  testCompileOnly libs.lombok
+  testAnnotationProcessor libs.lombok
     // postgres DB driver
   runtimeOnly libs.postgresql
 
-  runtimeOnly 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+  runtimeOnly libs.jackson.databind
+  implementation libs.jackson.dataformat.xml
   implementation libs.jackson.datatype.jsr310
   implementation libs.jackson.annotations
 
@@ -85,18 +85,15 @@ dependencies{
   testImplementation libs.bundles.springboot.test
 
   testImplementation libs.mockito.inline
-  testImplementation 'org.mockito:mockito-junit-jupiter'
-  // https://junit.org/junit5/docs/current/release-notes/index.html
-  testImplementation 'org.junit.jupiter:junit-jupiter-api'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation libs.mockito.junit.jupiter
+  testImplementation libs.junit.jupiter
 
   testImplementation libs.assertj
 
   // because MockRestServiceServer couldn't find class org.hamcrest.Matcher
-  testImplementation 'org.hamcrest:hamcrest'
+  testImplementation libs.hamcrest
 
   // needed for jsonpath testing in Spring MVC tests
-  testImplementation 'com.jayway.jsonpath:json-path'
   testImplementation libs.spring.security.test
 
   // XJC dependencies - need the actual compiler tools
