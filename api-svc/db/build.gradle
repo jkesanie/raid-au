@@ -116,7 +116,7 @@ tasks.register('cleanJooqGeneratedSrc', Delete) {
 }
 
 jooq{
-  version = '3.18.0'
+  version = libs.versions.jooq.gradle.plugin.get()
   configurations {
     main {  // name of the jOOQ configuration
       generateSchemaSourceOnCompilation = false
