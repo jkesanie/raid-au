@@ -1,7 +1,11 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
-# 2.5.23
+# 2.5.25
+## API
+* Add service point name to ORCID notification and change item type to mmbership in ORCID integration
+
+# 2.5.23/2.5.24
 ## App-client UI
 * Updated the date format to follow (YYYY-MM-DD) format throughout the App(View/Edit)
 * Extracted root domain from current origin instead of hard-coding domain name
