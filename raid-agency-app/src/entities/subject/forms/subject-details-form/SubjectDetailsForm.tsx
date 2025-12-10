@@ -2,7 +2,7 @@ import { TextSelectField } from "@/components/fields/TextSelectField";
 import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 import subjectMapping from "@/mapping/data/subject-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Stack, Tooltip, Typography, Box } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -28,7 +28,9 @@ function FieldGrid({
         required={true}
         width={12}
       />
-      <CustomizedTreeViewWithSelection/>
+      <Box sx={{ width: '100%', mt: 2, ml: 2, overflowY: 'auto', height: 270 }} >
+        <CustomizedTreeViewWithSelection/>
+      </Box>
     </Grid>
   );
 }

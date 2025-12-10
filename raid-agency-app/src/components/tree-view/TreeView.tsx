@@ -6,6 +6,8 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import EndIcon from '@mui/icons-material/InsertDriveFile';
 import { BorderedTreeItem } from './TreeViewStyles';
+import { CustomTreeItem } from './CustomTree';
+import { Minus } from 'lucide-react';
 
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
@@ -22,6 +24,7 @@ export default function CustomizedTreeViewWithSelection() {
         setSelectedIds(newSelectedIds);
     };
     console.log('Selected IDs:', selectedIds);
+    const MinusIcon = () => <Minus size={18} />;
     return (
         <RichTreeView
             aria-label="customized tree view with selection"
@@ -41,12 +44,14 @@ export default function CustomizedTreeViewWithSelection() {
             }}
             
             slots={{
-            item: BorderedTreeItem,
-            expandIcon: AddBoxOutlinedIcon,
-            collapseIcon: IndeterminateCheckBoxOutlinedIcon,
-            //endIcon: EndIcon,
+                item: BorderedTreeItem,
+                expandIcon: AddBoxOutlinedIcon,
+                collapseIcon: IndeterminateCheckBoxOutlinedIcon,
+                endIcon: MinusIcon,
             }}
-            sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 300 }}
+            sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto', '& .MuiTreeItem-content:has(.MuiTreeItem-group) .MuiCheckbox-root': {
+                visibility: 'hidden'
+            } }}
         />
     );
 }
