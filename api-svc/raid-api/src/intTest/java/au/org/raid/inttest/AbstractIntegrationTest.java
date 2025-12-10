@@ -111,7 +111,7 @@ public class AbstractIntegrationTest {
 
                 .contributor(List.of(
                         orcidContributor(
-                                REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)
+                                REAL_TEST_ORCID, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today)
                 ))
                 .organisation(List.of(organisation(
                         REAL_TEST_ROR, LEAD_RESEARCH_ORGANISATION, today)))
@@ -148,8 +148,7 @@ public class AbstractIntegrationTest {
             final String orcid,
             final String position,
             final String role,
-            final LocalDate startDate,
-            final String email
+            final LocalDate startDate
     ) {
         return new Contributor()
                 .id(orcid)
@@ -171,9 +170,10 @@ public class AbstractIntegrationTest {
             final String position,
             final String role,
             final LocalDate startDate,
-            final String email
+            final String status
     ) {
-        return new Contributor()
+
+        final var contributor = new Contributor()
                 .id(isni)
                 .contact(true)
                 .leader(true)
@@ -186,6 +186,11 @@ public class AbstractIntegrationTest {
                         new ContributorRole()
                                 .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
                                 .id(role)));
+
+        if (status != null) {
+            contributor.setStatus(status);
+        }
+        return contributor;
     }
 
     public Organisation organisation(

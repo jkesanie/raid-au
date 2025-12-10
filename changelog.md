@@ -1,9 +1,13 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.26
+## API
+* Fix bug in ISNI validation in PATCH requests
+
 # 2.5.25
 ## API
-* Add service point name to ORCID notification and change item type to mmbership in ORCID integration
+* Add service point name to ORCID notification and change item type to membership in ORCID integration
 
 # 2.5.23/2.5.24
 ## App-client UI
