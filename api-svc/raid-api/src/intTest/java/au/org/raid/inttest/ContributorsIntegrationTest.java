@@ -1348,21 +1348,17 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         @Test
         @DisplayName("Should patch a RAiD with a contributor with an ISNI")
         void patchRaidWithIsniContributor() {
-            try {
-                final var createResponse = raidApi.mintRaid(createRequest);
-                final var raidDto = createResponse.getBody();
-                final var handle = new Handle(raidDto.getIdentifier().getId());
+            final var createResponse = raidApi.mintRaid(createRequest);
+            final var raidDto = createResponse.getBody();
+            final var handle = new Handle(raidDto.getIdentifier().getId());
 
-                raidDto.getContributor().add(
-                        isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, "AUTHENTICATED")
-                );
+            raidDto.getContributor().add(
+                    isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, "AUTHENTICATED")
+            );
 
-                final var patchResponse = raidApi.patchRaid(handle.getPrefix(), handle.getSuffix(), raidPatchRequestFactory.create(raidDto));
-                final var updateRequest = raidUpdateRequestFactory.create(patchResponse.getBody());
-                raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
-            } catch (RaidApiValidationException e) {
-                fail(e.getMessage());
-            }
+            final var patchResponse = raidApi.patchRaid(handle.getPrefix(), handle.getSuffix(), raidPatchRequestFactory.create(raidDto));
+            final var updateRequest = raidUpdateRequestFactory.create(patchResponse.getBody());
+            raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
         }
 
         @Test
