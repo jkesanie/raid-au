@@ -1,4 +1,5 @@
 import { TextSelectField } from "@/components/fields/TextSelectField";
+import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 import subjectMapping from "@/mapping/data/subject-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
@@ -27,6 +28,7 @@ function FieldGrid({
         required={true}
         width={12}
       />
+      <CustomizedTreeViewWithSelection/>
     </Grid>
   );
 }
