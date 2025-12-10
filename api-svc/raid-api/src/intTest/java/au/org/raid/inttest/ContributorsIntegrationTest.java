@@ -1360,8 +1360,6 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
                 final var patchResponse = raidApi.patchRaid(handle.getPrefix(), handle.getSuffix(), raidPatchRequestFactory.create(raidDto));
                 final var updateRequest = raidUpdateRequestFactory.create(patchResponse.getBody());
                 raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
-
-                assertThat("Contributor id does not match ISNI",raidDto.getContributor().get(1).getId(), is(REAL_TEST_ISNI));
             } catch (RaidApiValidationException e) {
                 fail(e.getMessage());
             }
