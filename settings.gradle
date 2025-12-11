@@ -15,7 +15,7 @@ dependencyResolutionManagement{
       // https://github.com/OpenFeign/feign/releases
       version('feign', '12.2')
       // https://www.slf4j.org/news.html
-      version('springboot-version', '3.3.4')
+      version('springboot-version', '3.5.0')
       version('spring-cloud', '4.1.3')
 
       // https://documentation.red-gate.com/fd/release-notes-for-flyway-engine-179732572.html
