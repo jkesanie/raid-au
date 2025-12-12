@@ -28,9 +28,10 @@ function FieldGrid({
         required={true}
         width={12}
       />
+      {/* The Subject Picker is currently disabled until all it's repective functionalities are completed
       <Box sx={{ width: '100%', mt: 2, ml: 2, overflowY: 'auto', height: 270 }} >
         <CustomizedTreeViewWithSelection/>
-      </Box>
+      </Box> */}
     </Grid>
   );
 }
