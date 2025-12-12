@@ -170,7 +170,7 @@ public class ServicePoint extends TableImpl<ServicePointRecord> {
 
     @Override
     public List<UniqueKey<ServicePointRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.UNIQUE_NAME);
+        return Arrays.asList(Keys.UNIQUE_NAME, Keys.UNIQUE_REPOSITORY_ID);
     }
 
     @Override
