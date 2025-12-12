@@ -36,10 +36,10 @@ postgresql = "42.5.4"
 slf4j-simple = "2.0.6"
 spring-dependency-management = "1.1.6"
 spring-security-test = "6.2.2"
-springboot = "3.3.4"
+springboot = "3.5.8"
 springboot-plugin = "3.5.8"
-springcloud = "4.1.3"
-springdoc = "2.1.0"
+springcloud = "4.3.0"
+springdoc = "2.8.14"
 xjc = "1.8.2"
 
 [libraries]
