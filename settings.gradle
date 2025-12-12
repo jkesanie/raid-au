@@ -15,7 +15,7 @@ dependencyResolutionManagement{
       // https://github.com/OpenFeign/feign/releases
       version('feign', '12.2')
       // https://www.slf4j.org/news.html
-      version('springboot-version', '3.5.0')
+      version('springboot-version', '3.5.8')
       version('spring-cloud', '4.3.0')
 
       // https://documentation.red-gate.com/fd/release-notes-for-flyway-engine-179732572.html
@@ -28,7 +28,7 @@ dependencyResolutionManagement{
       // https://assertj.github.io/doc/#assertj-core-release-notes
       library('assertj', 'org.assertj:assertj-core:3.24.2')
 
-      library('springdoc-openapi', 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0')
+      library('springdoc-openapi', 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14')
 
       library('spring-boot-starter-web', 'org.springframework.boot', 'spring-boot-starter-web').versionRef('springboot-version')
       library('spring-boot-starter-jdbc', 'org.springframework.boot', 'spring-boot-starter-jdbc').versionRef('springboot-version')
