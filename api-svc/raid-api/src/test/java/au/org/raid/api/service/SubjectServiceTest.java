@@ -64,6 +64,12 @@ class SubjectServiceTest {
         final var raidSubjectId = 123;
         final var languageId = 234;
         final var text = "_text";
+        final var schemaUri = "schema-uri";
+        final var schemaId = 3;
+
+        final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord()
+                .setId(schemaId)
+                .setUri(schemaUri);
 
         final var subjectTypeRecord = new SubjectTypeRecord()
                 .setId(subjectTypeId);
@@ -80,13 +86,16 @@ class SubjectServiceTest {
 
         final var subject = new Subject()
                 .keyword(List.of(keyword))
-                .id(uri);
+                .id(uri)
+                .schemaUri(schemaUri);
 
         final var raidSubjectKeywordRecord = new RaidSubjectKeywordRecord();
 
-        when(subjectTypeRepository.findById(id)).thenReturn(Optional.of(subjectTypeRecord));
+        when(subjectTypeSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(subjectTypeSchemaRecord));
 
-        when(raidSubjectRecordFactory.create(handle, subjectTypeId)).thenReturn(raidSubjectRecord);
+        when(subjectTypeRepository.findByIdAndSchemaId(id, schemaId)).thenReturn(Optional.of(subjectTypeRecord));
+
+        when(raidSubjectRecordFactory.create(handle, subjectTypeId, schemaId)).thenReturn(raidSubjectRecord);
         when(raidSubjectRepository.create(raidSubjectRecord)).thenReturn(saved);
         when(languageService.findLanguageId(language)).thenReturn(languageId);
         when(raidSubjectKeywordRecordFactory.create(raidSubjectId, text, languageId))
@@ -117,11 +126,17 @@ class SubjectServiceTest {
     void createThrowsSubjectTypeNotFoundException() {
         final var handle = "_handle";
         final var id = "_id";
+        final var schemaId = 99;
+        final var schemaUri = "schema-uri";
         final var uri = "/" + id;
         final var subject = new Subject()
-                .id(uri);
+                .id(uri)
+                .schemaUri(schemaUri);
 
-        when(subjectTypeRepository.findById(id)).thenReturn(Optional.empty());
+        final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord().setId(schemaId);
+
+        when(subjectTypeSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(subjectTypeSchemaRecord));
+        when(subjectTypeRepository.findByIdAndSchemaId(id, schemaId)).thenReturn(Optional.empty());
 
         assertThrows(SubjectTypeNotFoundException.class, () -> subjectService.create(List.of(subject), handle));
 
@@ -143,10 +158,13 @@ class SubjectServiceTest {
 
         final var raidSubjectRecord = new RaidSubjectRecord()
                 .setId(raidSubjectId)
-                .setSubjectTypeId(subjectTypeId);
+                .setSubjectTypeId(subjectTypeId)
+                .setSubjectTypeSchemaId(schemaId);
+
         final var subjectTypeRecord = new SubjectTypeRecord()
                 .setId(subjectTypeId)
                 .setSchemaId(schemaId);
+
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord()
                 .setUri(schemaUri);
 
@@ -155,7 +173,7 @@ class SubjectServiceTest {
         final var subject = new Subject();
 
         when(raidSubjectRepository.findAllByHandle(handle)).thenReturn(List.of(raidSubjectRecord));
-        when(subjectTypeRepository.findById(subjectTypeId)).thenReturn(Optional.of(subjectTypeRecord));
+        when(subjectTypeRepository.findByIdAndSchemaId(subjectTypeId, schemaId)).thenReturn(Optional.of(subjectTypeRecord));
         when(subjectTypeSchemaRepository.findById(schemaId)).thenReturn(Optional.of(subjectTypeSchemaRecord));
         when(subjectKeywordService.findAllByRaidSubjectId(raidSubjectId)).thenReturn(keywords);
         when(subjectFactory.create(subjectTypeId, schemaUri, keywords)).thenReturn(subject);
@@ -169,13 +187,14 @@ class SubjectServiceTest {
         final var handle = "_handle";
         final var subjectTypeId = "subject-type-id";
         final var raidSubjectId = 234;
+        final var schemaId = 3;
 
         final var raidSubjectRecord = new RaidSubjectRecord()
                 .setId(raidSubjectId)
-                .setSubjectTypeId(subjectTypeId);
+                .setSubjectTypeId(subjectTypeId)
+                .setSubjectTypeSchemaId(schemaId);
 
         when(raidSubjectRepository.findAllByHandle(handle)).thenReturn(List.of(raidSubjectRecord));
-        when(subjectTypeRepository.findById(subjectTypeId)).thenReturn(Optional.empty());
 
         assertThrows(SubjectTypeNotFoundException.class, () -> subjectService.findAllByHandle(handle));
 
@@ -194,13 +213,15 @@ class SubjectServiceTest {
 
         final var raidSubjectRecord = new RaidSubjectRecord()
                 .setId(raidSubjectId)
-                .setSubjectTypeId(subjectTypeId);
+                .setSubjectTypeId(subjectTypeId)
+                .setSubjectTypeSchemaId(schemaId);
+
         final var subjectTypeRecord = new SubjectTypeRecord()
                 .setId(subjectTypeId)
                 .setSchemaId(schemaId);
 
         when(raidSubjectRepository.findAllByHandle(handle)).thenReturn(List.of(raidSubjectRecord));
-        when(subjectTypeRepository.findById(subjectTypeId)).thenReturn(Optional.of(subjectTypeRecord));
+        when(subjectTypeRepository.findByIdAndSchemaId(subjectTypeId, schemaId)).thenReturn(Optional.of(subjectTypeRecord));
         when(subjectTypeSchemaRepository.findById(schemaId)).thenReturn(Optional.empty());
 
         assertThrows(SubjectTypeSchemaNotFoundException.class, () -> subjectService.findAllByHandle(handle));
@@ -220,6 +241,13 @@ class SubjectServiceTest {
         final var languageId = 234;
         final var text = "_text";
 
+        final var schemaUri = "schema-uri";
+        final var schemaId = 3;
+
+        final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord()
+                .setId(schemaId)
+                .setUri(schemaUri);
+
         final var subjectTypeRecord = new SubjectTypeRecord()
                 .setId(subjectTypeId);
 
@@ -235,13 +263,15 @@ class SubjectServiceTest {
 
         final var subject = new Subject()
                 .keyword(List.of(keyword))
-                .id(uri);
+                .id(uri)
+                .schemaUri(schemaUri);
 
         final var raidSubjectKeywordRecord = new RaidSubjectKeywordRecord();
 
-        when(subjectTypeRepository.findById(id)).thenReturn(Optional.of(subjectTypeRecord));
+        when(subjectTypeRepository.findByIdAndSchemaId(id, schemaId)).thenReturn(Optional.of(subjectTypeRecord));
+        when(subjectTypeSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(subjectTypeSchemaRecord));
 
-        when(raidSubjectRecordFactory.create(handle, subjectTypeId)).thenReturn(raidSubjectRecord);
+        when(raidSubjectRecordFactory.create(handle, subjectTypeId, schemaId)).thenReturn(raidSubjectRecord);
         when(raidSubjectRepository.create(raidSubjectRecord)).thenReturn(saved);
         when(languageService.findLanguageId(language)).thenReturn(languageId);
         when(raidSubjectKeywordRecordFactory.create(raidSubjectId, text, languageId))
