@@ -84,17 +84,6 @@ export function SubjectsForm({
               {errorMessage}
             </Typography>
           )}
-
-          {fields.length === 0 && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              textAlign="center"
-            >
-              No {labelPlural} defined
-            </Typography>
-          )}
-
           <Stack divider={<Divider />} gap={2} data-testid={`${key}-form`}>
             <CustomizedTreeViewWithSelection/>
             {fields.map((field, index) => (

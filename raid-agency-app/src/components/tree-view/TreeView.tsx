@@ -29,22 +29,22 @@ export default function CustomizedTreeViewWithSelection() {
     };
 
     React.useEffect(() => {
-    if (!codesData || !codesData[subjectType]) return;
+        if (!codesData || !codesData[subjectType]) return;
 
-    const selectedSet = new Set(selectedIds);
-    
-    const updateSelection = (items: any[]): any[] => 
-        items.map(item => ({
-            ...item,
-            selected: selectedSet.has(item.id),
-            children: item.children ? updateSelection(item.children) : undefined
-        }));
+        const selectedSet = new Set(selectedIds);
+        
+        const updateSelection = (items: any[]): any[] => 
+            items.map(item => ({
+                ...item,
+                selected: selectedSet.has(item.id),
+                children: item.children ? updateSelection(item.children) : undefined
+            }));
 
-    setCodesData({
-        ...codesData,
-        [subjectType]: updateSelection(codesData[subjectType])
-    });
-}, [selectedIds, subjectType]);
+        setCodesData({
+            ...codesData,
+            [subjectType]: updateSelection(codesData[subjectType])
+        });
+    }, [selectedIds, subjectType]);
 
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
