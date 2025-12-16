@@ -8,23 +8,73 @@ import { findItem } from './CustomTree';
 import { useCodesContext } from './context/CodesContext';
 import { Box } from '@mui/material';
 import { Loader } from 'lucide-react';
+import { set } from 'react-hook-form';
 
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [treeItems, setTreeItems] = React.useState<TreeViewBaseItem[]>([]);
-    const { codesData, isLoading } = useCodesContext();
+    const { setCodesData, codesData, isLoading, setSelectedCodes, getSelectedCodesData, subjectType } = useCodesContext();
     
     React.useEffect(() => {
-        if(codesData && codesData["ANZSRC FOR"]) {
-            setTreeItems(codesData["ANZSRC FOR"] || []);
+        if(codesData && codesData[subjectType]) {
+            setTreeItems(codesData[subjectType] || []);
         }
         
-    }, [codesData]);
+    }, [codesData, subjectType]);
     console.log('Codes Data from Context:', codesData);
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
         // event is unused; update controlled selection state with the new item IDs
         setSelectedIds(newSelectedIds);
+        setSelectedCodes(newSelectedIds);
     };
+    /* React.useEffect(() => {
+        const selectedCodesData = getSelectedCodesData();
+        console.log('Selected Codes Data:', selectedCodesData);
+        codesData && selectedCodesData.forEach((item) => {
+            codesData[subjectType].find((codeItem: any) => {
+                if(codeItem.id === item.id) {
+                    codeItem.selected = true;
+                } else if(codeItem.children && codeItem.children.length > 0) {
+                    codeItem.children.forEach((child: any) => {
+                        if(child.id === item.id) {
+                            child.selected = true;
+                        } else if(child.children && child.children.length > 0) {
+                            child.children.forEach((grandChild: any) => {
+                                if(grandChild.id === item.id) {
+                                    grandChild.selected = true;
+                                } else {
+                                    grandChild.selected = false;
+                                }
+                            });
+                        } else {
+                            child.selected = false;
+                        }
+                    });
+                } else {
+                    codeItem.selected = false;
+                }
+            });
+        });
+        codesData && setCodesData(codesData);
+    }, [codesData, getSelectedCodesData, selectedIds, setCodesData, subjectType]); */
+
+    React.useEffect(() => {
+    if (!codesData || !codesData[subjectType]) return;
+
+    const selectedSet = new Set(selectedIds);
+    
+    const updateSelection = (items: any[]): any[] => 
+        items.map(item => ({
+            ...item,
+            selected: selectedSet.has(item.id),
+            children: item.children ? updateSelection(item.children) : undefined
+        }));
+
+    setCodesData({
+        ...codesData,
+        [subjectType]: updateSelection(codesData[subjectType])
+    });
+}, [selectedIds, subjectType]);
 
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
@@ -70,3 +120,4 @@ export default function CustomizedTreeViewWithSelection() {
         </Box>
     );
 }
+

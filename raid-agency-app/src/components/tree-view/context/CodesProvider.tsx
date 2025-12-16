@@ -1,5 +1,6 @@
 import React, {useState, useCallback, ReactNode } from 'react';
 import { CodesContext } from './CodesContext';
+import { i, s } from 'node_modules/vite/dist/node/types.d-jgA8ss1A';
 
 // Type definitions for your codes structure
 export interface CodeItem {
@@ -9,7 +10,7 @@ export interface CodeItem {
   description?: string;
   parent?: string;
   level?: number;
-  active?: boolean;
+  selected?: boolean;
   children?: CodeItem[];
   // Add any other fields from your JSON structure
 }
@@ -21,6 +22,7 @@ export interface CodesData {
   "ANZSRC SEO": CodeItem[];
   "SDGs": CodeItem[];
   // Add any other top-level fields from your JSON
+  [key: string]: any;
 }
 
 // Context value type
@@ -32,9 +34,11 @@ export interface CodesContextType {
   selectedCodes: string[];
   expandedNodes: string[];
   searchQuery: string;
+  subjectType: string;
   
   // Actions
   setCodesData: (data: CodesData) => void;
+  setSubjectType: (type: string) => void;
   loadCodesFromFile: (file: File) => Promise<void>;
   loadCodesFromUrl: (url: string) => Promise<void>;
   loadCodesFromJson: (json: any) => void;
@@ -65,6 +69,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [selectedCodes, setSelectedCodesState] = useState<string[]>([]);
   const [expandedNodes, setExpandedNodesState] = useState<string[]>([]);
   const [searchQuery, setSearchQueryState] = useState('');
+  const [subjectType, setSubjectType] = useState<string>('ANZSRC FOR');
 
   // Set codes data
   const setCodesData = useCallback((data: CodesData) => {
@@ -217,8 +222,8 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return undefined;
     };
     
-    return findCode(codesData.codes);
-  }, [codesData]);
+    return findCode(codesData[subjectType] || []);
+  }, [codesData, subjectType]);
 
   const getSelectedCodesData = useCallback((): CodeItem[] => {
     return selectedCodes
@@ -244,9 +249,11 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     selectedCodes,
     expandedNodes,
     searchQuery,
+    subjectType: 'ANZSRC FOR',
     
     // Actions
     setCodesData,
+    setSubjectType,
     loadCodesFromFile,
     loadCodesFromUrl,
     loadCodesFromJson,
