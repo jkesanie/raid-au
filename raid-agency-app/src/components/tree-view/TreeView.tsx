@@ -5,17 +5,22 @@ import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/Indeterminate
 import { BorderedTreeItem } from './TreeViewStyles';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models'
 import { findItem } from './CustomTree';
+import { useCodesContext } from './context/CodesContext';
+import { Box } from '@mui/material';
+import { Loader } from 'lucide-react';
 
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [treeItems, setTreeItems] = React.useState<TreeViewBaseItem[]>([]);
-
+    const { codesData, isLoading } = useCodesContext();
+    
     React.useEffect(() => {
-        fetch('/SubjectSample.JSON')
-            .then(res => res.json())
-            .then(data => {setTreeItems(data["ANZSRC FOR"])});
-    }, []);
-
+        if(codesData && codesData["ANZSRC FOR"]) {
+            setTreeItems(codesData["ANZSRC FOR"] || []);
+        }
+        
+    }, [codesData]);
+    console.log('Codes Data from Context:', codesData);
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
         // event is unused; update controlled selection state with the new item IDs
         setSelectedIds(newSelectedIds);
@@ -24,7 +29,7 @@ export default function CustomizedTreeViewWithSelection() {
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
         const hasChildren = item && item.children && item.id.length === 2;
-        const isLastChild = item && !item.children;
+        const isLastChild = item && item.children && item.children.length === 0;
         return (
             <BorderedTreeItem
                 {...props}
@@ -38,25 +43,30 @@ export default function CustomizedTreeViewWithSelection() {
     }
 
     return (
-        <RichTreeView
-            aria-label="customized tree view with selection"
-            items={treeItems}
-            // --- Make selection controlled to retrieve values ---
-            checkboxSelection
-            multiSelect
-            selectedItems={selectedIds}
-            onSelectedItemsChange={handleSelectedItemsChange}
-            // --- Enable selection propagation for full feature implementation ---
-            selectionPropagation={{
-                parents: false, // Select parent if all children are selected
-                descendants: false, // Select all children if parent is selected
-            }}
-            slots={{
-                item: CustomTreeItem,
-                expandIcon: AddBoxOutlinedIcon,
-                collapseIcon: IndeterminateCheckBoxOutlinedIcon,
-            }}
-            sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto'}}
-        />
+        <Box sx={{ width: '100%', mt: 2, ml: 2, overflowY: 'auto', height: 270 }} >
+            {isLoading ? (
+                <Loader>Loading...</Loader>
+            ) : (
+                <RichTreeView
+                    aria-label="customized tree view with selection"
+                    items={treeItems}
+                    // --- Make selection controlled to retrieve values ---
+                    checkboxSelection
+                multiSelect
+                selectedItems={selectedIds}
+                onSelectedItemsChange={handleSelectedItemsChange}
+                // --- Enable selection propagation for full feature implementation ---
+                selectionPropagation={{
+                    parents: false, // Select parent if all children are selected
+                    descendants: false, // Select all children if parent is selected
+                }}
+                slots={{
+                    item: CustomTreeItem,
+                    expandIcon: AddBoxOutlinedIcon,
+                    collapseIcon: IndeterminateCheckBoxOutlinedIcon,
+                }}
+                sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto'}}
+            />)}
+        </Box>
     );
 }

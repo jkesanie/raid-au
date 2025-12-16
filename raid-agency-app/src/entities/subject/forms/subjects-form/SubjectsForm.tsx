@@ -1,3 +1,4 @@
+import React from "react";
 import { subjectDataGenerator } from "@/entities/subject/data-generator/subject-data-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
@@ -23,6 +24,9 @@ import { SubjectDetailsForm } from "@/entities/subject/forms/subject-details-for
 import { MetadataContext } from "@/components/raid-form/RaidForm";
 import { CustomStyledTooltip } from "@/components/tooltips/StyledTooltip";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useCodesContext } from "@/components/tree-view/context/CodesContext";
+import { TransformCodes } from "@/utils/transformer/TransformCodes";
+import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 
 export function SubjectsForm({
   control,
@@ -42,13 +46,18 @@ export function SubjectsForm({
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
   const errorMessage = errors[key]?.message;
-
+  const { setCodesData } = useCodesContext();
   const handleAddItem = () => {
     append(generator());
     trigger(key);
   };
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
+  React.useEffect(() => {
+    TransformCodes().then((transformed) => {
+      setCodesData(transformed || []);
+    });
+  }, [setCodesData]);
   return (
     <Card
       sx={{
@@ -87,6 +96,7 @@ export function SubjectsForm({
           )}
 
           <Stack divider={<Divider />} gap={2} data-testid={`${key}-form`}>
+            <CustomizedTreeViewWithSelection/>
             {fields.map((field, index) => (
               <Fragment key={field.id}>
                 <DetailsForm
