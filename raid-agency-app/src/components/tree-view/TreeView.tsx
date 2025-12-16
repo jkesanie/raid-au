@@ -27,36 +27,6 @@ export default function CustomizedTreeViewWithSelection() {
         setSelectedIds(newSelectedIds);
         setSelectedCodes(newSelectedIds);
     };
-    /* React.useEffect(() => {
-        const selectedCodesData = getSelectedCodesData();
-        console.log('Selected Codes Data:', selectedCodesData);
-        codesData && selectedCodesData.forEach((item) => {
-            codesData[subjectType].find((codeItem: any) => {
-                if(codeItem.id === item.id) {
-                    codeItem.selected = true;
-                } else if(codeItem.children && codeItem.children.length > 0) {
-                    codeItem.children.forEach((child: any) => {
-                        if(child.id === item.id) {
-                            child.selected = true;
-                        } else if(child.children && child.children.length > 0) {
-                            child.children.forEach((grandChild: any) => {
-                                if(grandChild.id === item.id) {
-                                    grandChild.selected = true;
-                                } else {
-                                    grandChild.selected = false;
-                                }
-                            });
-                        } else {
-                            child.selected = false;
-                        }
-                    });
-                } else {
-                    codeItem.selected = false;
-                }
-            });
-        });
-        codesData && setCodesData(codesData);
-    }, [codesData, getSelectedCodesData, selectedIds, setCodesData, subjectType]); */
 
     React.useEffect(() => {
     if (!codesData || !codesData[subjectType]) return;
