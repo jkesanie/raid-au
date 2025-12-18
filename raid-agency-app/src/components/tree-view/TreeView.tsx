@@ -21,7 +21,7 @@ export default function CustomizedTreeViewWithSelection() {
         }
         
     }, [codesData, subjectType]);
-    console.log('Codes Data from Context:', codesData);
+    console.log('subjectType', subjectType);
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
         // event is unused; update controlled selection state with the new item IDs
         setSelectedIds(newSelectedIds);
@@ -48,7 +48,7 @@ export default function CustomizedTreeViewWithSelection() {
 
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
-        const hasChildren = item && item.children && item.id.length === 2;
+        const hasChildren = item && item.children && item.id.length <= 2;
         const isLastChild = item && item.children && item.children.length === 0;
         return (
             <BorderedTreeItem

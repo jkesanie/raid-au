@@ -27,6 +27,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useCodesContext } from "@/components/tree-view/context/CodesContext";
 import { TransformCodes } from "@/utils/transformer/TransformCodes";
 import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
+import DropDown from "@/components/dropdown-select/DropDown";
 
 export function SubjectsForm({
   control,
@@ -46,18 +47,21 @@ export function SubjectsForm({
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
   const errorMessage = errors[key]?.message;
-  const { setCodesData } = useCodesContext();
+  const { setCodesData, subjectType, setSubjectType, getSubjectTypes } = useCodesContext();
   const handleAddItem = () => {
     append(generator());
     trigger(key);
   };
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
+  const subjectTypes = getSubjectTypes();
+
   React.useEffect(() => {
     TransformCodes().then((transformed) => {
       setCodesData(transformed || []);
     });
   }, [setCodesData]);
+
   return (
     <Card
       sx={{
@@ -85,6 +89,12 @@ export function SubjectsForm({
             </Typography>
           )}
           <Stack divider={<Divider />} gap={2} data-testid={`${key}-form`}>
+            <DropDown
+              label="Subject Type"
+              options={subjectTypes || []}
+              defaultValue={subjectType || ""}
+              setValue={setSubjectType}
+            />
             <CustomizedTreeViewWithSelection/>
             {fields.map((field, index) => (
               <Fragment key={field.id}>

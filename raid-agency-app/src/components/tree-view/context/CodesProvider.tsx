@@ -39,6 +39,7 @@ export interface CodesContextType {
   // Actions
   setCodesData: (data: CodesData) => void;
   setSubjectType: (type: string) => void;
+  getSubjectTypes: () => string[];
   loadCodesFromFile: (file: File) => Promise<void>;
   loadCodesFromUrl: (url: string) => Promise<void>;
   loadCodesFromJson: (json: any) => void;
@@ -77,7 +78,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setError(null);
     setIsLoading(false);
   }, []);
-  console.log('CodesProvider - codesData:', codesData);
+  console.log('CodesProvider - codesData:', subjectType);
   // Load codes from file
   const loadCodesFromFile = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -231,6 +232,11 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       .filter((item): item is CodeItem => item !== undefined);
   }, [selectedCodes, getCodeById]);
 
+  const getSubjectTypes = useCallback((): string[] => {
+    console.log("Object.keys(codesData || {});", Object.keys(codesData || {}));
+    return Object.keys(codesData || {});
+  }, [codesData]);
+
   // Reset state
   const resetState = useCallback(() => {
     setCodesDataState(null);
@@ -249,11 +255,12 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     selectedCodes,
     expandedNodes,
     searchQuery,
-    subjectType: 'ANZSRC FOR',
+    subjectType,
     
     // Actions
     setCodesData,
     setSubjectType,
+    getSubjectTypes,
     loadCodesFromFile,
     loadCodesFromUrl,
     loadCodesFromJson,
