@@ -28,6 +28,9 @@ import { useCodesContext } from "@/components/tree-view/context/CodesContext";
 import { TransformCodes } from "@/utils/transformer/TransformCodes";
 import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 import DropDown from "@/components/dropdown-select/DropDown";
+import CustomisedInputBase from "@/components/custom-text-field/CustomisedInputBase";
+import { Search } from "lucide-react";
+import { CodeItem } from "@/components/tree-view/context/CodesProvider";
 
 export function SubjectsForm({
   control,
@@ -47,7 +50,17 @@ export function SubjectsForm({
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
   const errorMessage = errors[key]?.message;
-  const { setCodesData, subjectType, setSubjectType, getSubjectTypes } = useCodesContext();
+  const {
+    codesData,
+    setCodesData,
+    subjectType,
+    setSubjectType,
+    getSubjectTypes,
+    setSearchQuery,
+    searchQuery,
+    filterCodesBySearch
+  } = useCodesContext();
+
   const handleAddItem = () => {
     append(generator());
     trigger(key);
@@ -55,13 +68,21 @@ export function SubjectsForm({
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
+  const preserveCodesData = React.useRef<{[key: string]: CodeItem[] | null} | null>(null);
 
   React.useEffect(() => {
     TransformCodes().then((transformed) => {
       setCodesData(transformed || []);
+      (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
     });
   }, [setCodesData]);
 
+  React.useEffect(() => {
+    const filtered = filterCodesBySearch(preserveCodesData.current?.[subjectType] || [], searchQuery);
+    preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, filterCodesBySearch, subjectType]);
+  console.log("codesData in SubjectsForm:", codesData);
   return (
     <Card
       sx={{
@@ -89,12 +110,22 @@ export function SubjectsForm({
             </Typography>
           )}
           <Stack divider={<Divider />} gap={2} data-testid={`${key}-form`}>
-            <DropDown
-              label="Subject Type"
-              options={subjectTypes || []}
-              defaultValue={subjectType || ""}
-              setValue={setSubjectType}
-            />
+            <Stack gap={2} direction="row" alignItems="center">
+               <DropDown
+                  label="Subject Type"
+                  options={subjectTypes || []}
+                  defaultValue={subjectType || ""}
+                  setValue={setSubjectType}
+                />
+              <CustomisedInputBase
+                placeholder="Search Subjects"
+                searchValue={(searchValue) => {
+                  setSearchQuery(searchValue);
+                }}
+                endEdorment={<Search size={16} />}
+              />
+            </Stack>
+           
             <CustomizedTreeViewWithSelection/>
             {fields.map((field, index) => (
               <Fragment key={field.id}>

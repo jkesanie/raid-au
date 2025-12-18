@@ -21,7 +21,7 @@ export default function CustomizedTreeViewWithSelection() {
         }
         
     }, [codesData, subjectType]);
-    console.log('subjectType', subjectType);
+
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
         // event is unused; update controlled selection state with the new item IDs
         setSelectedIds(newSelectedIds);
@@ -63,7 +63,7 @@ export default function CustomizedTreeViewWithSelection() {
     }
 
     return (
-        <Box sx={{ width: '100%', mt: 2, ml: 2, overflowY: 'auto', height: 270 }} >
+        <Box sx={{ width: '100%', overflowY: 'auto', height: 270 }} >
             {isLoading ? (
                 <Loader>Loading...</Loader>
             ) : (

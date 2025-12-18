@@ -1,10 +1,10 @@
 import React, {useState, useCallback, ReactNode } from 'react';
 import { CodesContext } from './CodesContext';
-import { i, s } from 'node_modules/vite/dist/node/types.d-jgA8ss1A';
 
 // Type definitions for your codes structure
 export interface CodeItem {
   id: string;
+  label?: string;
   code: string;
   name: string;
   description?: string;
@@ -12,17 +12,21 @@ export interface CodeItem {
   level?: number;
   selected?: boolean;
   children?: CodeItem[];
+  _searchMatch?: {
+    directMatch: boolean;
+    hasChildMatches: boolean;
+    matchedFields: {
+      id: boolean;
+      label: boolean;
+      name: boolean;
+    };
+    depth: number;
+  };
   // Add any other fields from your JSON structure
 }
 
 export interface CodesData {
-  version?: string;
-  lastUpdated?: string;
-  "ANZSRC FOR": CodeItem[];
-  "ANZSRC SEO": CodeItem[];
-  "SDGs": CodeItem[];
-  // Add any other top-level fields from your JSON
-  [key: string]: any;
+  [key: string]: CodeItem[];
 }
 
 // Context value type
@@ -56,6 +60,7 @@ export interface CodesContextType {
   getCodeById: (codeId: string) => CodeItem | undefined;
   getSelectedCodesData: () => CodeItem[];
   resetState: () => void;
+  filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
 }
 
 
@@ -78,7 +83,6 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setError(null);
     setIsLoading(false);
   }, []);
-  console.log('CodesProvider - codesData:', subjectType);
   // Load codes from file
   const loadCodesFromFile = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -205,6 +209,52 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const setSearchQuery = useCallback((query: string) => {
     setSearchQueryState(query);
   }, []);
+  console.log("codesData", codesData);
+const filterCodesBySearch = useCallback((items: CodeItem[], query: string): CodeItem[] => {
+    if (!query) return items;
+    
+    const lowerQuery = query.toLowerCase();
+    
+    const filterWithInfo = (items: CodeItem[], depth: number = 0): CodeItem[] => {
+      return items.reduce((filtered: CodeItem[], item) => {
+        // Check current item for matches
+        const idMatch = item.id.toLowerCase().includes(lowerQuery);
+        const labelMatch = item.label?.toLowerCase().includes(lowerQuery);
+        const nameMatch = item.name?.toLowerCase().includes(lowerQuery);
+        const currentItemMatches = idMatch || labelMatch || nameMatch;
+        
+        // Recursively check children
+        const filteredChildren = item.children 
+          ? filterWithInfo(item.children, depth + 1)
+          : [];
+        
+        const hasMatchingDescendants = filteredChildren.length > 0;
+        
+        // Include item if it matches or has matching descendants
+        if (currentItemMatches || hasMatchingDescendants) {
+          filtered.push({
+            ...item,
+            children: filteredChildren,
+            // Add metadata for highlighting or styling
+            _searchMatch: {
+              directMatch: currentItemMatches,
+              hasChildMatches: hasMatchingDescendants,
+              matchedFields: {
+                id: idMatch,
+                label: labelMatch,
+                name: nameMatch
+              },
+              depth: depth
+            }
+          });
+        }
+        
+        return filtered;
+      }, []);
+    };
+    
+    return filterWithInfo(items);
+  }, []);
 
   // Utility functions
   const getCodeById = useCallback((codeId: string): CodeItem | undefined => {
@@ -233,7 +283,6 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [selectedCodes, getCodeById]);
 
   const getSubjectTypes = useCallback((): string[] => {
-    console.log("Object.keys(codesData || {});", Object.keys(codesData || {}));
     return Object.keys(codesData || {});
   }, [codesData]);
 
@@ -277,6 +326,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     getCodeById,
     getSelectedCodesData,
     resetState,
+    filterCodesBySearch,
   };
 
   return (
