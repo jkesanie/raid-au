@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.27
+## API
+* Add SEO codes as subject types
+
 # 2.5.26
 ## API
 * Fix bug in ISNI validation in PATCH requests
