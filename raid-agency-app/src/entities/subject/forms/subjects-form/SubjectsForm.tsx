@@ -1,14 +1,13 @@
 import React from "react";
 import { subjectDataGenerator } from "@/entities/subject/data-generator/subject-data-generator";
 import { RaidDto } from "@/generated/raid";
-import { AddBox } from "@mui/icons-material";
+import { AddBox, Spa } from "@mui/icons-material";
 import {
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  Divider,
   Stack,
   Typography,
 } from "@mui/material";
@@ -109,16 +108,19 @@ export function SubjectsForm({
               {errorMessage}
             </Typography>
           )}
-          <Stack divider={<Divider />} gap={2} data-testid={`${key}-form`}>
-            <Stack gap={2} direction="row" alignItems="center">
-               <DropDown
-                  label="Subject Type"
-                  options={subjectTypes || []}
-                  defaultValue={subjectType || ""}
-                  setValue={setSubjectType}
-                />
+          <Stack gap={2} data-testid={`${key}-form`}>
+            <Typography variant="body1" color="black" textAlign="left" marginBottom={2}>
+              {"Subject Selection"}
+            </Typography>
+            <Stack gap={5} direction={{ xs: 'column', sm: 'row' }} alignItems="center" justifyContent="space-between" >
+              <DropDown
+                label="Select Subject Type"
+                options={subjectTypes || []}
+                defaultValue={subjectType || ""}
+                setValue={setSubjectType}
+              />
               <CustomisedInputBase
-                placeholder="Search Subjects"
+                placeholder="Type to filter subjects..."
                 searchValue={(searchValue) => {
                   setSearchQuery(searchValue);
                 }}

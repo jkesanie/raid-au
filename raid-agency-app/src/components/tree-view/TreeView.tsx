@@ -8,22 +8,29 @@ import { findItem } from './CustomTree';
 import { useCodesContext } from './context/CodesContext';
 import { Box } from '@mui/material';
 import { Loader } from 'lucide-react';
-import { set } from 'react-hook-form';
 
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [treeItems, setTreeItems] = React.useState<TreeViewBaseItem[]>([]);
-    const { setCodesData, codesData, isLoading, setSelectedCodes, getSelectedCodesData, subjectType } = useCodesContext();
+    const { setCodesData, codesData, isLoading, setSelectedCodes, subjectType } = useCodesContext();
     
     React.useEffect(() => {
         if(codesData && codesData[subjectType]) {
-            setTreeItems(codesData[subjectType] || []);
+            const transformItems = (items: any[]): TreeViewBaseItem[] =>
+                items.map(item => ({
+                    ...item,
+                    label: item.label || '',
+                    children: item.children ? transformItems(item.children) : undefined
+                }));
+            const transformedItems = transformItems(codesData[subjectType]);
+            setTreeItems(transformedItems);
         }
         
     }, [codesData, subjectType]);
 
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
         // event is unused; update controlled selection state with the new item IDs
+        event?.preventDefault();
         setSelectedIds(newSelectedIds);
         setSelectedCodes(newSelectedIds);
     };
@@ -72,21 +79,22 @@ export default function CustomizedTreeViewWithSelection() {
                     items={treeItems}
                     // --- Make selection controlled to retrieve values ---
                     checkboxSelection
-                multiSelect
-                selectedItems={selectedIds}
-                onSelectedItemsChange={handleSelectedItemsChange}
-                // --- Enable selection propagation for full feature implementation ---
-                selectionPropagation={{
-                    parents: false, // Select parent if all children are selected
-                    descendants: false, // Select all children if parent is selected
-                }}
-                slots={{
-                    item: CustomTreeItem,
-                    expandIcon: AddBoxOutlinedIcon,
-                    collapseIcon: IndeterminateCheckBoxOutlinedIcon,
-                }}
-                sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto'}}
-            />)}
+                    multiSelect
+                    selectedItems={selectedIds}
+                    onSelectedItemsChange={handleSelectedItemsChange}
+                    // --- Enable selection propagation for full feature implementation ---
+                    selectionPropagation={{
+                        parents: false, // Select parent if all children are selected
+                        descendants: false, // Select all children if parent is selected
+                    }}
+                    slots={{
+                        item: CustomTreeItem,
+                        expandIcon: AddBoxOutlinedIcon,
+                        collapseIcon: IndeterminateCheckBoxOutlinedIcon,
+                    }}
+                    sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto'}}
+                />
+            )}
         </Box>
     );
 }

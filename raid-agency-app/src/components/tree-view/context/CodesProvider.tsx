@@ -46,7 +46,7 @@ export interface CodesContextType {
   getSubjectTypes: () => string[];
   loadCodesFromFile: (file: File) => Promise<void>;
   loadCodesFromUrl: (url: string) => Promise<void>;
-  loadCodesFromJson: (json: any) => void;
+  //loadCodesFromJson: (json: unknown) => void;
   selectCode: (codeId: string) => void;
   deselectCode: (codeId: string) => void;
   toggleCodeSelection: (codeId: string) => void;
@@ -141,7 +141,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [setCodesData]);
 
-  // Load codes from JSON object
+/*   // Load codes from JSON object
   const loadCodesFromJson = useCallback((json: any) => {
     try {
       const data: CodesData = Array.isArray(json) 
@@ -153,7 +153,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setError(err instanceof Error ? err.message : 'Failed to parse JSON');
       console.error('Error loading codes from JSON:', err);
     }
-  }, [setCodesData]);
+  }, [setCodesData]); */
 
   // Selection management
   const selectCode = useCallback((codeId: string) => {
@@ -219,8 +219,8 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
       return items.reduce((filtered: CodeItem[], item) => {
         // Check current item for matches
         const idMatch = item.id.toLowerCase().includes(lowerQuery);
-        const labelMatch = item.label?.toLowerCase().includes(lowerQuery);
-        const nameMatch = item.name?.toLowerCase().includes(lowerQuery);
+        const labelMatch = item.label?.toLowerCase().includes(lowerQuery) ?? false;
+        const nameMatch = item.name?.toLowerCase().includes(lowerQuery) ?? false;
         const currentItemMatches = idMatch || labelMatch || nameMatch;
         
         // Recursively check children
@@ -312,7 +312,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     getSubjectTypes,
     loadCodesFromFile,
     loadCodesFromUrl,
-    loadCodesFromJson,
+    //loadCodesFromJson,
     selectCode,
     deselectCode,
     toggleCodeSelection,
