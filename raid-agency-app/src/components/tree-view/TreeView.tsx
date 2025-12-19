@@ -9,10 +9,28 @@ import { useCodesContext } from './context/CodesContext';
 import { Box } from '@mui/material';
 import { Loader } from 'lucide-react';
 
+const HighlightText: React.FC<{ text: string; query: string }> = ({ text, query }) => {
+    if (!query || !text) return <>{text}</>;
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return (
+        <>
+            {parts.map((part, index) =>
+                part.toLowerCase() === query.toLowerCase() ? (
+                    <mark key={index} style={{ backgroundColor: '#ffeb3b', padding: '0 2px' }}>
+                        {part}
+                    </mark>
+                ) : (
+                    <span key={index}>{part}</span>
+                )
+            )}
+        </>
+    );
+};
+
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [treeItems, setTreeItems] = React.useState<TreeViewBaseItem[]>([]);
-    const { setCodesData, codesData, isLoading, setSelectedCodes, subjectType } = useCodesContext();
+    const { setCodesData, codesData, isLoading, setSelectedCodes, subjectType, searchQuery } = useCodesContext();
     
     React.useEffect(() => {
         if(codesData && codesData[subjectType]) {
@@ -57,9 +75,18 @@ export default function CustomizedTreeViewWithSelection() {
         const item = findItem(treeItems, props.itemId);
         const hasChildren = item && item.children && item.id.length <= 2;
         const isLastChild = item && item.children && item.children.length === 0;
+               // OPTION 2: If you want to highlight in the CustomTreeItem
+        // You can modify the label here if needed
+        const modifiedProps = {
+            ...props,
+            // If label is a string and you want to highlight it here
+            label: typeof props.label === 'string' && searchQuery ? (
+                <HighlightText text={props.label} query={searchQuery} />
+            ) : props.label
+        };
         return (
             <BorderedTreeItem
-                {...props}
+                {...modifiedProps}
                 // Pass a custom data attribute to allow for prop-based conditional styling in StyledTreeItem
                 data-iscustomparent={hasChildren ? 'true' : 'false'}
                 data-isLastChild={isLastChild ? 'true' : 'false'}
@@ -82,6 +109,17 @@ export default function CustomizedTreeViewWithSelection() {
                     multiSelect
                     selectedItems={selectedIds}
                     onSelectedItemsChange={handleSelectedItemsChange}
+                    expandedItems={searchQuery ? treeItems.reduce((acc, item) => {
+                        if (item.children && item.children.length > 0) {
+                            acc.push(item.id);
+                            const childIds = item.children.reduce((childAcc, child) => {
+                                childAcc.push(child.id);
+                                return childAcc;
+                            }, [] as string[]);
+                            acc.push(...childIds);
+                        } 
+                        return acc;
+                    }, [] as string[]) : []}
                     // --- Enable selection propagation for full feature implementation ---
                     selectionPropagation={{
                         parents: false, // Select parent if all children are selected
