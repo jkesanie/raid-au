@@ -23,7 +23,7 @@ export default function DropDown(props: {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ width: { xs: '100%', sm: 200, md: 250, lg: 300, xl: 400 } }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">{props.label}</InputLabel>
         <Select

@@ -101,7 +101,7 @@ export function SubjectsForm({
         >
         </CustomStyledTooltip>
       </Stack>
-      <CardContent>
+      <CardContent sx={{ p: 3, m: 3, border: "1px solid rgba(0, 0, 0, 0.87)", borderRadius: 1 }}>
         <Stack gap={2} className={isRowHighlighted ? "add" : ""}>
           {errorMessage && (
             <Typography variant="body2" color="error" textAlign="center">
@@ -112,7 +112,13 @@ export function SubjectsForm({
             <Typography variant="body1" color="black" textAlign="left" marginBottom={2}>
               {"Subject Selection"}
             </Typography>
-            <Stack gap={5} direction={{ xs: 'column', sm: 'row' }} alignItems="center" justifyContent="space-between" >
+            <Stack
+              gap={2}
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems="center"
+              justifyContent="space-between"
+              spacing={{ xs: 0, sm: 10, md: 20, lg: 30, xl: 40 }}
+            >
               <DropDown
                 label="Select Subject Type"
                 options={subjectTypes || []}

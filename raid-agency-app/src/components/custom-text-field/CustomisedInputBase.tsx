@@ -28,7 +28,7 @@ export default function CustomizedInputBase({
     }
   return (
     <Paper
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%', height: 56 }}
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: { xs: '100%', sm: '100%' }, height: 56, boxShadow: 'none', border: '1px solid rgba(0, 0, 0, 0.87)' }}
     >
       {startEdorment && (
         <IconButton sx={{ p: '10px' }} aria-label="menu">
