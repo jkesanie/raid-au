@@ -14,8 +14,9 @@ class RaidSubjectRecordFactoryTest {
     void setsAllFields() {
         final var handle = "_handle";
         final var subjectTypeId = "subject-type-id";
+        final var subjectTypeSchemaId = 99;
 
-        final var result = factory.create(handle, subjectTypeId);
+        final var result = factory.create(handle, subjectTypeId, subjectTypeSchemaId);
 
         assertThat(result.getHandle(), is(handle));
         assertThat(result.getSubjectTypeId(), is(subjectTypeId));

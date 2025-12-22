@@ -140,7 +140,7 @@ public class ContributorValidator {
                     if (isOrcid(contributor)) {
                         failures.addAll(orcidValidator.validate(contributor, index));
                     } else if (isIsni(contributor)) {
-                        failures.addAll(orcidValidator.validate(contributor, index));
+                        failures.addAll(isniValidator.validate(contributor, index));
                     } else {
                         failures.add(new ValidationFailure()
                                 .fieldId("contributor[%d].id".formatted(index))

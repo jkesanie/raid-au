@@ -1,5 +1,6 @@
 package au.org.raid.api.repository;
 
+import au.org.raid.api.config.properties.ContributorValidationProperties;
 import au.org.raid.api.endpoint.Constant;
 import au.org.raid.db.jooq.enums.Metaschema;
 import au.org.raid.db.jooq.tables.records.RaidRecord;
@@ -23,7 +24,8 @@ import static au.org.raid.db.jooq.tables.RaidOrganisation.RAID_ORGANISATION;
 @Repository
 @RequiredArgsConstructor
 public class RaidRepository {
-    private static final String ORCID_URI_FORMAT = "https://orcid.org/%s";
+    private final ContributorValidationProperties contributorValidationProperties;
+//    private static final String ORCID_URI_FORMAT = "https://orcid.org/%s";
     private final DSLContext dslContext;
 
     public RaidRecord insert(final RaidRecord raid) {
@@ -128,7 +130,7 @@ public class RaidRepository {
                 .join(CONTRIBUTOR)
                 .on(RAID_CONTRIBUTOR.CONTRIBUTOR_ID.eq(CONTRIBUTOR.ID))
                 .where(
-                        CONTRIBUTOR.PID.eq(ORCID_URI_FORMAT.formatted(orcid))
+                        CONTRIBUTOR.PID.eq(contributorValidationProperties.getOrcid().getUrlPrefix().concat(orcid))
                 )
                 .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
                 .fetchInto(RaidRecord.class);

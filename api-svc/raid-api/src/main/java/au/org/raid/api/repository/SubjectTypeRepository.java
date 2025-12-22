@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static au.org.raid.db.jooq.tables.SubjectType.SUBJECT_TYPE;
@@ -19,4 +20,12 @@ public class SubjectTypeRepository {
                 .where(SUBJECT_TYPE.ID.eq(subjectId))
                 .fetchOptional();
     }
+
+    public Optional<SubjectTypeRecord> findByIdAndSchemaId(final String subjectId, final int schemaId) {
+        return dslContext.selectFrom(SUBJECT_TYPE)
+                .where(SUBJECT_TYPE.ID.eq(subjectId))
+                .and(SUBJECT_TYPE.SCHEMA_ID.eq(schemaId))
+                .fetchOptional();
+    }
+
 }

@@ -37,13 +37,17 @@ public class SubjectService {
         }
 
         for (final var subject : subjects) {
+            final var schemaUri = subject.getSchemaUri();
+
+            final var subjectTypeSchemaRecord = subjectTypeSchemaRepository.findByUri(schemaUri)
+                    .orElseThrow(() -> new SubjectTypeSchemaNotFoundException(schemaUri));
 
             final var subjectId = subject.getId().substring(subject.getId().lastIndexOf('/') + 1);
 
-            final var subjectTypeRecord = subjectTypeRepository.findById(subjectId)
+            final var subjectTypeRecord = subjectTypeRepository.findByIdAndSchemaId(subjectId, subjectTypeSchemaRecord.getId())
                     .orElseThrow(() -> new SubjectTypeNotFoundException(subject.getId()));
 
-            final var raidSubjectRecord = raidSubjectRecordFactory.create(handle, subjectTypeRecord.getId());
+            final var raidSubjectRecord = raidSubjectRecordFactory.create(handle, subjectTypeRecord.getId(), subjectTypeSchemaRecord.getId());
 
             final var raidSubject = raidSubjectRepository.create(raidSubjectRecord);
 
@@ -66,7 +70,7 @@ public class SubjectService {
         final var records = raidSubjectRepository.findAllByHandle(handle);
 
         for (final var record : records) {
-            final var typeRecord = subjectTypeRepository.findById(record.getSubjectTypeId())
+            final var typeRecord = subjectTypeRepository.findByIdAndSchemaId(record.getSubjectTypeId(), record.getSubjectTypeSchemaId())
                     .orElseThrow(() -> new SubjectTypeNotFoundException(record.getSubjectTypeId()));
 
             final var schemaId = typeRecord.getSchemaId();
