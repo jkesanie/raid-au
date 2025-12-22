@@ -3,9 +3,11 @@ name: Build and test raid-agency-app
 on:
   workflow_dispatch:
   push:
-    branches: [ $default-branch ]
+    paths-ignore:
+      - '**.java'
   pull_request:
-    branches: [ $default-branch ]
+    paths-ignore:
+      - '**.java'
 
 jobs:
   build:
