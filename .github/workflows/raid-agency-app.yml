@@ -16,12 +16,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - run: cd raid-agency-app/
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-      - run: cd raid-agency-app/
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
