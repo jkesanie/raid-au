@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - .github
+      - .github/**
       - raid-agency-app
       - raid-agency-app-static
   pull_request:
     paths:
-      - .github
+      - .github/**
       - raid-agency-app
       - raid-agency-app-static
 
