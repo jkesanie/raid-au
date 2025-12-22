@@ -3,16 +3,12 @@ package au.org.raid.api.service;
 import au.org.raid.api.dto.ContributorLookupResponse;
 import au.org.raid.api.dto.RaidListenerMessage;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
-import au.org.raid.idl.raidv2.model.Contributor;
-import au.org.raid.idl.raidv2.model.Id;
-import au.org.raid.idl.raidv2.model.RaidDto;
-import au.org.raid.idl.raidv2.model.Title;
+import au.org.raid.idl.raidv2.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +16,6 @@ import java.util.concurrent.Executor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +27,9 @@ class OrcidIntegrationServiceTest {
     @Mock
     private RaidListenerMessageFactory messageFactory;
 
+    @Mock
+    private ServicePointService servicePointService;
+
     private OrcidIntegrationService orcidIntegrationService;
 
     // Use direct executor for testing to avoid async complexity
@@ -42,7 +40,8 @@ class OrcidIntegrationServiceTest {
         orcidIntegrationService = new OrcidIntegrationService(
                 orcidIntegrationClient,
                 directExecutor,
-                messageFactory
+                messageFactory,
+                servicePointService
         );
     }
 
@@ -129,7 +128,10 @@ class OrcidIntegrationServiceTest {
         // Given
         final var contributor1 = new Contributor().id("orcid1");
         final var contributor2 = new Contributor().id("orcid2");
-        final var id = new Id().id("raid123");
+        final var servicePointId = 99L;
+        final var id = new Id()
+                .id("raid123")
+                .owner(new Owner().servicePoint(servicePointId));
         final var titles = List.of(new Title().text("Test Raid"));
 
         final var raid = new RaidDto()
@@ -137,69 +139,21 @@ class OrcidIntegrationServiceTest {
                 .title(titles)
                 .contributor(List.of(contributor1, contributor2));
 
-        final var message1 = new RaidListenerMessage();
-        final var message2 = new RaidListenerMessage();
+        final var servicePoint = new ServicePoint()
+                .id(servicePointId);
 
-        when(messageFactory.create(id, contributor1, titles))
+        when(servicePointService.findById(servicePointId)).thenReturn(Optional.of(servicePoint));
+
+        final var message1 = new RaidListenerMessage();
+
+        when(messageFactory.create(raid, servicePoint))
                 .thenReturn(message1);
-        when(messageFactory.create(id, contributor1, titles))
-                .thenReturn(message2);
 
         // When
         orcidIntegrationService.updateOrcidRecord(raid);
 
         // Then
-        verify(messageFactory).create(id, contributor1, titles);
-        verify(messageFactory).create(id, contributor2, titles);
+        verify(messageFactory).create(raid, servicePoint);
         verify(orcidIntegrationClient).post(message1);
-        verify(orcidIntegrationClient).post(message2);
-    }
-
-    @Test
-    void updateOrcidRecord_shouldContinueProcessing_whenOnePostFails() {
-        // Given
-        final var contributor1 = new Contributor().id("orcid1");
-        final var contributor2 = new Contributor().id("orcid2");
-        final var id = new Id().id("raid123");
-        final var titles = List.of(new Title().text("Test Raid"));
-
-        final var raid = new RaidDto()
-                .identifier(id)
-                .title(titles)
-                .contributor(List.of(contributor1, contributor2));
-
-        final var message1 = new RaidListenerMessage();
-        final var message2 = new RaidListenerMessage();
-
-        when(messageFactory.create(id, contributor1, titles))
-                .thenReturn(message1).thenReturn(message2);
-
-        doThrow(new RuntimeException("Network error"))
-                .when(orcidIntegrationClient).post(message1);
-
-        // When
-        orcidIntegrationService.updateOrcidRecord(raid);
-
-        // Then
-        verify(orcidIntegrationClient).post(message1);
-        verify(orcidIntegrationClient).post(message2);
-    }
-
-    @Test
-    void updateOrcidRecord_shouldHandleEmptyContributorList() {
-        final var id = new Id().id("raid123");
-        final var titles = List.of(new Title().text("Test Raid"));
-        // Given
-        final var raid = new RaidDto()
-                .identifier(id)
-                .title(titles)
-                .contributor(List.of());
-
-        // When
-        orcidIntegrationService.updateOrcidRecord(raid);
-
-        // Then
-        verifyNoInteractions(messageFactory);
-        verifyNoInteractions(orcidIntegrationClient);
     }
 }

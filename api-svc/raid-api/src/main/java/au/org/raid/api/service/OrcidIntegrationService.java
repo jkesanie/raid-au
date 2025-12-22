@@ -1,6 +1,7 @@
 package au.org.raid.api.service;
 
 import au.org.raid.api.dto.ContributorLookupResponse;
+import au.org.raid.api.exception.ServicePointNotFoundException;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
 import au.org.raid.idl.raidv2.model.Contributor;
 import au.org.raid.idl.raidv2.model.RaidDto;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.management.ServiceNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -20,13 +22,15 @@ public class OrcidIntegrationService {
     private final OrcidIntegrationClient orcidIntegrationClient;
     private final Executor taskExecutor;
     private final RaidListenerMessageFactory messageFactory;
+    private final ServicePointService servicePointService;
 
     public OrcidIntegrationService(final OrcidIntegrationClient orcidIntegrationClient,
                                    @Qualifier("applicationTaskExecutor") final Executor taskExecutor,
-                                   final RaidListenerMessageFactory messageFactory) {
+                                   final RaidListenerMessageFactory messageFactory, ServicePointService servicePointService) {
         this.orcidIntegrationClient = orcidIntegrationClient;
         this.taskExecutor = taskExecutor;
         this.messageFactory = messageFactory;
+        this.servicePointService = servicePointService;
     }
 
     public List<Contributor> setContributorStatus(final List<Contributor> contributors) {
@@ -59,24 +63,15 @@ public class OrcidIntegrationService {
     }
 
     public void updateOrcidRecord(final RaidDto raid) {
-        final var futures = raid.getContributor().stream()
-                .map(contributor -> {
-                    final var message = messageFactory.create(
-                            raid.getIdentifier(),
-                            contributor,
-                            raid.getTitle()
-                    );
-                    return CompletableFuture
-                            .runAsync(() -> orcidIntegrationClient.post(message), taskExecutor)
-                            .exceptionally(throwable -> {
-                                log.error("Error posting message to ORCID integration for contributor ID: {}",
-                                        contributor.getId(), throwable);
-                                return null;
-                            });
-                })
-                .toList();
+        final var servicePointId = raid.getIdentifier().getOwner().getServicePoint();
 
-        // Wait for all futures to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        final var servicePoint = servicePointService.findById(servicePointId)
+                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
+
+        final var message = messageFactory.create(
+                raid, servicePoint
+        );
+
+        orcidIntegrationClient.post(message);
     }
 }

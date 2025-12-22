@@ -74,7 +74,7 @@ public class SubjectType extends TableImpl<SubjectTypeRecord> {
     /**
      * The column <code>api_svc.subject_type.schema_id</code>.
      */
-    public final TableField<SubjectTypeRecord, Integer> SCHEMA_ID = createField(DSL.name("schema_id"), SQLDataType.INTEGER, this, "");
+    public final TableField<SubjectTypeRecord, Integer> SCHEMA_ID = createField(DSL.name("schema_id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     private SubjectType(Name alias, Table<SubjectTypeRecord> aliased) {
         this(alias, aliased, null);
@@ -116,7 +116,7 @@ public class SubjectType extends TableImpl<SubjectTypeRecord> {
 
     @Override
     public UniqueKey<SubjectTypeRecord> getPrimaryKey() {
-        return Keys.SUBJECT_PKEY;
+        return Keys.SUBJECT_TYPE_PKEY;
     }
 
     @Override

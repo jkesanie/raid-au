@@ -2,7 +2,6 @@
 
 # temp directory that Gradle dumps in the repo root
 .gradle
-
 # gradle build artifacts
 build/
 

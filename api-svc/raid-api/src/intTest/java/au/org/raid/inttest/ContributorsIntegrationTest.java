@@ -53,7 +53,7 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
         void raidWithIsniContributor() {
 
             createRequest.contributor(List.of(
-                    isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, CONTRIBUTOR_EMAIL)));
+                    isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, null)));
 
             try {
                 final var createResponse = raidApi.mintRaid(createRequest);
@@ -1343,6 +1343,24 @@ public class ContributorsIntegrationTest extends AbstractIntegrationTest {
     @Nested
     @DisplayName("Contributor patch tests")
     class ContributorPatchTests {
+
+        @Disabled("Flakey test fails in test environment")
+        @Test
+        @DisplayName("Should patch a RAiD with a contributor with an ISNI")
+        void patchRaidWithIsniContributor() {
+
+            final var createResponse = raidApi.mintRaid(createRequest);
+            final var raidDto = createResponse.getBody();
+            final var handle = new Handle(raidDto.getIdentifier().getId());
+
+            raidDto.getContributor().add(
+                    isniContributor(REAL_TEST_ISNI, PRINCIPAL_INVESTIGATOR_POSITION, SOFTWARE_CONTRIBUTOR_ROLE, today, "AUTHENTICATED")
+            );
+
+            final var patchResponse = raidApi.patchRaid(handle.getPrefix(), handle.getSuffix(), raidPatchRequestFactory.create(raidDto));
+            final var updateRequest = raidUpdateRequestFactory.create(patchResponse.getBody());
+            raidApi.updateRaid(handle.getPrefix(), handle.getSuffix(), updateRequest);
+        }
 
         @Test
         @DisplayName("Should add authenticated contributor to raid")

@@ -90,16 +90,16 @@ public class RaidController implements RaidApi {
         //TODO: filter for service point owner/raid admin/raid user if embargoed
         List<RaidDto> raids;
 
-        if (TokenUtil.hasRole(TokenUtil.OPERATOR_ROLE)) {
-            log.debug("Fetching raids for operator");
-            raids = raidIngestService.findAll()
-                    .stream()
-                .toList();
-        } else if (contributorId != null) {
+        if (contributorId != null) {
             log.debug("Fetching raids for contributor {}", contributorId);
             raids = raidIngestService.findAllByContributor(contributorId);
         } else if (organisationId != null) {
             raids = raidIngestService.findAllByOrganisation(organisationId);
+        } else if (TokenUtil.hasRole(TokenUtil.OPERATOR_ROLE)) {
+            log.debug("Fetching raids for operator");
+            raids = raidIngestService.findAll()
+                    .stream()
+                    .toList();
         } else {
             final var servicePointId = getServicePointId();
 

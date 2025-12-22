@@ -83,9 +83,10 @@ public class AbstractIntegrationTest {
             final String position,
             final String role,
             final LocalDate startDate,
-            final String email
+            final String status
     ) {
-        return new Contributor()
+
+        final var contributor = new Contributor()
                 .id(isni)
                 .contact(true)
                 .leader(true)
@@ -98,6 +99,11 @@ public class AbstractIntegrationTest {
                         new ContributorRole()
                                 .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
                                 .id(role)));
+
+        if (status != null) {
+            contributor.setStatus(status);
+        }
+        return contributor;
     }
 
 
