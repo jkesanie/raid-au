@@ -11,16 +11,16 @@ on:
 
 jobs:
   build:
-
+    defaults:
+      run:
+        working-directory: raid-agency-app
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - run: cd raid-agency-app/
       - name: Use Node.js 20
         uses: actions/setup-node@v6
         with:
-          cache-dependency-path: raid-agency-app/package.json
           node-version: 20
           cache: 'npm'
       - run: npm ci
