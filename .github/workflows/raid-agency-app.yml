@@ -24,6 +24,7 @@ jobs:
       - name: Use Node.js 20
         uses: actions/setup-node@v6
         with:
+          cache-dependency-path: raid-agency-app/package.json
           node-version: 20
           cache: 'npm'
       - run: npm ci
