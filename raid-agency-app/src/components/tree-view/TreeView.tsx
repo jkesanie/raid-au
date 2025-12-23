@@ -16,7 +16,7 @@ const HighlightText: React.FC<{ text: string; query: string }> = ({ text, query 
         <>
             {parts.map((part, index) =>
                 part.toLowerCase() === query.toLowerCase() ? (
-                    <mark key={index} style={{ backgroundColor: '#ffeb3b', padding: '0 2px' }}>
+                    <mark key={index} style={{ backgroundColor: '#ffeb3b', padding: '0 1px' }}>
                         {part}
                     </mark>
                 ) : (
@@ -109,7 +109,7 @@ export default function CustomizedTreeViewWithSelection() {
                     multiSelect
                     selectedItems={selectedIds}
                     onSelectedItemsChange={handleSelectedItemsChange}
-                    expandedItems={searchQuery ? treeItems.reduce((acc, item) => {
+                    /* expandedItems={searchQuery ? treeItems.reduce((acc, item) => {
                         if (item.children && item.children.length > 0) {
                             acc.push(item.id);
                             const childIds = item.children.reduce((childAcc, child) => {
@@ -119,7 +119,7 @@ export default function CustomizedTreeViewWithSelection() {
                             acc.push(...childIds);
                         } 
                         return acc;
-                    }, [] as string[]) : []}
+                    }, [] as string[]) : []} */
                     // --- Enable selection propagation for full feature implementation ---
                     selectionPropagation={{
                         parents: false, // Select parent if all children are selected
