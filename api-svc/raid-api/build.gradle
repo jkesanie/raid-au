@@ -22,6 +22,8 @@ plugins {
 //apply plugin: 'docker-compose'
 
 ext {
+  set('jackson-bom.version', '2.20.0')
+
   defaultSysProps = [
     /* prod machines will always be set to UTC, but developer machines are set
     to whatever they want - so this forces it for gradle stuff. */
