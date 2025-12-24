@@ -5,16 +5,12 @@ buildscript {
   repositories {
     mavenCentral()
   }
-  dependencies {
-//    classpath 'com.avast.gradle:gradle-docker-compose-plugin:0.17.7'
-  }
 }
 
 plugins {
   id 'java'
   id 'jvm-test-suite'
   alias(libs.plugins.spring.boot)
-  alias(libs.plugins.spring.dependency.management)
   alias(libs.plugins.jsonschema2pojo)
   alias(libs.plugins.xjc)
 }
@@ -22,8 +18,6 @@ plugins {
 //apply plugin: 'docker-compose'
 
 ext {
-  set('jackson-bom.version', '2.20.0')
-
   defaultSysProps = [
     /* prod machines will always be set to UTC, but developer machines are set
     to whatever they want - so this forces it for gradle stuff. */
