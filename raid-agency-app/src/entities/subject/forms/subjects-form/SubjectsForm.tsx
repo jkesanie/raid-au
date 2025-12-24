@@ -1,7 +1,7 @@
 import React from "react";
 import { subjectDataGenerator } from "@/entities/subject/data-generator/subject-data-generator";
 import { RaidDto } from "@/generated/raid";
-import { AddBox, Spa } from "@mui/icons-material";
+import { AddBox } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -28,7 +28,7 @@ import { TransformCodes } from "@/utils/transformer/TransformCodes";
 import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 import DropDown from "@/components/dropdown-select/DropDown";
 import CustomisedInputBase from "@/components/custom-text-field/CustomisedInputBase";
-import { Search } from "lucide-react";
+import { RotateCcw, Search, Plus } from "lucide-react";
 import { CodeItem } from "@/components/tree-view/context/CodesProvider";
 
 export function SubjectsForm({
@@ -57,7 +57,9 @@ export function SubjectsForm({
     getSubjectTypes,
     setSearchQuery,
     searchQuery,
-    filterCodesBySearch
+    filterCodesBySearch,
+    resetState,
+    getSelectedCodesData,
   } = useCodesContext();
 
   const handleAddItem = () => {
@@ -130,11 +132,37 @@ export function SubjectsForm({
                 searchValue={(searchValue) => {
                   setSearchQuery(searchValue);
                 }}
+                value={searchQuery}
                 endEdorment={<Search size={16} />}
               />
             </Stack>
-           
             <CustomizedTreeViewWithSelection/>
+            <Stack gap={2} direction="row" justifyContent="flex-end">
+              <Button
+                variant="outlined"
+                color="info"
+                size="small"
+                startIcon={<RotateCcw />}
+                sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
+                onClick={resetState}
+              >
+                Reset
+              </Button>
+              <Button
+                variant="outlined"
+                color="info"
+                size="small"
+                startIcon={<Plus />}
+                sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
+                onClick={handleAddItem}
+                onMouseEnter={() => setIsRowHighlighted(true)}
+                onMouseLeave={() => setIsRowHighlighted(false)}
+              >
+                Add subjects
+              </Button>
+              </Stack>
+            </Stack>
+            <Stack gap={4}>
             {fields.map((field, index) => (
               <Fragment key={field.id}>
                 <DetailsForm

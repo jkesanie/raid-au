@@ -30,8 +30,18 @@ const HighlightText: React.FC<{ text: string; query: string }> = ({ text, query 
 export default function CustomizedTreeViewWithSelection() {
     const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
     const [treeItems, setTreeItems] = React.useState<TreeViewBaseItem[]>([]);
-    const { setCodesData, codesData, isLoading, setSelectedCodes, subjectType, searchQuery } = useCodesContext();
-    
+    const {
+        setCodesData,
+        codesData,
+        isLoading,
+        setSelectedCodes,
+        subjectType,
+        searchQuery,
+        selectedCodes,
+        setExpandedNodes,
+        expandedNodes,
+    } = useCodesContext();
+
     React.useEffect(() => {
         if(codesData && codesData[subjectType]) {
             const transformItems = (items: any[]): TreeViewBaseItem[] =>
@@ -43,7 +53,6 @@ export default function CustomizedTreeViewWithSelection() {
             const transformedItems = transformItems(codesData[subjectType]);
             setTreeItems(transformedItems);
         }
-        
     }, [codesData, subjectType]);
 
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
@@ -70,6 +79,8 @@ export default function CustomizedTreeViewWithSelection() {
             [subjectType]: updateSelection(codesData[subjectType])
         });
     }, [selectedIds, subjectType]);
+
+    
 
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
@@ -107,8 +118,10 @@ export default function CustomizedTreeViewWithSelection() {
                     // --- Make selection controlled to retrieve values ---
                     checkboxSelection
                     multiSelect
-                    selectedItems={selectedIds}
+                    selectedItems={selectedCodes}
                     onSelectedItemsChange={handleSelectedItemsChange}
+                    expandedItems={expandedNodes}
+                    onExpandedItemsChange={(event, itemIds) => setExpandedNodes(event as React.SyntheticEvent, itemIds)}
                     /* expandedItems={searchQuery ? treeItems.reduce((acc, item) => {
                         if (item.children && item.children.length > 0) {
                             acc.push(item.id);
@@ -136,4 +149,3 @@ export default function CustomizedTreeViewWithSelection() {
         </Box>
     );
 }
-

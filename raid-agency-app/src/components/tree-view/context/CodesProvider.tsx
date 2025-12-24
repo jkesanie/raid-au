@@ -55,7 +55,7 @@ export interface CodesContextType {
   expandNode: (nodeId: string) => void;
   collapseNode: (nodeId: string) => void;
   toggleNodeExpansion: (nodeId: string) => void;
-  setExpandedNodes: (nodes: string[]) => void;
+  setExpandedNodes: (event: React.SyntheticEvent, nodes: string[]) => void;
   setSearchQuery: (query: string) => void;
   getCodeById: (codeId: string) => CodeItem | undefined;
   getSelectedCodesData: () => CodeItem[];
@@ -63,14 +63,13 @@ export interface CodesContextType {
   filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
 }
 
-
 // Provider component
 export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Core state
   const [codesData, setCodesDataState] = useState<CodesData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // UI state
   const [selectedCodes, setSelectedCodesState] = useState<string[]>([]);
   const [expandedNodes, setExpandedNodesState] = useState<string[]>([]);
@@ -201,7 +200,8 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     );
   }, []);
 
-  const setExpandedNodes = useCallback((nodes: string[]) => {
+  const setExpandedNodes = useCallback((event: React.SyntheticEvent, nodes: string[]) => {
+    console.log("setExpandedNodes called with nodes:", nodes);
     setExpandedNodesState(nodes);
   }, []);
 
@@ -288,8 +288,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
 
   // Reset state
   const resetState = useCallback(() => {
-    setCodesDataState(null);
-    setSelectedCodesState([]);
+    clearSelectedCodes();
     setExpandedNodesState([]);
     setSearchQueryState('');
     setError(null);
@@ -305,7 +304,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     expandedNodes,
     searchQuery,
     subjectType,
-    
+
     // Actions
     setCodesData,
     setSubjectType,
