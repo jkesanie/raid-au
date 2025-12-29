@@ -56,7 +56,6 @@ export default function CustomizedTreeViewWithSelection() {
     }, [codesData, subjectType]);
 
     const handleSelectedItemsChange = (event: React.SyntheticEvent | null, newSelectedIds: string[]) => {
-        // event is unused; update controlled selection state with the new item IDs
         event?.preventDefault();
         setSelectedIds(newSelectedIds);
         setSelectedCodes(newSelectedIds);
@@ -80,14 +79,11 @@ export default function CustomizedTreeViewWithSelection() {
         });
     }, [selectedIds, subjectType]);
 
-    console.log("Selected IDs in TreeView:", codesData);
-
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
         const hasChildren = item && item.children && item.id.length <= 2;
         const isLastChild = item && item.children && item.children.length === 0;
-               // OPTION 2: If you want to highlight in the CustomTreeItem
-        // You can modify the label here if needed
+
         const modifiedProps = {
             ...props,
             // If label is a string and you want to highlight it here

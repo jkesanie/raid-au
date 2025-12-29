@@ -201,7 +201,6 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, []);
 
   const setExpandedNodes = useCallback((event: React.SyntheticEvent, nodes: string[]) => {
-    console.log("setExpandedNodes called with nodes:", nodes);
     setExpandedNodesState(nodes);
   }, []);
 
@@ -209,7 +208,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const setSearchQuery = useCallback((query: string) => {
     setSearchQueryState(query);
   }, []);
-  console.log("codesData", codesData);
+
 const filterCodesBySearch = useCallback((items: CodeItem[], query: string): CodeItem[] => {
     if (!query) return items;
     

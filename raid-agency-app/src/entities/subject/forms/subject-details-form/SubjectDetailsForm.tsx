@@ -1,5 +1,3 @@
-import { TextSelectField } from "@/components/fields/TextSelectField";
-import subjectMapping from "@/mapping/data/subject-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Tooltip, Typography, TextField } from "@mui/material";
 import { useState } from "react";
@@ -15,7 +13,7 @@ function FieldGrid({
   selectedCode?: any;
 }) {
   return (
-    <Grid sx={{width: "100%"}} spacing={2} className={isRowHighlighted ? "remove" : ""}>
+    <Grid sx={{width: "100%"}} className={isRowHighlighted ? "remove" : ""}>
       <TextField
         value={selectedCode}
         name={`subject.${index}.id`}

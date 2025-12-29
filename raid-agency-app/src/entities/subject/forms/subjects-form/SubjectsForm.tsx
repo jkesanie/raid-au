@@ -61,12 +61,13 @@ export function SubjectsForm({
     resetState,
     getSelectedCodesData,
   } = useCodesContext();
-  const selectedCodesData = []
+  const selectedCodesData = React.useRef<Array<CodeItem>>([]);
   const handleAddItem = () => {
-    append(generator());
+    selectedCodesData.current = getSelectedCodesData();
+    selectedCodesData.current.map((code)=>append(generator(code.id)));
     trigger(key);
-
   };
+
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
@@ -84,7 +85,6 @@ export function SubjectsForm({
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
-  console.log("codesData in SubjectsForm:", getSelectedCodesData());
   return (
     <Card
       sx={{
@@ -164,7 +164,7 @@ export function SubjectsForm({
               </Stack>
             </Stack>
             <Stack gap={4}>
-            {getSelectedCodesData()?.map((field, index) => (
+            {selectedCodesData.current?.map((field, index) => (
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
