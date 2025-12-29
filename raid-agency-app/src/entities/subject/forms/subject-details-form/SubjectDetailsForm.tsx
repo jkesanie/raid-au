@@ -1,31 +1,28 @@
 import { TextSelectField } from "@/components/fields/TextSelectField";
 import subjectMapping from "@/mapping/data/subject-mapping.json";
 import { IndeterminateCheckBox } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Stack, Tooltip, Typography, TextField } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 function FieldGrid({
   index,
   isRowHighlighted,
+  selectedCode,
 }: {
   index: number;
   isRowHighlighted: boolean;
+  selectedCode?: any;
 }) {
   return (
-    <Grid container spacing={2} className={isRowHighlighted ? "remove" : ""}>
-      <TextSelectField
-        options={subjectMapping
-          .sort((a, b) => a.value.localeCompare(b.value))
-          .map((subject) => ({
-            label: subject.value,
-            value: subject.definition,
-          }))}
+    <Grid sx={{width: "100%"}} spacing={2} className={isRowHighlighted ? "remove" : ""}>
+      <TextField
+        value={selectedCode}
         name={`subject.${index}.id`}
-        label="Type"
         placeholder="Type"
         required={true}
-        width={12}
+        fullWidth
+        sx={{ height: "50px" }}        
       />
     </Grid>
   );
@@ -34,9 +31,11 @@ function FieldGrid({
 export function SubjectDetailsForm({
   index,
   handleRemoveItem,
+  selectedCode,
 }: {
   index: number;
   handleRemoveItem: (index: number) => void;
+  selectedCode?: any;
 }) {
   const key = "subject";
   const label = "Subject";
@@ -61,7 +60,11 @@ export function SubjectDetailsForm({
       </Typography>
 
       <Stack direction="row" alignItems="flex-start" gap={1}>
-        <FieldGrid index={index} isRowHighlighted={isRowHighlighted} />
+        <FieldGrid
+          index={index}
+          isRowHighlighted={isRowHighlighted}
+          selectedCode={selectedCode}
+        />
 
         <Tooltip title={`Remove ${label}`} placement="right">
           <IconButton

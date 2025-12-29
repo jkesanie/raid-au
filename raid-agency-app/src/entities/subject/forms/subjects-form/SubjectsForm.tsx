@@ -61,10 +61,11 @@ export function SubjectsForm({
     resetState,
     getSelectedCodesData,
   } = useCodesContext();
-
+  const selectedCodesData = []
   const handleAddItem = () => {
     append(generator());
     trigger(key);
+
   };
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
@@ -83,7 +84,7 @@ export function SubjectsForm({
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
-  console.log("codesData in SubjectsForm:", codesData);
+  console.log("codesData in SubjectsForm:", getSelectedCodesData());
   return (
     <Card
       sx={{
@@ -163,12 +164,13 @@ export function SubjectsForm({
               </Stack>
             </Stack>
             <Stack gap={4}>
-            {fields.map((field, index) => (
+            {getSelectedCodesData()?.map((field, index) => (
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
                   handleRemoveItem={() => remove(index)}
                   index={index}
+                  selectedCode={field.label}
                 />
                 <SubjectKeywordsForm
                   control={control}
@@ -181,21 +183,6 @@ export function SubjectsForm({
           </Stack>
         </Stack>
       </CardContent>
-
-      <CardActions>
-        <Button
-          variant="outlined"
-          color="success"
-          size="small"
-          startIcon={<AddBox />}
-          sx={{ textTransform: "none", mt: 3 }}
-          onClick={handleAddItem}
-          onMouseEnter={() => setIsRowHighlighted(true)}
-          onMouseLeave={() => setIsRowHighlighted(false)}
-        >
-          Add {label}
-        </Button>
-      </CardActions>
     </Card>
   );
 }

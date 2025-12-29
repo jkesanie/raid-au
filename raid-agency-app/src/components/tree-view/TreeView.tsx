@@ -80,7 +80,7 @@ export default function CustomizedTreeViewWithSelection() {
         });
     }, [selectedIds, subjectType]);
 
-    
+    console.log("Selected IDs in TreeView:", codesData);
 
     function CustomTreeItem(props: TreeItemProps) {
         const item = findItem(treeItems, props.itemId);
