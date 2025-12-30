@@ -62,12 +62,11 @@ export function SubjectsForm({
     getSelectedCodesData,
     selectedCodesData,
   } = useCodesContext();
-  //const selectedCodesData = React.useRef<Array<CodeItem>>([]);
   const handleAddItem = () => {
     getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
     trigger(key);
   };
-  console.log("SubjectsForm render", selectedCodesData);
+
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();

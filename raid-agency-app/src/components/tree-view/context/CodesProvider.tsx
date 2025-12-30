@@ -304,7 +304,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     setError(null);
     setIsLoading(false);
     setSelectedCodesData([]);
-    setSubjectType(getSubjectTypes()[0] || '');
+    setSubjectType(getSubjectTypes()[0]);
   }, []);
 
   const value: CodesContextType = {
