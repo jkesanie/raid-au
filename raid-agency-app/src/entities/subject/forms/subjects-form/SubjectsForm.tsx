@@ -60,14 +60,14 @@ export function SubjectsForm({
     filterCodesBySearch,
     resetState,
     getSelectedCodesData,
+    selectedCodesData,
   } = useCodesContext();
-  const selectedCodesData = React.useRef<Array<CodeItem>>([]);
+  //const selectedCodesData = React.useRef<Array<CodeItem>>([]);
   const handleAddItem = () => {
-    selectedCodesData.current = getSelectedCodesData();
-    selectedCodesData.current.map((code)=>append(generator(code.id)));
+    getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
     trigger(key);
   };
-
+  console.log("SubjectsForm render", selectedCodesData);
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
@@ -127,6 +127,7 @@ export function SubjectsForm({
                 options={subjectTypes || []}
                 defaultValue={subjectType || ""}
                 setValue={setSubjectType}
+                currentValue={subjectType || ""}
               />
               <CustomisedInputBase
                 placeholder="Type to filter subjects..."
@@ -164,7 +165,7 @@ export function SubjectsForm({
               </Stack>
             </Stack>
             <Stack gap={4}>
-            {selectedCodesData.current?.map((field, index) => (
+            {selectedCodesData?.map((field, index) => (
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}

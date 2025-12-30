@@ -1,5 +1,6 @@
 import React, {useState, useCallback, ReactNode } from 'react';
 import { CodesContext } from './CodesContext';
+import { get } from 'http';
 
 // Type definitions for your codes structure
 export interface CodeItem {
@@ -39,6 +40,7 @@ export interface CodesContextType {
   expandedNodes: string[];
   searchQuery: string;
   subjectType: string;
+  selectedCodesData: CodeItem[];
   
   // Actions
   setCodesData: (data: CodesData) => void;
@@ -75,6 +77,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [expandedNodes, setExpandedNodesState] = useState<string[]>([]);
   const [searchQuery, setSearchQueryState] = useState('');
   const [subjectType, setSubjectType] = useState<string>('ANZSRC FOR');
+  const [selectedCodesData, setSelectedCodesData] = useState<CodeItem[]>([]);
 
   // Set codes data
   const setCodesData = useCallback((data: CodesData) => {
@@ -272,13 +275,21 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
       return undefined;
     };
     
-    return findCode(codesData[subjectType] || []);
+    for (const type of getSubjectTypes()) {
+      const result = findCode(codesData[type]);
+      if (result) {
+        return result;
+      }
+    }
+    return undefined;
   }, [codesData, subjectType]);
 
   const getSelectedCodesData = useCallback((): CodeItem[] => {
-    return selectedCodes
+    const codesArray = selectedCodes
       .map(codeId => getCodeById(codeId))
       .filter((item): item is CodeItem => item !== undefined);
+    setSelectedCodesData(codesArray);
+    return codesArray;
   }, [selectedCodes, getCodeById]);
 
   const getSubjectTypes = useCallback((): string[] => {
@@ -292,6 +303,8 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     setSearchQueryState('');
     setError(null);
     setIsLoading(false);
+    setSelectedCodesData([]);
+    setSubjectType(getSubjectTypes()[0] || '');
   }, []);
 
   const value: CodesContextType = {
@@ -303,6 +316,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     expandedNodes,
     searchQuery,
     subjectType,
+    selectedCodesData,
 
     // Actions
     setCodesData,

@@ -11,9 +11,9 @@ export default function DropDown(props: {
     defaultValue?: string,
     currentValue?: string,
     setValue:
-    (value: string) => void
+    (value: string) => void,
 }) {
-  const [value, setValue] = React.useState(props.currentValue || props.defaultValue || '');
+  const [value, setValue] = React.useState(props.currentValue || props.defaultValue);
   const handleChange = (event: SelectChangeEvent) => {
     const newValue = event.target.value as string;
     setValue(newValue);
@@ -29,7 +29,7 @@ export default function DropDown(props: {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={value}
+          value={props.currentValue || value || ''}
           label={props.label}
           onChange={handleChange}
         >
