@@ -298,14 +298,16 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
 
   // Reset state
   const resetState = useCallback(() => {
+    const subjectTypes = getSubjectTypes();
+    const newSubjectType = subjectTypes.length > 0 ? subjectTypes[0] : '';
+    setSubjectType(newSubjectType);
     clearSelectedCodes();
     setExpandedNodesState([]);
     setSearchQueryState('');
     setError(null);
     setIsLoading(false);
     setSelectedCodesData([]);
-    setSubjectType(getSubjectTypes()[0]);
-  }, []);
+  }, [getSubjectTypes]);
 
   const value: CodesContextType = {
     // State

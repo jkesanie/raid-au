@@ -17,6 +17,7 @@ import {
   FieldErrors,
   UseFormTrigger,
   useFieldArray,
+  useFormContext,
 } from "react-hook-form";
 import { SubjectKeywordsForm } from "@/entities/subject-keyword/forms/subject-keywords-form/";
 import { SubjectDetailsForm } from "@/entities/subject/forms/subject-details-form";
@@ -48,6 +49,7 @@ export function SubjectsForm({
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
+  const { clearErrors } = useFormContext();
   const errorMessage = errors[key]?.message;
   const {
     codesData,
@@ -61,12 +63,14 @@ export function SubjectsForm({
     resetState,
     getSelectedCodesData,
     selectedCodesData,
+    selectedCodes,
   } = useCodesContext();
   const handleAddItem = () => {
     getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
     trigger(key);
   };
-  console.log("subjectType", subjectType);
+  console.log("fields", fields);
+  console.log("selectedCodesData", selectedCodesData);
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
@@ -78,12 +82,18 @@ export function SubjectsForm({
       (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
     });
   }, [setCodesData]);
-
+  console.log("codesData in Subjectform", codesData);
   React.useEffect(() => {
     const filtered = filterCodesBySearch(preserveCodesData.current?.[subjectType] || [], searchQuery);
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log("subjectType", subjectType)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
+
+  const handleReset = () => {
+    resetState();
+    clearErrors(key);
+  }
   return (
     <Card
       sx={{
@@ -145,7 +155,7 @@ export function SubjectsForm({
                 size="small"
                 startIcon={<RotateCcw />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
-                onClick={resetState}
+                onClick={handleReset}
               >
                 Reset
               </Button>
@@ -156,6 +166,7 @@ export function SubjectsForm({
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
                 onClick={handleAddItem}
+                disabled={selectedCodes.length === 0}
               >
                 Add subjects
               </Button>
