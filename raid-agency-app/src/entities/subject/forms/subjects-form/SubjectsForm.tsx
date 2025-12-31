@@ -66,7 +66,7 @@ export function SubjectsForm({
     getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
     trigger(key);
   };
-
+  console.log("subjectType", subjectType);
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
@@ -156,8 +156,6 @@ export function SubjectsForm({
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
                 onClick={handleAddItem}
-                onMouseEnter={() => setIsRowHighlighted(true)}
-                onMouseLeave={() => setIsRowHighlighted(false)}
               >
                 Add subjects
               </Button>

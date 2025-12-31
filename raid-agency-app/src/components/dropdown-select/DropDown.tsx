@@ -22,6 +22,10 @@ export default function DropDown(props: {
     }
   };
 
+  // Determine the current value, ensuring it's valid
+  const currentValue = props.currentValue || value || '';
+  const isValidValue = props.options.includes(currentValue);
+
   return (
     <Box sx={{ width: { xs: '100%', sm: 200, md: 250, lg: 300, xl: 400 } }}>
       <FormControl fullWidth>
@@ -29,7 +33,7 @@ export default function DropDown(props: {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={props.currentValue || value || ''}
+          value={isValidValue ? currentValue : ''}
           label={props.label}
           onChange={handleChange}
         >
