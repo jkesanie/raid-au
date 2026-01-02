@@ -63,6 +63,7 @@ export interface CodesContextType {
   getSelectedCodesData: () => CodeItem[];
   resetState: () => void;
   filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
+  removeFromSubjects: (codeId: string) => void;
 }
 
 // Provider component
@@ -164,9 +165,16 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     );
   }, []);
 
+
+
   const deselectCode = useCallback((codeId: string) => {
     setSelectedCodesState(prev => prev.filter(id => id !== codeId));
   }, []);
+
+  const removeFromSubjects = useCallback((codeId: string) => {
+    setSelectedCodesData(prev => prev.filter(item => item.id !== codeId));
+    deselectCode(codeId); // Also deselect from tree
+  }, [deselectCode]);
 
   const toggleCodeSelection = useCallback((codeId: string) => {
     setSelectedCodesState(prev =>
@@ -341,6 +349,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     getSelectedCodesData,
     resetState,
     filterCodesBySearch,
+    removeFromSubjects
   };
 
   return (

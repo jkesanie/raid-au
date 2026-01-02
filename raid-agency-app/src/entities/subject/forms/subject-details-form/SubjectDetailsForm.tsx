@@ -30,10 +30,12 @@ export function SubjectDetailsForm({
   index,
   handleRemoveItem,
   selectedCode,
+  id
 }: {
   index: number;
-  handleRemoveItem: (index: number) => void;
+  handleRemoveItem: (id: string) => void;
   selectedCode?: any;
+  id: string
 }) {
   const key = "subject";
   const label = "Subject";
@@ -76,7 +78,7 @@ export function SubjectDetailsForm({
                   `Are you sure you want to delete ${label} # ${index + 1} ?`
                 )//ShortTerm Fix: Display the title of the item and its corresponding sequence number in the confirmation dialog
               ) {
-                handleRemoveItem(index);
+                handleRemoveItem(id);
               }
             }}
           >

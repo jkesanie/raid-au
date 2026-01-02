@@ -64,13 +64,20 @@ export function SubjectsForm({
     getSelectedCodesData,
     selectedCodesData,
     selectedCodes,
+    removeFromSubjects,
   } = useCodesContext();
+  let count:number = 0
+  React.useEffect(() => {
+   if(!selectedCodesData) return;
+   console.log("Appending selected codes data",  count+1);
+   selectedCodesData?.map((code)=>append(generator(code.id, subjectType)));
+  }, [selectedCodesData]);
+
   const handleAddItem = () => {
     getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
-    trigger(key);
-  };
-  console.log("fields", fields);
-  console.log("selectedCodesData", selectedCodesData);
+   trigger(key);
+  }
+  
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
@@ -82,11 +89,10 @@ export function SubjectsForm({
       (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
     });
   }, [setCodesData]);
-  console.log("codesData in Subjectform", codesData);
+  console.log("selectedCodesData", selectedCodesData);
   React.useEffect(() => {
     const filtered = filterCodesBySearch(preserveCodesData.current?.[subjectType] || [], searchQuery);
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
-    console.log("subjectType", subjectType)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
 
@@ -165,7 +171,7 @@ export function SubjectsForm({
                 size="small"
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
-                onClick={handleAddItem}
+                onClick={getSelectedCodesData}
                 disabled={selectedCodes.length === 0}
               >
                 Add subjects
@@ -177,9 +183,10 @@ export function SubjectsForm({
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
-                  handleRemoveItem={() => remove(index)}
+                  handleRemoveItem={() => removeFromSubjects(field.id)}
                   index={index}
                   selectedCode={field.label}
+                  id={field.id}
                 />
                 <SubjectKeywordsForm
                   control={control}
