@@ -66,10 +66,9 @@ export function SubjectsForm({
     selectedCodes,
     removeFromSubjects,
   } = useCodesContext();
-  let count:number = 0
+
   React.useEffect(() => {
    if(!selectedCodesData) return;
-   console.log("Appending selected codes data",  count+1);
    selectedCodesData?.map((code)=>append(generator(code.id, subjectType)));
   }, [selectedCodesData]);
 
@@ -89,7 +88,7 @@ export function SubjectsForm({
       (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
     });
   }, [setCodesData]);
-  console.log("selectedCodesData", selectedCodesData);
+
   React.useEffect(() => {
     const filtered = filterCodesBySearch(preserveCodesData.current?.[subjectType] || [], searchQuery);
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
