@@ -102,7 +102,7 @@ export function SubjectDetailsForm({
                 setAlertOpen(false);
               },
               icon: Check,
-              bgColor: "warning",
+              bgColor: "error.main",
             }
           ]}
         />

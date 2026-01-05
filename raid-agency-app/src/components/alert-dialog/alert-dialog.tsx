@@ -8,7 +8,6 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
-import { Minus } from 'lucide-react';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -16,6 +15,22 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
+  },
+  '& .Cancel': {
+    marginRight: theme.spacing(1),
+    ':hover': {
+        backgroundColor: "#fff",
+        color: theme.palette.primary.main,  // ✅ Use theme.palette
+        border: `1px solid ${theme.palette.primary.main}`,
+    },
+  },
+  '& .Yes': {
+    marginRight: theme.spacing(1),
+    ':hover': {
+        backgroundColor: "#fff",
+        color: theme.palette.error.main,  // ✅ Use theme.palette
+        border: `1px solid ${theme.palette.error.main}`,
+    },
   },
 }));
 
@@ -36,7 +51,7 @@ export default function CustomizedDialogs({
     label: string;
     onClick: () => void;
     icon: React.ElementType;
-    bgColor?: string;
+    bgColor: string;
   }[];
 }) {
 
@@ -70,15 +85,12 @@ export default function CustomizedDialogs({
         <DialogActions>
           {modalAction && modalActions?.map((action, index) => (
             <Button
-              sx={{
-                
-                color: "white"
-              }}
-              color={action?.bgColor ? 'primary' : 'error'}
               key={index}
               autoFocus
               onClick={action.onClick}
-              variant='contained'
+              variant='outlined'
+              sx={{ backgroundColor: action.bgColor, color: '#fff' }}
+              className={action.label}
             >
               <action.icon style={{ marginRight: '8px' }} />
               {action.label}

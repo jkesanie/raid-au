@@ -173,7 +173,7 @@ export function SubjectsForm({
                 onClick={getSelectedCodesData}
                 disabled={selectedCodes.length === 0}
               >
-                Add subjects
+                Save Selection
               </Button>
               </Stack>
             </Stack>
