@@ -16,7 +16,7 @@ import { RaidCreateRequest, RaidDto } from "@/generated/raid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Close as CloseIcon, Save as SaveIcon } from "@mui/icons-material";
 import { Fab, Stack, Tooltip } from "@mui/material";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {ServicePointForm} from "@/entities/service-point/forms/ServicePointForm.tsx";
@@ -25,6 +25,9 @@ import { useErrorDialog } from "@/components/error-dialog";
 import { transformErrorMessage } from "../raid-form-error-message/ErrorContentUtils";
 import { formConfigService, transformFormData } from "@/services/form-service";
 import { createContext } from "react";
+import { useCodesContext } from "@/components/tree-view/context/CodesContext";
+import { CodeItem } from "../tree-view/context/CodesProvider";
+
 // Define JSON types locally since '@/types/json-types' is missing
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 type JSONObject = { [key: string]: JSONValue };
@@ -62,15 +65,44 @@ export const RaidForm = memo(
   }) => {
     const { isOperator } = useAuthHelper();
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const hasLoadedInitialData = useRef(false);
     const { openErrorDialog } = useErrorDialog();
+    const {
+      setSelectedCodes,
+      codesData,
+      setSelectedCodesData,
+      getCodeById,
+    } = useCodesContext();
 
     const formConfig = formConfigService();
     const [formSchema, setFormSchema] = useState<JSONObject | null>(null);
 
     useEffect(() => {
       formConfig.getFormConfig().then((schema: JSONObject) => setFormSchema(schema));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+      if (!hasLoadedInitialData.current && raidData.subject && codesData) {
+        const selectedSubjects = Array.isArray(raidData.subject)
+          ? raidData.subject
+          : [];
+
+        const selectedIds = selectedSubjects.map((subject) =>
+          subject.id.split("/").pop() || ""
+        );
+        if(selectedIds.length === 0) return;
+        setSelectedCodes(selectedIds);
+        const codesArray = selectedIds
+          .map(codeId => getCodeById(codeId))
+          .filter((item): item is CodeItem => item !== undefined);
+
+        if (codesArray.length > 0) {
+          setSelectedCodesData(codesArray);
+          hasLoadedInitialData.current = true; // Mark as loaded
+        }
+      }
+    }, [raidData.subject, codesData, getCodeById]);
 
     const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
 

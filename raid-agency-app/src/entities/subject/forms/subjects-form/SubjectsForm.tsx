@@ -75,11 +75,6 @@ export function SubjectsForm({
    if(!selectedCodesData) return;
    selectedCodesData?.map((code)=>append(generator(code.id, subjectType)));
   }, [selectedCodesData]);
-
-  const handleAddItem = () => {
-    getSelectedCodesData().map((code)=>append(generator(code.id, subjectType)));
-   trigger(key);
-  }
   
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
@@ -175,7 +170,7 @@ export function SubjectsForm({
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
                 onClick={modifySubjectSelection}
-                disabled={selectedCodes.length === 0}
+                disabled={selectedCodes.length === 0 && selectedCodesData?.length === 0}
               >
                 Save Selection
               </Button>

@@ -67,6 +67,7 @@ export interface CodesContextType {
   removeFromSubjects: (codeId: string) => void;
   modifySubjectSelection: () => void;
   setConfirmationNeeded: (needed: boolean) => void;
+  setSelectedCodesData: (codesData: CodeItem[]) => void;
 }
 
 // Provider component
@@ -368,6 +369,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     removeFromSubjects,
     modifySubjectSelection,
     setConfirmationNeeded,
+    setSelectedCodesData,
   };
 
   return (
