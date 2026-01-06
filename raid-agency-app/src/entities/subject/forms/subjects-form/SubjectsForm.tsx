@@ -29,8 +29,9 @@ import { TransformCodes } from "@/utils/transformer/TransformCodes";
 import CustomizedTreeViewWithSelection from "@/components/tree-view/TreeView";
 import DropDown from "@/components/dropdown-select/DropDown";
 import CustomisedInputBase from "@/components/custom-text-field/CustomisedInputBase";
-import { RotateCcw, Search, Plus } from "lucide-react";
+import { RotateCcw, Search, Plus, Delete, Check } from "lucide-react";
 import { CodeItem } from "@/components/tree-view/context/CodesProvider";
+import CustomizedDialogs from "@/components/alert-dialog/alert-dialog";
 
 export function SubjectsForm({
   control,
@@ -65,6 +66,9 @@ export function SubjectsForm({
     selectedCodesData,
     selectedCodes,
     removeFromSubjects,
+    confirmationNeeded,
+    modifySubjectSelection,
+    setConfirmationNeeded,
   } = useCodesContext();
 
   React.useEffect(() => {
@@ -170,7 +174,7 @@ export function SubjectsForm({
                 size="small"
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
-                onClick={getSelectedCodesData}
+                onClick={modifySubjectSelection}
                 disabled={selectedCodes.length === 0}
               >
                 Save Selection
@@ -196,6 +200,31 @@ export function SubjectsForm({
               </Fragment>
             ))}
           </Stack>
+          {confirmationNeeded && (
+            <CustomizedDialogs
+              modalTitle="Confirm Removal"
+              modalContent="Removing the subject will also delete its keywords. Are you sure you want to remove it?"
+              alertOpen={confirmationNeeded}
+              onClose={() => {}}
+              modalAction={true}
+              modalActions={[
+            {
+              label: "Cancel",
+              onClick: () => setConfirmationNeeded(false),
+              icon: Delete,
+              bgColor: "primary.main",
+            },
+            {
+              label: "Yes",  
+              onClick: () => {
+                getSelectedCodesData();
+                setConfirmationNeeded(false);
+              },
+              icon: Check,
+              bgColor: "error.main",
+            }
+          ]}
+          />)}
         </Stack>
       </CardContent>
     </Card>

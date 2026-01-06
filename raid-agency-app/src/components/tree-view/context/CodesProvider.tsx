@@ -41,6 +41,7 @@ export interface CodesContextType {
   searchQuery: string;
   subjectType: string;
   selectedCodesData: CodeItem[];
+  confirmationNeeded: boolean;
   
   // Actions
   setCodesData: (data: CodesData) => void;
@@ -64,6 +65,8 @@ export interface CodesContextType {
   resetState: () => void;
   filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
   removeFromSubjects: (codeId: string) => void;
+  modifySubjectSelection: () => void;
+  setConfirmationNeeded: (needed: boolean) => void;
 }
 
 // Provider component
@@ -79,7 +82,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [searchQuery, setSearchQueryState] = useState('');
   const [subjectType, setSubjectType] = useState<string>('ANZSRC FOR');
   const [selectedCodesData, setSelectedCodesData] = useState<CodeItem[]>([]);
-
+  const [confirmationNeeded, setConfirmationNeeded] = useState<boolean>(false);
   // Set codes data
   const setCodesData = useCallback((data: CodesData) => {
     setCodesDataState(data);
@@ -304,6 +307,18 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return Object.keys(codesData || {});
   }, [codesData]);
 
+  const modifySubjectSelection = useCallback(() => {
+    const compareCodeSelection = selectedCodesData.some(codeItem => {
+      return !selectedCodes.includes(codeItem.id);
+    });
+    if(compareCodeSelection) {
+      setConfirmationNeeded(true);
+      return;
+    }
+    setConfirmationNeeded(false);
+    return getSelectedCodesData();
+  }, [selectedCodes, selectedCodesData]);
+
   // Reset state
   const resetState = useCallback(() => {
     const subjectTypes = getSubjectTypes();
@@ -327,6 +342,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     searchQuery,
     subjectType,
     selectedCodesData,
+    confirmationNeeded,
 
     // Actions
     setCodesData,
@@ -349,7 +365,9 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     getSelectedCodesData,
     resetState,
     filterCodesBySearch,
-    removeFromSubjects
+    removeFromSubjects,
+    modifySubjectSelection,
+    setConfirmationNeeded,
   };
 
   return (
