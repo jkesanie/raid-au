@@ -83,7 +83,7 @@ export const RaidForm = memo(
     }, []);
 
     useEffect(() => {
-      if (!hasLoadedInitialData.current && raidData.subject && codesData) {
+      if (!hasLoadedInitialData.current && Array.isArray(raidData?.subject) && raidData.subject.length > 0 && codesData) {
         const selectedSubjects = Array.isArray(raidData.subject)
           ? raidData.subject
           : [];
@@ -91,18 +91,21 @@ export const RaidForm = memo(
         const selectedIds = selectedSubjects.map((subject) =>
           subject.id.split("/").pop() || ""
         );
+
         if(selectedIds.length === 0) return;
         setSelectedCodes(selectedIds);
         const codesArray = selectedIds
           .map(codeId => getCodeById(codeId))
           .filter((item): item is CodeItem => item !== undefined);
-
         if (codesArray.length > 0) {
           setSelectedCodesData(codesArray);
           hasLoadedInitialData.current = true; // Mark as loaded
         }
+      } else if ((!raidData?.subject || raidData.subject.length === 0) && isInitialLoad) {
+        setSelectedCodes([]);
+        setSelectedCodesData([]);
       }
-    }, [raidData.subject, codesData, getCodeById]);
+    }, [raidData.subject, codesData]);
 
     const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
 
