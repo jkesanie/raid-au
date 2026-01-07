@@ -320,17 +320,21 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return getSelectedCodesData();
   }, [selectedCodes, selectedCodesData]);
 
+  const restoreSubjectSelection = useCallback(() => {
+    const codesArray = selectedCodesData
+      .map(codeItem => getCodeById(codeItem.id))
+      .filter((item): item is CodeItem => item !== undefined);
+    setSelectedCodes(codesArray.map(code => code.id));
+    return codesArray;
+  }, [selectedCodesData, getCodeById]);
   // Reset state
   const resetState = useCallback(() => {
     const subjectTypes = getSubjectTypes();
     const newSubjectType = subjectTypes.length > 0 ? subjectTypes[0] : '';
     setSubjectType(newSubjectType);
     clearSelectedCodes();
-    setExpandedNodesState([]);
     setSearchQueryState('');
-    setError(null);
-    setIsLoading(false);
-    setSelectedCodesData([]);
+    restoreSubjectSelection();
   }, [getSubjectTypes]);
 
   const value: CodesContextType = {
