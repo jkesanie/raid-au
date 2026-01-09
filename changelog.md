@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.5.29
+## App-client UI
+* Turned off the contributors call until the new ORCID updater is ready
+
 # 2.5.28
 ## API
 * Update ORCID integration endpoints to use raid.org
