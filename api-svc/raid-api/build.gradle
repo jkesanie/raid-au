@@ -5,16 +5,12 @@ buildscript {
   repositories {
     mavenCentral()
   }
-  dependencies {
-//    classpath 'com.avast.gradle:gradle-docker-compose-plugin:0.17.7'
-  }
 }
 
 plugins {
   id 'java'
   id 'jvm-test-suite'
   alias(libs.plugins.spring.boot)
-  alias(libs.plugins.spring.dependency.management)
   alias(libs.plugins.jsonschema2pojo)
   alias(libs.plugins.xjc)
 }
