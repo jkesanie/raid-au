@@ -1,4 +1,3 @@
-
 /* -------------------------------------------------------------------------- */
 /*                               Type Definitions                             */
 /* -------------------------------------------------------------------------- */
@@ -7,6 +6,7 @@ export interface CodeNode {
   id: string;
   name: string;
   label: string;
+  url: string;
   selected: boolean;
   children: CodeNode[];
 }
@@ -51,41 +51,18 @@ export interface TransformedData {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             Main Transform Function                         */
+/*                             URL Generation Helper                           */
 /* -------------------------------------------------------------------------- */
 
-/* export async function transformCodesToHierarchy(
-  ANZSRC FORPath: string,
-  ANZSRC SEOPath: string,
-  SDGsPath: string,
-  outputPath: string
-): Promise<TransformedData> {
-  try {
-    const [ANZSRC FORRaw, ANZSRC SEORaw, SDGsRaw] = await Promise.all([
-      fs.readFile(ANZSRC FORPath, "utf-8"),
-      fs.readFile(ANZSRC SEOPath, "utf-8"),
-      fs.readFile(SDGsPath, "utf-8"),
-    ]);
+function generateANZSRCUrl(id: string, type: "FOR" | "SEO"): string {
+  const codeType = type === "FOR" ? "anzsrc-for" : "anzsrc-seo";
+  return `https://linked.data.gov.au/def/${codeType}/2020/${id}`;
+}
 
-    const ANZSRC FOR = JSON.parse(ANZSRC FORRaw);
-    const ANZSRC SEO = JSON.parse(ANZSRC SEORaw);
-    const SDGs = JSON.parse(SDGsRaw);
-
-    const transformedData: TransformedData = {
-      ANZSRC FOR: transformANZSRCCodes(ANZSRC FOR, "FOR"),
-      ANZSRC SEO: transformANZSRCCodes(ANZSRC SEO, "SEO"),
-      SDGs: transformSDGs(SDGs),
-    };
-
-    await fs.writeFile(outputPath, JSON.stringify(transformedData, null, 2), "utf-8");
-
-    console.log(`✅ Transformation complete! Output saved to: ${outputPath}`);
-    return transformedData;
-  } catch (error) {
-    console.error("❌ Error during transformation:", error);
-    throw error;
-  }
-} */
+function generateSDGUrl(id: string): string {
+  // SDGs might have a different URL pattern, adjust as needed
+  return `https://sdgs.un.org/goals/goal${id.replace('.', '#target-')}`;
+}
 
 /* -------------------------------------------------------------------------- */
 /*                     Transformation: ANZSRC (FOR / SEO)                     */
@@ -115,6 +92,7 @@ export function transformFlatANZSRCCodes(
       id,
       name,
       label: `${id} - ${name}`,
+      url: generateANZSRCUrl(id, type),
       selected: false,
       children: [],
     };
@@ -156,6 +134,7 @@ export function transformNestedANZSRCCodes(
       id: category.code,
       name: category.name,
       label: `${category.code} - ${category.name}`,
+      url: generateANZSRCUrl(category.code, type),
       selected: false,
       children: [],
     };
@@ -165,6 +144,7 @@ export function transformNestedANZSRCCodes(
         id: group.code,
         name: group.name,
         label: `${group.code} - ${group.name}`,
+        url: generateANZSRCUrl(group.code, type),
         selected: false,
         children: [],
       };
@@ -174,15 +154,18 @@ export function transformNestedANZSRCCodes(
           id: objective.code,
           name: objective.name,
           label: `${objective.code} - ${objective.name}`,
+          url: generateANZSRCUrl(objective.code, type),
           selected: false,
           children: [],
         });
       });
-       group.fields?.forEach((field) => {
+      
+      group.fields?.forEach((field) => {
         groupNode.children.push({
           id: field.code,
           name: field.name,
           label: `${field.code} - ${field.name}`,
+          url: generateANZSRCUrl(field.code, type),
           selected: false,
           children: [],
         });
@@ -213,6 +196,7 @@ export function transformSDGs(codes: SDGCode[]): CodeNode[] {
       id,
       name,
       label: `${id} - ${name}`,
+      url: generateSDGUrl(id),
       selected: false,
       children: [],
     });
@@ -265,6 +249,7 @@ export function flattenHierarchy(nodes: CodeNode[], acc: any[] = []): any[] {
       id: node.id,
       name: node.name,
       label: node.label,
+      url: node.url,
       selected: node.selected,
     });
     if (node.children?.length) flattenHierarchy(node.children, acc);
@@ -331,4 +316,3 @@ export function getStatistics(transformedData: TransformedData) {
 
   return stats;
 }
-

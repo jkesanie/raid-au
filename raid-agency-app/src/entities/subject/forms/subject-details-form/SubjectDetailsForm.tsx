@@ -35,7 +35,7 @@ export function SubjectDetailsForm({
   id
 }: {
   index: number;
-  handleRemoveItem: (id: string) => void;
+  handleRemoveItem: (id: string, index: number) => void;
   selectedCode?: any;
   id: string
 }) {
@@ -98,7 +98,7 @@ export function SubjectDetailsForm({
             {
               label: "Yes",  
               onClick: () => {
-                handleRemoveItem(id);
+                handleRemoveItem(id, index);
                 setAlertOpen(false);
               },
               icon: Check,

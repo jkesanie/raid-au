@@ -71,7 +71,6 @@ export function App() {
   return (
     <KeycloakProvider>
       <NotificationProvider>
-        <CodesProvider>
         <StrictMode>
           <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -81,7 +80,9 @@ export function App() {
                   <QueryClientProvider client={queryClient}>
                       <ReactErrorBoundary>
                         <Box sx={{ pt: 7.4 }}></Box>
-                        <Outlet />
+                        <CodesProvider>
+                          <Outlet />
+                        </CodesProvider>
                       </ReactErrorBoundary>
                   </QueryClientProvider>
                 </SnackbarProvider>
@@ -89,7 +90,6 @@ export function App() {
             </ErrorDialogProvider>
           </ThemeProvider>
         </StrictMode>
-        </CodesProvider>
       </NotificationProvider>
     </KeycloakProvider>
   );

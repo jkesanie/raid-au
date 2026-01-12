@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { subjectDataGenerator } from "@/entities/subject/data-generator/subject-data-generator";
 import { RaidDto } from "@/generated/raid";
 import { AddBox } from "@mui/icons-material";
@@ -32,6 +32,7 @@ import CustomisedInputBase from "@/components/custom-text-field/CustomisedInputB
 import { RotateCcw, Search, Plus, Delete, Check } from "lucide-react";
 import { CodeItem } from "@/components/tree-view/context/CodesProvider";
 import CustomizedDialogs from "@/components/alert-dialog/alert-dialog";
+import { get } from "http";
 
 export function SubjectsForm({
   control,
@@ -50,7 +51,7 @@ export function SubjectsForm({
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
   const { fields, append, remove } = useFieldArray({ control, name: key });
-  const { clearErrors } = useFormContext();
+  const { clearErrors, getValues } = useFormContext();
   const errorMessage = errors[key]?.message;
   const {
     codesData,
@@ -70,11 +71,6 @@ export function SubjectsForm({
     modifySubjectSelection,
     setConfirmationNeeded,
   } = useCodesContext();
-
-  React.useEffect(() => {
-   if(!selectedCodesData) return;
-   selectedCodesData?.map((code)=>append(generator(code.id, subjectType)));
-  }, [selectedCodesData]);
   
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
@@ -98,6 +94,33 @@ export function SubjectsForm({
     resetState();
     clearErrors(key);
   }
+  console.log("Selected Codes Data:", getValues(key));
+  const handleAddItem = () => {
+    const selections = modifySubjectSelection();
+   
+    selections?.forEach((code, i) => {
+      if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
+        append(generator(code.url));
+        trigger(key);
+        clearErrors(key);
+      }
+    });
+  }
+
+  const handleRemoveSelection = () => {
+    if(selectedCodesData.length === 0) return;
+    const index = selectedCodesData.findIndex(codeItem => !selectedCodes.includes(codeItem.id));
+    if(index === -1) return;
+    getSelectedCodesData();
+    remove(index);
+  }
+
+  const hanldeRemoveFromSubjects = (codeId: string, index: number) => {
+    console.log("Removing Code ID:", codeId);
+    remove(index);
+    removeFromSubjects(codeId);
+  };
+
   return (
     <Card
       sx={{
@@ -169,7 +192,7 @@ export function SubjectsForm({
                 size="small"
                 startIcon={<Plus />}
                 sx={{ textTransform: "none", mt: 3, alignSelf: 'flex-end' }}
-                onClick={modifySubjectSelection}
+                onClick={handleAddItem}
                 disabled={selectedCodes.length === 0 && selectedCodesData?.length === 0}
               >
                 Save Selection
@@ -181,7 +204,7 @@ export function SubjectsForm({
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
-                  handleRemoveItem={() => removeFromSubjects(field.id)}
+                  handleRemoveItem={() => hanldeRemoveFromSubjects(field.id, index)}
                   index={index}
                   selectedCode={field.label}
                   id={field.id}
@@ -212,7 +235,7 @@ export function SubjectsForm({
             {
               label: "Yes",  
               onClick: () => {
-                getSelectedCodesData();
+                handleRemoveSelection();
                 setConfirmationNeeded(false);
               },
               icon: Check,

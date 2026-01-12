@@ -132,7 +132,7 @@ export const RaidForm = memo(
         setIsInitialLoad(false);
       }
     }, [isInitialLoad]);
-
+    console.log("Form State Errors:", formState.errors);
     useEffect(() => {
       // This effect runs when the form is submitted
       // and there are validation errors

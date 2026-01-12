@@ -13,6 +13,7 @@ export interface CodeItem {
   level?: number;
   selected?: boolean;
   children?: CodeItem[];
+  url?: string;
   _searchMatch?: {
     directMatch: boolean;
     hasChildMatches: boolean;
@@ -65,7 +66,7 @@ export interface CodesContextType {
   resetState: () => void;
   filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
   removeFromSubjects: (codeId: string) => void;
-  modifySubjectSelection: () => void;
+  modifySubjectSelection: () => CodeItem[] | undefined;
   setConfirmationNeeded: (needed: boolean) => void;
   setSelectedCodesData: (codesData: CodeItem[]) => void;
 }
@@ -308,7 +309,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return Object.keys(codesData || {});
   }, [codesData]);
 
-  const modifySubjectSelection = useCallback(() => {
+  const modifySubjectSelection = useCallback((): CodeItem[] | undefined => {
     const compareCodeSelection = selectedCodesData.some(codeItem => {
       return !selectedCodes.includes(codeItem.id);
     });
