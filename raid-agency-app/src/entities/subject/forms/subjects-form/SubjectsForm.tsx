@@ -94,17 +94,26 @@ export function SubjectsForm({
     resetState();
     clearErrors(key);
   }
-  console.log("Selected Codes Data:", getValues(key));
-  const handleAddItem = () => {
-    const selections = modifySubjectSelection();
-   
-    selections?.forEach((code, i) => {
+
+   useEffect(() => {
+    getSelectedCodesData().forEach((code, i) => {
       if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
         append(generator(code.url));
-        trigger(key);
-        clearErrors(key);
       }
     });
+    }, [ remove, fields]);
+
+  console.log("Selected Codes Data:", getValues(key));
+  const handleAddItem = () => {
+    //fields.forEach((field, index) => remove(index));
+    const selections = modifySubjectSelection();
+    selections?.forEach((code, i) => {
+      if(!code.id) return;
+      if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
+        append(generator(code?.url));
+      }
+    });
+    clearErrors(key);
   }
 
   const handleRemoveSelection = () => {
