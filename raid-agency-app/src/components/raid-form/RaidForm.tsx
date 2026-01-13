@@ -82,7 +82,43 @@ export const RaidForm = memo(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
+
+    const formMethods = useForm<RaidDto>({
+      defaultValues: transformedData,
+      resolver: zodResolver(RaidValidationSchema),
+      mode: "onChange",
+      reValidateMode: "onChange",
+    });
+
+    const { control, trigger, formState, setValue } = formMethods;
+
+    const handleSubmit = useCallback(
+      (data: RaidDto) => {
+        // This function is called when the form is submitted
+        // and all validations pass
+        onSubmit(data);
+      },
+      [onSubmit]
+    );
+
     useEffect(() => {
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
+    }, [isInitialLoad]);
+
+    useEffect(() => {
+      // This effect runs when the form is submitted
+      // and there are validation errors
+      if (formState.isSubmitted && Object.keys(formState.errors).length > 0) {
+        openErrorDialog(transformErrorMessage(formState.errors));
+      }
+      // This effect runs when there are validation errors
+      // and opens an error dialog with the transformed error message
+    }, [formState.errors, formState.isSubmitted, openErrorDialog]);
+
+        useEffect(() => {
       if (!hasLoadedInitialData.current && Array.isArray(raidData?.subject) && raidData.subject.length > 0 && codesData) {
         const selectedSubjects = Array.isArray(raidData.subject)
           ? raidData.subject
@@ -104,44 +140,9 @@ export const RaidForm = memo(
       } else if ((!raidData?.subject || raidData.subject.length === 0) && isInitialLoad) {
         setSelectedCodes([]);
         setSelectedCodesData([]);
+        setValue('subject', [])
       }
     }, [raidData.subject, codesData]);
-
-    const { data: transformedData, metadata } = transformFormData(raidData, formSchema as JSONObject);
-
-    const formMethods = useForm<RaidDto>({
-      defaultValues: transformedData,
-      resolver: zodResolver(RaidValidationSchema),
-      mode: "onChange",
-      reValidateMode: "onChange",
-    });
-
-    const { control, trigger, formState } = formMethods;
-
-    const handleSubmit = useCallback(
-      (data: RaidDto) => {
-        // This function is called when the form is submitted
-        // and all validations pass
-        onSubmit(data);
-      },
-      [onSubmit]
-    );
-
-    useEffect(() => {
-      if (isInitialLoad) {
-        setIsInitialLoad(false);
-      }
-    }, [isInitialLoad]);
-    console.log("Form State Errors:", formState.errors);
-    useEffect(() => {
-      // This effect runs when the form is submitted
-      // and there are validation errors
-      if (formState.isSubmitted && Object.keys(formState.errors).length > 0) {
-        openErrorDialog(transformErrorMessage(formState.errors));
-      }
-      // This effect runs when there are validation errors
-      // and opens an error dialog with the transformed error message
-    }, [formState.errors, formState.isSubmitted, openErrorDialog]);
 
     return (
       <MetadataContext.Provider value={metadata}>

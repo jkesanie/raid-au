@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import { subjectDataGenerator } from "@/entities/subject/data-generator/subject-data-generator";
 import { RaidDto } from "@/generated/raid";
-import { AddBox } from "@mui/icons-material";
 import {
   Button,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   Stack,
@@ -89,7 +87,7 @@ export function SubjectsForm({
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
-  console.log("selectedCodes", selectedCodes);
+
   const handleReset = () => {
     resetState();
     clearErrors(key);
@@ -103,9 +101,7 @@ export function SubjectsForm({
     });
     }, [ remove, fields]);
 
-  console.log("Selected Codes Data:", getValues(key));
   const handleAddItem = () => {
-    //fields.forEach((field, index) => remove(index));
     const selections = modifySubjectSelection();
     selections?.forEach((code, i) => {
       if(!code.id) return;
@@ -118,22 +114,17 @@ export function SubjectsForm({
 
   const handleRemoveTreeSelection = () => {
     if(selectedCodesData.length === 0) return;
-    const index = selectedCodesData.findIndex(codeItem => !selectedCodes.includes(codeItem.id));
-    if(index === -1) return;
+    selectedCodesData.forEach(()=>{
+      const index = getValues(key).findIndex((codeItem: { id: string; }, i: number) => selectedCodes[i] !== codeItem?.id?.split("/").pop());
+      if(index === -1) return;
+      remove(index);
+    })
     getSelectedCodesData();
-    remove(index);
   }
 
-/*   const hanldeRemoveIndividualSubjects = (codeId: string, index: number) => {
-    remove(index);
-    removeFromSubjects(codeId);
-  }; */
-
-  const hanldeRemoveIndividualSubjects = (codeId: string, e: Event) => {
+  const hanldeRemoveIndividualSubjects = (codeId: string) => {
   // Find the index using the stable field ID
-    console.log("Event Target:", e);
     const index = getValues(key)?.findIndex((subject: { id: string | string[]; }) => typeof subject.id === 'string' && subject.id.split("/").pop() === codeId);
-    console.log("Removing subject with codeId:", index);
     if (index !== -1) {
       remove(index);
       removeFromSubjects(codeId);
@@ -223,7 +214,7 @@ export function SubjectsForm({
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
-                  handleRemoveItem={(e) => hanldeRemoveIndividualSubjects(field.id, e)}
+                  handleRemoveItem={(e) => hanldeRemoveIndividualSubjects(field.id)}
                   index={index}
                   selectedCode={field.label}
                   id={field.id}
