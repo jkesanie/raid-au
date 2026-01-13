@@ -107,7 +107,7 @@ export default function CustomizedTreeViewWithSelection() {
         <Box sx={{ width: '100%', overflowY: 'auto', height: 270 }} >
             {isLoading ? (
                 <Loader>Loading...</Loader>
-            ) : (
+            ) : ( treeItems.length > 0 ? (
                 <RichTreeView
                     aria-label="customized tree view with selection"
                     items={treeItems}
@@ -141,6 +141,15 @@ export default function CustomizedTreeViewWithSelection() {
                     }}
                     sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1, maxWidth: 'auto'}}
                 />
+            ): <Box 
+                    sx={{ 
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        minHeight: '20vh'
+                    }}>
+                    No data available
+                </Box>
             )}
         </Box>
     );

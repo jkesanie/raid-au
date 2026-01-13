@@ -14,12 +14,12 @@ import { CodeNode, TransformedData } from "./codes-transformer";
 export function transformCodesClient(
   anzsrcFor: any[],
   anzsrcSeo: any[],
-  sdgs: any[]
+  //sdgs: any[]
 ): TransformedData {
   return {
     "ANZSRC FOR": transformANZSRCCodes(anzsrcFor, "FOR"),
     "ANZSRC SEO": transformANZSRCCodes(anzsrcSeo, "SEO"),
-    "SDGs": transformSDGs(sdgs)
+    //"SDGs": transformSDGs(sdgs)
   };
 }
 

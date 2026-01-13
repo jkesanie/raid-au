@@ -47,7 +47,7 @@ export interface SDGCode {
 export interface TransformedData {
   "ANZSRC FOR": CodeNode[];
   "ANZSRC SEO": CodeNode[];
-  SDGs: CodeNode[];
+  //SDGs: CodeNode[];
 }
 
 /* -------------------------------------------------------------------------- */
