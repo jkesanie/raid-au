@@ -308,11 +308,11 @@ export function getStatistics(transformedData: TransformedData) {
     else if (n.id.length === 6) stats["ANZSRC SEO"].level3++;
   });
 
-  const sdgFlat = flattenHierarchy(transformedData["SDGs"]);
+  /* const sdgFlat = flattenHierarchy(transformedData["SDGs"]);
   sdgFlat.forEach((n) => {
     if (n.id.includes(".")) stats["SDGs"].totalTargets++;
     else stats["SDGs"].totalGoals++;
-  });
+  }); */
 
   return stats;
 }
