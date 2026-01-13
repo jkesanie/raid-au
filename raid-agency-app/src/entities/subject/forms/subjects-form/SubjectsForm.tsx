@@ -32,7 +32,6 @@ import CustomisedInputBase from "@/components/custom-text-field/CustomisedInputB
 import { RotateCcw, Search, Plus, Delete, Check } from "lucide-react";
 import { CodeItem } from "@/components/tree-view/context/CodesProvider";
 import CustomizedDialogs from "@/components/alert-dialog/alert-dialog";
-import { get } from "http";
 
 export function SubjectsForm({
   control,
@@ -70,6 +69,7 @@ export function SubjectsForm({
     confirmationNeeded,
     modifySubjectSelection,
     setConfirmationNeeded,
+    restoreSubjectSelection
   } = useCodesContext();
   
   const metadata = useContext(MetadataContext);
@@ -89,7 +89,7 @@ export function SubjectsForm({
     preserveCodesData.current && setCodesData({...codesData, [subjectType]: filtered || [] });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterCodesBySearch, subjectType]);
-
+  console.log("selectedCodes", selectedCodes);
   const handleReset = () => {
     resetState();
     clearErrors(key);
@@ -116,7 +116,7 @@ export function SubjectsForm({
     clearErrors(key);
   }
 
-  const handleRemoveSelection = () => {
+  const handleRemoveTreeSelection = () => {
     if(selectedCodesData.length === 0) return;
     const index = selectedCodesData.findIndex(codeItem => !selectedCodes.includes(codeItem.id));
     if(index === -1) return;
@@ -124,10 +124,20 @@ export function SubjectsForm({
     remove(index);
   }
 
-  const hanldeRemoveFromSubjects = (codeId: string, index: number) => {
-    console.log("Removing Code ID:", codeId);
+/*   const hanldeRemoveIndividualSubjects = (codeId: string, index: number) => {
     remove(index);
     removeFromSubjects(codeId);
+  }; */
+
+  const hanldeRemoveIndividualSubjects = (codeId: string, e: Event) => {
+  // Find the index using the stable field ID
+    console.log("Event Target:", e);
+    const index = getValues(key)?.findIndex((subject: { id: string | string[]; }) => typeof subject.id === 'string' && subject.id.split("/").pop() === codeId);
+    console.log("Removing subject with codeId:", index);
+    if (index !== -1) {
+      remove(index);
+      removeFromSubjects(codeId);
+    }
   };
 
   return (
@@ -213,7 +223,7 @@ export function SubjectsForm({
               <Fragment key={field.id}>
                 <DetailsForm
                   key={field.id}
-                  handleRemoveItem={() => hanldeRemoveFromSubjects(field.id, index)}
+                  handleRemoveItem={(e) => hanldeRemoveIndividualSubjects(field.id, e)}
                   index={index}
                   selectedCode={field.label}
                   id={field.id}
@@ -237,14 +247,17 @@ export function SubjectsForm({
               modalActions={[
             {
               label: "Cancel",
-              onClick: () => setConfirmationNeeded(false),
+              onClick: () => {
+                restoreSubjectSelection();
+                setConfirmationNeeded(false);
+              },
               icon: Delete,
               bgColor: "primary.main",
             },
             {
               label: "Yes",  
               onClick: () => {
-                handleRemoveSelection();
+                handleRemoveTreeSelection();
                 setConfirmationNeeded(false);
               },
               icon: Check,

@@ -69,6 +69,7 @@ export interface CodesContextType {
   modifySubjectSelection: () => CodeItem[] | undefined;
   setConfirmationNeeded: (needed: boolean) => void;
   setSelectedCodesData: (codesData: CodeItem[]) => void;
+  restoreSubjectSelection:  () => void;
 }
 
 // Provider component
@@ -375,6 +376,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     modifySubjectSelection,
     setConfirmationNeeded,
     setSelectedCodesData,
+    restoreSubjectSelection
   };
 
   return (
