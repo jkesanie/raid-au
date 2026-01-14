@@ -47,7 +47,7 @@ export function SubjectsForm({
   const DetailsForm = SubjectDetailsForm;
 
   const [isRowHighlighted, setIsRowHighlighted] = useState(false);
-  const { fields, append, remove } = useFieldArray({ control, name: key });
+  const { fields, prepend, remove } = useFieldArray({ control, name: key });
   const { clearErrors, getValues } = useFormContext();
   const errorMessage = errors[key]?.message;
   const {
@@ -98,7 +98,7 @@ export function SubjectsForm({
    useEffect(() => {
     getSelectedCodesData().forEach((code, i) => {
       if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
-        append(generator(code.url));
+        prepend(generator(code.url));
       }
     });
     }, [ remove, fields]);
@@ -108,7 +108,7 @@ export function SubjectsForm({
     selections?.forEach((code, i) => {
       if(!code.id) return;
       if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
-        append(generator(code?.url));
+        prepend(generator(code?.url));
       }
     });
     clearErrors(key);
