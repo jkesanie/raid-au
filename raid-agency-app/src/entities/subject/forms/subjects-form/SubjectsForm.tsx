@@ -99,6 +99,7 @@ export function SubjectsForm({
     getSelectedCodesData().forEach((code, i) => {
       if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
         prepend(generator(code.url));
+        trigger(key)
       }
     });
     }, [ remove, fields]);
@@ -109,6 +110,7 @@ export function SubjectsForm({
       if(!code.id) return;
       if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
         prepend(generator(code?.url));
+        trigger(key)
       }
     });
     clearErrors(key);
