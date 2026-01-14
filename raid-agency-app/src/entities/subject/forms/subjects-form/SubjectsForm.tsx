@@ -67,7 +67,8 @@ export function SubjectsForm({
     confirmationNeeded,
     modifySubjectSelection,
     setConfirmationNeeded,
-    restoreSubjectSelection
+    restoreSubjectSelection,
+    setGlobalData
   } = useCodesContext();
   
   const metadata = useContext(MetadataContext);
@@ -78,6 +79,7 @@ export function SubjectsForm({
   React.useEffect(() => {
     TransformCodes().then((transformed) => {
       setCodesData(transformed || []);
+      setGlobalData(transformed || []);
       (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
     });
   }, [setCodesData]);
@@ -130,7 +132,7 @@ export function SubjectsForm({
       removeFromSubjects(codeId);
     }
   };
-
+  console.log(selectedCodesData);
   return (
     <Card
       sx={{

@@ -43,6 +43,7 @@ export interface CodesContextType {
   subjectType: string;
   selectedCodesData: CodeItem[];
   confirmationNeeded: boolean;
+  globalData: CodesData | null;
   
   // Actions
   setCodesData: (data: CodesData) => void;
@@ -61,7 +62,7 @@ export interface CodesContextType {
   toggleNodeExpansion: (nodeId: string) => void;
   setExpandedNodes: (event: React.SyntheticEvent, nodes: string[]) => void;
   setSearchQuery: (query: string) => void;
-  getCodeById: (codeId: string) => CodeItem | undefined;
+  getCodeById: (codeId: string, data: CodesData) => CodeItem | undefined;
   getSelectedCodesData: () => CodeItem[];
   resetState: () => void;
   filterCodesBySearch: (items: CodeItem[], query: string) => CodeItem[];
@@ -70,6 +71,7 @@ export interface CodesContextType {
   setConfirmationNeeded: (needed: boolean) => void;
   setSelectedCodesData: (codesData: CodeItem[]) => void;
   restoreSubjectSelection:  () => void;
+  setGlobalData: (data: CodesData) => void;
 }
 
 // Provider component
@@ -78,6 +80,7 @@ export const CodesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [codesData, setCodesDataState] = useState<CodesData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [globalData, setGlobalData] = useState<CodesData | null>(null);
 
   // UI state
   const [selectedCodes, setSelectedCodesState] = useState<string[]>([]);
@@ -272,10 +275,13 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return filterWithInfo(items);
   }, []);
 
+  const getSubjectTypes = useCallback((): string[] => {
+    return Object.keys(codesData || {});
+  }, [codesData]);
+
   // Utility functions
-  const getCodeById = useCallback((codeId: string): CodeItem | undefined => {
-    if (!codesData) return undefined;
-    
+  const getCodeById = useCallback((codeId: string, data: CodesData): CodeItem | undefined => {
+    if (!data) return undefined;
     const findCode = (items: CodeItem[]): CodeItem | undefined => {
       for (const item of items) {
         if (item.id === codeId || item.code === codeId) {
@@ -286,29 +292,26 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
           if (found) return found;
         }
       }
+      
       return undefined;
     };
-    
     for (const type of getSubjectTypes()) {
-      const result = findCode(codesData[type]);
+      const result = findCode(data[type]);
       if (result) {
         return result;
       }
     }
     return undefined;
-  }, [codesData, subjectType]);
+  }, [subjectType, codesData]);
 
   const getSelectedCodesData = useCallback((): CodeItem[] => {
+    if (!globalData) return [];
     const codesArray = selectedCodes
-      .map(codeId => getCodeById(codeId))
+      .map(codeId => getCodeById(codeId, globalData))
       .filter((item): item is CodeItem => item !== undefined);
     setSelectedCodesData(codesArray);
     return codesArray;
-  }, [selectedCodes, getCodeById]);
-
-  const getSubjectTypes = useCallback((): string[] => {
-    return Object.keys(codesData || {});
-  }, [codesData]);
+  }, [selectedCodes, getCodeById, codesData]);
 
   const modifySubjectSelection = useCallback((): CodeItem[] | undefined => {
     const compareCodeSelection = selectedCodesData.some(codeItem => {
@@ -323,12 +326,14 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
   }, [selectedCodes, selectedCodesData]);
 
   const restoreSubjectSelection = useCallback(() => {
+    if (!globalData) return [];
     const codesArray = selectedCodesData
-      .map(codeItem => getCodeById(codeItem.id))
+      .map(codeItem => getCodeById(codeItem.id, globalData))
       .filter((item): item is CodeItem => item !== undefined);
     setSelectedCodes(codesArray.map(code => code.id));
     return codesArray;
-  }, [selectedCodesData, getCodeById]);
+  }, [selectedCodesData, getCodeById, globalData]);
+
   // Reset state
   const resetState = useCallback(() => {
     const subjectTypes = getSubjectTypes();
@@ -337,6 +342,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     clearSelectedCodes();
     setSearchQueryState('');
     restoreSubjectSelection();
+    setExpandedNodesState([])
   }, [getSubjectTypes]);
 
   const value: CodesContextType = {
@@ -350,6 +356,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     subjectType,
     selectedCodesData,
     confirmationNeeded,
+    globalData,
 
     // Actions
     setCodesData,
@@ -376,7 +383,8 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     modifySubjectSelection,
     setConfirmationNeeded,
     setSelectedCodesData,
-    restoreSubjectSelection
+    restoreSubjectSelection,
+    setGlobalData
   };
 
   return (
