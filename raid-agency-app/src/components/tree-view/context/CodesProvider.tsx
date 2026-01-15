@@ -279,7 +279,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return Object.keys(codesData || {});
   }, [codesData]);
 
-  // Utility functions
+  // Utility function to get the codes data by id
   const getCodeById = useCallback((codeId: string, data: CodesData): CodeItem | undefined => {
     if (!data) return undefined;
     const findCode = (items: CodeItem[]): CodeItem | undefined => {
@@ -304,6 +304,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return undefined;
   }, [subjectType, codesData]);
 
+  //get the selected Codes data
   const getSelectedCodesData = useCallback((): CodeItem[] => {
     if (!globalData) return [];
     const codesArray = selectedCodes
@@ -313,6 +314,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return codesArray;
   }, [selectedCodes, getCodeById, codesData]);
 
+  //Check if the saved selection is deselected from the tree
   const modifySubjectSelection = useCallback((): CodeItem[] | undefined => {
     const compareCodeSelection = selectedCodesData.some(codeItem => {
       return !selectedCodes.includes(codeItem.id);
@@ -325,6 +327,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     return getSelectedCodesData();
   }, [selectedCodes, selectedCodesData]);
 
+  //Restore the tree to the saved subject selection
   const restoreSubjectSelection = useCallback(() => {
     if (!globalData) return [];
     const codesArray = selectedCodesData
@@ -339,11 +342,10 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     const subjectTypes = getSubjectTypes();
     const newSubjectType = subjectTypes.length > 0 ? subjectTypes[0] : '';
     setSubjectType(newSubjectType);
-    clearSelectedCodes();
     setSearchQueryState('');
     restoreSubjectSelection();
     setExpandedNodesState([])
-  }, [getSubjectTypes]);
+  }, [getSubjectTypes, restoreSubjectSelection]);
 
   const value: CodesContextType = {
     // State

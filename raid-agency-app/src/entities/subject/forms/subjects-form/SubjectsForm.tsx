@@ -134,7 +134,7 @@ export function SubjectsForm({
       removeFromSubjects(codeId);
     }
   };
-  console.log(selectedCodesData);
+
   return (
     <Card
       sx={{

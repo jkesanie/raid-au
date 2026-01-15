@@ -107,7 +107,7 @@ export const RaidForm = memo(
         setIsInitialLoad(false);
       }
     }, [isInitialLoad]);
-    console.log("formState.errors",formState.errors)
+
     useEffect(() => {
       // This effect runs when the form is submitted
       // and there are validation errors
@@ -133,7 +133,6 @@ export const RaidForm = memo(
         const codesArray = selectedIds
           .map(codeId => getCodeById(codeId, codesData))
           .filter((item): item is CodeItem => item !== undefined);
-          console.log("array", codesData)
         if (codesArray.length > 0) {
           setSelectedCodesData(codesArray);
           hasLoadedInitialData.current = true; // Mark as loaded
