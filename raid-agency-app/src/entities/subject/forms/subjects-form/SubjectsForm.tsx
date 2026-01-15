@@ -68,21 +68,46 @@ export function SubjectsForm({
     modifySubjectSelection,
     setConfirmationNeeded,
     restoreSubjectSelection,
-    setGlobalData
+    setGlobalData,
+    setError,
+    error
   } = useCodesContext();
   
   const metadata = useContext(MetadataContext);
   const tooltip = metadata?.[key]?.tooltip;
   const subjectTypes = getSubjectTypes();
   const preserveCodesData = React.useRef<{[key: string]: CodeItem[] | null} | null>(null);
+  
+  const hasLoadedCodesRef = React.useRef(false);
 
   React.useEffect(() => {
-    TransformCodes().then((transformed) => {
-      setCodesData(transformed || []);
-      setGlobalData(transformed || []);
-      (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null>).current = {...transformed};
-    });
-  }, [setCodesData]);
+    // Prevent double-loading (especially in React Strict Mode)
+    if (hasLoadedCodesRef.current) return;
+    hasLoadedCodesRef.current = true;
+    
+    let isMounted = true;
+    
+    const loadCodes = async () => {
+      try {
+        const transformed = await TransformCodes();
+        if (transformed) {
+          // Batch state updates together to minimize re-renders
+          setCodesData(transformed as any);
+          setGlobalData(transformed as any);
+          (preserveCodesData as React.MutableRefObject<{[key: string]: CodeItem[] | null} | null | any>).current = {...transformed};
+        }
+      } catch (error) {
+        hasLoadedCodesRef.current = false; // Allow retry on error
+        setError(`Failed to load Codes due to ${error}`)
+      }
+    };
+    
+    loadCodes();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Empty deps array - runs only once
 
   React.useEffect(() => {
     const filtered = filterCodesBySearch(preserveCodesData.current?.[subjectType] || [], searchQuery);
@@ -94,15 +119,6 @@ export function SubjectsForm({
     resetState();
     clearErrors(key);
   }
-
-   useEffect(() => {
-    getSelectedCodesData().forEach((code, i) => {
-      if(code.url && !getValues(key)?.some((subject: any) => subject.id === code.url)) {
-        prepend(generator(code.url));
-        trigger(key)
-      }
-    });
-    }, [ remove, fields]);
 
   const handleAddItem = () => {
     const selections = modifySubjectSelection();
@@ -231,6 +247,7 @@ export function SubjectsForm({
                 />
               </Fragment>
             ))}
+            {error && error}
           </Stack>
           {confirmationNeeded && (
             <CustomizedDialogs

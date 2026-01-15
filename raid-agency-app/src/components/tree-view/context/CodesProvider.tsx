@@ -72,6 +72,8 @@ export interface CodesContextType {
   setSelectedCodesData: (codesData: CodeItem[]) => void;
   restoreSubjectSelection:  () => void;
   setGlobalData: (data: CodesData) => void;
+  setError: (msg: string) => void;
+  setSearchQueryState: (filterText: string ) => void
 }
 
 // Provider component
@@ -280,8 +282,9 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
   }, [codesData]);
 
   // Utility function to get the codes data by id
-  const getCodeById = useCallback((codeId: string, data: CodesData): CodeItem | undefined => {
+  const getCodeById = (codeId: string, data: CodesData): CodeItem | undefined => {
     if (!data) return undefined;
+    
     const findCode = (items: CodeItem[]): CodeItem | undefined => {
       for (const item of items) {
         if (item.id === codeId || item.code === codeId) {
@@ -292,9 +295,9 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
           if (found) return found;
         }
       }
-      
       return undefined;
     };
+    
     for (const type of getSubjectTypes()) {
       const result = findCode(data[type]);
       if (result) {
@@ -302,7 +305,7 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
       }
     }
     return undefined;
-  }, [subjectType, codesData]);
+  };
 
   //get the selected Codes data
   const getSelectedCodesData = useCallback((): CodeItem[] => {
@@ -386,7 +389,9 @@ const filterCodesBySearch = useCallback((items: CodeItem[], query: string): Code
     setConfirmationNeeded,
     setSelectedCodesData,
     restoreSubjectSelection,
-    setGlobalData
+    setGlobalData,
+    setError,
+    setSearchQueryState
   };
 
   return (
