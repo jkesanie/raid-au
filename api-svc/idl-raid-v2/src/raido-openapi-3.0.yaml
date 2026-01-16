@@ -286,7 +286,7 @@ paths:
       tags:
         - raid
       operationId: findAllPublicRaids
-      summary: List raids
+      summary: List public raids
       responses:
         200:
           description: success
@@ -296,7 +296,23 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RaidDto'
-
+  /raid/all-embargoed:
+    get:
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - raid
+      operationId: findAllEmbargoedRaids
+      summary: List embargoed raids
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaidDto'
   /service-point/:
     post:
       security:
