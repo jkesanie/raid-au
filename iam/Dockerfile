@@ -18,6 +18,9 @@ RUN keytool -import -storepass password -noprompt -trustcacerts -alias test.raid
 RUN keytool -import -storepass password -noprompt -trustcacerts -alias demo.raid.org.au -file test-raid-org-au.pem -keystore conf/server.keystore
 RUN keytool -import -storepass password -noprompt -trustcacerts -alias prod.raid.org.au -file test-raid-org-au.pem -keystore conf/server.keystore
 
+# ADD THIS: Copy your custom theme into the image
+COPY themes/raid-custom /opt/keycloak/themes/raid-custom
+
 RUN /opt/keycloak/bin/kc.sh build
 
 COPY build/libs/raid-iam.jar /opt/keycloak/providers/

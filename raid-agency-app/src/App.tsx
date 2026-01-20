@@ -17,8 +17,25 @@ import { KeycloakProvider } from "./contexts/keycloak-context";
 import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
 import { NotificationProvider } from "./components/alert-notifications/notification-context/NotificationsProvider";
 import { CodesProvider } from "./components/tree-view/context/CodesProvider";
+import { useKeycloak } from '@react-keycloak/web';
+import React from "react";
 
 export function App() {
+  const { keycloak, initialized } = useKeycloak();
+
+  React.useEffect(() => {
+    if (initialized) {
+      console.log('Keycloak initialized:', {
+        authenticated: keycloak.authenticated,
+        token: keycloak.token?.substring(0, 20) + '...',
+        userName: keycloak.tokenParsed?.preferred_username,
+      });
+    }
+  }, [initialized, keycloak]);
+
+  if (!initialized) {
+    return <div>Initializing authentication...</div>;
+  }
   useGoogleAnalytics();
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(

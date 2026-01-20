@@ -12,6 +12,7 @@ import { UsageTerms } from "@/pages/usage-terms";
 import { Box } from "@mui/material";
 import { RouteObject } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import KeyCloakLogin from "@/pages/login/KeyCloakLogin";
 
 export const otherRoutes: RouteObject[] = [
   {
@@ -25,7 +26,7 @@ export const otherRoutes: RouteObject[] = [
       },
     ],
   },
-  {
+  /* {
     path: ROUTES.LOGIN,
     // No need for ProtectedRoute here since this is the login page
     element: (
@@ -34,7 +35,7 @@ export const otherRoutes: RouteObject[] = [
         <Login />
       </Box>
     ),
-  },
+  }, */
   {
     path: ROUTES.PRIVACY,
     // No need for ProtectedRoute here since this is a public page

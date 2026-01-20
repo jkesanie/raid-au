@@ -15,6 +15,7 @@ import { UserDropdown } from "../../containers/header/UserDropdown";
 import { NotificationBell } from '../alert-notifications/Notifications';
 import { useServicePointPendingRequest } from "@/shared/service-point/service-point-pending-request";
 import { useAuthHelper } from "@/auth/keycloak";
+import { useKeycloak } from '@react-keycloak/web';
 
 const AuthenticatedNavbarContent = () => {
   const { isOperator, isGroupAdmin } = useAuthHelper();
@@ -46,7 +47,15 @@ const AuthenticatedNavbarContent = () => {
  */
 export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
   const theme = useTheme();
-
+  const { keycloak, initialized } = useKeycloak();
+    const handleLogin = () => {
+    keycloak.login();
+  };
+    const handleLogout = () => {
+    keycloak.logout({
+      redirectUri: window.location.origin,
+    });
+  };
   return (
     <AppBar
       position="fixed"
@@ -75,7 +84,7 @@ export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
             </Box>
           </Link>
 
-          {authenticated && (
+          {initialized && keycloak.authenticated && (
             <IconButton
               component={Link}
               size="large"
@@ -90,7 +99,7 @@ export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
         </Stack>
 
         <div style={{ flexGrow: 1 }} />
-        {authenticated && <AuthenticatedNavbarContent />}
+        {keycloak.authenticated && <AuthenticatedNavbarContent />}
       </Toolbar>
     </AppBar>
   );
