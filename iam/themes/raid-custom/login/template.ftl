@@ -35,7 +35,7 @@
 
     <!-- Main Content -->
     <div class="page-container">
-        <div class="content-wrapper">
+        <div class="content-wrapper pt-1">
             <#-- Display messages -->
             <#if displayMessage && message?has_content && (message.type != 'warning' || !isAppInitiatedAction??)>
                 <div class="alert alert-${message.type}">
