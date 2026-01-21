@@ -13,30 +13,27 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
-import { KeycloakProvider } from "./contexts/keycloak-context";
+import { KeycloakProvider, useKeycloak } from "./contexts/keycloak-context"; // ✅ CORRECT
 import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
 import { NotificationProvider } from "./components/alert-notifications/notification-context/NotificationsProvider";
 import { CodesProvider } from "./components/tree-view/context/CodesProvider";
-import { useKeycloak } from '@react-keycloak/web';
 import React from "react";
 
-export function App() {
-  const { keycloak, initialized } = useKeycloak();
+function AppContent() {
+  const { isInitialized, authenticated, user } = useKeycloak(); // ✅ Now using YOUR context
 
   React.useEffect(() => {
-    if (initialized) {
+    if (isInitialized) {
       console.log('Keycloak initialized:', {
-        authenticated: keycloak.authenticated,
-        token: keycloak.token?.substring(0, 20) + '...',
-        userName: keycloak.tokenParsed?.preferred_username,
+        authenticated,
+        userName: user?.username,
+        email: user?.email,
       });
     }
-  }, [initialized, keycloak]);
+  }, [isInitialized, authenticated, user]);
 
-  if (!initialized) {
-    return <div>Initializing authentication...</div>;
-  }
   useGoogleAnalytics();
+  
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
     () =>
@@ -86,28 +83,34 @@ export function App() {
   });
 
   return (
+    <NotificationProvider>
+      <StrictMode>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <ErrorDialogProvider>
+            <MappingProvider>
+              <SnackbarProvider>
+                <QueryClientProvider client={queryClient}>
+                  <ReactErrorBoundary>
+                    <Box sx={{ pt: 7.4 }}></Box>
+                    <CodesProvider>
+                      <Outlet />
+                    </CodesProvider>
+                  </ReactErrorBoundary>
+                </QueryClientProvider>
+              </SnackbarProvider>
+            </MappingProvider>
+          </ErrorDialogProvider>
+        </ThemeProvider>
+      </StrictMode>
+    </NotificationProvider>
+  );
+}
+
+export function App() {
+  return (
     <KeycloakProvider>
-      <NotificationProvider>
-        <StrictMode>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <ErrorDialogProvider>
-              <MappingProvider>
-                <SnackbarProvider>
-                  <QueryClientProvider client={queryClient}>
-                      <ReactErrorBoundary>
-                        <Box sx={{ pt: 7.4 }}></Box>
-                        <CodesProvider>
-                          <Outlet />
-                        </CodesProvider>
-                      </ReactErrorBoundary>
-                  </QueryClientProvider>
-                </SnackbarProvider>
-              </MappingProvider>
-            </ErrorDialogProvider>
-          </ThemeProvider>
-        </StrictMode>
-      </NotificationProvider>
+      <AppContent />
     </KeycloakProvider>
   );
 }

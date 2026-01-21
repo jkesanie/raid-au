@@ -15,7 +15,9 @@ import { UserDropdown } from "../../containers/header/UserDropdown";
 import { NotificationBell } from '../alert-notifications/Notifications';
 import { useServicePointPendingRequest } from "@/shared/service-point/service-point-pending-request";
 import { useAuthHelper } from "@/auth/keycloak";
-import { useKeycloak } from '@react-keycloak/web';
+import { useKeycloak } from '@/contexts/keycloak-context'; // ✅ CORRECT
+import React from "react";
+import { useNavigate } from 'react-router-dom';
 
 const AuthenticatedNavbarContent = () => {
   const { isOperator, isGroupAdmin } = useAuthHelper();
@@ -45,16 +47,28 @@ const AuthenticatedNavbarContent = () => {
  * @param {boolean} authenticated - Whether a user is currently authenticated
  * @returns {JSX.Element} Navigation bar with appropriate controls based on auth state
  */
-export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
+export const AppNavBar = () => {
   const theme = useTheme();
-  const { keycloak, initialized } = useKeycloak();
-    const handleLogin = () => {
-    keycloak.login();
+  const { authenticated, tokenParsed, logout } = useKeycloak();
+  const user = tokenParsed;
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
-    const handleLogout = () => {
-    keycloak.logout({
-      redirectUri: window.location.origin,
-    });
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleLogout = () => {
+    handleClose();
+    logout();
   };
   return (
     <AppBar
@@ -84,7 +98,7 @@ export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
             </Box>
           </Link>
 
-          {initialized && keycloak.authenticated && (
+          {authenticated && (
             <IconButton
               component={Link}
               size="large"
@@ -99,7 +113,7 @@ export const AppNavBar = ({ authenticated }: { authenticated: boolean }) => {
         </Stack>
 
         <div style={{ flexGrow: 1 }} />
-        {keycloak.authenticated && <AuthenticatedNavbarContent />}
+        {authenticated && <AuthenticatedNavbarContent />}
       </Toolbar>
     </AppBar>
   );

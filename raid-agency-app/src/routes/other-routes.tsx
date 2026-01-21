@@ -26,22 +26,21 @@ export const otherRoutes: RouteObject[] = [
       },
     ],
   },
-  /* {
+  {
     path: ROUTES.LOGIN,
     // No need for ProtectedRoute here since this is the login page
     element: (
       <Box sx={{ pt: 5 }}>
-        <AppNavBar authenticated={false} />
         <Login />
       </Box>
     ),
-  }, */
+  },
   {
     path: ROUTES.PRIVACY,
     // No need for ProtectedRoute here since this is a public page
     element: (
       <>
-        <AppNavBar authenticated={false} />
+        <AppNavBar />
         <Privacy />
       </>
     ),
@@ -51,7 +50,7 @@ export const otherRoutes: RouteObject[] = [
     // No need for ProtectedRoute here since this is a public page
     element: (
       <>
-        <AppNavBar authenticated={false} />
+        <AppNavBar />
         <UsageTerms />
       </>
     ),
@@ -61,7 +60,7 @@ export const otherRoutes: RouteObject[] = [
     // No need for ProtectedRoute here since this is a public page
     element: (
       <>
-        <AppNavBar authenticated={false} />
+        <AppNavBar />
         <AboutRaid />
       </>
     ),
