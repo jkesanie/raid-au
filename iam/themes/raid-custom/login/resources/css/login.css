@@ -256,7 +256,7 @@ body {
 .idp-icon svg {
     width: 20px;
     height: 20px;
-    fill: #fff
+    fill: #fff;
 }
 
 .idp-text {
@@ -268,24 +268,18 @@ body {
 
 /* Specific Provider Colors */
 
-.idp-google:hover {
-    background: rgb(65, 131, 206, 0.9);
+.idp-google:hover, .idp-aaf:hover, .idp-oidc:hover {
+    text-decoration: none;
+    background-color: rgb(45, 91, 144);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
 }
 
 .idp-aaf {
-    background: #3b82f6;
-}
-
-.idp-aaf:hover {
-    background: #2563eb;
+    background: rgb(65, 131, 206);
 }
 
 .idp-orcid {
     background: #3b82f6;
-}
-
-.idp-orcid:hover {
-    background: #2563eb;
 }
 
 /* Alert Messages */

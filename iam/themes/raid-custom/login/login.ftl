@@ -7,36 +7,22 @@
         <!-- ARDC Info Card -->
         <div class="ardc-info-card">
             <p class="ardc-title pb-1">
-                ${msg("org.header.title")}
-                <span class="demo-badge">${msg("org.badge.text")}</span>
+                ${msg("welcomeTitle")?no_esc}
+                <span class="demo-badge">${msg("badge")?no_esc}</span>
             </p>
-            <p class="ardc-description pb-0 pt-1">
-                ${msg("org.description.prefix")}
-                <a href="${msg("org.raid.url")}" target="_blank" class="ardc-link">${msg("org.raid.text")}</a>
-                ${msg("org.description.suffix")}
-            </p>
-            <p class="ardc-description pb-1">
-                ${msg("org.maintained.prefix")}
-                <a href="${msg("org.url")}" target="_blank" class="ardc-link">${msg("org.name")}</a>${msg("org.maintained.suffix")}
+            <p class="ardc-description pb-1 pt-1">
+                ${msg("welcomeText")?no_esc}
             </p>
             <div class="ardc-links">
-                <a href="${msg("org.privacy.url")}" class="ardc-footer-link">${msg("org.privacy.text")}</a>
-                <a href="${msg("org.terms.url")}" class="ardc-footer-link">${msg("org.terms.text")}</a>
+                ${msg("privacyPolicy")?no_esc}
+                ${msg("servicePolicy")?no_esc}
             </div>
         </div>
 
         <!-- Login Card -->
         <div class="login-card">
-            <div class="help-icon-wrapper">
-                <div class="help-icon" title="${msg("help.tooltip")}">
-                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-306n9t"
-                        focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HelpOutlineIcon" aria-label="You can sign in either directly with your personal Google or ORCID account, or via the AAF if your organisation has an agreement. Once you've signed in and authenticated yourself, you will be able to submit a request for a specific institution to authorize your usage of the RAiD app with their data."><path d="M11 18h2v-2h-2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4"></path></svg>
-                </div>
-            </div>
-
-            <p class="ardc-title pb-0">${msg("loginTitle")}</h2>
-            <p class="ardc-description pb-1">${msg("loginInstruction")}</p>
-
+            <p class="ardc-title pb-0">${msg("signinTitle")}</h2>
+            <p class="ardc-description pb-1">${msg("signinText")}</p>
             <#if social.providers??>
                 <div class="idp-buttons pt-0">
                     <#list social.providers as p>
@@ -56,12 +42,30 @@
                                             12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z">
                                         </path></svg>
                                 <#elseif p.alias == "aaf">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                                         focusable="false"
+                                         aria-hidden="true"
+                                         viewBox="0 0 512 512">
+                                         <path fill="currentColor"
+                                             d="M380.37 28.839l-27.24 100.215-64-48 17.405-34.46-83.863 8.079-13.541
+                                             42.38-35.512-25.482-67.16 85.62-83.008 48.593 34.81 156.752 38.87 6.518
+                                              112-64 74.38 52.082 21.62-28.094 32 72.012L424 415.452l64.549-126.398-6.014-64.
+                                              703-65.404-79.297-36.762-116.215zm-14.75 411.238l15.099 43.084 20.412-2.107 11.
+                                              435-35.864-46.947-5.113z"
+                                         >
+                                          </path>
                                     </svg>
-                                <#elseif p.alias == "orcid">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                        <circle cx="12" cy="12" r="10"/>
+                                <#elseif p.alias == "oidc">
+                                    <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                                        focusable="false" aria-hidden="true" viewBox="0 0 256 256">
+                                        <path d="M256,128c0,70.7-57.3,128-128,128C57.3,256,0,198.7,0,128C0,57.3,57.3,0,128,0C198.7,0,256,57.3,256,128z">
+                                        </path><g fill="#666"><path class="icon" d="M86.3,186.2H70.9V79.1h15.4v107.1z">
+                                        </path><path class="icon"
+                                            d="M108.9,79.1h41.6c39.6,0,57,28.3,57,53.6c0,27.5-21.5,53.6-56.8,53.6h-41.8V79.1zM124.3,172.4h24.5c34.9,0,42.9-26.5,42.9-39.7c0-21.5-13.7-39.7-43.7-39.7h-23.7V172.4z">
+                                        </path>
+                                        <path d="M88.7,56.8c0,5.5-4.5,10.1-10.1,10.1s-10.1-4.6-10.1-10.1c0-5.6,4.5-10.1,10.1-10.1S88.7,51.3,88.7,56.8z">
+                                        </path>
+                                        </g>
                                     </svg>
                                 </#if>
                             </span>
