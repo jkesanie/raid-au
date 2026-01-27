@@ -27,17 +27,17 @@ const { contributors = [] } = Astro.props as Props;
             <div class="grid grid-cols-3 gap-5 text-sm">
               <div>
                 <span class="block font-medium text-gray-900">Name</span>
-                <a href={orcidInfo.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
-                  <span style="text-decoration: underline">{orcidInfo.displayName}</span>
+                <a href={orcidInfo?.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
+                  <span style="text-decoration: underline">{orcidInfo?.displayName}</span>
                   <img style="display: inline" src=`/${status}.svg` alt="ORCID iD"/> 
                 </a>
                 {status === 'UNAUTHENTICATED' && <span>({status.toLowerCase()})</span>}
               </div>
               <div>
                 <span class="block font-medium text-gray-900">Contributor</span>
-                <a href={orcidInfo.profileUrl} aria-label="View ORCID ID" target="_blank" rel="noopener noreferrer">
+                <a href={orcidInfo?.profileUrl} aria-label="View ORCID ID" target="_blank" rel="noopener noreferrer">
                   <img style="display: inline" src=`/${status}.svg` alt="ORCID Logo"/>{" "}
-                  <span style="text-decoration: underline">{orcidInfo.profileUrl}</span>
+                  <span style="text-decoration: underline">{orcidInfo?.profileUrl}</span>
                 </a>
                 {status === 'UNAUTHENTICATED' && <span>({status.toLowerCase()})</span>}
               </div>
