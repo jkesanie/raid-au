@@ -29,7 +29,7 @@ const { contributors = [] } = Astro.props as Props;
                 <span class="block font-medium text-gray-900">Name</span>
                 <a href={orcidInfo?.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
                   <span style="text-decoration: underline">{orcidInfo?.displayName}</span>
-                  <img style="display: inline" src=`/${status}.svg` alt="ORCID iD"/> 
+                  <img style="display: inline" src=`/${status}.svg` alt="ORCID Logo"/> 
                 </a>
                 {status === 'UNAUTHENTICATED' && <span>({status.toLowerCase()})</span>}
               </div>
