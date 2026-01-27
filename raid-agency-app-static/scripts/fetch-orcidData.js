@@ -43,9 +43,9 @@ export async function checkOrcidAuthStatus(orcidId, makeRequestWithRetry, config
       error: 'Invalid ORCID ID format'
     };
   }
-
-  const orcidConfig = getOrcidConfig(config.orcidEnv || 'production');
-  const url = `${orcidConfig.publicApiUrl}/${cleanOrcidId}/record`;
+  const orcidAPIUrl = orcidId.includes('sandbox') ? 'https://pub.sandbox.orcid.org/v3.0' : 'https://pub.orcid.org/v3.0';
+  //const orcidConfig = getOrcidConfig(config.orcidEnv || 'production');
+  const url = `${orcidAPIUrl}/${cleanOrcidId}/record`;
 
   try {
     const response = await makeRequestWithRetry(url, {
@@ -203,7 +203,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       authenticated: false,
       authStatus,
       displayName: null,
-      profileUrl: `https://${config.orcidEnv === 'sandbox' ? 'sandbox.' : ''}orcid.org/${cleanOrcidId}`,
+      profileUrl: `${orcidId}`,
       reason: authStatus.deactivated ? 'deactivated' : 'not_found'
     };
   }
@@ -217,7 +217,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       authenticated: authStatus.authenticated,
       authStatus,
       displayName: null,
-      profileUrl: `https://${config.orcidEnv === 'sandbox' ? 'sandbox.' : ''}orcid.org/${cleanOrcidId}`,
+      profileUrl: `${orcidId}`,
       reason: 'fetch_failed'
     };
   }
@@ -234,7 +234,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       nameType: nameInfo.type,
       visibility: nameInfo.visibility,
       visibilityDetails: nameInfo.visibilityDetails,
-      profileUrl: `https://${config.orcidEnv === 'sandbox' ? 'sandbox.' : ''}orcid.org/${cleanOrcidId}`,
+      profileUrl: `${orcidId}`,
       isPublic: true
     };
   }
@@ -247,7 +247,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
     displayName: null,
     visibility: nameInfo?.visibility || 'unknown',
     visibilityDetails: nameInfo?.visibilityDetails,
-    profileUrl: `https://${config.orcidEnv === 'sandbox' ? 'sandbox.' : ''}orcid.org/${cleanOrcidId}`,
+    profileUrl: `${orcidId}`,
     isPublic: false,
     reason: 'name_not_public'
   };
