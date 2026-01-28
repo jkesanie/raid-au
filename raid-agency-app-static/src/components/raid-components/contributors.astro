@@ -29,10 +29,10 @@ console.log("contributors", contributors)
               <div>
                 <span class="block font-medium text-gray-900">Name</span>
                 <a href={orcidInfo?.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
-                  <span style="text-decoration: underline">{orcidInfo?.displayName}</span>
-                  <img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/> 
+                  <span style="text-decoration: orcidInfo?.style">{orcidInfo?.displayName}</span>
+                  {orcidInfo?.visibility === 'public' && (<img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/>)}
                 </a>
-                {(status === 'UNAUTHENTICATED' || 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
+                {(status === 'UNAUTHENTICATED' || status === 'AWAITING_AUTHENTICATION') && orcidInfo?.visibility === 'public' && <span>({status.toLowerCase()})</span>}
               </div>
               <div>
                 <span class="block font-medium text-gray-900">Contributor ID</span>
@@ -40,7 +40,7 @@ console.log("contributors", contributors)
                   <img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/>{" "}
                   <span style="text-decoration: underline">{orcidInfo?.profileUrl}</span>
                 </a>
-                {(status === 'UNAUTHENTICATED' || 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
+                {(status === 'UNAUTHENTICATED' || status === 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
               </div>
               <InfoField label="Leader" value={leader ? "Yes" : "No"} />
               <InfoField label="Contact" value={contact ? "Yes" : "No"} />

@@ -18,5 +18,6 @@ export interface Contributor {
         displayName: string | null;
         profileUrl: string | null;
         visibility: 'public' | 'limited' | 'private';
+        style: string;
     };
 }

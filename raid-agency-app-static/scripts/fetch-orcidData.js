@@ -67,7 +67,7 @@ export async function checkOrcidAuthStatus(orcidId, makeRequestWithRetry, config
       deactivated: history?.['deactivation-date'] != null,
       creationMethod: history?.['creation-method'],
       lastModified: history?.['last-modified-date']?.value,
-      source: history?.source
+      source: history?.source,
     };
   } catch (error) {
     // Handle different error statuses
@@ -202,7 +202,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       orcidId: cleanOrcidId,
       authenticated: false,
       authStatus,
-      displayName: null,
+      displayName: 'Name withheld by Contributor',
       profileUrl: `${orcidId}`,
       reason: authStatus.deactivated ? 'deactivated' : 'not_found',
       visibility: 'private'
@@ -217,7 +217,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       orcidId: cleanOrcidId,
       authenticated: authStatus.authenticated,
       authStatus,
-      displayName: null,
+      displayName: 'Name withheld by Contributor',
       profileUrl: `${orcidId}`,
       reason: 'fetch_failed',
       visibility: 'private'
@@ -350,6 +350,8 @@ export async function addOrcidInfoToRaidData(raidData, makeRequestWithRetry, con
         } else {
           // Add minimal info for non-public/non-authenticated accounts
           raidData[raidIndex].contributor[contributorIndex].orcidInfo = {
+            displayName: orcidInfo.displayName,
+            visibility: orcidInfo.visibility,
             orcidId: orcidInfo.orcidId,
             authenticated: orcidInfo.authenticated,
             isPublic: orcidInfo.isPublic || false,
