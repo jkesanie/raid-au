@@ -31,7 +31,7 @@ const { contributors = [] } = Astro.props as Props;
                   <span style="text-decoration: underline">{orcidInfo?.displayName}</span>
                   <img style="display: inline" src=`/${status}.svg` alt="ORCID Logo"/> 
                 </a>
-                {status === 'UNAUTHENTICATED' && <span>({status.toLowerCase()})</span>}
+                {(status === 'UNAUTHENTICATED' || 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
               </div>
               <div>
                 <span class="block font-medium text-gray-900">Contributor</span>
@@ -39,7 +39,7 @@ const { contributors = [] } = Astro.props as Props;
                   <img style="display: inline" src=`/${status}.svg` alt="ORCID Logo"/>{" "}
                   <span style="text-decoration: underline">{orcidInfo?.profileUrl}</span>
                 </a>
-                {status === 'UNAUTHENTICATED' && <span>({status.toLowerCase()})</span>}
+                {(status === 'UNAUTHENTICATED' || 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
               </div>
               <InfoField label="Leader" value={leader ? "Yes" : "No"} />
               <InfoField label="Contact" value={contact ? "Yes" : "No"} />
