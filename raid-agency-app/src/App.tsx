@@ -13,14 +13,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode, useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { ErrorDialogProvider } from "./components/error-dialog";
-import { KeycloakProvider, useKeycloak } from "./contexts/keycloak-context"; // ✅ CORRECT
+import { KeycloakProvider, useKeycloak } from "./contexts/keycloak-context";
 import { useGoogleAnalytics } from "./shared/hooks/google-analytics/useGoogleAnalytics";
 import { NotificationProvider } from "./components/alert-notifications/notification-context/NotificationsProvider";
 import { CodesProvider } from "./components/tree-view/context/CodesProvider";
 import React from "react";
 
 function AppContent() {
-  const { isInitialized, authenticated, user } = useKeycloak(); // ✅ Now using YOUR context
+  const { isInitialized, authenticated, user } = useKeycloak();
 
   React.useEffect(() => {
     if (isInitialized) {
@@ -33,7 +33,7 @@ function AppContent() {
   }, [isInitialized, authenticated, user]);
 
   useGoogleAnalytics();
-  
+
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const theme = useMemo(
     () =>

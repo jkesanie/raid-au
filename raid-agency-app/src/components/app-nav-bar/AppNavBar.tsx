@@ -15,7 +15,7 @@ import { UserDropdown } from "../../containers/header/UserDropdown";
 import { NotificationBell } from '../alert-notifications/Notifications';
 import { useServicePointPendingRequest } from "@/shared/service-point/service-point-pending-request";
 import { useAuthHelper } from "@/auth/keycloak";
-import { useKeycloak } from '@/contexts/keycloak-context'; // ✅ CORRECT
+import { useKeycloak } from '@/contexts/keycloak-context';
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
