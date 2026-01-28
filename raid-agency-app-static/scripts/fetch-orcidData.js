@@ -204,7 +204,8 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       authStatus,
       displayName: null,
       profileUrl: `${orcidId}`,
-      reason: authStatus.deactivated ? 'deactivated' : 'not_found'
+      reason: authStatus.deactivated ? 'deactivated' : 'not_found',
+      visibility: 'private'
     };
   }
 
@@ -218,7 +219,8 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
       authStatus,
       displayName: null,
       profileUrl: `${orcidId}`,
-      reason: 'fetch_failed'
+      reason: 'fetch_failed',
+      visibility: 'private'
     };
   }
 
@@ -245,7 +247,7 @@ export async function fetchOrcidInfo(orcidId, makeRequestWithRetry, config) {
     authenticated: authStatus.authenticated,
     authStatus,
     displayName: null,
-    visibility: nameInfo?.visibility || 'unknown',
+    visibility: nameInfo?.visibility || 'private',
     visibilityDetails: nameInfo?.visibilityDetails,
     profileUrl: `${orcidId}`,
     isPublic: false,
