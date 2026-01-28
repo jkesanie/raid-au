@@ -1,6 +1,8 @@
 /* ============================================
    RAiD Custom Login Theme
    ============================================ */
+/* Import Figtree font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 /* Reset and Base */
 * {
@@ -10,7 +12,7 @@
 }
 
 body {
-    font-family: Figtree, sans-serif;
+    font-family: 'Figtree', sans-serif;
     background: #c6d9f0!important;
     font-weight: 400;
     min-height: 100vh;
@@ -135,6 +137,7 @@ body {
     gap: 2rem;
     margin-top: 0;
     padding-top: 0;
+    font-size: 0.8125rem;
 }
 
 .ardc-footer-link {
