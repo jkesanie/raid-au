@@ -29,7 +29,7 @@ console.log("contributors", contributors)
               <div>
                 <span class="block font-medium text-gray-900">Name</span>
                 <a href={orcidInfo?.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
-                  <span style="text-decoration: orcidInfo?.style">{orcidInfo?.displayName}</span>
+                  <span style={{ textDecoration: orcidInfo?.style }}>{orcidInfo?.displayName}</span>
                   {orcidInfo?.visibility === 'public' && (<img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/>)}
                 </a>
                 {(status === 'UNAUTHENTICATED' || status === 'AWAITING_AUTHENTICATION') && orcidInfo?.visibility === 'public' && <span>({status.toLowerCase()})</span>}

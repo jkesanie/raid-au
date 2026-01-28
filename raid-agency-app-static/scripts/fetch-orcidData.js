@@ -345,7 +345,8 @@ export async function addOrcidInfoToRaidData(raidData, makeRequestWithRetry, con
             authenticated: orcidInfo.authenticated,
             claimed: orcidInfo.authStatus.claimed,
             verified: orcidInfo.authStatus.verified,
-            profileUrl: orcidInfo.profileUrl
+            profileUrl: orcidInfo.profileUrl,
+            style: 'underline'
           };
         } else {
           // Add minimal info for non-public/non-authenticated accounts
@@ -356,7 +357,8 @@ export async function addOrcidInfoToRaidData(raidData, makeRequestWithRetry, con
             authenticated: orcidInfo.authenticated,
             isPublic: orcidInfo.isPublic || false,
             reason: orcidInfo.reason,
-            profileUrl: orcidInfo.profileUrl
+            profileUrl: orcidInfo.profileUrl,
+            style: 'none'
           };
         }
       }
