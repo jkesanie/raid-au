@@ -12,7 +12,6 @@ import { UsageTerms } from "@/pages/usage-terms";
 import { Box } from "@mui/material";
 import { RouteObject } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import KeyCloakLogin from "@/pages/login/KeyCloakLogin";
 
 export const otherRoutes: RouteObject[] = [
   {
