@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     path: ROUTES.ORCID_SUCCESS,
     element: (
       <>
-        <AppNavBar authenticated={false} />
+        <AppNavBar />
         <OrcidSuccess />
       </>
     ),
