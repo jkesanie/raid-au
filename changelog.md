@@ -1,6 +1,10 @@
 See the [Changelog audience](#changelog-audience) section for info about 
  the expected audience and content of the changelog.
 
+# 2.6.0
+## API
+* Add endpoint to return all embargoed raids
+
 # 2.5.31
 ## API
 * Support requests with or without trailing slashes in the URL
@@ -19,7 +23,7 @@ See the [Changelog audience](#changelog-audience) section for info about
 
 # 2.5.27
 ## API
-* Add SEO codes as subject types
+* Add SEO codes as subject types  
 
 # 2.5.26
 ## API
