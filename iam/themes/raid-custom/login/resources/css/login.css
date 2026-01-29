@@ -271,13 +271,13 @@ body {
 
 /* Specific Provider Colors */
 
-.idp-google:hover, .idp-aaf:hover, .idp-oidc:hover, .idp-orcid:hover {
+.idp-google:hover, .idp-aaf:hover, .idp-oidc:hover, .idp-orcid:hover, .idp-aaf-saml:hover {
     text-decoration: none;
     background-color: rgb(45, 91, 144);
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
 }
 
-.idp-aaf, .idp-orcid, .idp-oidc, .idp-google {
+.idp-aaf, .idp-orcid, .idp-oidc, .idp-google, .idp-aaf-saml {
     background: rgb(65, 131, 206);
 }
 
