@@ -72,8 +72,8 @@ body {
     padding-right: 24px;
 }
 
-/* ARDC Info Card */
-.ardc-info-card {
+/* RAiD Info Card */
+.raid-info-card {
     background: white;
     border-radius: 4px;
     padding: 16px;
@@ -81,7 +81,7 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.ardc-title {
+.raid-title {
     margin: 0px;
     font-family: Figtree, sans-serif;
     font-weight: 400;
@@ -115,7 +115,7 @@ body {
     border-radius: 16px;
 }
 
-.ardc-description {
+.raid-description {
     font-size: 0.875rem;
     color: #475569;
     line-height: 1.43;
@@ -123,16 +123,16 @@ body {
     font-family: Figtree, sans-serif;
 }
 
-.ardc-link {
+.raid-link {
     color: #3b82f6;
     text-decoration: none;
 }
 
-.ardc-link:hover {
+.raid-link:hover {
     text-decoration: underline;
 }
 
-.ardc-links {
+.raid-links {
     display: flex;
     gap: 2rem;
     margin-top: 0;
@@ -140,7 +140,7 @@ body {
     font-size: 0.8125rem;
 }
 
-.ardc-footer-link {
+.raid-footer-link {
     color: #3b82f6;
     text-decoration: none;
     font-size: 0.875rem;
@@ -149,7 +149,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-.ardc-footer-link:hover {
+.raid-footer-link:hover {
     text-decoration: underline;
 }
 
@@ -271,18 +271,14 @@ body {
 
 /* Specific Provider Colors */
 
-.idp-google:hover, .idp-aaf:hover, .idp-oidc:hover {
+.idp-google:hover, .idp-aaf:hover, .idp-oidc:hover, .idp-orcid:hover {
     text-decoration: none;
     background-color: rgb(45, 91, 144);
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
 }
 
-.idp-aaf {
+.idp-aaf, .idp-orcid, .idp-oidc, .idp-google {
     background: rgb(65, 131, 206);
-}
-
-.idp-orcid {
-    background: #3b82f6;
 }
 
 /* Alert Messages */
@@ -318,12 +314,12 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .ardc-info-card,
+    .raid-info-card,
     .login-card {
         padding: 1.5rem;
     }
 
-    .ardc-title {
+    .raid-title {
         font-size: 1.25rem;
     }
 
@@ -338,7 +334,7 @@ body {
         padding: 1rem 1.5rem;
     }
 
-    .ardc-links {
+    .raid-links {
         flex-direction: column;
         gap: 0.75rem;
     }

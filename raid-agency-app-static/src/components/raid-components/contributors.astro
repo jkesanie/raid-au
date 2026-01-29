@@ -10,7 +10,6 @@ interface Props {
 }
 
 const { contributors = [] } = Astro.props as Props;
-console.log("contributors", contributors)
 ---
 
 <section class="bg-gray-50 py-5">
@@ -23,16 +22,24 @@ console.log("contributors", contributors)
     }
     <div class="divide-y divide-gray-200">
       {
-        contributors.map(({ id, leader, contact, position, role, status, orcidInfo }) => (
+        contributors.map(({ id, leader, contact, position, role, status, orcidInfo }) => {
+        const activeStatus = status !== 'AUTHENTICATED' ? 'UNAUTHENTICATED' : 'AUTHENTICATED';
+        return (
           <div class="ml-5 space-y-2 py-4">
             <div class="grid grid-cols-2 gap-5 text-sm">
               <div>
                 <span class="block font-medium text-gray-900">Name</span>
                 <a href={orcidInfo?.profileUrl} aria-label="View ORCID Name" target="_blank" rel="noopener noreferrer">
                   <span style={{ textDecoration: orcidInfo?.style }}>{orcidInfo?.displayName}</span>
-                  {orcidInfo?.visibility === 'public' && (<img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/>)}
+                  {orcidInfo?.visibility === 'public' && (
+                    <img 
+                      style="display: inline; height: 24px; width: 24px" 
+                      src={`/${activeStatus}.svg`} 
+                      alt="ORCID Logo"
+                    />
+                  )}
                 </a>
-                {(status === 'UNAUTHENTICATED' || status === 'AWAITING_AUTHENTICATION') && orcidInfo?.visibility === 'public' && <span>({status.toLowerCase()})</span>}
+                {(status !== 'AUTHENTICATED') && orcidInfo?.visibility === 'public' && <span>(unauthenticated)</span>}
               </div>
               <div>
                 <span class="block font-medium text-gray-900">Contributor ID</span>
@@ -40,7 +47,7 @@ console.log("contributors", contributors)
                   <img style="display: inline; height: 24px; width: 24px" src=`/${status}.svg` alt="ORCID Logo"/>{" "}
                   <span style="text-decoration: underline">{orcidInfo?.profileUrl}</span>
                 </a>
-                {(status === 'UNAUTHENTICATED' || status === 'AWAITING_AUTHENTICATION') && <span>({status.toLowerCase()})</span>}
+                {(status !== 'AUTHENTICATED') && <span>(unauthenticated)</span>}
               </div>
               <InfoField label="Leader" value={leader ? "Yes" : "No"} />
               <InfoField label="Contact" value={contact ? "Yes" : "No"} />
@@ -62,7 +69,7 @@ console.log("contributors", contributors)
               <ContributorRoles contributorRoles={role} />
             </div>
           </div>
-        ))
+        )})
       }
     </div>
   </div>
