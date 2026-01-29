@@ -4,16 +4,16 @@
         <!-- Header card moved outside to template.ftl for navigation -->
 
     <#elseif section = "form">
-        <!-- ARDC Info Card -->
-        <div class="ardc-info-card">
-            <p class="ardc-title pb-1">
+        <!-- RAiD Info Card -->
+        <div class="raid-info-card">
+            <p class="raid-title pb-1">
                 ${msg("welcomeTitle")?no_esc}
                 <span class="demo-badge">${msg("badge")?no_esc}</span>
             </p>
-            <p class="ardc-description pb-1 pt-1">
+            <p class="raid-description pb-1 pt-1">
                 ${msg("welcomeText")?no_esc}
             </p>
-            <div class="ardc-links">
+            <div class="raid-links">
                 ${msg("privacyPolicy")?no_esc}
                 ${msg("servicePolicy")?no_esc}
             </div>
@@ -21,8 +21,8 @@
 
         <!-- Login Card -->
         <div class="login-card">
-            <p class="ardc-title pb-0">${msg("signinTitle")}</h2>
-            <p class="ardc-description pb-1">${msg("signinText")}</p>
+            <p class="raid-title pb-0">${msg("signinTitle")}</h2>
+            <p class="raid-description pb-1">${msg("signinText")}</p>
             <#if social.providers??>
                 <div class="idp-buttons pt-0">
                     <#list social.providers as p>
