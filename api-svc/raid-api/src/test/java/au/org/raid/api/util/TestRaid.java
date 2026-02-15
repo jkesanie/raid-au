@@ -164,7 +164,7 @@ public class TestRaid {
                     .language(LANGUAGE));
     public static final List<Subject> SUBJECTS = List.of(new Subject()
             .id(SUBJECT_ID)
-            .schemaUri(SUBJECT_SCHEMA_URI)
+            .schemaUri(SubjectSchemaURIEnum.HTTPS_VOCABS_ARDC_EDU_AU_VIEW_BY_ID_316)
             .keyword(List.of(new SubjectKeyword()
                     .text(SUBJECT_KEYWORD_TEXT)
                     .language(LANGUAGE))));
@@ -173,7 +173,7 @@ public class TestRaid {
             .schemaUri(TRADITIONAL_KNOWLEDGE_LABEL_SCHEMA_URI));
     public static final List<SpatialCoverage> SPATIAL_COVERAGES = List.of(new SpatialCoverage()
             .id(SPATIAL_COVERAGE_ID)
-            .schemaUri(SPATIAL_COVERAGE_SCHEMA_URI)
+            .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_NOMINATIM_OPENSTREETMAP_ORG_)
             .place(List.of(new SpatialCoveragePlace()
                     .text(SPATIAL_COVERAGE_PLACE_TEXT)
                     .language(LANGUAGE))));

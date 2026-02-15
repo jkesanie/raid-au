@@ -449,7 +449,7 @@ public class RaidJsonLdConverter implements HttpMessageConverter<RaidDto> {
                 }
                 
                 if (subject.getSchemaUri() != null) {
-                    subjectObj.put("inDefinedTermSet", subject.getSchemaUri());
+                    subjectObj.put("inDefinedTermSet", subject.getSchemaUri().getValue());
                 }
                 
                 // Add keywords

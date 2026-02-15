@@ -9,21 +9,20 @@ import au.org.raid.db.jooq.tables.records.RaidSpatialCoverageRecord;
 import au.org.raid.db.jooq.tables.records.SpatialCoverageSchemaRecord;
 import au.org.raid.idl.raidv2.model.SpatialCoverage;
 import au.org.raid.idl.raidv2.model.SpatialCoveragePlace;
+import au.org.raid.idl.raidv2.model.SpatialCoverageSchemaUriEnum;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class SpatialCoverageServiceTest {
@@ -51,7 +50,7 @@ class SpatialCoverageServiceTest {
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(schemaUri)
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
                 .id(uri)
                 .place(List.of(place));
 
@@ -82,7 +81,7 @@ class SpatialCoverageServiceTest {
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(schemaUri)
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
                 .id(uri)
                 .place(List.of(place));
 
@@ -170,7 +169,7 @@ class SpatialCoverageServiceTest {
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(schemaUri)
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
                 .id(uri)
                 .place(List.of(place));
 

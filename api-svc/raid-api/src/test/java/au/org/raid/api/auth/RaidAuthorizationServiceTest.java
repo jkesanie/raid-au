@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static au.org.raid.api.config.SecurityConfig.SecurityConstants.*;
+import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -103,13 +104,13 @@ class RaidAuthorizationServiceTest {
         var raid = new RaidDto();
         var identifier = new Id();
         var owner = new Owner();
-        owner.setServicePoint(TEST_SERVICE_POINT_ID);
+        owner.setServicePoint(BigDecimal.valueOf(TEST_SERVICE_POINT_ID));
         identifier.setOwner(owner);
         raid.setIdentifier(identifier);
 
         var access = new Access();
         var accessType = new AccessType();
-        accessType.setId(embargoed ? SchemaValues.ACCESS_TYPE_EMBARGOED.getUri() : "open");
+        accessType.setId(embargoed ? AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_ : AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_);
         access.setType(accessType);
         raid.setAccess(access);
 

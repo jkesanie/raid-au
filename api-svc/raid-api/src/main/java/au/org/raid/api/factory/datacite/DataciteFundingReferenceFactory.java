@@ -1,7 +1,6 @@
 package au.org.raid.api.factory.datacite;
 
 import au.org.raid.api.client.ror.RorClient;
-import au.org.raid.api.client.ror.dto.Type;
 import au.org.raid.api.model.datacite.DataciteFundingReference;
 import au.org.raid.idl.raidv2.model.Organisation;
 import lombok.RequiredArgsConstructor;

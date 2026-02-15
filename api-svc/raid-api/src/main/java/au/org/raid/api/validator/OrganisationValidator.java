@@ -66,7 +66,7 @@ public class OrganisationValidator {
                     }
             }
 
-            if (isBlank(organisation.getSchemaUri())) {
+            if (isBlank(organisation.getSchemaUri().getValue())) {
                 failures.add(new ValidationFailure()
                         .fieldId("organisation[%d].schemaUri".formatted(i))
                         .errorType(NOT_SET_TYPE)

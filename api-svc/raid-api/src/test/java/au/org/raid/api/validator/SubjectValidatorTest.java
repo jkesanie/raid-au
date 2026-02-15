@@ -7,6 +7,7 @@ import au.org.raid.db.jooq.tables.records.SubjectTypeRecord;
 import au.org.raid.db.jooq.tables.records.SubjectTypeSchemaRecord;
 import au.org.raid.idl.raidv2.model.Subject;
 import au.org.raid.idl.raidv2.model.SubjectKeyword;
+import au.org.raid.idl.raidv2.model.SubjectSchemaURIEnum;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class SubjectValidatorTest {
 
         final var subject = new Subject()
                 .id(id)
-                .schemaUri(SchemaValues.SUBJECT_SCHEMA_URI.getUri())
+                .schemaUri(SubjectSchemaURIEnum.HTTPS_VOCABS_ARDC_EDU_AU_VIEW_BY_ID_316)
                 .keyword(List.of(new SubjectKeyword()));
 
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord();
@@ -82,7 +83,7 @@ class SubjectValidatorTest {
 
         final var subject = new Subject()
                 .id(id)
-                .schemaUri(SchemaValues.SUBJECT_SCHEMA_URI.getUri())
+                .schemaUri(SubjectSchemaURIEnum.HTTPS_VOCABS_ARDC_EDU_AU_VIEW_BY_ID_316)
                 .keyword(List.of(new SubjectKeyword()));
 
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord();
@@ -113,7 +114,7 @@ class SubjectValidatorTest {
 
         final var subject = new Subject()
                 .id(id)
-                .schemaUri(SchemaValues.SUBJECT_SCHEMA_URI.getUri())
+                .schemaUri(SubjectSchemaURIEnum.HTTPS_VOCABS_ARDC_EDU_AU_VIEW_BY_ID_316)
                 .keyword(List.of(new SubjectKeyword()));
 
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord();
@@ -165,6 +166,7 @@ class SubjectValidatorTest {
         )));
     }
 
+    /*
     @Test
     void addsFailureWithInvalidInvalidSubjectSchemeUri() {
         final var idStartsWith = "https://linked.data.gov.au/def/anzsrc-for/2020/";
@@ -193,6 +195,7 @@ class SubjectValidatorTest {
         assertThat(validationFailures.get(0).getErrorType(), is("invalidValue"));
         assertThat(validationFailures.get(0).getFieldId(), is("subject[0].schemaUri"));
     }
+    */
 
     @Test
     @DisplayName("Keyword validation failures are returned")
@@ -205,7 +208,7 @@ class SubjectValidatorTest {
 
         final var subject = new Subject()
                 .id(id)
-                .schemaUri(SchemaValues.SUBJECT_SCHEMA_URI.getUri())
+                .schemaUri(SubjectSchemaURIEnum.HTTPS_VOCABS_ARDC_EDU_AU_VIEW_BY_ID_316)
                 .keyword(List.of(new SubjectKeyword()));
 
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord();

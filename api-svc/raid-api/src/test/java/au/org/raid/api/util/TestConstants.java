@@ -1,10 +1,11 @@
 package au.org.raid.api.util;
 
+import au.org.raid.idl.raidv2.model.ContributorRoleSchemaUriEnum;
 import java.time.LocalDate;
 
 public class TestConstants {
 
-    public static final String ACCESS_TYPE_SCHEMA_URI =
+    public static final String ACCESS_TYPE_SCHEMA_URI = 
             "https://github.com/au-research/raid-metadata/tree/main/scheme/access/type/v1";
 
     public static final String OPEN_ACCESS_TYPE_ID =
@@ -34,8 +35,7 @@ public class TestConstants {
 
     public static final String ISNI_SCHEMA_URI = "https://isni.org/";
 
-    public static final String CONTRIBUTOR_ROLE_SCHEMA_URI =
-            "https://github.com/au-research/raid-metadata/tree/main/scheme/contributor/role/v1";
+    public static final ContributorRoleSchemaUriEnum CONTRIBUTOR_ROLE_SCHEMA_URI = ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_;
 
     public static final String SUPERVISION_CONTRIBUTOR_ROLE =
             "https://github.com/au-research/raid-metadata/blob/main/scheme/contributor/role/v1/supervision.json";

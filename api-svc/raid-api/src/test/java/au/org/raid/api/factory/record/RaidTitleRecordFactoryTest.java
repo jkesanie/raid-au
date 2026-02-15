@@ -1,11 +1,10 @@
 package au.org.raid.api.factory.record;
 
 import au.org.raid.idl.raidv2.model.Title;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class RaidTitleRecordFactoryTest {
     private final RaidTitleRecordFactory factory = new RaidTitleRecordFactory();

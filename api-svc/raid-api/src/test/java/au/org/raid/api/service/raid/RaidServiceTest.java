@@ -165,7 +165,7 @@ class RaidServiceTest {
 
         final var contributor = new Contributor()
                 .id("https://orcid.org/0009-0002-5128-5184")
-                .schemaUri("https://orcid.org")
+                .schemaUri(ContributorSchemaUriEnum.HTTPS_ORCID_ORG_)
                 .contact(true)
                 .leader(true);
 

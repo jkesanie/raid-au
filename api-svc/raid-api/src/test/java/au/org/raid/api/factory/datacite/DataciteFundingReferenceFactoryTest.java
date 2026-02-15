@@ -1,8 +1,6 @@
 package au.org.raid.api.factory.datacite;
 
 import au.org.raid.api.client.ror.RorClient;
-import au.org.raid.api.client.ror.dto.Name;
-import au.org.raid.api.client.ror.dto.RorSchemaV21;
 import au.org.raid.idl.raidv2.model.Organisation;
 import au.org.raid.idl.raidv2.model.OrganizationSchemaUriEnum;
 import org.junit.jupiter.api.DisplayName;
@@ -37,13 +35,13 @@ class DataciteFundingReferenceFactoryTest {
 
         final var organisation = new Organisation()
                 .id(id)
-                .schemaUri(schemaUri);
+                .schemaUri(OrganizationSchemaUriEnum.fromValue(schemaUri));
 
         final var result = fundingReferenceFactory.create(organisation);
 
         assertThat(result.getFunderName(), is(organisationName));
         assertThat(result.getFunderIdentifier(), is(id));
         assertThat(result.getFunderIdentifierType(), is("ROR"));
-        assertThat(result.getSchemeUri(), is(schemaUri.getValue()));
+        assertThat(result.getSchemeUri(), is(schemaUri));
     }
 }

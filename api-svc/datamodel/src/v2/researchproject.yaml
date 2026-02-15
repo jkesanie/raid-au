@@ -126,8 +126,6 @@ classes:
         exact_mappings:
           - raidext:spatialCoverage
         range: SpatialCoverageSchemaOrg
-  TraditionalKnowledgeLabel:
-    class_uri: https://datamodel.raid.org/core/traditionalKnowledgeLabel
   TraditionalKnowledgeLabelSchemaOrg:
     title: TraditionalKnowledgeLabel
     narrow_mappings:
@@ -143,7 +141,7 @@ classes:
       propertyID:
         slot_uri: schema:propertyID
         required: true
-        range: TraditionalKnowledgeLabel
+        range: string
   SpatialCoverageSchemaOrg:
     title: SpatialCoverage
     close_mappings:

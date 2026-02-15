@@ -176,7 +176,7 @@ public class RaidController implements RaidApi {
         return ResponseEntity.ok(raidService.findAllPublic());
     }
 
-    @Override
+    //@Override
     public ResponseEntity<List<RaidDto>> findAllEmbargoedRaids() {
         return ResponseEntity.ok(raidService.findAllEmbargoed());
     }

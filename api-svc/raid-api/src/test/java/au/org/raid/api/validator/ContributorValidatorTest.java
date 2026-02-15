@@ -21,6 +21,7 @@ import java.util.List;
 
 import static au.org.raid.api.util.TestConstants.VALID_ISNI;
 import static au.org.raid.api.util.TestConstants.VALID_ORCID;
+import au.org.raid.idl.raidv2.model.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -112,9 +113,9 @@ class ContributorValidatorTest {
 
     @Test
     @DisplayName("Validation fails with missing leader")
-    void missingLeadPositions() {
+    void missingLeadPositions() {        
         final var role = new ContributorRole()
-                .schemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_)
+                .schemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_.HTTPS_CREDIT_NISO_ORG_)
                 .id(ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLE_SUPERVISION_);
 
         final var position = new ContributorPosition()

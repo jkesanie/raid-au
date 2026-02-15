@@ -39,7 +39,7 @@ public class DataciteContributorFactoryTest {
 
         final var registrationAgency = new RegistrationAgency()
                 .id(id)
-                .schemaUri(schemaUri);
+                .schemaUri(RegistrationAgencySchemaURIEnum.fromValue(schemaUri));
 
         final var result = dataciteContributorFactory.create(registrationAgency);
 
@@ -48,7 +48,7 @@ public class DataciteContributorFactoryTest {
         assertThat(result.getNameType(), is("Organizational"));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifier(), is(id));
         assertThat(result.getNameIdentifiers().get(0).getNameIdentifierScheme(), is("ROR"));
-        assertThat(result.getNameIdentifiers().get(0).getSchemeUri(), is(schemaUri.getValue()));
+        assertThat(result.getNameIdentifiers().get(0).getSchemeUri(), is(schemaUri));
     }
 
     @Test

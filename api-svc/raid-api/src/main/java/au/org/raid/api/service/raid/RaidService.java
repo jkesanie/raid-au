@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static au.org.raid.api.util.TokenUtil.OPERATOR_ROLE;
+import au.org.raid.idl.raidv2.model.AccessTypeIdEnum;
 
 @Slf4j
 @Component
@@ -108,14 +109,14 @@ public class RaidService {
     public RaidDto update(final RaidUpdateRequest raid, final long userServicePointId) {
         final var raidServicePointId = raid.getIdentifier().getOwner().getServicePoint();
 
-        if (!TokenUtil.hasRole(OPERATOR_ROLE) && raidServicePointId != userServicePointId) {
+        if (!TokenUtil.hasRole(OPERATOR_ROLE) && raidServicePointId.longValue() != userServicePointId) {
             throw new IllegalAccessException("User service point id (%d) does not match raid service point id (%d)"
                     .formatted(userServicePointId, raidServicePointId));
         }
 
         final var servicePointRecord =
-                servicePointRepository.findById(raidServicePointId).orElseThrow(() ->
-                        new UnknownServicePointException(raid.getIdentifier().getOwner().getServicePoint()));
+                servicePointRepository.findById(raidServicePointId.longValue()).orElseThrow(() ->
+                        new UnknownServicePointException(raid.getIdentifier().getOwner().getServicePoint().longValue()));
 
         final Integer version = raid.getIdentifier().getVersion();
 
@@ -279,8 +280,8 @@ public class RaidService {
 
         final var servicePointId = raid.getIdentifier().getOwner().getServicePoint();
 
-        final var servicePointRecord = servicePointRepository.findById(servicePointId)
-                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId));
+        final var servicePointRecord = servicePointRepository.findById(servicePointId.longValue())
+                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId.longValue()));
 
         dataciteSvc.update(raid, handle.toString(), servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
     }

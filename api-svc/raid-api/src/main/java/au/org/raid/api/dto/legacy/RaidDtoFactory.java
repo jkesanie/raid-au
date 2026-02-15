@@ -3,6 +3,7 @@ package au.org.raid.api.dto.legacy;
 import au.org.raid.api.dto.LegacyRaid;
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.idl.raidv2.model.*;
+import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,18 +13,18 @@ import java.util.Map;
 @Component
 public class RaidDtoFactory {
     private static final Map<String, String> DESCRIPTION_TYPE_MAP = Map.of(
-            "Primary Description", SchemaValues.PRIMARY_DESCRIPTION_TYPE.getUri(),
-            "Alternative Description", SchemaValues.ALTERNATIVE_DESCRIPTION_TYPE.getUri()
+            "Primary Description", DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_318.getValue(),
+            "Alternative Description", DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_319.getValue()
     );
 
     private static final Map<String, String> TITLE_TYPE_MAP = Map.of(
-            "Primary Title", SchemaValues.PRIMARY_TITLE_TYPE.getUri(),
-            "Alternative Title", SchemaValues.ALTERNATIVE_TITLE_TYPE.getUri()
+            "Primary Title", TitleTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_5.getValue(),
+            "Alternative Title", TitleTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_4.getValue()
     );
 
     private static final Map<String, String> ACCESS_TYPE_MAP = Map.of(
-            "Open", SchemaValues.ACCESS_TYPE_OPEN.getUri(),
-            "Closed", SchemaValues.ACCESS_TYPE_EMBARGOED.getUri()
+            "Open", AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_.getValue(),
+            "Closed", AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_F1CF_.getValue()
     );
 
     public RaidDto create(final LegacyRaid legacyRaid) {
@@ -37,27 +38,27 @@ public class RaidDtoFactory {
         final var access = new Access()
                 .type(
                         new AccessType()
-                                .id(ACCESS_TYPE_MAP.get(legacyRaid.getAccess().getType()))
-                                .schemaUri(SchemaValues.ACCESS_TYPE_SCHEMA.getUri())
+                                .id(AccessTypeIdEnum.fromValue(legacyRaid.getAccess().getType()))
+                                .schemaUri(AccessTypeSchemaUriEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_)
                 )
                 .embargoExpiry(legacyRaid.getAccess().getType().equals("Closed") ? embargoExpiry : null)
                 .statement(new AccessStatement().text("Set to embargoed from closed during metadata uplift %s".formatted(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)))
-                        .language(new Language().id("eng").schemaUri(SchemaValues.LANGUAGE_SCHEMA.getUri())));
+                        .language(new Language().id("eng").schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)));
 
 
         return new RaidDto()
                 .identifier(new Id()
                                 .id(legacyRaid.getId().getIdentifier())
                                 .owner(new Owner()
-                                        .schemaUri(SchemaValues.ROR_SCHEMA_URI.getUri())
+                                        .schemaUri(RegistrationAgencySchemaURIEnum.HTTPS_ROR_ORG_)
                                         .id(legacyRaid.getId().getIdentifierOwner())
-                                        .servicePoint(legacyRaid.getId().getIdentifierServicePoint())
+                                        .servicePoint(BigDecimal.valueOf(legacyRaid.getId().getIdentifierServicePoint()))
                                 )
                                 .license("Creative Commons CC-0")
-                                .schemaUri(SchemaValues.RAID_SCHEMA_URI.getUri())
+                                .schemaUri(RaidIdentifierSchemaURIEnum.HTTPS_RAID_ORG_)
                                 .registrationAgency(new RegistrationAgency()
                                         .id(legacyRaid.getId().getRaidAgencyUrl())
-                                        .schemaUri(SchemaValues.ROR_SCHEMA_URI.getUri()))
+                                        .schemaUri(RegistrationAgencySchemaURIEnum.HTTPS_ROR_ORG_))
                                 .version(legacyRaid.getId().getVersion())
                         // TODO: set raidAgencyUrl depending on environment
 
@@ -66,8 +67,8 @@ public class RaidDtoFactory {
                         new Title()
                                 .text(legacyTitle.getTitle())
                                 .type(new TitleType()
-                                        .id(TITLE_TYPE_MAP.get(legacyTitle.getType()))
-                                        .schemaUri(SchemaValues.TITLE_TYPE_SCHEMA.getUri()))
+                                        .id(TitleTypeIdEnum.fromValue(legacyTitle.getType()))
+                                        .schemaUri(TitleTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_376))
                                 .startDate(legacyTitle.getStartDate())
                                 .endDate(legacyTitle.getEndDate())
 
@@ -77,8 +78,8 @@ public class RaidDtoFactory {
                                 new Description()
                                         .text(legacyDescription.getDescription())
                                         .type(new DescriptionType()
-                                                .schemaUri(SchemaValues.DESCRIPTION_TYPE_SCHEMA.getUri())
-                                                .id(DESCRIPTION_TYPE_MAP.get(legacyDescription.getType())))
+                                                .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
+                                                .id(DescriptionTypeIdEnum.fromValue(legacyDescription.getType())))
                         ).toList()
                 )
                 .date(new Date()

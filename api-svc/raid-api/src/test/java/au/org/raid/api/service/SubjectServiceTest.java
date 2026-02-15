@@ -16,6 +16,7 @@ import au.org.raid.db.jooq.tables.records.SubjectTypeSchemaRecord;
 import au.org.raid.idl.raidv2.model.Language;
 import au.org.raid.idl.raidv2.model.Subject;
 import au.org.raid.idl.raidv2.model.SubjectKeyword;
+import au.org.raid.idl.raidv2.model.SubjectSchemaURIEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,7 +88,7 @@ class SubjectServiceTest {
         final var subject = new Subject()
                 .keyword(List.of(keyword))
                 .id(uri)
-                .schemaUri(schemaUri);
+                .schemaUri(SubjectSchemaURIEnum.fromValue(schemaUri));
 
         final var raidSubjectKeywordRecord = new RaidSubjectKeywordRecord();
 
@@ -131,7 +132,7 @@ class SubjectServiceTest {
         final var uri = "/" + id;
         final var subject = new Subject()
                 .id(uri)
-                .schemaUri(schemaUri);
+                .schemaUri(SubjectSchemaURIEnum.fromValue(schemaUri));
 
         final var subjectTypeSchemaRecord = new SubjectTypeSchemaRecord().setId(schemaId);
 
@@ -264,7 +265,7 @@ class SubjectServiceTest {
         final var subject = new Subject()
                 .keyword(List.of(keyword))
                 .id(uri)
-                .schemaUri(schemaUri);
+                .schemaUri(SubjectSchemaURIEnum.fromValue(schemaUri));
 
         final var raidSubjectKeywordRecord = new RaidSubjectKeywordRecord();
 

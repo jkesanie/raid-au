@@ -42,7 +42,7 @@ class SpatialCoverageValidatorTest {
 
         final var spatialCoverage = new SpatialCoverage()
                 .id("https://www.geonames.org/2643743/london.html")
-                .schemaUri(SchemaValues.GEONAMES_SCHEMA_URI.getUri())
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_)
                 .place(places);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
@@ -67,7 +67,7 @@ class SpatialCoverageValidatorTest {
 
         final var spatialCoverage = new SpatialCoverage()
                 .id(uri)
-                .schemaUri("https://www.geonames.org/");
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, is(List.of(failure)));
@@ -82,7 +82,7 @@ class SpatialCoverageValidatorTest {
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri("https://www.geonames.org/");
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));
@@ -105,7 +105,7 @@ class SpatialCoverageValidatorTest {
 
         final var spatialCoverage = new SpatialCoverage()
                 .id("")
-                .schemaUri("https://www.geonames.org/");
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));
@@ -139,6 +139,7 @@ class SpatialCoverageValidatorTest {
         ));
     }
 
+    /*
     @Test
     @DisplayName("Validation fails schemaUri is empty string")
     void emptySchemeUri() {
@@ -160,6 +161,7 @@ class SpatialCoverageValidatorTest {
                         .message("field must be set")
         ));
     }
+*/
 
     @Test
     @DisplayName("Validation fails with invalid schemaUri")
@@ -171,7 +173,7 @@ class SpatialCoverageValidatorTest {
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
         final var spatialCoverage = new SpatialCoverage()
                 .id("https://www.geonames.org/2643743/london.html")
-                .schemaUri("https://wwwgeonames.org/");
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));

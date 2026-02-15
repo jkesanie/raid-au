@@ -27,6 +27,7 @@ import static au.org.raid.api.config.SecurityConfig.SecurityConstants.RAID_USER_
 import static au.org.raid.api.config.SecurityConfig.SecurityConstants.SERVICE_POINT_GROUP_ID_CLAIM;
 import static au.org.raid.api.config.SecurityConfig.SecurityConstants.SERVICE_POINT_USER_ROLE;
 import static au.org.raid.api.config.SecurityConfig.SecurityConstants.USER_RAIDS_CLAIM;
+import au.org.raid.idl.raidv2.model.AccessTypeIdEnum;
 
 @Service
 @RequiredArgsConstructor
@@ -98,7 +99,7 @@ public class RaidAuthorizationService {
                     .orElseThrow(() -> new ResourceNotFoundException(handle));
 
             // Check if embargoed - deny access if it is
-            if (raid.getAccess().getType().getId().equals(SchemaValues.ACCESS_TYPE_EMBARGOED.getUri())) {
+            if (raid.getAccess().getType().getId().equals(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)) {
                 return new AuthorizationDecision(false);
             }
 

@@ -1666,16 +1666,6 @@ components:
       - "propertyID"
       title: "AlternativeIdentifierSchemaOrg"
       type: "object"
-    Any:
-      additionalProperties: true
-      description: ""
-      title: "Any"
-      type:
-      - "null"
-      - "boolean"
-      - "object"
-      - "number"
-      - "string"
     ContributorPositionSchemaOrg:
       additionalProperties: false
       description: ""
@@ -1758,24 +1748,23 @@ components:
       - "identifier"
       title: "OrganisationSchemaOrg"
       type: "object"
-    OwnerPropertyEnum:
-      description: ""
-      enum:
-      - "https://datamodel.raid.org/core/owner"
-      title: "OwnerPropertyEnum"
-      type: "string"
     OwnerSchemaOrg:
       additionalProperties: false
       description: ""
       properties:
         propertyID:
-          $ref: "#/components/schemas/OwnerPropertyEnum"
+          $ref: "#/components/schemas/OwnerSchemaOrgPropertyID"
         value:
           type: "string"
       required:
       - "value"
       - "propertyID"
       title: "OwnerSchemaOrg"
+      type: "object"
+    OwnerSchemaOrgPropertyID:
+      additionalProperties: false
+      description: ""
+      title: "OwnerSchemaOrgPropertyID"
       type: "object"
     PersonSchemaOrg:
       additionalProperties: false
@@ -1798,18 +1787,17 @@ components:
       - "memberOf"
       title: "PersonSchemaOrg"
       type: "object"
-    RegistrationAgencyPropertyEnum:
+    RegistrationAgencyPropertyID:
+      additionalProperties: false
       description: ""
-      enum:
-      - "https://datamodel.raid.org/core/registrationAgency"
-      title: "RegistrationAgencyPropertyEnum"
-      type: "string"
+      title: "RegistrationAgencyPropertyID"
+      type: "object"
     RegistrationAgencySchemaOrg:
       additionalProperties: false
       description: ""
       properties:
         propertyID:
-          $ref: "#/components/schemas/RegistrationAgencyPropertyEnum"
+          $ref: "#/components/schemas/RegistrationAgencyPropertyID"
         value:
           type: "string"
       required:
@@ -1852,20 +1840,24 @@ components:
       description: ""
       properties:
         additionalProperty:
-          anyOf:
-          - $ref: "#/components/schemas/RegistrationAgencySchemaOrg"
-          - $ref: "#/components/schemas/OwnerSchemaOrg"
-          - $ref: "#/components/schemas/TraditionalKnowledgeLabelSchemaOrg"
-          - type: "null"
+          items:
+            anyOf:
+            - $ref: "#/components/schemas/OwnerSchemaOrg"
+            - $ref: "#/components/schemas/RegistrationAgencySchemaOrg"
+            - $ref: "#/components/schemas/TraditionalKnowledgeLabelSchemaOrg"
+          type:
+          - "array"
+          - "null"
         alternateName:
           description: "Other than current primary title value"
+          items:
+            type: "string"
           type:
-          - "string"
+          - "array"
           - "null"
         description:
           description: "Primary description or the only description is added as string."
           items:
-            $ref: "#/components/schemas/Any"
             anyOf:
             - type: "string"
             - $ref: "#/components/schemas/DescriptionSchemaOrg"
@@ -1882,27 +1874,32 @@ components:
           type: "string"
         identifier:
           items:
-            $ref: "#/components/schemas/Any"
             anyOf:
             - type: "string"
             - $ref: "#/components/schemas/AlternativeIdentifierSchemaOrg"
           type: "array"
         isRelatedTo:
-          anyOf:
-          - $ref: "#/components/schemas/RelatedObjectSchemaOrg"
-          - $ref: "#/components/schemas/RelatedRaidSchemaOrg"
-          - type: "null"
+          items:
+            anyOf:
+            - $ref: "#/components/schemas/RelatedObjectSchemaOrg"
+            - $ref: "#/components/schemas/RelatedRaidSchemaOrg"
+          type:
+          - "array"
+          - "null"
         keywords:
-          anyOf:
-          - $ref: "#/components/schemas/SubjectSchemaOrg"
-          - type: "null"
+          items:
+            $ref: "#/components/schemas/SubjectSchemaOrg"
+          type:
+          - "array"
+          - "null"
         location:
-          anyOf:
-          - $ref: "#/components/schemas/SpatialCoverageSchemaOrg"
-          - type: "null"
+          items:
+            $ref: "#/components/schemas/SpatialCoverageSchemaOrg"
+          type:
+          - "array"
+          - "null"
         member:
           items:
-            $ref: "#/components/schemas/Any"
             anyOf:
             - $ref: "#/components/schemas/PersonSchemaOrg"
             - $ref: "#/components/schemas/OrganisationSchemaOrg"
@@ -1911,7 +1908,6 @@ components:
           - "null"
         member_of:
           items:
-            $ref: "#/components/schemas/Any"
             anyOf:
             - $ref: "#/components/schemas/ContributorPositionSchemaOrg"
             - $ref: "#/components/schemas/ContributorRoleSchemaOrg"
@@ -1923,8 +1919,10 @@ components:
           description: "Latest primary title value"
           type: "string"
         url:
+          items:
+            type: "string"
           type:
-          - "string"
+          - "array"
           - "null"
       required:
       - "identifier"
@@ -1965,18 +1963,12 @@ components:
       - "inDefinedTermSet"
       title: "SubjectSchemaOrg"
       type: "object"
-    TraditionalKnowledgeLabelPropertyEnum:
-      description: ""
-      enum:
-      - "https://datamodel.raid.org/core/traditionalKnowledgeLabel"
-      title: "TraditionalKnowledgeLabelPropertyEnum"
-      type: "string"
     TraditionalKnowledgeLabelSchemaOrg:
       additionalProperties: false
       description: ""
       properties:
         propertyID:
-          $ref: "#/components/schemas/TraditionalKnowledgeLabelPropertyEnum"
+          type: "string"
         value:
           type: "string"
       required:

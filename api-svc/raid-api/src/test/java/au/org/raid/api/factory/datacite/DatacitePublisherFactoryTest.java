@@ -25,6 +25,7 @@ class DatacitePublisherFactoryTest {
     @DisplayName("Create sets all fields")
     void create() {
         final var id = "_id";
+        final var name = "ROR";
         final var schemaUri = RegistrationAgencySchemaURIEnum.HTTPS_ROR_ORG_;
 
         final var owner = new Owner()

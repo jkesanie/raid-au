@@ -274,7 +274,7 @@ public class RaidUpgradeService {
         final var oldHandle = id.substring(id.indexOf('/', 8) + 1);
         final var servicePointId = raidDto.getIdentifier().getOwner().getServicePoint();
 
-        final var servicePoint = servicePointRepository.findById(servicePointId)
+        final var servicePoint = servicePointRepository.findById(servicePointId.longValue())
                 .orElseThrow(() -> new RuntimeException("No such service point %d".formatted(servicePointId)));
 
         final var suffix = id.substring(id.lastIndexOf('/') + 1);
@@ -341,8 +341,8 @@ public class RaidUpgradeService {
                 .map(relatedRaid -> new RelatedRaid()
                         .id(relatedRaid.getId())
                         .type(new RelatedRaidType()
-                                .id(RELATED_RAID_TYPE_MAP.get(relatedRaid.getType().getId()))
-                                .schemaUri(RELATED_RAID_TYPE_SCHEMA_MAP.get(relatedRaid.getType().getSchemaUri()))
+                                .id(RelatedRaidTypeIdEnum.fromValue(RELATED_RAID_TYPE_MAP.get(relatedRaid.getType().getId())))
+                                .schemaUri(RelatedRaidTypeSchemaUriEnum.fromValue(RELATED_RAID_TYPE_SCHEMA_MAP.get(relatedRaid.getType().getSchemaUri())))
                         )
                 )
                 .toList();
@@ -357,14 +357,14 @@ public class RaidUpgradeService {
                         .schemaUri(relatedObject.getSchemaUri())
                         .category(relatedObject.getCategory().stream()
                                 .map(category -> new RelatedObjectCategory()
-                                        .id(RELATED_OBJECT_CATEGORY_MAP.get(category.getId()))
-                                        .schemaUri(RELATED_OBJECT_CATEGORY_SCHEMA_MAP.get(category.getSchemaUri()))
+                                        .id(RelatedObjectCategoryIdEnum.fromValue(RELATED_OBJECT_CATEGORY_MAP.get(category.getId())))
+                                        .schemaUri(RelatedObjectCategorySchemaUriEnum.fromValue(RELATED_OBJECT_CATEGORY_SCHEMA_MAP.get(category.getSchemaUri())))
                                 )
                                 .toList()
                         )
                         .type(new RelatedObjectType()
-                                .id(RELATED_OBJECT_TYPE_MAP.get(relatedObject.getType().getId()))
-                                .schemaUri(RELATED_OBJECT_TYPE_SCHEMA_MAP.get(relatedObject.getType().getSchemaUri()))
+                                .id(RelatedObjectTypeIdEnum.fromValue(RELATED_OBJECT_TYPE_MAP.get(relatedObject.getType().getId())))
+                                .schemaUri(RelatedObjectTypeSchemaUriEnum.fromValue(RELATED_OBJECT_TYPE_SCHEMA_MAP.get(relatedObject.getType().getSchemaUri())))
                         )
                 )
                 .toList();
@@ -378,12 +378,15 @@ public class RaidUpgradeService {
                         .id(organisation.getId())
                         .schemaUri(organisation.getSchemaUri())
                         .role(organisation.getRole().stream()
-                                .map(organisationRole -> new OrganisationRole()
-                                        .id(ORGANISATION_ROLE_MAP.get(organisationRole.getId()))
-                                        .schemaUri(ORGANISATION_ROLE_SCHEMA_MAP.get(organisationRole.getSchemaUri()))
-                                        .startDate(organisationRole.getStartDate())
-                                        .endDate(organisationRole.getEndDate())
-                                )
+                                .map(organisationRole -> {
+                                    final var roleId = ORGANISATION_ROLE_MAP.get(organisationRole.getId());
+                                    final var roleSchemaUri = ORGANISATION_ROLE_SCHEMA_MAP.get(organisationRole.getSchemaUri());
+                                    return new OrganisationRole()
+                                            .id(OrganizationRoleIdEnum.fromValue(roleId))
+                                            .schemaUri(OrganizationRoleSchemaUriEnum.fromValue(roleSchemaUri))
+                                            .startDate(organisationRole.getStartDate())
+                                            .endDate(organisationRole.getEndDate());
+                                })
                                 .toList()
                         )
                 )
@@ -406,8 +409,8 @@ public class RaidUpgradeService {
                                 .filter(contributorPosition -> !contributorPosition.getId().equals(LEAD_CONTRIBUTOR_POSITION_ID))
                                 .filter(contributorPosition -> !contributorPosition.getId().equals(CONTACT_CONTRIBUTOR_POSITION_ID))
                                 .map(contributorPosition -> new ContributorPosition()
-                                        .id(CONTRIBUTOR_POSITION_MAP.get(contributorPosition.getId()))
-                                        .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_MAP.get(contributorPosition.getSchemaUri()))
+                                        .id(ContributorPositionIdEnum.fromValue(CONTRIBUTOR_POSITION_MAP.get(contributorPosition.getId())))
+                                        .schemaUri(ContributorPositionSchemaUriEnum.fromValue(CONTRIBUTOR_POSITION_SCHEMA_MAP.get(contributorPosition.getSchemaUri())))
                                         .startDate(contributorPosition.getStartDate())
                                         .endDate(contributorPosition.getEndDate())
                                 )
@@ -427,8 +430,8 @@ public class RaidUpgradeService {
                         .text(description.getText())
                         .language(description.getLanguage())
                         .type(new DescriptionType()
-                                .id(DESCRIPTION_TYPE_MAP.get(description.getType().getId()))
-                                .schemaUri(DESCRIPTION_TYPE_SCHEMA_MAP.get(description.getType().getSchemaUri()))
+                                .id(DescriptionTypeIdEnum.fromValue(DESCRIPTION_TYPE_MAP.get(description.getType().getId())))
+                                .schemaUri(DescriptionTypeSchemaURIEnum.fromValue( DESCRIPTION_TYPE_SCHEMA_MAP.get(description.getType().getSchemaUri())))
                         )
                 )
                 .toList();
@@ -444,8 +447,8 @@ public class RaidUpgradeService {
                         .endDate(title.getEndDate())
                         .language(title.getLanguage())
                         .type(new TitleType()
-                                .id(TITLE_TYPE_MAP.get(title.getType().getId()))
-                                .schemaUri(TITLE_TYPE_SCHEMA_MAP.get(title.getType().getSchemaUri()))
+                                .id(TitleTypeIdEnum.fromValue(TITLE_TYPE_MAP.get(title.getType().getId())))
+                                .schemaUri(TitleTypeSchemaURIEnum.fromValue(TITLE_TYPE_SCHEMA_MAP.get(title.getType().getSchemaUri())))
                         )
                 )
                 .toList();
@@ -467,12 +470,12 @@ public class RaidUpgradeService {
                         .text(statement)
                         .language(new Language()
                                 .id("eng")
-                                .schemaUri(SchemaValues.LANGUAGE_SCHEMA.getUri())
+                                .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                         )
                 )
                 .type(new AccessType()
-                        .schemaUri(ACCESS_TYPE_SCHEMA_MAP.get(raidDto.getAccess().getType().getSchemaUri()))
-                        .id(ACCESS_TYPE_MAP.get(raidDto.getAccess().getType().getId()))
+                        .schemaUri(AccessTypeSchemaUriEnum.fromValue(ACCESS_TYPE_SCHEMA_MAP.get(raidDto.getAccess().getType().getSchemaUri())))
+                        .id(AccessTypeIdEnum.fromValue(ACCESS_TYPE_MAP.get(raidDto.getAccess().getType().getId())))
                 )
                 .embargoExpiry(embargoExpiry);
 

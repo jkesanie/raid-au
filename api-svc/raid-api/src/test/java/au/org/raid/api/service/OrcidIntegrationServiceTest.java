@@ -4,6 +4,7 @@ import au.org.raid.api.dto.ContributorLookupResponse;
 import au.org.raid.api.dto.RaidListenerMessage;
 import au.org.raid.api.factory.RaidListenerMessageFactory;
 import au.org.raid.idl.raidv2.model.*;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -131,7 +132,7 @@ class OrcidIntegrationServiceTest {
         final var servicePointId = 99L;
         final var id = new Id()
                 .id("raid123")
-                .owner(new Owner().servicePoint(servicePointId));
+                .owner(new Owner().servicePoint(BigDecimal.valueOf(servicePointId)));
         final var titles = List.of(new Title().text("Test Raid"));
 
         final var raid = new RaidDto()
