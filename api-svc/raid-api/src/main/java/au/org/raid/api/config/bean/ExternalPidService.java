@@ -58,21 +58,6 @@ public class ExternalPidService {
 
     @Bean
     @Primary
-    public GeoNamesUriValidator geoNamesUriValidator(
-            final StubProperties stubProperties,
-            final RestTemplate restTemplate,
-            @Value("${raid.validation.geonames.username}") final String username
-    ) {
-        if (stubProperties.getGeoNames().isEnabled()) {
-            log.warn("using the in-memory GeoNames validator");
-            return new GeonamesUriValidatorStub(stubProperties.getGeoNames().getDelay());
-        }
-
-        return new GeoNamesUriValidator(restTemplate,  username);
-    }
-
-    @Bean
-    @Primary
     public OpenStreetMapUriValidator openStreetMapUriValidator(
             final StubProperties stubProperties,
             final RestTemplate restTemplate
@@ -85,33 +70,14 @@ public class ExternalPidService {
         return new OpenStreetMapUriValidator(restTemplate);
     }
 
-    @Bean
-    @Primary
-    public NominatimOpenStreetMapUriValidator nominatimOpenStreetMapUriValidator(
-            final StubProperties stubProperties,
-            final RestTemplate restTemplate
-    ) {
-        if (stubProperties.getOpenStreetMap().isEnabled()) {
-            log.warn("using the in-memory OpenStreetMap validator");
-            return new NominatimOpenStreetMapValidatorStub(stubProperties.getOpenStreetMap().getDelay());
-        }
-
-        return new NominatimOpenStreetMapUriValidator(restTemplate);
-    }
 
     @Bean
     public Map<String, BiFunction<String, String, List<ValidationFailure>>> spatialCoverageUriValidatorMap(
-            final GeoNamesUriValidator geoNamesUriValidator,
             final OpenStreetMapUriValidator openStreetMapUriValidator,
-            final NominatimOpenStreetMapUriValidator nominatimOpenStreetMapUriValidator,
-            @Value("${raid.spatial-coverage.schema-uri.geonames}") final String geoNamesSchemaUri,
-            @Value("${raid.spatial-coverage.schema-uri.openstreetmap}") final String openStreetMapSchemaUri,
-            @Value("${raid.spatial-coverage.schema-uri.nominatim-openstreetmap}") final String nominatimOpenStreetMapSchemaUri
+            @Value("${raid.spatial-coverage.schema-uri.openstreetmap}") final String openStreetMapSchemaUri
     ) {
         return Map.of(
-                geoNamesSchemaUri, geoNamesUriValidator::validate,
-                openStreetMapSchemaUri, openStreetMapUriValidator::validate,
-                nominatimOpenStreetMapSchemaUri, nominatimOpenStreetMapUriValidator::validate
+                openStreetMapSchemaUri, openStreetMapUriValidator::validate
         );
     }
 }

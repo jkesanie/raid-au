@@ -238,8 +238,8 @@ class RaidRdfServiceTest {
         // Add spatial coverage
         var spatialCoverages = new ArrayList<SpatialCoverage>();
         var spatialCoverage = new SpatialCoverage();
-        spatialCoverage.setId("https://www.geonames.org/2158177/melbourne.html");
-        spatialCoverage.setSchemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
+        spatialCoverage.setId("https://www.openstreetmap.org/2158177/melbourne.html");
+        spatialCoverage.setSchemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
         
         var places = new ArrayList<SpatialCoveragePlace>();
         var place = new SpatialCoveragePlace();

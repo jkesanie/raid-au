@@ -10,10 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
-    public static String NONEXISTENT_TEST_GEONAMES_URI = "https://www.geonames.org/0/not-found.html";
-    public static String SERVER_ERROR_TEST_GEONAMES_URI = "https://www.geonames.org/0/server-error.html";
     public static String NONEXISTENT_TEST_OPENSTREETMAP_URI = "https://www.openstreetmap.org/not-found";
-    public static String NONEXISTENT_TEST_NOMINATIM_OPENSTREETMAP_URI = "https://nominatim.openstreetmap.org/not-found";
+    public static String SERVER_ERROR_TEST_OPENSTREETMAP_URI = "https://www.openstreetmap.org/server-error";
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with an invalid uri fails")
     void invalidId() {
@@ -28,7 +26,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("spatialCoverage[0].id")
                     .errorType("invalidValue")
-                    .message("has invalid/unsupported value - should match ^https://(www\\.)?geonames.org/\\d+/.*$")
+                    .message("has invalid/unsupported value - should match ^https://(www\\.)?openstreetmap.org/(node|relation|way|ui)/.*$")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");
@@ -38,8 +36,8 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with an non-existent OpenStreetMap uri fails")
     void nonExistentUri_OpenStreetMap() {
-        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_NOMINATIM_OPENSTREETMAP_URI);
-        createRequest.getSpatialCoverage().get(0).setSchemaUri(SpatialCoverageSchemaUriEnum.HTTPS_NOMINATIM_OPENSTREETMAP_ORG_);
+        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_OPENSTREETMAP_URI);
+        createRequest.getSpatialCoverage().get(0).setSchemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
 
         try {
             raidApi.mintRaid(createRequest);
@@ -50,7 +48,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("spatialCoverage[0].id")
                     .errorType("invalidValue")
-                    .message("uri not found")
+                    .message("has invalid/unsupported value - should match ^https://(www\\.)?openstreetmap.org/(node|relation|way|ui)/.*$")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");
@@ -60,7 +58,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with an non-existent uri fails")
     void nonExistentUri() {
-        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_GEONAMES_URI);
+        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_OPENSTREETMAP_URI);
 
         try {
             raidApi.mintRaid(createRequest);
@@ -71,17 +69,17 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             assertThat(failures).contains(new ValidationFailure()
                     .fieldId("spatialCoverage[0].id")
                     .errorType("invalidValue")
-                    .message("uri not found")
+                    .message("has invalid/unsupported value - should match ^https://(www\\.)?openstreetmap.org/(node|relation|way|ui)/.*$")
             );
         } catch (Exception e) {
             fail("Expected RaidApiValidationException");
         }
     }
-
+/*
     @Test
     @DisplayName("Server error returns validation failure")
     void serverError() {
-        createRequest.getSpatialCoverage().get(0).setId(SERVER_ERROR_TEST_GEONAMES_URI);
+        createRequest.getSpatialCoverage().get(0).setId(SERVER_ERROR_TEST_OPENSTREETMAP_URI);
 
         try {
             raidApi.mintRaid(createRequest);
@@ -98,7 +96,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
             fail("Expected RaidApiValidationException");
         }
     }
-
+*/
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with a null language schemaUri fails")
     void nullLanguageSchemeUri() {

@@ -28,7 +28,7 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation passes with valid spatial coverage")
     void validSpatialCoverage() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
@@ -41,8 +41,8 @@ class SpatialCoverageValidatorTest {
                 .text("London"));
 
         final var spatialCoverage = new SpatialCoverage()
-                .id("https://www.geonames.org/2643743/london.html")
-                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_)
+                .id("https://www.openstreetmap.org/2643743/london.html")
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_)
                 .place(places);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
@@ -59,15 +59,15 @@ class SpatialCoverageValidatorTest {
                 .message("_message");
 
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> List.of(failure)
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> List.of(failure)
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
-        final var uri = "https://www.geonames.org/2643743/london.html";
+        final var uri = "https://www.openstreetmap.org/2643743/london.html";
 
         final var spatialCoverage = new SpatialCoverage()
                 .id(uri)
-                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, is(List.of(failure)));
@@ -77,12 +77,12 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation fails with null id")
     void nullId() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));
@@ -98,14 +98,14 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation fails if id is empty string")
     void emptyId() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
 
         final var spatialCoverage = new SpatialCoverage()
                 .id("")
-                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));
@@ -121,13 +121,13 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation fails with null schemaUri")
     void nullSchemeUri() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
 
         final var spatialCoverage = new SpatialCoverage()
-                .id("https://www.geonames.org/2643743/london.html");
+                .id("https://www.openstreetmap.org/2643743/london.html");
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));
@@ -144,12 +144,12 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation fails schemaUri is empty string")
     void emptySchemeUri() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
         final var spatialCoverage = new SpatialCoverage()
-                .id("https://www.geonames.org/2643743/london.html")
+                .id("https://www.openstreetmap.org/2643743/london.html")
                 .schemaUri("");
 
         final var failures = validationService.validate(List.of(spatialCoverage));
@@ -167,13 +167,13 @@ class SpatialCoverageValidatorTest {
     @DisplayName("Validation fails with invalid schemaUri")
     void invalidSchemeUri() {
         final var uriValidatorMap = Map.of(
-                SchemaValues.GEONAMES_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
+                SchemaValues.OPENSTREETMAP_SCHEMA_URI.getUri(), (BiFunction<String, String, List<ValidationFailure>>) (s, s2) -> Collections.emptyList()
         );
 
         final var validationService = new SpatialCoverageValidator(placeValidator, uriValidatorMap);
         final var spatialCoverage = new SpatialCoverage()
-                .id("https://www.geonames.org/2643743/london.html")
-                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_);
+                .id("https://www.openstreetmap.org/2643743/london.html")
+                .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_);
 
         final var failures = validationService.validate(List.of(spatialCoverage));
         assertThat(failures, hasSize(1));

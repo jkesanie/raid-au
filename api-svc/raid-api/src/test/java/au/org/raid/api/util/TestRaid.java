@@ -172,7 +172,7 @@ public class TestRaid {
             .schemaUri(TRADITIONAL_KNOWLEDGE_LABEL_SCHEMA_URI));
     public static final List<SpatialCoverage> SPATIAL_COVERAGES = List.of(new SpatialCoverage()
             .id(SPATIAL_COVERAGE_ID)
-            .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_NOMINATIM_OPENSTREETMAP_ORG_)
+            .schemaUri(SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_)
             .place(List.of(new SpatialCoveragePlace()
                     .text(SPATIAL_COVERAGE_PLACE_TEXT)
                     .language(LANGUAGE))));

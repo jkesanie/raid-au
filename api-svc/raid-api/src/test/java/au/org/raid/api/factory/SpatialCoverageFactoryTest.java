@@ -17,7 +17,7 @@ class SpatialCoverageFactoryTest {
     @DisplayName("Sets all fields")
     void setsAllFields() {
         final var id = "_id";
-        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
         final var places = List.of(new SpatialCoveragePlace());
 
         final var result = factory.create(id, schemaUri.getValue(), places);

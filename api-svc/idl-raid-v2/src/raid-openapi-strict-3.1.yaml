@@ -1637,10 +1637,6 @@ components:
       title: "SpatialCoverageSchemaUriEnum"
       type: "string"
       enum:
-      - "https://marineregions.org/gazetteer.php"
-      - "https://nominatim.openstreetmap.org/"
-      - "https://vocabulary.raid.org/spatialCoverage.schemaUri/1"
-      - "https://vocabulary.raid.org/spatialCoverage.schemaUri/2"
       - "https://www.geonames.org/"
       - "https://www.openstreetmap.org/"
     Subject:

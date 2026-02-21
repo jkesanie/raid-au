@@ -48,8 +48,6 @@ raid:
     port: 7432
   spatial-coverage:
     schema-uri:
-      nominatim-openstreetmap: https://nominatim.openstreetmap.org/
-      geonames: https://www.geonames.org/
       openstreetmap: https://www.openstreetmap.org/
   validation:
     geonames:

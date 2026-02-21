@@ -95,8 +95,6 @@ classes:
           - value: https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=1947835&class=boundary (Tundzha, Bulgaria, from OpenStreetMap)
           - value: https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=186382&class=boundary (Bulgaria, from OpenStreetMap)
           - value: https://nominatim.openstreetmap.org/ui/details.html?osmtype=W&osmid=26707240&class=historic (Pompeii, Italy, OpenStreetMap)
-          - value: https://www.geonames.org/264371/athens.html (Athens, Greece, from Geonames)
-          - value: https://www.geonames.org/2161776/katoomba.html (Katoomba, NSW, Australia, from Geonames)
         #any_of:
         #  - pattern: "^https:\/\/nominatim\\.openstreetmap\\.org\/"
         #  - pattern: "^https:\/\/www\\.geonames\\.org\/"

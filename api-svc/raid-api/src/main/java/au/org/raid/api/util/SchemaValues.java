@@ -66,8 +66,7 @@ public enum SchemaValues {
     INTERNAL_PROCESS_DOCUMENT_RELATED_OBJECT_CATEGORY("https://vocabulary.raid.org/relatedObject.category.id/192"),
 */
 
-    GEONAMES_SCHEMA_URI("https://www.geonames.org/"),
-    NOMINATIM_GEONAMES_SCHEMA_URI("https://nominatim.openstreetmap.org/"),
+    OPENSTREETMAP_SCHEMA_URI("https://www.openstreetmap.org/"),
 
 
     ARKS_SCHEMA("https://arks.org/"),

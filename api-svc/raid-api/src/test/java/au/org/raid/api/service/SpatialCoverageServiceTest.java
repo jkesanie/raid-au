@@ -43,7 +43,7 @@ class SpatialCoverageServiceTest {
     @DisplayName("create() saves new spatial coverage")
     void create() {
         final var handle = "_handle";
-        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
         final var schemaId = 123;
         final var uri = "_uri";
         final var id = 234;
@@ -76,7 +76,7 @@ class SpatialCoverageServiceTest {
     @DisplayName("create() throws SpatialCoverageSchemaNotFoundException")
     void createThrowsSpatialCoverageSchemaNotFoundException() {
         final var handle = "_handle";
-        final var schemaUri =SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+        final var schemaUri =SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
         final var uri = "_uri";
         final var place = new SpatialCoveragePlace();
 
@@ -99,7 +99,7 @@ class SpatialCoverageServiceTest {
     void findAllByHandle() {
         final var handle = "_handle";
         final var schemaId = 123;
-        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
         final var id = 234;
         final var uri = "_uri";
 
@@ -162,7 +162,7 @@ class SpatialCoverageServiceTest {
     @DisplayName("update() deletes and re-inserts spatial coverages")
     void update() {
         final var handle = "_handle";
-        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
         final var schemaId = 123;
         final var uri = "_uri";
         final var id = 234;

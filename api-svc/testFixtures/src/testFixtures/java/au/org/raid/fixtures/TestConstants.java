@@ -93,9 +93,9 @@ public class TestConstants {
     public static final LanguageSchemaURIEnum LANGUAGE_SCHEMA_URI = LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML;
     public static final String LANGUAGE_ID = "eng";
 
-    public static final String GEONAMES_MELBOURNE = "https://www.geonames.org/2158177/melbourne.html";
+    public static final String OPENSTREEMAP_MELBOURNE = "https://www.openstreetmap.org/relation/4246124";
 
-    public static final SpatialCoverageSchemaUriEnum GEONAMES_SCHEMA_URI = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
+    public static final SpatialCoverageSchemaUriEnum OPENSTREETMAP_SCHEMA_URI = SpatialCoverageSchemaUriEnum.HTTPS_WWW_OPENSTREETMAP_ORG_;
 
     public static final String CONTRIBUTOR_EMAIL = "authenticated@test.raid.org.au";
 }
