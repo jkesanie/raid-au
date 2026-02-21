@@ -799,6 +799,7 @@ components:
       description: ""
       enum:
       - "UNVERIFIED"
+      - "AWAITING_AUTHENTICATION"
       title: "ContributorStatusEnum"
       type: "string"
     Date:

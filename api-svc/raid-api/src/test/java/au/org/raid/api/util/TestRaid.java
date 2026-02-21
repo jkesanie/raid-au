@@ -73,8 +73,7 @@ public class TestRaid {
     public static final String SUBJECT_KEYWORD_TEXT =
             "unconstrained keyword or key phrase describing the project or activity";
     public static final String TRADITIONAL_KNOWLEDGE_LABEL_ID = "https://localcontexts.org/label/tk-attribution/";
-    public static final String TRADITIONAL_KNOWLEDGE_LABEL_SCHEMA_URI =
-            "https://localcontexts.org/labels/traditional-knowledge-labels/";
+    public static final TraditionalKnowledgeLabelSchemaUriEnum TRADITIONAL_KNOWLEDGE_LABEL_SCHEMA_URI = TraditionalKnowledgeLabelSchemaUriEnum.HTTPS_LOCALCONTEXTS_ORG_LABELS_TRADITIONAL_KNOWLEDGE_LABELS_;
     public static final String SPATIAL_COVERAGE_ID = "https://www.openstreetmap.org/relation/62422";
     public static final String SPATIAL_COVERAGE_SCHEMA_URI = "https://www.openstreetmap.org/";
     public static final String SPATIAL_COVERAGE_PLACE_TEXT = "Berliner Urstromtal";
@@ -137,13 +136,13 @@ public class TestRaid {
                     .endDate(ORGANISATION_ROLE_END_DATE))));
     public static final List<RelatedObject> RELATED_OBJECTS = List.of(new RelatedObject()
             .id(RELATED_OBJECT_ID)
-            .schemaUri(RelatedObjectSchemaUriEnum.HTTP_DOI_ORG_)
+            .schemaUri(RelatedObjectSchemaUriEnum.HTTPS_DOI_ORG_)
             .type(new RelatedObjectType()
                     .id(RelatedObjectTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_RELATED_OBJECT_TYPE_SCHEMA_247)
                     .schemaUri(RelatedObjectTypeSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_RELATED_OBJECT_TYPE_SCHEMA_329))
             .category(List.of(new RelatedObjectCategory()
                     .id(RelatedObjectCategoryIdEnum.HTTPS_VOCABULARY_RAID_ORG_RELATED_OBJECT_CATEGORY_ID_190)
-                    .schemaUri(RelatedObjectCategorySchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_RELATED_OBJECT_CATEGORY_SCHEMA_385))));
+                    .schemaUri(RelatedObjectCategorySchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_RELATED_OBJECT_CATEGORY_SCHEMA_URI_386))));
     public static final List<AlternateIdentifier> ALTERNATE_IDENTIFIERS = List.of(new AlternateIdentifier()
             .id(ALTERNATE_IDENTIFIER_ID)
             .type(ALTERNATE_IDENTIFIER_TYPE));

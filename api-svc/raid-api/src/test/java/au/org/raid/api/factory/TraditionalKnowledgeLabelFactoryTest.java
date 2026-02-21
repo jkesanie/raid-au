@@ -13,11 +13,11 @@ class TraditionalKnowledgeLabelFactoryTest {
     @DisplayName("Sets all fields")
     void setsAllFields() {
         final var id = "_id";
-        final var schemaUri = "schema-uri";
+        final var schemaUri = "https://localcontexts.org/labels/traditional-knowledge-labels/";
 
         final var result = factory.create(id, schemaUri);
 
         assertThat(result.getId(), is(id));
-        assertThat(result.getSchemaUri(), is(schemaUri));
+        assertThat(result.getSchemaUri().getValue(), is(schemaUri));
     }
 }

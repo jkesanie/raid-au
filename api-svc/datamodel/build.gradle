@@ -95,6 +95,10 @@ tasks.register('generateExtendedReferenceDataV2', GenerateReferenceDataTask) {
   schemaID = 3
 }
 
+tasks.register('copyRequirements', Copy) {
+  from './src/requirements.txt'
+  into './generated/'
+}
 
 tasks.register('generateStrictJsonSchemaV2', AddStaticEnums) {
   dependsOn "generateJSONSchemaV2"
@@ -112,6 +116,6 @@ tasks.register('generateAllV2') {
   dependsOn "generateSchemaDocsV2"
   dependsOn "generateDatamodelDocsV2"
   dependsOn "generateSchemaOrgDocsV2"
-
+  dependsOn "copyRequirements"
 
 }

@@ -74,7 +74,7 @@ public enum SchemaValues {
     ISBN_SCHEMA("https://www.isbn-international.org/"),
     RRID_SCHEMA("https://scicrunch.org/resolver/"),
     ARCHIVE_ORG_SCHEMA("https://archive.org/"),
-    DOI_SCHEMA("http://doi.org/"),
+    DOI_SCHEMA("https://doi.org/"),
 
     SUBJECT_SCHEMA_URI("https://vocabs.ardc.edu.au/viewById/316"),
 
