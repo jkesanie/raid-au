@@ -1,9 +1,6 @@
 package au.org.raid.inttest;
 
-import au.org.raid.idl.raidv2.model.Description;
-import au.org.raid.idl.raidv2.model.DescriptionType;
-import au.org.raid.idl.raidv2.model.Language;
-import au.org.raid.idl.raidv2.model.ValidationFailure;
+import au.org.raid.idl.raidv2.model.*;
 import au.org.raid.inttest.factory.RaidUpdateRequestFactory;
 import au.org.raid.inttest.service.Handle;
 import au.org.raid.inttest.service.RaidApiValidationException;
@@ -386,91 +383,91 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
     void happyPath() {
         final var acknowledgements = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/392")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_392)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Acknowledgements")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var alternative = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/319")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_319)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Alternative")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
 
         final var primary = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/318")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_318)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Primary")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var brief = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/3")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_3)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Brief")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var methods = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/8")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_8)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Methods")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var objectives = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/7")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_7)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Objectives")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var other = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/6")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_6)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Other")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         final var significanceStatement = new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/9")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_9)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Significance Statement")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 );
 
         createRequest.description(List.of(
@@ -516,13 +513,13 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
 
         mintedRaid.getDescription().add(new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/392")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_392)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Acknowledgements")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 ));
 
         final var updateResponse1 =
@@ -534,13 +531,13 @@ public class DescriptionIntegrationTest extends AbstractIntegrationTest {
 
         updatedRaid1.getDescription().add(new Description()
                 .type(new DescriptionType()
-                        .id("https://vocabulary.raid.org/description.type.schema/7")
-                        .schemaUri("https://vocabulary.raid.org/description.type.schema/320")
+                        .id(DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_7)
+                        .schemaUri(DescriptionTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_320)
                 )
                 .text("Objectives")
                 .language(new Language()
                         .id("eng")
-                        .schemaUri("https://www.iso.org/standard/74575.html")
+                        .schemaUri(LanguageSchemaURIEnum.HTTPS_WWW_ISO_ORG_STANDARD_74575_HTML)
                 ));
 
         final var updateResponse2 =

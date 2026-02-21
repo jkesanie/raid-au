@@ -34,12 +34,12 @@ class ContributorPositionValidatorTest {
     private static final ContributorPositionSchemaRecord CONTRIBUTOR_POSITION_TYPE_SCHEMA_RECORD =
             new ContributorPositionSchemaRecord()
                     .setId(CONTRIBUTOR_POSITION_TYPE_SCHEMA_ID)
-                    .setUri(CONTRIBUTOR_POSITION_SCHEMA_URI);
+                    .setUri(CONTRIBUTOR_POSITION_SCHEMA_URI.getValue());
 
     private static final ContributorPositionRecord CONTRIBUTOR_POSITION_TYPE_RECORD =
             new ContributorPositionRecord()
                     .setSchemaId(CONTRIBUTOR_POSITION_TYPE_SCHEMA_ID)
-                    .setUri(LEADER_CONTRIBUTOR_POSITION);
+                    .setUri(LEADER_CONTRIBUTOR_POSITION.getValue());
 
 
     @Mock

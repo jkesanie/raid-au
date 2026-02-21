@@ -89,11 +89,11 @@
       "role": [
         {
           "schemaUri": "https://credit.niso.org/",
-          "id": "https://credit.niso.org/contributor-role/formal-analysis/"
+          "id": "https://credit.niso.org/contributor-roles/formal-analysis/"
         },
         {
           "schemaUri": "https://credit.niso.org/",
-          "id": "https://credit.niso.org/contributor-role/investigation/"
+          "id": "https://credit.niso.org/contributor-roles/investigation/"
         }
       ]
     },
@@ -110,7 +110,7 @@
       "role": [
         {
           "schemaUri": "https://credit.niso.org/",
-          "id": "https://credit.niso.org/contributor-role/project-administration/"
+          "id": "https://credit.niso.org/contributor-roles/project-administration/"
         }
       ]
     }

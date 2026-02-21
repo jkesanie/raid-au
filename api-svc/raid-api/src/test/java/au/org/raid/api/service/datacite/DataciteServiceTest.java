@@ -38,7 +38,8 @@ public class DataciteServiceTest {
 
     @Test
     @DisplayName("Sends Datacite request on mint")
-    void mint() {
+    void
+    mint() {
         final var repositoryId = "repository-id";
         final var password = "_password";
         final var handle = "_handle";

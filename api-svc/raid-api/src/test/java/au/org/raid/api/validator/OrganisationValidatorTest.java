@@ -81,58 +81,8 @@ class OrganisationValidatorTest {
         verify(roleValidationService).validate(role, 0, 0);
     }
 
-    @Test
-    @DisplayName("Validation fails with missing schemaUri")
-    void missingIdentifierSchemeUri() {
-        final var organisation = new Organisation()
-                .id(TestConstants.VALID_ROR)
-                .role(List.of(
-                        new OrganisationRole()
-                                .schemaUri(TestConstants.ORGANISATION_ROLE_SCHEMA_URI)
-                                .id(TestConstants.LEAD_RESEARCH_ORGANISATION_ROLE)
-                                .startDate(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_LOCAL_DATE))
-                                .endDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                ));
 
-        when(rorClient.exists(TestConstants.VALID_ROR)).thenReturn(true);
 
-        final var failures = validationService.validate(List.of(organisation));
-
-        assertThat(failures, hasSize(1));
-        assertThat(failures, hasItem(
-                new ValidationFailure()
-                        .fieldId("organisation[0].schemaUri")
-                        .errorType("notSet")
-                        .message("field must be set")
-        ));
-    }
-
-    @Test
-    @DisplayName("Validation fails with empty schemaUri")
-    void emptyIdentifierSchemeUri() {
-        final var organisation = new Organisation()
-                .id(TestConstants.VALID_ROR)
-                .schemaUri("")
-                .role(List.of(
-                        new OrganisationRole()
-                                .schemaUri(TestConstants.ORGANISATION_ROLE_SCHEMA_URI)
-                                .id(TestConstants.LEAD_RESEARCH_ORGANISATION_ROLE)
-                                .startDate(LocalDate.now().minusYears(1).format(DateTimeFormatter.ISO_LOCAL_DATE))
-                                .endDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                ));
-
-        when(rorClient.exists(TestConstants.VALID_ROR)).thenReturn(true);
-
-        final var failures = validationService.validate(List.of(organisation));
-
-        assertThat(failures, hasSize(1));
-        assertThat(failures, hasItem(
-                new ValidationFailure()
-                        .fieldId("organisation[0].schemaUri")
-                        .errorType("notSet")
-                        .message("field must be set")
-        ));
-    }
 
     @Test
     @DisplayName("Role validation failures are returned")

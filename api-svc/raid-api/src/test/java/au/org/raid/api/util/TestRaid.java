@@ -125,7 +125,7 @@ public class TestRaid {
                     .endDate(CONTRIBUTOR_POSITION_END_DATE)
             ))
             .role(List.of(new ContributorRole()
-                    .id(ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLE_CONCEPTUALIZATION_)
+                    .id(ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLES_CONCEPTUALIZATION_)
                     .schemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_))));
     public static final List<Organisation> ORGANISATIONS = List.of(new Organisation()
             .id(ORGANISATION_ID)

@@ -32,12 +32,12 @@ class OrganisationRoleValidatorTest {
     private static final OrganisationRoleSchemaRecord ORGANISATION_ROLE_SCHEMA_RECORD =
             new OrganisationRoleSchemaRecord()
                     .setId(ORGANISATION_ROLE_SCHEMA_ID)
-                    .setUri(ORGANISATION_ROLE_SCHEMA_URI);
+                    .setUri(ORGANISATION_ROLE_SCHEMA_URI.getValue());
 
     private static final OrganisationRoleRecord ORGANISATION_ROLE_RECORD =
             new OrganisationRoleRecord()
                     .setSchemaId(ORGANISATION_ROLE_SCHEMA_ID)
-                    .setUri(LEAD_RESEARCH_ORGANISATION_ROLE);
+                    .setUri(LEAD_RESEARCH_ORGANISATION_ROLE.getValue());
 
     @Mock
     private OrganisationRoleSchemaRepository contributorRoleSchemaRepository;

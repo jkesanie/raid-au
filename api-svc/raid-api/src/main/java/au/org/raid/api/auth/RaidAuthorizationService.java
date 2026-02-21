@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.function.Supplier;
 
 import static au.org.raid.api.config.SecurityConfig.SecurityConstants.*;
@@ -113,7 +114,7 @@ public class RaidAuthorizationService {
 
             // Allow access if user's service point owns the raid
             return new AuthorizationDecision(
-                    raid.getIdentifier().getOwner().getServicePoint().equals(servicePoint.getId())
+                    raid.getIdentifier().getOwner().getServicePoint().equals(BigDecimal.valueOf(servicePoint.getId()))
             );
         } catch (Exception e) {
             log.error("Error checking service point user access", e);
@@ -173,7 +174,7 @@ public class RaidAuthorizationService {
                     .orElseThrow(() -> new ResourceNotFoundException(handle));
 
             return new AuthorizationDecision(
-                    raid.getIdentifier().getOwner().getServicePoint().equals(servicePoint.getId())
+                    raid.getIdentifier().getOwner().getServicePoint().equals(BigDecimal.valueOf(servicePoint.getId()))
             );
         } catch (Exception e) {
             log.error("Error checking service point ownership", e);

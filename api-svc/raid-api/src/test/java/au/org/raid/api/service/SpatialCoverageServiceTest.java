@@ -43,14 +43,14 @@ class SpatialCoverageServiceTest {
     @DisplayName("create() saves new spatial coverage")
     void create() {
         final var handle = "_handle";
-        final var schemaUri = "schema-uri";
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
         final var schemaId = 123;
         final var uri = "_uri";
         final var id = 234;
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri.getValue()))
                 .id(uri)
                 .place(List.of(place));
 
@@ -61,7 +61,7 @@ class SpatialCoverageServiceTest {
         final var saved = new RaidSpatialCoverageRecord()
                 .setId(id);
 
-        when(spatialCoverageSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(schemaRecord));
+        when(spatialCoverageSchemaRepository.findByUri(schemaUri.getValue())).thenReturn(Optional.of(schemaRecord));
 
         when(raidSpatialCoverageRecordFactory.create(uri, handle, schemaId)).thenReturn(record);
 
@@ -76,16 +76,16 @@ class SpatialCoverageServiceTest {
     @DisplayName("create() throws SpatialCoverageSchemaNotFoundException")
     void createThrowsSpatialCoverageSchemaNotFoundException() {
         final var handle = "_handle";
-        final var schemaUri = "schema-uri";
+        final var schemaUri =SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
         final var uri = "_uri";
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri.getValue()))
                 .id(uri)
                 .place(List.of(place));
 
-        when(spatialCoverageSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.empty());
+        when(spatialCoverageSchemaRepository.findByUri(schemaUri.getValue())).thenReturn(Optional.empty());
 
         assertThrows(SpatialCoverageSchemaNotFoundException.class, () -> spatialCoverageService.create(List.of(spatialCoverage), handle));
 
@@ -99,7 +99,7 @@ class SpatialCoverageServiceTest {
     void findAllByHandle() {
         final var handle = "_handle";
         final var schemaId = 123;
-        final var schemaUri = "schema-uri";
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
         final var id = 234;
         final var uri = "_uri";
 
@@ -109,7 +109,7 @@ class SpatialCoverageServiceTest {
                 .setUri(uri);
 
         final var spatialCoverageSchemaRecord = new SpatialCoverageSchemaRecord()
-                .setUri(schemaUri);
+                .setUri(schemaUri.getValue());
 
         final var place = new SpatialCoveragePlace();
         final var spatialCoverage = new SpatialCoverage();
@@ -117,7 +117,7 @@ class SpatialCoverageServiceTest {
         when(raidSpatialCoverageRepository.findAllByHandle(handle)).thenReturn(List.of(raidSpatialCoverageRecord));
         when(spatialCoverageSchemaRepository.findById(schemaId)).thenReturn(Optional.of(spatialCoverageSchemaRecord));
         when(raidSpatialCoveragePlaceService.findAllByRaidSpatialCoverageId(id)).thenReturn(List.of(place));
-        when(spatialCoverageFactory.create(uri, schemaUri, List.of(place))).thenReturn(spatialCoverage);
+        when(spatialCoverageFactory.create(uri, schemaUri.getValue(), List.of(place))).thenReturn(spatialCoverage);
 
         assertThat(spatialCoverageService.findAllByHandle(handle), is(List.of(spatialCoverage)));
     }
@@ -162,14 +162,14 @@ class SpatialCoverageServiceTest {
     @DisplayName("update() deletes and re-inserts spatial coverages")
     void update() {
         final var handle = "_handle";
-        final var schemaUri = "schema-uri";
+        final var schemaUri = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
         final var schemaId = 123;
         final var uri = "_uri";
         final var id = 234;
         final var place = new SpatialCoveragePlace();
 
         final var spatialCoverage = new SpatialCoverage()
-                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri))
+                .schemaUri(SpatialCoverageSchemaUriEnum.fromValue(schemaUri.getValue()))
                 .id(uri)
                 .place(List.of(place));
 
@@ -180,7 +180,7 @@ class SpatialCoverageServiceTest {
         final var saved = new RaidSpatialCoverageRecord()
                 .setId(id);
 
-        when(spatialCoverageSchemaRepository.findByUri(schemaUri)).thenReturn(Optional.of(schemaRecord));
+        when(spatialCoverageSchemaRepository.findByUri(schemaUri.getValue())).thenReturn(Optional.of(schemaRecord));
 
         when(raidSpatialCoverageRecordFactory.create(uri, handle, schemaId)).thenReturn(record);
 

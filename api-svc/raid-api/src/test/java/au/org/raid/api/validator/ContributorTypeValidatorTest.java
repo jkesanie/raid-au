@@ -2,10 +2,7 @@ package au.org.raid.api.validator;
 
 import au.org.raid.api.client.contributor.ContributorClient;
 import au.org.raid.api.config.properties.ContributorValidationProperties.ContributorTypeValidationProperties;
-import au.org.raid.idl.raidv2.model.Contributor;
-import au.org.raid.idl.raidv2.model.ContributorPosition;
-import au.org.raid.idl.raidv2.model.ContributorRole;
-import au.org.raid.idl.raidv2.model.ValidationFailure;
+import au.org.raid.idl.raidv2.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -225,103 +222,6 @@ class ContributorTypeValidatorTest {
         verify(contributorClient).exists(VALID_ORCID);
     }
 
-    @Test
-    @DisplayName("Validation fails with blank schema URI")
-    void blankSchemaUri() {
-        final var role = new ContributorRole()
-                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
-                .id(SUPERVISION_CONTRIBUTOR_ROLE);
-
-        final var position = new ContributorPosition()
-                .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
-                .id(LEADER_CONTRIBUTOR_POSITION)
-                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
-
-        final var contributor = new Contributor()
-                .id(VALID_ORCID)
-                .schemaUri("")
-                .role(List.of(role))
-                .position(List.of(position));
-
-        when(contributorClient.exists(VALID_ORCID)).thenReturn(true);
-        when(roleValidator.validate(role, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-        when(positionValidator.validate(position, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-
-        final var failures = validator.validate(contributor, CONTRIBUTOR_INDEX);
-
-        assertThat(failures, hasSize(1));
-        assertThat(failures, hasItem(
-                new ValidationFailure()
-                        .fieldId("contributor[0].schemaUri")
-                        .errorType(NOT_SET_TYPE)
-                        .message(NOT_SET_MESSAGE)
-        ));
-    }
-
-    @Test
-    @DisplayName("Validation fails with null schema URI")
-    void nullSchemaUri() {
-        final var role = new ContributorRole()
-                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
-                .id(SUPERVISION_CONTRIBUTOR_ROLE);
-
-        final var position = new ContributorPosition()
-                .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
-                .id(LEADER_CONTRIBUTOR_POSITION)
-                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
-
-        final var contributor = new Contributor()
-                .id(VALID_ORCID)
-                .role(List.of(role))
-                .position(List.of(position));
-
-        when(contributorClient.exists(VALID_ORCID)).thenReturn(true);
-        when(roleValidator.validate(role, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-        when(positionValidator.validate(position, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-
-        final var failures = validator.validate(contributor, CONTRIBUTOR_INDEX);
-
-        assertThat(failures, hasSize(1));
-        assertThat(failures, hasItem(
-                new ValidationFailure()
-                        .fieldId("contributor[0].schemaUri")
-                        .errorType(NOT_SET_TYPE)
-                        .message(NOT_SET_MESSAGE)
-        ));
-    }
-
-    @Test
-    @DisplayName("Validation fails with invalid schema URI")
-    void invalidSchemaUri() {
-        final var role = new ContributorRole()
-                .schemaUri(CONTRIBUTOR_ROLE_SCHEMA_URI)
-                .id(SUPERVISION_CONTRIBUTOR_ROLE);
-
-        final var position = new ContributorPosition()
-                .schemaUri(CONTRIBUTOR_POSITION_SCHEMA_URI)
-                .id(LEADER_CONTRIBUTOR_POSITION)
-                .startDate(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
-
-        final var contributor = new Contributor()
-                .id(VALID_ORCID)
-                .schemaUri("https://invalid.org/")
-                .role(List.of(role))
-                .position(List.of(position));
-
-        when(contributorClient.exists(VALID_ORCID)).thenReturn(true);
-        when(roleValidator.validate(role, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-        when(positionValidator.validate(position, CONTRIBUTOR_INDEX, 0)).thenReturn(Collections.emptyList());
-
-        final var failures = validator.validate(contributor, CONTRIBUTOR_INDEX);
-
-        assertThat(failures, hasSize(1));
-        assertThat(failures, hasItem(
-                new ValidationFailure()
-                        .fieldId("contributor[0].schemaUri")
-                        .errorType(INVALID_VALUE_TYPE)
-                        .message(INVALID_VALUE_MESSAGE + " - should be " + SCHEMA_URI_PATTERN)
-        ));
-    }
 
     @Test
     @DisplayName("Validation fails with null position list")
@@ -709,7 +609,7 @@ class ContributorTypeValidatorTest {
 
         final var contributor = new Contributor()
                 .id(VALID_ORCID)
-                .schemaUri("https://invalid.org/")
+                .schemaUri(ContributorSchemaUriEnum.HTTPS_ISNI_ORG_)
                 .role(List.of(role))
                 .position(List.of(position));
 

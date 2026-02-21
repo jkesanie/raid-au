@@ -1,5 +1,6 @@
 package au.org.raid.inttest;
 
+import au.org.raid.idl.raidv2.model.SpatialCoverageSchemaUriEnum;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
 import au.org.raid.inttest.service.RaidApiValidationException;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
     public static String NONEXISTENT_TEST_GEONAMES_URI = "https://www.geonames.org/0/not-found.html";
     public static String SERVER_ERROR_TEST_GEONAMES_URI = "https://www.geonames.org/0/server-error.html";
     public static String NONEXISTENT_TEST_OPENSTREETMAP_URI = "https://www.openstreetmap.org/not-found";
+    public static String NONEXISTENT_TEST_NOMINATIM_OPENSTREETMAP_URI = "https://nominatim.openstreetmap.org/not-found";
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with an invalid uri fails")
     void invalidId() {
@@ -36,8 +38,8 @@ public class SpatialCoverageIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Minting a RAiD with a spatial coverage with an non-existent OpenStreetMap uri fails")
     void nonExistentUri_OpenStreetMap() {
-        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_OPENSTREETMAP_URI);
-        createRequest.getSpatialCoverage().get(0).setSchemaUri("https://www.openstreetmap.org/");
+        createRequest.getSpatialCoverage().get(0).setId(NONEXISTENT_TEST_NOMINATIM_OPENSTREETMAP_URI);
+        createRequest.getSpatialCoverage().get(0).setSchemaUri(SpatialCoverageSchemaUriEnum.HTTPS_NOMINATIM_OPENSTREETMAP_ORG_);
 
         try {
             raidApi.mintRaid(createRequest);

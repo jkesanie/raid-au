@@ -67,7 +67,7 @@ public class SubjectValidator {
                 failure.setErrorType(NOT_SET_TYPE);
 
                 failures.add(failure);
-            } else if (!subjectTypeSchemaUris.contains(subject.getSchemaUri())) {
+            } else if (!subjectTypeSchemaUris.contains(subject.getSchemaUri().getValue())) {
                 final var failure = new ValidationFailure();
                 failure.setFieldId(String.format("subject[%d].schemaUri", subjectIndex));
                 failure.setMessage(String.format("must be %s.", SchemaValues.SUBJECT_SCHEMA_URI.getUri()));
@@ -75,7 +75,7 @@ public class SubjectValidator {
 
                 failures.add(failure);
             } else if (
-                    subject.getId() != null && !subject.getId().startsWith(subjectIdStartsWithMap.get(subject.getSchemaUri()))
+                    subject.getId() != null && !subject.getId().startsWith(subjectIdStartsWithMap.get(subject.getSchemaUri().getValue()))
             ) {
                 final var failure = new ValidationFailure();
                 failure.setFieldId(String.format("subject[%d].id", subjectIndex));
@@ -86,7 +86,7 @@ public class SubjectValidator {
             } else if (subject.getId() != null){
                 final var subjectId = subject.getId().substring(subject.getId().lastIndexOf('/') + 1);
 
-                final var schemaId = subjectTypeSchemaMap.get(subject.getSchemaUri());
+                final var schemaId = subjectTypeSchemaMap.get(subject.getSchemaUri().getValue());
 
                 if (schemaId != null) {
                     final Optional<SubjectTypeRecord> subjectTypeRecord = subjectTypeRepository.findByIdAndSchemaId(subjectId, schemaId);

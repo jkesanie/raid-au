@@ -72,7 +72,7 @@ public class OrganisationValidator {
                         .errorType(NOT_SET_TYPE)
                         .message(NOT_SET_MESSAGE)
                 );
-            } else if (!organisation.getSchemaUri().equals(ROR_SCHEMA_URI)) {
+            } else if (!organisation.getSchemaUri().getValue().equals(ROR_SCHEMA_URI)) {
                 failures.add(new ValidationFailure()
                         .fieldId("organisation[%d].schemaUri")
                         .errorType(INVALID_VALUE_TYPE)

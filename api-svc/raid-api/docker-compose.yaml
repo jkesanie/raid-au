@@ -9,7 +9,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - 7432:5432
+      - "7432:5432"
     environment:
       POSTGRES_PASSWORD: supersecret
       POSTGRES_DB: raido

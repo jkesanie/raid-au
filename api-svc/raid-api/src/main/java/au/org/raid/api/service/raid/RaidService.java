@@ -273,7 +273,7 @@ public class RaidService {
         return raids;
     }
 
-    public void postToDatacite(@Valid RaidDto raid) {
+    public void postToDatacite(RaidDto raid) {
         final var handle = new Handle(raid.getIdentifier().getId());
 
         //TODO: Check prefix

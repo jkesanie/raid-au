@@ -1,6 +1,7 @@
 package au.org.raid.api.util;
 
-import au.org.raid.idl.raidv2.model.ContributorRoleSchemaUriEnum;
+import au.org.raid.idl.raidv2.model.*;
+
 import java.time.LocalDate;
 
 public class TestConstants {
@@ -31,34 +32,31 @@ public class TestConstants {
     public static final String UNKNOWN_TITLE_TYPE =
             "https://github.com/au-research/raid-metadata/blob/main/scheme/title/type/v1/unknown.json";
 
-    public static final String ORCID_SCHEMA_URI = "https://orcid.org/";
+    public static final ContributorSchemaUriEnum ORCID_SCHEMA_URI = ContributorSchemaUriEnum.HTTPS_ORCID_ORG_;
 
-    public static final String ISNI_SCHEMA_URI = "https://isni.org/";
+    public static final ContributorSchemaUriEnum ISNI_SCHEMA_URI = ContributorSchemaUriEnum.HTTPS_ISNI_ORG_;
 
     public static final ContributorRoleSchemaUriEnum CONTRIBUTOR_ROLE_SCHEMA_URI = ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_;
 
-    public static final String SUPERVISION_CONTRIBUTOR_ROLE =
-            "https://github.com/au-research/raid-metadata/blob/main/scheme/contributor/role/v1/supervision.json";
+    public static final ContributorRoleIdEnum SUPERVISION_CONTRIBUTOR_ROLE = ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLES_SUPERVISION_;
 
-    public static final String CONTRIBUTOR_POSITION_SCHEMA_URI =
-            "https://github.com/au-research/raid-metadata/tree/main/scheme/contributor/position/v1";
+    public static final ContributorPositionSchemaUriEnum CONTRIBUTOR_POSITION_SCHEMA_URI = ContributorPositionSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_305;
 
-    public static final String LEADER_CONTRIBUTOR_POSITION =
-            "https://github.com/au-research/raid-metadata/blob/main/scheme/contributor/position/v1/leader.json";
+    public static final ContributorPositionIdEnum LEADER_CONTRIBUTOR_POSITION = ContributorPositionIdEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_307;
+
+    public static final String UUID = "cfcda544-9f87-43b4-97d7-e282d18799bb";
 
     public static final String VALID_ORCID = "https://orcid.org/0000-0000-0000-0001";
 
     public static final String VALID_ISNI = "https://isni.org/0000000078519858";
 
-    public static final String ORGANISATION_ROLE_SCHEMA_URI =
-            "https://github.com/au-research/raid-metadata/tree/main/scheme/organisation/role/v1";
+    public static final OrganizationRoleSchemaUriEnum ORGANISATION_ROLE_SCHEMA_URI = OrganizationRoleSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_359;
 
-    public static final String LEAD_RESEARCH_ORGANISATION_ROLE =
-            "https://github.com/au-research/raid-metadata/blob/main/scheme/organisation/role/v1/lead-research-organisation.json";
+    public static final OrganizationRoleIdEnum LEAD_RESEARCH_ORGANISATION_ROLE = OrganizationRoleIdEnum.HTTPS_VOCABULARY_RAID_ORG_ORGANISATION_ROLE_SCHEMA_182;
 
     public static final String VALID_ROR = "https://ror.org/038sjwq14";
 
-    public static final String HTTPS_ROR_ORG = "https://ror.org/";
+    public static final OrganizationSchemaUriEnum HTTPS_ROR_ORG = OrganizationSchemaUriEnum.HTTPS_ROR_ORG_;
 
     public static final String BOOK_CHAPTER_RELATED_OBJECT_TYPE =
             "https://github.com/au-research/raid-metadata/blob/main/scheme/related-object/related-object-type/book-chapter.json";

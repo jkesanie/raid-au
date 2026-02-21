@@ -200,7 +200,7 @@ class SubjectValidatorTest {
     @Test
     @DisplayName("Keyword validation failures are returned")
     void addsKeywordFailures() {
-        final var idStartsWith = "https://linked.data.gov.au/def/anzsrc-for/2020/";
+        final var idStartsWith = "https://vocabs.ardc.edu.au/viewById/316/";
         final var subjectId = "222222";
         final var id = idStartsWith.concat(subjectId);
         final var keyword = new SubjectKeyword();

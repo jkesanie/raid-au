@@ -67,6 +67,7 @@ public enum SchemaValues {
 */
 
     GEONAMES_SCHEMA_URI("https://www.geonames.org/"),
+    NOMINATIM_GEONAMES_SCHEMA_URI("https://nominatim.openstreetmap.org/"),
 
 
     ARKS_SCHEMA("https://arks.org/"),

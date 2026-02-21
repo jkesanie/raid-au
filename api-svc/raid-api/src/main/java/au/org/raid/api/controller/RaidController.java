@@ -71,7 +71,7 @@ public class RaidController implements RaidApi {
     }
 
     @Override
-    public ResponseEntity<RaidDto> mintRaid(final RaidCreateRequest request) {
+    public ResponseEntity<RaidDto> mintRaid(@Valid  final RaidCreateRequest request) {
         final var servicePointId = getServicePointId();
 
         final var failures = new ArrayList<>(validationService.validateForCreate(request));

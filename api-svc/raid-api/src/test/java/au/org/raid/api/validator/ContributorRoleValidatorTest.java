@@ -30,12 +30,12 @@ class ContributorRoleValidatorTest {
     private static final ContributorRoleSchemaRecord CONTRIBUTOR_ROLE_TYPE_SCHEMA_RECORD =
             new ContributorRoleSchemaRecord()
                     .setId(CONTRIBUTOR_ROLE_TYPE_SCHEMA_ID)
-                    .setUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI);
+                    .setUri(TestConstants.CONTRIBUTOR_ROLE_SCHEMA_URI.getValue());
 
     private static final ContributorRoleRecord CONTRIBUTOR_ROLE_TYPE_RECORD =
             new ContributorRoleRecord()
                     .setSchemaId(CONTRIBUTOR_ROLE_TYPE_SCHEMA_ID)
-                    .setUri(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE);
+                    .setUri(TestConstants.SUPERVISION_CONTRIBUTOR_ROLE.getValue());
 
     @Mock
     private ContributorRoleSchemaRepository contributorRoleSchemaRepository;

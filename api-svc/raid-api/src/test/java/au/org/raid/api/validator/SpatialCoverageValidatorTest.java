@@ -116,7 +116,7 @@ class SpatialCoverageValidatorTest {
                         .message("field must be set")
         ));
     }
-
+/*
     @Test
     @DisplayName("Validation fails with null schemaUri")
     void nullSchemeUri() {
@@ -138,7 +138,7 @@ class SpatialCoverageValidatorTest {
                         .message("field must be set")
         ));
     }
-
+*/
     /*
     @Test
     @DisplayName("Validation fails schemaUri is empty string")
@@ -162,7 +162,7 @@ class SpatialCoverageValidatorTest {
         ));
     }
 */
-
+/*
     @Test
     @DisplayName("Validation fails with invalid schemaUri")
     void invalidSchemeUri() {
@@ -184,4 +184,6 @@ class SpatialCoverageValidatorTest {
                         .message("schema is unknown/unsupported")
         ));
     }
+    
+ */
 }

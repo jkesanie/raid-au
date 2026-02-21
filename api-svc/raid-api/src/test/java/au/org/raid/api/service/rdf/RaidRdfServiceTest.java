@@ -194,7 +194,7 @@ class RaidRdfServiceTest {
         
         var roles = new ArrayList<ContributorRole>();
         var role = new ContributorRole();
-        role.setId(ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLE_CONCEPTUALIZATION_);
+        role.setId(ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLES_CONCEPTUALIZATION_);
         role.setSchemaUri(ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_);
         roles.add(role);
         contributor.setRole(roles);

@@ -5,6 +5,7 @@ import au.org.raid.api.client.contributor.orcid.OrcidClient;
 import au.org.raid.api.model.datacite.DataciteCreator;
 import au.org.raid.api.model.datacite.NameIdentifier;
 import au.org.raid.idl.raidv2.model.Contributor;
+import au.org.raid.idl.raidv2.model.ContributorSchemaUriEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,9 @@ public class DataciteCreatorFactory {
         final var creator = new DataciteCreator();
         String name;
 
-        if (contributor.getSchemaUri().equals(ORCID_SCHEMA_URI)) {
+        if (contributor.getSchemaUri().equals(ContributorSchemaUriEnum.HTTPS_ORCID_ORG_)) {
             name = orcidClient.getName(contributor.getId());
-        } else if (contributor.getSchemaUri().equals(ISNI_SCHEMA_URI)) {
+        } else if (contributor.getSchemaUri().equals(ContributorSchemaUriEnum.HTTPS_ISNI_ORG_)) {
             name = isniClient.getName(contributor.getId());
         } else {
             throw new RuntimeException("Unsupported contributor schema %s".formatted(contributor.getSchemaUri()));
@@ -45,7 +46,7 @@ public class DataciteCreatorFactory {
                 new NameIdentifier()
                         .setNameIdentifier(contributor.getId())
                         .setSchemeUri(contributor.getSchemaUri().getValue())
-                        .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri()))
+                        .setNameIdentifierScheme(NAME_IDENTIFIER_SCHEMA_MAP.get(contributor.getSchemaUri().getValue()))
         ));
 
         return creator;

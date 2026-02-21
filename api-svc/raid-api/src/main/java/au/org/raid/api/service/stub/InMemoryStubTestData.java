@@ -27,4 +27,7 @@ public class InMemoryStubTestData {
 
     public static String NONEXISTENT_TEST_OPENSTREETMAP_URI = "https://www.openstreetmap.org/not-found";
     public static String SERVER_ERROR_TEST_OPENSTREETMAP_URI = "https://www.openstreetmap.org/server-error";
+
+    public static String NONEXISTENT_TEST_NOMINATIM_OPENSTREETMAP_URI = "https://nominatim.openstreetmap.org/not-found";
 }
+

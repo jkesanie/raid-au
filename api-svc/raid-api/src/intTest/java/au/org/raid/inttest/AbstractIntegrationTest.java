@@ -80,8 +80,8 @@ public class AbstractIntegrationTest {
 
     public Contributor isniContributor(
             final String isni,
-            final String position,
-            final String role,
+            final ContributorPositionIdEnum position,
+            final ContributorRoleIdEnum role,
             final LocalDate startDate,
             final String status
     ) {
@@ -90,7 +90,7 @@ public class AbstractIntegrationTest {
                 .id(isni)
                 .contact(true)
                 .leader(true)
-                .schemaUri(ISNI_SCHEMA_URI)
+                .schemaUri(ContributorSchemaUriEnum.HTTPS_ISNI_ORG_)
                 .position(List.of(new ContributorPosition()
                         .schemaUri(ContributorPositionSchemaUriEnum.HTTPS_VOCABULARY_RAID_ORG_CONTRIBUTOR_POSITION_SCHEMA_305)
                         .id(position)

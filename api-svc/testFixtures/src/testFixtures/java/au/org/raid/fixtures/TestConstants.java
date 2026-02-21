@@ -3,6 +3,9 @@ package au.org.raid.fixtures;
 import au.org.raid.idl.raidv2.model.*;
 
 public class TestConstants {
+
+    public static final RaidIdentifierSchemaURIEnum RAID_IDENTIFIER_SCHEMA = RaidIdentifierSchemaURIEnum.HTTPS_RAID_ORG_;
+
     public static final String REAL_TEST_ORCID = "https://sandbox.orcid.org/0009-0002-5128-5184";
     public static final String REAL_TEST_ISNI = "https://isni.org/isni/0000000078519858";
     public static final String REAL_TEST_ROR = "https://ror.org/038sjwq14";
@@ -42,8 +45,7 @@ public class TestConstants {
     public static final TitleTypeSchemaURIEnum TITLE_TYPE_SCHEMA_URI =
             TitleTypeSchemaURIEnum.HTTPS_VOCABULARY_RAID_ORG_TITLE_TYPE_SCHEMA_376;
 
-    public static final String PRIMARY_DESCRIPTION_TYPE =
-            "https://vocabulary.raid.org/description.type.schema/318";
+    public static final DescriptionTypeIdEnum PRIMARY_DESCRIPTION_TYPE = DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_318;
 
     public static final DescriptionTypeIdEnum ALTERNATIVE_DESCRIPTION_TYPE =
             DescriptionTypeIdEnum.HTTPS_VOCABULARY_RAID_ORG_DESCRIPTION_TYPE_SCHEMA_319;
@@ -65,7 +67,7 @@ public class TestConstants {
     public static final ContributorRoleSchemaUriEnum CONTRIBUTOR_ROLE_SCHEMA_URI = ContributorRoleSchemaUriEnum.HTTPS_CREDIT_NISO_ORG_;
 
     public static final ContributorRoleIdEnum SOFTWARE_CONTRIBUTOR_ROLE =
-            ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLE_SOFTWARE_;
+            ContributorRoleIdEnum.HTTPS_CREDIT_NISO_ORG_CONTRIBUTOR_ROLES_SOFTWARE_;
     public static final String SUPERVISION_CONTRIBUTOR_ROLE =
             "https://credit.niso.org/contributor-roles/supervision/";
     public static final String WRITING_REVIEW_EDITING_CONTRIBUTOR_ROLE =
@@ -93,7 +95,7 @@ public class TestConstants {
 
     public static final String GEONAMES_MELBOURNE = "https://www.geonames.org/2158177/melbourne.html";
 
-    public static final String GEONAMES_SCHEMA_URI = "https://www.geonames.org/";
+    public static final SpatialCoverageSchemaUriEnum GEONAMES_SCHEMA_URI = SpatialCoverageSchemaUriEnum.HTTPS_WWW_GEONAMES_ORG_;
 
     public static final String CONTRIBUTOR_EMAIL = "authenticated@test.raid.org.au";
 }

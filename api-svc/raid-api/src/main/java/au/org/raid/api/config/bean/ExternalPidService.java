@@ -7,6 +7,7 @@ import au.org.raid.api.service.ror.RorService;
 import au.org.raid.api.service.stub.*;
 import au.org.raid.api.util.Log;
 import au.org.raid.api.validator.GeoNamesUriValidator;
+import au.org.raid.api.validator.NominatimOpenStreetMapUriValidator;
 import au.org.raid.api.validator.OpenStreetMapUriValidator;
 import au.org.raid.idl.raidv2.model.ValidationFailure;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,15 +86,32 @@ public class ExternalPidService {
     }
 
     @Bean
+    @Primary
+    public NominatimOpenStreetMapUriValidator nominatimOpenStreetMapUriValidator(
+            final StubProperties stubProperties,
+            final RestTemplate restTemplate
+    ) {
+        if (stubProperties.getOpenStreetMap().isEnabled()) {
+            log.warn("using the in-memory OpenStreetMap validator");
+            return new NominatimOpenStreetMapValidatorStub(stubProperties.getOpenStreetMap().getDelay());
+        }
+
+        return new NominatimOpenStreetMapUriValidator(restTemplate);
+    }
+
+    @Bean
     public Map<String, BiFunction<String, String, List<ValidationFailure>>> spatialCoverageUriValidatorMap(
             final GeoNamesUriValidator geoNamesUriValidator,
             final OpenStreetMapUriValidator openStreetMapUriValidator,
+            final NominatimOpenStreetMapUriValidator nominatimOpenStreetMapUriValidator,
             @Value("${raid.spatial-coverage.schema-uri.geonames}") final String geoNamesSchemaUri,
-            @Value("${raid.spatial-coverage.schema-uri.openstreetmap}") final String openStreetMapSchemaUri
+            @Value("${raid.spatial-coverage.schema-uri.openstreetmap}") final String openStreetMapSchemaUri,
+            @Value("${raid.spatial-coverage.schema-uri.nominatim-openstreetmap}") final String nominatimOpenStreetMapSchemaUri
     ) {
         return Map.of(
                 geoNamesSchemaUri, geoNamesUriValidator::validate,
-                openStreetMapSchemaUri, openStreetMapUriValidator::validate
+                openStreetMapSchemaUri, openStreetMapUriValidator::validate,
+                nominatimOpenStreetMapSchemaUri, nominatimOpenStreetMapUriValidator::validate
         );
     }
 }
