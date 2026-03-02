@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -87,7 +88,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForCreate returns no failures when all validators pass")
     void validateForCreate_returnsNoFailures_whenAllValidatorsPass() {
-        stubAllCreateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var failures = validationService.validateForCreate(new RaidCreateRequest());
 
@@ -97,7 +98,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForCreate collects failures from all synchronous in-memory validators")
     void validateForCreate_collectsFailuresFromSynchronousValidators() {
-        stubAllCreateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var titleFailure = new ValidationFailure().message("bad title");
         var accessFailure = new ValidationFailure().message("bad access");
@@ -112,7 +113,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForCreate collects failures from all I/O-bound validators")
     void validateForCreate_collectsFailuresFromIoBoundValidators() {
-        stubAllCreateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var contributorFailure = new ValidationFailure().message("bad contributor");
         var orgFailure = new ValidationFailure().message("bad org");
@@ -161,7 +162,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForCreate invokes all 4 I/O-bound validators exactly once")
     void validateForCreate_invokesEachIoBoundValidatorOnce() {
-        stubAllCreateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         validationService.validateForCreate(new RaidCreateRequest());
 
@@ -169,6 +170,20 @@ class ValidationServiceTest {
         verify(organisationValidator, times(1)).validate(any());
         verify(relatedObjectValidator, times(1)).validateRelatedObjects(any());
         verify(spatialCoverageValidator, times(1)).validate(any());
+    }
+
+    @Test
+    @DisplayName("validateForCreate propagates the original RuntimeException when an I/O-bound validator throws")
+    void validateForCreate_propagatesOriginalException_whenIoBoundValidatorThrows() {
+        stubAllValidatorsEmpty();
+
+        var cause = new RuntimeException("ROR service unavailable");
+        when(organisationValidator.validate(any())).thenThrow(cause);
+
+        var thrown = assertThrows(RuntimeException.class,
+                () -> validationService.validateForCreate(new RaidCreateRequest()));
+
+        assertThat(thrown, equalTo(cause));
     }
 
     // -----------------------------------------------------------------------
@@ -187,7 +202,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForUpdate returns no failures when all validators pass")
     void validateForUpdate_returnsNoFailures_whenAllValidatorsPass() throws Exception {
-        stubAllUpdateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var handle = "10.25.1/abc123";
         var id = new Id().id("https://raid.org.au/" + handle);
@@ -210,7 +225,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForUpdate collects failures from all I/O-bound validators")
     void validateForUpdate_collectsFailuresFromIoBoundValidators() throws Exception {
-        stubAllUpdateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var handle = "10.25.1/abc123";
         var id = new Id().id("https://raid.org.au/" + handle);
@@ -243,7 +258,7 @@ class ValidationServiceTest {
     @Test
     @DisplayName("validateForUpdate invokes all 4 I/O-bound validators exactly once")
     void validateForUpdate_invokesEachIoBoundValidatorOnce() throws Exception {
-        stubAllUpdateValidatorsEmpty();
+        stubAllValidatorsEmpty();
 
         var handle = "10.25.1/abc123";
         var id = new Id().id("https://raid.org.au/" + handle);
@@ -264,6 +279,33 @@ class ValidationServiceTest {
         verify(organisationValidator, times(1)).validate(any());
         verify(relatedObjectValidator, times(1)).validateRelatedObjects(any());
         verify(spatialCoverageValidator, times(1)).validate(any());
+    }
+
+    @Test
+    @DisplayName("validateForUpdate propagates the original RuntimeException when an I/O-bound validator throws")
+    void validateForUpdate_propagatesOriginalException_whenIoBoundValidatorThrows() throws Exception {
+        stubAllValidatorsEmpty();
+
+        var handle = "10.25.1/abc123";
+        var id = new Id().id("https://raid.org.au/" + handle);
+        var request = new RaidUpdateRequest().identifier(id);
+
+        var parsedUrl = mock(au.org.raid.api.service.raid.id.IdentifierUrl.class);
+        var parsedHandle = mock(au.org.raid.api.service.raid.id.IdentifierHandle.class);
+        when(idParser.parseUrlWithException(any())).thenReturn(parsedUrl);
+        when(idParser.parseHandleWithException(any())).thenReturn(parsedHandle);
+        when(parsedHandle.format()).thenReturn(handle);
+        var parsedHandleInUrl = mock(au.org.raid.api.service.raid.id.IdentifierHandle.class);
+        when(parsedUrl.handle()).thenReturn(parsedHandleInUrl);
+        when(parsedHandleInUrl.format()).thenReturn(handle);
+
+        var cause = new RuntimeException("ORCID service unavailable");
+        when(contributorValidator.validate(any())).thenThrow(cause);
+
+        var thrown = assertThrows(RuntimeException.class,
+                () -> validationService.validateForUpdate(handle, request));
+
+        assertThat(thrown, equalTo(cause));
     }
 
     // -----------------------------------------------------------------------
@@ -297,21 +339,7 @@ class ValidationServiceTest {
     // Helpers
     // -----------------------------------------------------------------------
 
-    private void stubAllCreateValidatorsEmpty() {
-        when(dateValidator.validate(any())).thenReturn(List.of());
-        when(accessValidator.validate(any())).thenReturn(List.of());
-        when(titleValidator.validate(any())).thenReturn(List.of());
-        when(descriptionValidator.validate(any())).thenReturn(List.of());
-        when(subjectValidator.validate(any())).thenReturn(List.of());
-        when(relatedRaidValidator.validate(any())).thenReturn(List.of());
-        when(alternateIdentifierValidator.validateAlternateIdentifier(any())).thenReturn(List.of());
-        when(contributorValidator.validate(any())).thenReturn(List.of());
-        when(organisationValidator.validate(any())).thenReturn(List.of());
-        when(relatedObjectValidator.validateRelatedObjects(any())).thenReturn(List.of());
-        when(spatialCoverageValidator.validate(any())).thenReturn(List.of());
-    }
-
-    private void stubAllUpdateValidatorsEmpty() {
+    private void stubAllValidatorsEmpty() {
         when(dateValidator.validate(any())).thenReturn(List.of());
         when(accessValidator.validate(any())).thenReturn(List.of());
         when(titleValidator.validate(any())).thenReturn(List.of());

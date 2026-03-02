@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 import static au.org.raid.api.endpoint.message.ValidationMessage.HANDLE_DOES_NOT_MATCH_MESSAGE;
 import static au.org.raid.api.endpoint.message.ValidationMessage.handlesDoNotMatch;
@@ -141,34 +143,12 @@ public class ValidationService {
         failures.addAll(relatedRaidValidator.validate(request.getRelatedRaid()));
         failures.addAll(alternateIdentifierValidator.validateAlternateIdentifier(request.getAlternateIdentifier()));
 
-        // Submit the 4 I/O-bound validators concurrently. Each future owns its
-        // own list so there is no shared mutable state across threads.
-        CompletableFuture<List<ValidationFailure>> contributorFuture =
-                CompletableFuture.supplyAsync(
-                        () -> contributorValidator.validate(request.getContributor()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> organisationFuture =
-                CompletableFuture.supplyAsync(
-                        () -> organisationValidator.validate(request.getOrganisation()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> relatedObjectFuture =
-                CompletableFuture.supplyAsync(
-                        () -> relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> spatialCoverageFuture =
-                CompletableFuture.supplyAsync(
-                        () -> spatialCoverageValidator.validate(request.getSpatialCoverage()),
-                        taskExecutor);
-
-        // Join all futures and merge results. join() re-throws unchecked so
-        // any validator exception propagates to the caller as normal.
-        failures.addAll(contributorFuture.join());
-        failures.addAll(organisationFuture.join());
-        failures.addAll(relatedObjectFuture.join());
-        failures.addAll(spatialCoverageFuture.join());
+        failures.addAll(runIoBoundValidators(
+                () -> contributorValidator.validate(request.getContributor()),
+                () -> organisationValidator.validate(request.getOrganisation()),
+                () -> relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()),
+                () -> spatialCoverageValidator.validate(request.getSpatialCoverage())
+        ));
 
         return failures;
     }
@@ -191,38 +171,66 @@ public class ValidationService {
         failures.addAll(relatedRaidValidator.validate(request.getRelatedRaid()));
         failures.addAll(alternateIdentifierValidator.validateAlternateIdentifier(request.getAlternateIdentifier()));
 
-        // Submit the 4 I/O-bound validators concurrently. Each future owns its
-        // own list so there is no shared mutable state across threads.
-        CompletableFuture<List<ValidationFailure>> contributorFuture =
-                CompletableFuture.supplyAsync(
-                        () -> contributorValidator.validate(request.getContributor()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> organisationFuture =
-                CompletableFuture.supplyAsync(
-                        () -> organisationValidator.validate(request.getOrganisation()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> relatedObjectFuture =
-                CompletableFuture.supplyAsync(
-                        () -> relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()),
-                        taskExecutor);
-
-        CompletableFuture<List<ValidationFailure>> spatialCoverageFuture =
-                CompletableFuture.supplyAsync(
-                        () -> spatialCoverageValidator.validate(request.getSpatialCoverage()),
-                        taskExecutor);
-
-        // Join all futures and merge results.
-        failures.addAll(contributorFuture.join());
-        failures.addAll(organisationFuture.join());
-        failures.addAll(relatedObjectFuture.join());
-        failures.addAll(spatialCoverageFuture.join());
+        failures.addAll(runIoBoundValidators(
+                () -> contributorValidator.validate(request.getContributor()),
+                () -> organisationValidator.validate(request.getOrganisation()),
+                () -> relatedObjectValidator.validateRelatedObjects(request.getRelatedObject()),
+                () -> spatialCoverageValidator.validate(request.getSpatialCoverage())
+        ));
 
         return failures;
     }
 
     public List<ValidationFailure> validateForPatch(final RaidPatchRequest request) {
         return new ArrayList<>(contributorValidator.validateForPatch(request.getContributor()));
+    }
+
+    /**
+     * Submits each supplier as an async task, waits for all of them to finish
+     * via allOf(), then merges their results. Every validator runs to
+     * completion before any result is inspected.
+     *
+     * If a validator throws a RuntimeException it is re-thrown unwrapped —
+     * the CompletionException wrapper added by CompletableFuture is removed so
+     * callers see the original exception type.
+     */
+    @SafeVarargs
+    private List<ValidationFailure> runIoBoundValidators(
+            Supplier<List<ValidationFailure>>... validators) {
+
+        @SuppressWarnings("unchecked")
+        CompletableFuture<List<ValidationFailure>>[] futures =
+                new CompletableFuture[validators.length];
+
+        for (int i = 0; i < validators.length; i++) {
+            final Supplier<List<ValidationFailure>> validator = validators[i];
+            futures[i] = CompletableFuture.supplyAsync(validator, taskExecutor);
+        }
+
+        // Wait for all futures before inspecting any result. allOf().join()
+        // throws a CompletionException if any future failed, but we discard
+        // that here and re-inspect each future individually so we can unwrap.
+        try {
+            CompletableFuture.allOf(futures).join();
+        } catch (CompletionException ignored) {
+            // At least one future failed. Fall through to per-future join()
+            // calls below which will unwrap and re-throw the original exception.
+        }
+
+        var results = new ArrayList<ValidationFailure>();
+        for (CompletableFuture<List<ValidationFailure>> future : futures) {
+            // join() on an individually failed future throws CompletionException.
+            // Unwrap it so callers receive the original RuntimeException type.
+            try {
+                results.addAll(future.join());
+            } catch (CompletionException e) {
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
+                if (cause instanceof RuntimeException re) {
+                    throw re;
+                }
+                throw new RuntimeException(cause);
+            }
+        }
+        return results;
     }
 }
