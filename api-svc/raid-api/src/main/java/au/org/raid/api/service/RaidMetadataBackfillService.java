@@ -1,7 +1,6 @@
 package au.org.raid.api.service;
 
 import au.org.raid.api.repository.RaidRepository;
-import au.org.raid.db.jooq.enums.Metaschema;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -21,7 +19,6 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
     private final ObjectMapper objectMapper;
 
     @Override
-    @Transactional
     @SneakyThrows
     public void run(final ApplicationArguments args) {
         final var allV2Records = raidRepository.findAllV2();
@@ -31,11 +28,6 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
         log.info("Starting raid metadata backfill for {} v2 raids", allV2Records.size());
 
         for (final var record : allV2Records) {
-            if (!Metaschema.raido_metadata_schema_v2.equals(record.getMetadataSchema())) {
-                skippedCount++;
-                continue;
-            }
-
             if (hasValidMaterialisedMetadata(record.getMetadata() != null ? record.getMetadata().data() : null)) {
                 skippedCount++;
                 continue;
@@ -49,8 +41,12 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
             }
 
             final var json = objectMapper.writeValueAsString(raidDtoOptional.get());
-            raidRepository.updateMetadata(record.getHandle(), json);
-            backfilledCount++;
+            final var rowsUpdated = raidRepository.updateMetadata(record.getHandle(), json);
+            if (rowsUpdated == 0) {
+                log.warn("Failed to materialise metadata for handle {}: no matching raid record", record.getHandle());
+            } else {
+                backfilledCount++;
+            }
         }
 
         log.info("Raid metadata backfill complete: {} backfilled, {} skipped", backfilledCount, skippedCount);
@@ -69,3 +65,4 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
         }
     }
 }
+

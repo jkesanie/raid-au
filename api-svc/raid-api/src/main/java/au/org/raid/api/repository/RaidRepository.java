@@ -159,8 +159,7 @@ public class RaidRepository {
         return dslContext.select()
                 .distinctOn(RAID.HANDLE)
                 .from(RAID)
-                .where(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
-                )
+                .where(RAID.METADATA_SCHEMA.eq(Metaschema.raido_metadata_schema_v2))
                 .fetchInto(RaidRecord.class);
     }
 

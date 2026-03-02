@@ -5,13 +5,8 @@ import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.RaidRecordFactory;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.api.util.TokenUtil;
-import au.org.raid.db.jooq.enums.Metaschema;
-import au.org.raid.db.jooq.tables.records.RaidRecord;
 import au.org.raid.idl.raidv2.model.RaidDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,7 +37,7 @@ public class RaidIngestService {
     private final HandleFactory handleFactory;
     private final CacheableRaidService cacheableRaidService;
     private final RaidHistoryService raidHistoryService;
-    private final ObjectMapper objectMapper;
+    private final RaidDtoReadService raidDtoReadService;
 
 
     public void create(final RaidDto raid) {
@@ -88,7 +82,8 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByServicePointIdOrNotConfidential(servicePointId);
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
@@ -99,7 +94,8 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByServicePointId(servicePointId);
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
@@ -110,7 +106,8 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByContributorOrcid(contributorId);
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
@@ -121,7 +118,8 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByOrganisationId(organisationId);
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
@@ -183,7 +181,8 @@ public class RaidIngestService {
         final var records = raidRepository.findAllByServicePointIdOrHandleIn(servicePointId, handles);
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
@@ -194,27 +193,10 @@ public class RaidIngestService {
         final var records = raidRepository.findAll();
 
         for (final var record : records) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseGet(() -> cacheableRaidService.build(record)));
         }
 
         return raids;
-    }
-
-    @SneakyThrows
-    private RaidDto toRaidDto(final RaidRecord record) {
-        if (Metaschema.raido_metadata_schema_v2.equals(record.getMetadataSchema())
-                && record.getMetadata() != null) {
-            try {
-                final var raidDto = objectMapper.readValue(record.getMetadata().data(), RaidDto.class);
-                if (raidDto.getIdentifier() != null) {
-                    return raidDto;
-                }
-            } catch (final Exception e) {
-                log.warn("Failed to deserialise materialised metadata for handle {}, falling back to history",
-                        record.getHandle(), e);
-            }
-        }
-        return raidHistoryService.findByHandle(record.getHandle())
-                .orElse(cacheableRaidService.build(record));
     }
 }

@@ -77,22 +77,6 @@ class RaidMetadataBackfillServiceTest {
     }
 
     @Test
-    @DisplayName("run() skips non-v2 raids")
-    void skipsNonV2Raids() {
-        final var record = new RaidRecord()
-                .setHandle("10.26193/LEGACY")
-                .setMetadataSchema(Metaschema.raido_metadata_schema_v1)
-                .setMetadata(JSONB.valueOf("{}"));
-
-        when(raidRepository.findAllV2()).thenReturn(List.of(record));
-
-        backfillService.run(null);
-
-        verify(raidRepository, never()).updateMetadata(anyString(), anyString());
-        verifyNoInteractions(raidHistoryService);
-    }
-
-    @Test
     @DisplayName("run() skips raids where history reconstruction fails")
     void skipsRaidWhereHistoryReconstructionFails() {
         final var handle = "10.26193/MISSING";

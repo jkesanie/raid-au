@@ -5,41 +5,31 @@ import org.jooq.DSLContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static au.org.raid.db.jooq.tables.Raid.RAID;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
-/**
- * Unit test for RaidRepository. JOOQ DSL chains are thin delegations and the
- * meaningful behaviour is covered at the service layer. This test verifies the
- * method invokes the DSLContext in the expected direction.
- */
 @ExtendWith(MockitoExtension.class)
 class RaidRepositoryTest {
     @Mock
     ContributorValidationProperties contributorValidationProperties;
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     DSLContext dslContext;
     @InjectMocks
     RaidRepository raidRepository;
 
     @Test
-    @DisplayName("updateMetadata() calls dslContext.update(RAID) with the given handle")
-    void updateMetadata_callsDslContextUpdate() {
+    @DisplayName("updateMetadata() initiates a JOOQ update against the raid table")
+    void updateMetadata() {
         final var handle = "10.26193/ABC123";
         final var metadata = "{\"identifier\":{\"id\":\"https://raid.org/10.26193/ABC123\"}}";
 
-        // dslContext.update(RAID) returns null by default in Mockito — calling further
-        // chaining would NPE, so we verify the initial interaction and let it fail naturally.
-        // The actual SQL correctness is covered by integration tests.
-        try {
-            raidRepository.updateMetadata(handle, metadata);
-        } catch (final NullPointerException e) {
-            // expected — JOOQ chain returns null mocks
-        }
+        raidRepository.updateMetadata(handle, metadata);
 
         verify(dslContext).update(RAID);
     }

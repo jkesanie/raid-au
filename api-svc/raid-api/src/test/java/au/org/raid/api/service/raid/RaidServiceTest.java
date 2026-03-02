@@ -91,6 +91,8 @@ class RaidServiceTest {
     private RorClient rorClient;
     @Mock
     private RaidDtoFactory raidDtoFactory;
+    @Mock
+    private RaidDtoReadService raidDtoReadService;
     @InjectMocks
     private RaidService raidService;
 

@@ -16,8 +16,6 @@ import au.org.raid.api.service.datacite.DataciteService;
 import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.api.util.TokenUtil;
-import au.org.raid.db.jooq.enums.Metaschema;
-import au.org.raid.db.jooq.tables.records.RaidRecord;
 import au.org.raid.db.jooq.tables.records.ServicePointRecord;
 import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,6 +62,7 @@ public class RaidService {
     private final RaidRepository raidRepository;
     private final RorClient rorClient;
     private final RaidDtoFactory raidDtoFactory;
+    private final RaidDtoReadService raidDtoReadService;
 
     @Transactional
     public RaidDto mint(
@@ -256,7 +255,8 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
@@ -267,7 +267,8 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
@@ -362,33 +363,19 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            raids.add(toRaidDto(record));
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
     }
 
     @SneakyThrows
-    private RaidDto toRaidDto(final RaidRecord record) {
-        if (Metaschema.raido_metadata_schema_v2.equals(record.getMetadataSchema())
-                && record.getMetadata() != null) {
-            try {
-                final var raidDto = objectMapper.readValue(record.getMetadata().data(), RaidDto.class);
-                if (raidDto.getIdentifier() != null) {
-                    return raidDto;
-                }
-            } catch (final Exception e) {
-                log.warn("Failed to deserialise materialised metadata for handle {}, falling back to history",
-                        record.getHandle(), e);
-            }
-        }
-        return raidHistoryService.findByHandle(record.getHandle())
-                .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-    }
-
-    @SneakyThrows
     private void updateMaterialisedMetadata(final String handle, final RaidDto raidDto) {
         final var json = objectMapper.writeValueAsString(raidDto);
-        raidRepository.updateMetadata(handle, json);
+        final var rowsUpdated = raidRepository.updateMetadata(handle, json);
+        if (rowsUpdated == 0) {
+            log.warn("Failed to materialise metadata for handle {}: no matching raid record", handle);
+        }
     }
 }
