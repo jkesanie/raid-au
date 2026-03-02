@@ -5,6 +5,7 @@ import au.org.raid.db.jooq.tables.SubjectTypeSchema;
 import au.org.raid.db.jooq.tables.records.SubjectTypeSchemaRecord;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class SubjectTypeSchemaRepository {
                 .fetch();
     }
 
+    @Cacheable("subject-type-schema")
     public Optional<SubjectTypeSchemaRecord> findByUri(String schemaUri) {
         return dslContext.selectFrom(SUBJECT_TYPE_SCHEMA)
                 .where(SUBJECT_TYPE_SCHEMA.URI.eq(schemaUri))
