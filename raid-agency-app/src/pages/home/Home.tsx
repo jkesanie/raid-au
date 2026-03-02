@@ -11,7 +11,7 @@ export const Home = () => {
 
   return (
     <>
-    <Container sx={{minHeight: '100vh' }}>
+    <Container sx={{minHeight: 'calc(100vh - 168px)'}}>
       <Stack gap={2}>
         {((hasServicePointGroup && isServicePointUser) || isOperator)  && (
           <Fab
