@@ -16,8 +16,10 @@ import au.org.raid.api.service.datacite.DataciteService;
 import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.api.util.TokenUtil;
+import au.org.raid.db.jooq.enums.Metaschema;
+import au.org.raid.db.jooq.tables.records.RaidRecord;
 import au.org.raid.db.jooq.tables.records.ServicePointRecord;
-import au.org.raid.idl.raidv2.model.*;;
+import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +83,9 @@ public class RaidService {
 
         keycloakService.addHandleToAdminRaids(new Handle(raidDto.getIdentifier().getId()).toString());
 
+        final var handle = new Handle(raidDto.getIdentifier().getId()).toString();
+        updateMaterialisedMetadata(handle, raidDto);
+
         orcidIntegrationService.updateOrcidRecord(raidDto);
         return raidDto;
     }
@@ -143,7 +148,8 @@ public class RaidService {
 
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
-        final var saved =  raidIngestService.update(raidDto);
+        final var saved = raidIngestService.update(raidDto);
+        updateMaterialisedMetadata(handle, saved);
         orcidIntegrationService.updateOrcidRecord(saved);
         return saved;
     }
@@ -166,6 +172,7 @@ public class RaidService {
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
         final var saved = raidIngestService.update(raid);
+        updateMaterialisedMetadata(handle, saved);
 
         orcidIntegrationService.updateOrcidRecord(saved);
         return saved;
@@ -249,9 +256,7 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(toRaidDto(record));
         }
 
         return raids;
@@ -262,9 +267,7 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(toRaidDto(record));
         }
 
         return raids;
@@ -359,11 +362,33 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(toRaidDto(record));
         }
 
         return raids;
+    }
+
+    @SneakyThrows
+    private RaidDto toRaidDto(final RaidRecord record) {
+        if (Metaschema.raido_metadata_schema_v2.equals(record.getMetadataSchema())
+                && record.getMetadata() != null) {
+            try {
+                final var raidDto = objectMapper.readValue(record.getMetadata().data(), RaidDto.class);
+                if (raidDto.getIdentifier() != null) {
+                    return raidDto;
+                }
+            } catch (final Exception e) {
+                log.warn("Failed to deserialise materialised metadata for handle {}, falling back to history",
+                        record.getHandle(), e);
+            }
+        }
+        return raidHistoryService.findByHandle(record.getHandle())
+                .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
+    }
+
+    @SneakyThrows
+    private void updateMaterialisedMetadata(final String handle, final RaidDto raidDto) {
+        final var json = objectMapper.writeValueAsString(raidDto);
+        raidRepository.updateMetadata(handle, json);
     }
 }

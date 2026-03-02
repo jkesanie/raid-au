@@ -4,20 +4,30 @@ import au.org.raid.api.factory.DateFactory;
 import au.org.raid.api.factory.HandleFactory;
 import au.org.raid.api.factory.RaidRecordFactory;
 import au.org.raid.api.repository.RaidRepository;
+import au.org.raid.db.jooq.enums.Metaschema;
 import au.org.raid.db.jooq.tables.records.RaidRecord;
+import au.org.raid.idl.raidv2.model.Id;
+import au.org.raid.idl.raidv2.model.RaidDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.jooq.JSONB;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
 import static au.org.raid.api.util.TestRaid.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +73,11 @@ class RaidIngestServiceTest {
     private CacheableRaidService cacheableRaidService;
     @Mock
     private RaidHistoryService raidHistoryService;
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .setDateFormat(new SimpleDateFormat("yyyy-MM-dd"))
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     @InjectMocks
     private RaidIngestService raidIngestService;
 
@@ -141,6 +156,66 @@ class RaidIngestServiceTest {
         final var result = raidIngestService.findAllByServicePointId(servicePointId);
 
         assertThat(result, is(List.of(RAID_DTO)));
+    }
+
+    @Test
+    @DisplayName("findAllByServicePointId() reads from materialised metadata when schema is v2 and metadata is valid")
+    void findAllByServicePointIdUsesmaterialisedMetadata() throws Exception {
+        final var servicePointId = 123L;
+        final var expectedRaid = new RaidDto().identifier(new Id().id("https://raid.org/" + HANDLE));
+        final var metadataJson = objectMapper.writeValueAsString(expectedRaid);
+
+        final var raidRecord = new RaidRecord()
+                .setHandle(HANDLE)
+                .setMetadataSchema(Metaschema.raido_metadata_schema_v2)
+                .setMetadata(JSONB.valueOf(metadataJson));
+
+        when(raidRepository.findAllByServicePointId(servicePointId)).thenReturn(List.of(raidRecord));
+
+        final var result = raidIngestService.findAllByServicePointId(servicePointId);
+
+        assertThat(result, is(List.of(expectedRaid)));
+        verifyNoInteractions(raidHistoryService);
+    }
+
+    @Test
+    @DisplayName("findAllByServicePointId() falls back to history when metadata is null")
+    void findAllByServicePointIdFallsBackToHistoryWhenMetadataNull() {
+        final var servicePointId = 123L;
+
+        final var raidRecord = new RaidRecord()
+                .setHandle(HANDLE)
+                .setMetadataSchema(Metaschema.raido_metadata_schema_v2)
+                .setMetadata(null);
+
+        when(raidRepository.findAllByServicePointId(servicePointId)).thenReturn(List.of(raidRecord));
+        when(raidHistoryService.findByHandle(HANDLE)).thenReturn(Optional.of(RAID_DTO));
+
+        final var result = raidIngestService.findAllByServicePointId(servicePointId);
+
+        assertThat(result, is(List.of(RAID_DTO)));
+        verify(raidHistoryService).findByHandle(HANDLE);
+    }
+
+    @Test
+    @DisplayName("findAllByServicePointId() falls back to history when metadata has no identifier")
+    void findAllByServicePointIdFallsBackWhenMetadataHasNoIdentifier() throws Exception {
+        final var servicePointId = 123L;
+        final var emptyRaid = new RaidDto();
+        final var metadataJson = objectMapper.writeValueAsString(emptyRaid);
+
+        final var raidRecord = new RaidRecord()
+                .setHandle(HANDLE)
+                .setMetadataSchema(Metaschema.raido_metadata_schema_v2)
+                .setMetadata(JSONB.valueOf(metadataJson));
+
+        when(raidRepository.findAllByServicePointId(servicePointId)).thenReturn(List.of(raidRecord));
+        when(raidHistoryService.findByHandle(HANDLE)).thenReturn(Optional.of(RAID_DTO));
+
+        final var result = raidIngestService.findAllByServicePointId(servicePointId);
+
+        assertThat(result, is(List.of(RAID_DTO)));
+        verify(raidHistoryService).findByHandle(HANDLE);
     }
 
     @Test
