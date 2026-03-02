@@ -30,8 +30,8 @@ public class SubjectTypeSchemaRepository {
                 .fetch();
     }
 
-    @Cacheable("subject-type-schema")
-    public Optional<SubjectTypeSchemaRecord> findByUri(String schemaUri) {
+    @Cacheable(value = "subject-type-schema", key = "{#schemaUri}")
+    public Optional<SubjectTypeSchemaRecord> findByUri(final String schemaUri) {
         return dslContext.selectFrom(SUBJECT_TYPE_SCHEMA)
                 .where(SUBJECT_TYPE_SCHEMA.URI.eq(schemaUri))
                 .fetchOptional();

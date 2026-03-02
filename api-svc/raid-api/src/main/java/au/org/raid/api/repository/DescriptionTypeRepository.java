@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.DescriptionType.DESCRIPTION_TYPE;
 public class DescriptionTypeRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("description-type")
+    @Cacheable(value = "description-type", key = "{#uri, #schemaId}")
     public Optional<DescriptionTypeRecord> findByUriAndSchemaId(final String uri, final int schemaId) {
         return dslContext
                 .selectFrom(DESCRIPTION_TYPE)

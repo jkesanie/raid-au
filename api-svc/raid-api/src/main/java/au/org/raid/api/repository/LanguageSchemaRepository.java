@@ -16,13 +16,14 @@ import static au.org.raid.db.jooq.tables.LanguageSchema.LANGUAGE_SCHEMA;
 public class LanguageSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("language-schema")
+    @Cacheable(value = "language-schema", key = "{#uri}")
     public Optional<LanguageSchemaRecord> findByUri(final String uri) {
         return dslContext
                 .selectFrom(LANGUAGE_SCHEMA)
                 .where(LANGUAGE_SCHEMA.URI.eq(uri))
                 .fetchOptional();
     }
+
     public Optional<LanguageSchemaRecord> findActiveByUri(final String uri) {
         return dslContext
                 .selectFrom(LANGUAGE_SCHEMA)

@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.ContributorSchema.CONTRIBUTOR_SCHEMA;
 public class ContributorSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("contributor-schema")
+    @Cacheable(value = "contributor-schema", key = "{#uri}")
     public Optional<ContributorSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(CONTRIBUTOR_SCHEMA)
                 .where(CONTRIBUTOR_SCHEMA.URI.eq(uri))

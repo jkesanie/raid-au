@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.TitleType.TITLE_TYPE;
 public class TitleTypeRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("title-type")
+    @Cacheable(value = "title-type", key = "{#uri, #schemaId}")
     public Optional<TitleTypeRecord> findByUriAndSchemaId(final String uri, final int schemaId) {
         return dslContext
                 .selectFrom(TITLE_TYPE)

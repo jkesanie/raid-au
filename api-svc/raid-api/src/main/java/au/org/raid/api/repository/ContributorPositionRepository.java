@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.ContributorPosition.CONTRIBUTOR_POSITIO
 public class ContributorPositionRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("contributor-position")
+    @Cacheable(value = "contributor-position", key = "{#uri, #schemaId}")
     public Optional<ContributorPositionRecord> findByUriAndSchemaId(final String uri, final int schemaId) {
         return dslContext.selectFrom(CONTRIBUTOR_POSITION)
                 .where(CONTRIBUTOR_POSITION.URI.eq(uri)

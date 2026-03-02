@@ -16,7 +16,7 @@ import static au.org.raid.db.jooq.tables.ContributorRoleSchema.CONTRIBUTOR_ROLE_
 public class ContributorRoleSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("contributor-role-schema")
+    @Cacheable(value = "contributor-role-schema", key = "{#uri}")
     public Optional<ContributorRoleSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(CONTRIBUTOR_ROLE_SCHEMA)
                 .where(CONTRIBUTOR_ROLE_SCHEMA.URI.eq(uri))

@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.AccessType.ACCESS_TYPE;
 public class AccessTypeRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("access-type")
+    @Cacheable(value = "access-type", key = "{#uri, #schemaId}")
     public Optional<AccessTypeRecord> findByUriAndSchemaId(final String uri, final int schemaId) {
         return dslContext.selectFrom(ACCESS_TYPE)
                 .where(ACCESS_TYPE.URI.eq(uri)

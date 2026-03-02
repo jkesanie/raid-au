@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.RelatedObjectSchema.RELATED_OBJECT_SCHE
 public class RelatedObjectSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("related-object-schema")
+    @Cacheable(value = "related-object-schema", key = "{#uri}")
     public Optional<RelatedObjectSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(RELATED_OBJECT_SCHEMA)
                 .where(RELATED_OBJECT_SCHEMA.URI.eq(uri))

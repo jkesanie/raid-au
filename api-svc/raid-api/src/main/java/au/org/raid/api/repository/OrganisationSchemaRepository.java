@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.OrganisationSchema.ORGANISATION_SCHEMA;
 public class OrganisationSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("organisation-schema")
+    @Cacheable(value = "organisation-schema", key = "{#uri}")
     public Optional<OrganisationSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(ORGANISATION_SCHEMA)
                 .where(ORGANISATION_SCHEMA.URI.eq(uri))

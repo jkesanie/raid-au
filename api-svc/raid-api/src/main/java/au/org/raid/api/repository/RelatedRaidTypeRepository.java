@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.RelatedRaidType.RELATED_RAID_TYPE;
 public class RelatedRaidTypeRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("related-raid-type")
+    @Cacheable(value = "related-raid-type", key = "{#uri, #schemaId}")
     public Optional<RelatedRaidTypeRecord> findByUriAndSchemaId(final String uri, final int schemaId) {
         return dslContext.selectFrom(RELATED_RAID_TYPE)
                 .where(RELATED_RAID_TYPE.URI.eq(uri).and(RELATED_RAID_TYPE.SCHEMA_ID.eq(schemaId))).

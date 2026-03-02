@@ -22,7 +22,7 @@ public class SubjectTypeRepository {
                 .fetchOptional();
     }
 
-    @Cacheable("subject-type")
+    @Cacheable(value = "subject-type", key = "{#subjectId, #schemaId}")
     public Optional<SubjectTypeRecord> findByIdAndSchemaId(final String subjectId, final int schemaId) {
         return dslContext.selectFrom(SUBJECT_TYPE)
                 .where(SUBJECT_TYPE.ID.eq(subjectId))

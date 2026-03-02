@@ -16,7 +16,7 @@ import static au.org.raid.db.jooq.tables.OrganisationRoleSchema.ORGANISATION_ROL
 public class OrganisationRoleSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("organisation-role-schema")
+    @Cacheable(value = "organisation-role-schema", key = "{#uri}")
     public Optional<OrganisationRoleSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(ORGANISATION_ROLE_SCHEMA)
                 .where(ORGANISATION_ROLE_SCHEMA.URI.eq(uri))

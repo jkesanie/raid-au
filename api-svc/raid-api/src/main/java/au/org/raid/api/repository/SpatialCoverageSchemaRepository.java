@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.SpatialCoverageSchema.SPATIAL_COVERAGE_
 public class SpatialCoverageSchemaRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("spatial-coverage-schema")
+    @Cacheable(value = "spatial-coverage-schema", key = "{#uri}")
     public Optional<SpatialCoverageSchemaRecord> findByUri(final String uri) {
         return dslContext.selectFrom(SPATIAL_COVERAGE_SCHEMA)
                 .where(SPATIAL_COVERAGE_SCHEMA.URI.eq(uri))

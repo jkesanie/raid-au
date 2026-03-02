@@ -15,7 +15,7 @@ import static au.org.raid.db.jooq.tables.Language.LANGUAGE;
 public class LanguageRepository {
     private final DSLContext dslContext;
 
-    @Cacheable("language")
+    @Cacheable(value = "language", key = "{#code, #schemaId}")
     public Optional<LanguageRecord> findByIdAndSchemaId(final String code, final int schemaId) {
         return dslContext
                 .selectFrom(LANGUAGE)
