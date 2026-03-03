@@ -1,26 +1,24 @@
 package au.org.raid.api.service;
 
+import au.org.raid.api.dto.BackfillResult;
 import au.org.raid.api.repository.RaidRepository;
 import au.org.raid.idl.raidv2.model.RaidDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RaidMetadataBackfillService implements ApplicationRunner {
+public class RaidMetadataBackfillService {
     private final RaidRepository raidRepository;
     private final RaidHistoryService raidHistoryService;
     private final ObjectMapper objectMapper;
 
-    @Override
     @SneakyThrows
-    public void run(final ApplicationArguments args) {
+    public BackfillResult backfill() {
         final var allV2Records = raidRepository.findAllV2();
         var backfilledCount = 0;
         var skippedCount = 0;
@@ -50,6 +48,12 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
         }
 
         log.info("Raid metadata backfill complete: {} backfilled, {} skipped", backfilledCount, skippedCount);
+
+        return BackfillResult.builder()
+                .total(allV2Records.size())
+                .backfilled(backfilledCount)
+                .skipped(skippedCount)
+                .build();
     }
 
     private boolean hasValidMaterialisedMetadata(final String metadataJson) {
@@ -64,4 +68,3 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
         }
     }
 }
-

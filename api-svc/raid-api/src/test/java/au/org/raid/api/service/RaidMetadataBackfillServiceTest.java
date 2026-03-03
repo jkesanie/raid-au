@@ -21,6 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,8 +42,8 @@ class RaidMetadataBackfillServiceTest {
     RaidMetadataBackfillService backfillService;
 
     @Test
-    @DisplayName("run() backfills metadata for v2 raids with no valid materialised state")
-    void backfillsRaidWithoutMaterialisedMetadata() throws Exception {
+    @DisplayName("backfill() backfills metadata for v2 raids with no valid materialised state")
+    void backfillsRaidWithoutMaterialisedMetadata() {
         final var handle = "10.26193/ABC123";
         final var record = new RaidRecord()
                 .setHandle(handle)
@@ -50,14 +54,18 @@ class RaidMetadataBackfillServiceTest {
 
         when(raidRepository.findAllV2()).thenReturn(List.of(record));
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raidDto));
+        when(raidRepository.updateMetadata(eq(handle), anyString())).thenReturn(1);
 
-        backfillService.run(null);
+        final var result = backfillService.backfill();
 
         verify(raidRepository).updateMetadata(eq(handle), anyString());
+        assertThat(result.getTotal(), is(1));
+        assertThat(result.getBackfilled(), is(1));
+        assertThat(result.getSkipped(), is(0));
     }
 
     @Test
-    @DisplayName("run() skips raids that already have valid materialised metadata")
+    @DisplayName("backfill() skips raids that already have valid materialised metadata")
     void skipsRaidWithValidMaterialisedMetadata() throws Exception {
         final var handle = "10.26193/ALREADY";
         final var raidDto = new RaidDto().identifier(new Id().id("https://raid.org/" + handle));
@@ -70,14 +78,17 @@ class RaidMetadataBackfillServiceTest {
 
         when(raidRepository.findAllV2()).thenReturn(List.of(record));
 
-        backfillService.run(null);
+        final var result = backfillService.backfill();
 
         verify(raidRepository, never()).updateMetadata(anyString(), anyString());
         verifyNoInteractions(raidHistoryService);
+        assertThat(result.getTotal(), is(1));
+        assertThat(result.getBackfilled(), is(0));
+        assertThat(result.getSkipped(), is(1));
     }
 
     @Test
-    @DisplayName("run() skips raids where history reconstruction fails")
+    @DisplayName("backfill() skips raids where history reconstruction fails")
     void skipsRaidWhereHistoryReconstructionFails() {
         final var handle = "10.26193/MISSING";
         final var record = new RaidRecord()
@@ -88,13 +99,16 @@ class RaidMetadataBackfillServiceTest {
         when(raidRepository.findAllV2()).thenReturn(List.of(record));
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.empty());
 
-        backfillService.run(null);
+        final var result = backfillService.backfill();
 
         verify(raidRepository, never()).updateMetadata(anyString(), anyString());
+        assertThat(result.getTotal(), is(1));
+        assertThat(result.getBackfilled(), is(0));
+        assertThat(result.getSkipped(), is(1));
     }
 
     @Test
-    @DisplayName("run() logs warning when updateMetadata affects zero rows and does not throw")
+    @DisplayName("backfill() logs warning when updateMetadata affects zero rows and does not throw")
     void logsWarningWhenUpdateMetadataAffectsZeroRows() {
         final var handle = "10.26193/ZERO_ROWS";
         final var record = new RaidRecord()
@@ -108,13 +122,16 @@ class RaidMetadataBackfillServiceTest {
         when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raidDto));
         when(raidRepository.updateMetadata(eq(handle), anyString())).thenReturn(0);
 
-        backfillService.run(null);
+        final var result = backfillService.backfill();
 
         verify(raidRepository).updateMetadata(eq(handle), anyString());
+        assertThat(result.getTotal(), is(1));
+        assertThat(result.getBackfilled(), is(0));
+        assertThat(result.getSkipped(), is(0));
     }
 
     @Test
-    @DisplayName("run() processes multiple raids, backfilling only those that need it")
+    @DisplayName("backfill() processes multiple raids, backfilling only those that need it")
     void processesMixedRaids() throws Exception {
         final var handleToBackfill = "10.26193/NEEDS_BACKFILL";
         final var handleAlreadyDone = "10.26193/ALREADY_DONE";
@@ -136,10 +153,14 @@ class RaidMetadataBackfillServiceTest {
 
         when(raidRepository.findAllV2()).thenReturn(List.of(recordToBackfill, recordAlreadyDone));
         when(raidHistoryService.findByHandle(handleToBackfill)).thenReturn(Optional.of(backfilledDto));
+        when(raidRepository.updateMetadata(eq(handleToBackfill), anyString())).thenReturn(1);
 
-        backfillService.run(null);
+        final var result = backfillService.backfill();
 
         verify(raidRepository).updateMetadata(eq(handleToBackfill), anyString());
         verify(raidRepository, never()).updateMetadata(eq(handleAlreadyDone), anyString());
+        assertThat(result.getTotal(), is(2));
+        assertThat(result.getBackfilled(), is(1));
+        assertThat(result.getSkipped(), is(1));
     }
 }
