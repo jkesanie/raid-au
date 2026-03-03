@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.jooq.DeleteConditionStep;
+import org.jooq.JSONB;
 import org.jooq.Record4;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
@@ -158,8 +159,7 @@ public class RaidRepository {
         return dslContext.select()
                 .distinctOn(RAID.HANDLE)
                 .from(RAID)
-                .where(RAID.METADATA_SCHEMA.notIn(Metaschema.legacy_metadata_schema_v1)
-                )
+                .where(RAID.METADATA_SCHEMA.eq(Metaschema.raido_metadata_schema_v2))
                 .fetchInto(RaidRecord.class);
     }
 
@@ -199,6 +199,13 @@ public class RaidRepository {
                 .join(RAID_HISTORY).on(RAID_HISTORY.HANDLE.eq(RAID.HANDLE))
                 .where(RAID.HANDLE.startsWith("10."))
                 .fetchInto(RaidRecord.class);
+    }
+
+    public int updateMetadata(final String handle, final String metadata) {
+        return dslContext.update(RAID)
+                .set(RAID.METADATA, JSONB.valueOf(metadata))
+                .where(RAID.HANDLE.eq(handle))
+                .execute();
     }
 
     public int deleteByHandle(final String handle) {
