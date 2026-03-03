@@ -10,8 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static au.org.raid.db.jooq.tables.Raid.RAID;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,5 +33,16 @@ class RaidRepositoryTest {
         raidRepository.updateMetadata(handle, metadata);
 
         verify(dslContext).update(RAID);
+    }
+
+    @Test
+    @DisplayName("findAllByServicePointIdOrHandleIn() issues a select against the raid table")
+    void findAllByServicePointIdOrHandleIn() {
+        final var servicePointId = 20000000L;
+        final var handles = List.of("10.26193/ABC123", "10.26193/DEF456");
+
+        raidRepository.findAllByServicePointIdOrHandleIn(servicePointId, handles);
+
+        verify(dslContext).selectFrom(RAID);
     }
 }

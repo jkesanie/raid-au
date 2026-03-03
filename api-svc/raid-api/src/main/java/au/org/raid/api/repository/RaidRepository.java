@@ -98,8 +98,11 @@ public class RaidRepository {
 
     public List<RaidRecord> findAllByServicePointIdOrHandleIn(final Long servicePointId, List<String> handles) {
         return dslContext.selectFrom(RAID)
-                .where(RAID.SERVICE_POINT_ID.eq(servicePointId))
-                .or(RAID.HANDLE.in(handles))
+                .where(
+                        RAID.ACCESS_TYPE_ID.in(1, 4)
+                        .or(RAID.HANDLE.in(handles))
+                        .or(RAID.SERVICE_POINT_ID.eq(servicePointId))
+                )
                 .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
                 .orderBy(RAID.DATE_CREATED.desc())
                 .limit(Constant.MAX_EXPERIMENTAL_RECORDS)
