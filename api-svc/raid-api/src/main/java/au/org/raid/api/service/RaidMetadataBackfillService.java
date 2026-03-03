@@ -52,7 +52,6 @@ public class RaidMetadataBackfillService implements ApplicationRunner {
         log.info("Raid metadata backfill complete: {} backfilled, {} skipped", backfilledCount, skippedCount);
     }
 
-    @SneakyThrows
     private boolean hasValidMaterialisedMetadata(final String metadataJson) {
         if (metadataJson == null || metadataJson.isBlank()) {
             return false;

@@ -94,6 +94,26 @@ class RaidMetadataBackfillServiceTest {
     }
 
     @Test
+    @DisplayName("run() logs warning when updateMetadata affects zero rows and does not throw")
+    void logsWarningWhenUpdateMetadataAffectsZeroRows() {
+        final var handle = "10.26193/ZERO_ROWS";
+        final var record = new RaidRecord()
+                .setHandle(handle)
+                .setMetadataSchema(Metaschema.raido_metadata_schema_v2)
+                .setMetadata(JSONB.valueOf("{}"));
+
+        final var raidDto = new RaidDto().identifier(new Id().id("https://raid.org/" + handle));
+
+        when(raidRepository.findAllV2()).thenReturn(List.of(record));
+        when(raidHistoryService.findByHandle(handle)).thenReturn(Optional.of(raidDto));
+        when(raidRepository.updateMetadata(eq(handle), anyString())).thenReturn(0);
+
+        backfillService.run(null);
+
+        verify(raidRepository).updateMetadata(eq(handle), anyString());
+    }
+
+    @Test
     @DisplayName("run() processes multiple raids, backfilling only those that need it")
     void processesMixedRaids() throws Exception {
         final var handleToBackfill = "10.26193/NEEDS_BACKFILL";
