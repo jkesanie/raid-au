@@ -36,12 +36,12 @@ class RaidRepositoryTest {
     }
 
     @Test
-    @DisplayName("findAllByServicePointIdOrHandleIn() issues a select against the raid table")
-    void findAllByServicePointIdOrHandleIn() {
+    @DisplayName("findAllViewable() issues a select against the raid table")
+    void findAllViewable() {
         final var servicePointId = 20000000L;
         final var handles = List.of("10.26193/ABC123", "10.26193/DEF456");
 
-        raidRepository.findAllByServicePointIdOrHandleIn(servicePointId, handles);
+        raidRepository.findAllViewable(servicePointId, handles);
 
         verify(dslContext).selectFrom(RAID);
     }
