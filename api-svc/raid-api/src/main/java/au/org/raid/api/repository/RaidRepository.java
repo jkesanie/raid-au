@@ -102,12 +102,15 @@ public class RaidRepository {
     }
 
     public List<RaidRecord> findAllViewable(final Long servicePointId, final List<String> handles) {
+        var condition = RAID.ACCESS_TYPE_ID.in(OPEN_ACCESS_LEGACY_ID, OPEN_ACCESS_COAR_ID)
+                .or(RAID.HANDLE.in(handles));
+
+        if (servicePointId != null) {
+            condition = condition.or(RAID.SERVICE_POINT_ID.eq(servicePointId));
+        }
+
         return dslContext.selectFrom(RAID)
-                .where(
-                        RAID.ACCESS_TYPE_ID.in(OPEN_ACCESS_LEGACY_ID, OPEN_ACCESS_COAR_ID)
-                        .or(RAID.HANDLE.in(handles))
-                        .or(RAID.SERVICE_POINT_ID.eq(servicePointId))
-                )
+                .where(condition)
                 .and(RAID.METADATA_SCHEMA.ne(Metaschema.legacy_metadata_schema_v1))
                 .orderBy(RAID.DATE_CREATED.desc())
                 .limit(Constant.MAX_EXPERIMENTAL_RECORDS)

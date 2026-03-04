@@ -177,8 +177,12 @@ public class RaidIngestService {
         final var handles = new ArrayList<>(TokenUtil.getAdminRaids());
         handles.addAll(TokenUtil.getUserRaids());
 
+        final Long visibleServicePointId = TokenUtil.hasRole(TokenUtil.SERVICE_POINT_USER_ROLE)
+                ? servicePointId
+                : null;
+
         final var raids = new ArrayList<RaidDto>();
-        final var records = raidRepository.findAllViewable(servicePointId, handles);
+        final var records = raidRepository.findAllViewable(visibleServicePointId, handles);
 
         for (final var record : records) {
             raids.add(raidDtoReadService.toRaidDto(record)
