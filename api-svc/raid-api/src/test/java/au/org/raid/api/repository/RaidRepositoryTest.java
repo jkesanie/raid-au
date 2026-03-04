@@ -45,4 +45,14 @@ class RaidRepositoryTest {
 
         verify(dslContext).selectFrom(RAID);
     }
+
+    @Test
+    @DisplayName("findAllViewable() with null servicePointId omits service point condition")
+    void findAllViewableWithNullServicePointId() {
+        final var handles = List.of("10.26193/ABC123", "10.26193/DEF456");
+
+        raidRepository.findAllViewable(null, handles);
+
+        verify(dslContext).selectFrom(RAID);
+    }
 }
