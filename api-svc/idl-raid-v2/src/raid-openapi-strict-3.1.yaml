@@ -1687,7 +1687,6 @@ components:
       title: "SubjectSchemaURIEnum"
       type: "string"
       enum:
-      - "https://id.loc.gov/authorities/subject.html"
       - "https://linked.data.gov.au/def/anzsrc-for/2020"
       - "https://linked.data.gov.au/def/anzsrc-seo/2020"
       - "https://vocabs.ardc.edu.au/viewById/316"
