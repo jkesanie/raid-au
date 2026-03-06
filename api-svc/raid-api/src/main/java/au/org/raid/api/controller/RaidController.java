@@ -8,12 +8,12 @@ import au.org.raid.api.service.RaidHistoryService;
 import au.org.raid.api.service.RaidIngestService;
 import au.org.raid.api.service.ServicePointService;
 import au.org.raid.api.service.raid.RaidService;
-import au.org.raid.api.util.SchemaValues;
 import au.org.raid.api.util.TokenUtil;
 import au.org.raid.api.validator.ValidationService;
 import au.org.raid.idl.raidv2.api.RaidApi;
 import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -28,9 +28,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -39,9 +39,6 @@ import java.util.Optional;
 @SecurityScheme(name = "bearerAuth", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 public class RaidController implements RaidApi {
     public static final String SERVICE_POINT_GROUP_ID_CLAIM = "service_point_group_id";
-    private static final String REALM_ACCESS_CLAIM = "realm_access";
-    private static final String ROLES_CLAIM = "roles";
-    private static final String SERVICE_POINT_USER_ROLE = "service-point-user";
 
     private final ValidationService validationService;
     private final RaidService raidService;
@@ -71,7 +68,7 @@ public class RaidController implements RaidApi {
     }
 
     @Override
-    public ResponseEntity<RaidDto> mintRaid(@Valid  final RaidCreateRequest request) {
+    public ResponseEntity<RaidDto> mintRaid(final RaidCreateRequest request) {
         final var servicePointId = getServicePointId();
 
         final var failures = new ArrayList<>(validationService.validateForCreate(request));
@@ -87,7 +84,6 @@ public class RaidController implements RaidApi {
 
     @Override
     public ResponseEntity<List<RaidDto>> findAllRaids(final List<String> includeFields, final String contributorId, final String organisationId) {
-        //TODO: filter for service point owner/raid admin/raid user if embargoed
         List<RaidDto> raids;
 
         if (contributorId != null) {
@@ -103,9 +99,7 @@ public class RaidController implements RaidApi {
         } else {
             final var servicePointId = getServicePointId();
 
-            raids = raidIngestService.findAllByServicePointIdOrHandleIn(servicePointId)
-                    .stream().filter(this::isViewable)
-                    .toList();
+            raids = raidIngestService.findAllByServicePointIdOrHandleIn(servicePointId);
         }
 
         if (includeFields != null && !includeFields.isEmpty()) {
@@ -176,7 +170,6 @@ public class RaidController implements RaidApi {
         return ResponseEntity.ok(raidService.findAllPublic());
     }
 
-    //@Override
     public ResponseEntity<List<RaidDto>> findAllEmbargoedRaids() {
         return ResponseEntity.ok(raidService.findAllEmbargoed());
     }
@@ -184,6 +177,14 @@ public class RaidController implements RaidApi {
     @GetMapping(value="/raid/non-legacy")
     public ResponseEntity<List<RaidDto>> findAllNonLegacy() {
         return ResponseEntity.ok(raidService.findAllNonLegacy());
+    }
+
+    @Override
+    public ResponseEntity<RaidCountResponse> countRaids(
+            final Long servicePointId,
+            final LocalDate startDate,
+            final LocalDate endDate) {
+        return ResponseEntity.ok(raidService.countRaids(servicePointId, startDate, endDate));
     }
 
     private long getServicePointId() {
@@ -225,46 +226,5 @@ public class RaidController implements RaidApi {
         return filtered;
     }
 
-    private boolean isRaidAdmin(final RaidDto raidDto) {
-        final var raidName = raidDto.getIdentifier().getId();
-
-        final var handle = raidName.substring(raidName.lastIndexOf("/", raidName.lastIndexOf("/") - 1) + 1);
-
-        return TokenUtil.getAdminRaids().contains(handle);
-    }
-
-    private boolean isRaidUser(final RaidDto raidDto) {
-        final var raidName = raidDto.getIdentifier().getId();
-
-        final var handle = raidName.substring(raidName.lastIndexOf("/", raidName.lastIndexOf("/") - 1) + 1);
-
-        return TokenUtil.getUserRaids().contains(handle);
-    }
-
-    private boolean isServicePointUser(final RaidDto raidDto) {
-        final var token = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken();
-
-        if (!((List<?>) ((Map<?,?>) token.getClaim(REALM_ACCESS_CLAIM)).get(ROLES_CLAIM)).contains(SERVICE_POINT_USER_ROLE)) {
-            return false;
-        }
-        final var userServicePoint = getServicePointId();
-        return raidDto.getIdentifier().getOwner().getServicePoint().equals(userServicePoint);
-    }
-
-    private boolean isViewable(final RaidDto raidDto) {
-        if (raidDto.getAccess().getType().getId().equals(AccessTypeIdEnum.HTTPS_VOCABULARIES_COAR_REPOSITORIES_ORG_ACCESS_RIGHTS_C_ABF2_)) {
-            return true;
-        }
-
-        if (isRaidAdmin(raidDto)) {
-            return true;
-        }
-
-        if (isRaidUser(raidDto)) {
-            return true;
-        }
-
-        return isServicePointUser(raidDto);
-    }
 }
 

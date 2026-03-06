@@ -16,14 +16,15 @@ services:
       - 8001:8080
       - 9443:8443
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 5s
+      test: ["CMD", "curl", "-fk", "https://localhost:9000/health"]
+      interval: 10s
       timeout: 5s
       retries: 50
     command: [ 'start-dev', '--import-realm', '--debug' ]
     volumes:
       - './realms:/opt/keycloak/data/import'
       - './themes/raid-custom:/opt/keycloak/themes/raid-custom'
+      - './themes/ardc-branding:/opt/keycloak/themes/ardc-branding'
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin

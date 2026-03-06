@@ -1,5 +1,6 @@
 package au.org.raid.api.service.raid;
 
+import au.org.raid.api.client.ror.RorClient;
 import au.org.raid.api.dto.RaidPermissionsDto;
 import au.org.raid.api.dto.legacy.RaidDtoFactory;
 import au.org.raid.api.exception.InvalidVersionException;
@@ -16,10 +17,7 @@ import au.org.raid.api.service.keycloak.KeycloakService;
 import au.org.raid.api.util.SchemaValues;
 import au.org.raid.api.util.TokenUtil;
 import au.org.raid.db.jooq.tables.records.ServicePointRecord;
-import au.org.raid.idl.raidv2.model.Contributor;
-import au.org.raid.idl.raidv2.model.RaidCreateRequest;
-import au.org.raid.idl.raidv2.model.RaidDto;
-import au.org.raid.idl.raidv2.model.RaidUpdateRequest;
+import au.org.raid.idl.raidv2.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +31,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static au.org.raid.api.util.TokenUtil.OPERATOR_ROLE;
-import au.org.raid.idl.raidv2.model.AccessTypeIdEnum;
 
 @Slf4j
 @Component
@@ -64,7 +61,9 @@ public class RaidService {
     private final ObjectMapper objectMapper;
 
     private final RaidRepository raidRepository;
+    private final RorClient rorClient;
     private final RaidDtoFactory raidDtoFactory;
+    private final RaidDtoReadService raidDtoReadService;
 
     @Transactional
     public RaidDto mint(
@@ -83,6 +82,9 @@ public class RaidService {
         raidIngestService.create(raidDto);
 
         keycloakService.addHandleToAdminRaids(new Handle(raidDto.getIdentifier().getId()).toString());
+
+        final var handle = new Handle(raidDto.getIdentifier().getId()).toString();
+        updateMaterialisedMetadata(handle, raidDto);
 
         orcidIntegrationService.updateOrcidRecord(raidDto);
         return raidDto;
@@ -146,7 +148,8 @@ public class RaidService {
 
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
-        final var saved =  raidIngestService.update(raidDto);
+        final var saved = raidIngestService.update(raidDto);
+        updateMaterialisedMetadata(handle, saved);
         orcidIntegrationService.updateOrcidRecord(saved);
         return saved;
     }
@@ -160,7 +163,7 @@ public class RaidService {
         final var servicePointId = raid.getIdentifier().getOwner().getServicePoint();
 
         final var servicePointRecord = servicePointRepository.findById(servicePointId.longValue())
-                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId.toString()));
+                .orElseThrow(() -> new ServicePointNotFoundException(servicePointId.longValue()));
 
         orcidIntegrationService.setContributorStatus(contributors);
         raid.setContributor(contributors);
@@ -169,6 +172,7 @@ public class RaidService {
         dataciteSvc.update(raid, handle, servicePointRecord.getRepositoryId(), servicePointRecord.getPassword());
 
         final var saved = raidIngestService.update(raid);
+        updateMaterialisedMetadata(handle, saved);
 
         orcidIntegrationService.updateOrcidRecord(saved);
         return saved;
@@ -209,7 +213,7 @@ public class RaidService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        if (raidOptional.get().getIdentifier().getOwner().getServicePoint().longValue() == servicePoint.getId()) {
+        if (raidOptional.get().getIdentifier().getOwner().getServicePoint().equals(BigDecimal.valueOf(servicePoint.getId()))) {
             servicePointMatch = true;
         }
 
@@ -252,9 +256,8 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
@@ -265,15 +268,84 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
     }
 
-    public void postToDatacite(RaidDto raid) {
+    @Transactional(readOnly = true)
+    public RaidCountResponse countRaids(final Long servicePointId,
+                                        final LocalDate startDate,
+                                        final LocalDate endDate) {
+        final var startDateTime = startDate != null
+                ? startDate.atStartOfDay()
+                : null;
+        final var endDateTime = endDate != null
+                ? endDate.plusDays(1).atStartOfDay()
+                : null;
+
+        final int count = raidRepository.countByFilters(servicePointId, startDateTime, endDateTime);
+
+        String servicePointName = null;
+        if (servicePointId != null) {
+            servicePointName = servicePointRepository.findById(servicePointId)
+                    .map(ServicePointRecord::getName)
+                    .orElse(null);
+        }
+
+        final var rows = raidRepository.countByOrganisationAndServicePoint(
+                servicePointId, startDateTime, endDateTime);
+
+        // Group rows by org PID, preserving insertion order
+        final var orgMap = new LinkedHashMap<String, List<ServicePointCount>>();
+        for (final var row : rows) {
+            final var orgPid = row.value1();
+            final var spId = row.value2();
+            final var spName = row.value3();
+            final var spCount = row.value4();
+
+            orgMap.computeIfAbsent(orgPid, k -> new ArrayList<>())
+                    .add(new ServicePointCount()
+                            .id(spId)
+                            .name(spName)
+                            .count((long) spCount));
+        }
+
+        final var organisations = orgMap.entrySet().stream()
+                .map(entry -> {
+                    final var orgPid = entry.getKey();
+                    final var servicePoints = entry.getValue();
+                    final var orgCount = servicePoints.stream()
+                            .mapToLong(ServicePointCount::getCount)
+                            .sum();
+
+                    String name = null;
+                    try {
+                        name = rorClient.getOrganisationName(orgPid);
+                    } catch (Exception e) {
+                        log.warn("Failed to resolve organisation name for {}", orgPid, e);
+                    }
+
+                    return new OrganisationCount()
+                            .id(orgPid)
+                            .name(name)
+                            .count(orgCount)
+                            .servicePoints(servicePoints);
+                })
+                .toList();
+
+        return new RaidCountResponse()
+                .count((long) count)
+                .servicePointId(servicePointId)
+                .servicePointName(servicePointName)
+                .startDate(startDate)
+                .endDate(endDate)
+                .organisations(organisations);
+    }
+
+    public void postToDatacite(@Valid RaidDto raid) {
         final var handle = new Handle(raid.getIdentifier().getId());
 
         //TODO: Check prefix
@@ -292,11 +364,19 @@ public class RaidService {
         final var raids = new ArrayList<RaidDto>();
 
         for (final var record : raidRecords) {
-            final var raidDto = raidHistoryService.findByHandle(record.getHandle())
-                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle()));
-            raids.add(raidDto);
+            raids.add(raidDtoReadService.toRaidDto(record)
+                    .orElseThrow(() -> new ResourceNotFoundException(record.getHandle())));
         }
 
         return raids;
+    }
+
+    @SneakyThrows
+    private void updateMaterialisedMetadata(final String handle, final RaidDto raidDto) {
+        final var json = objectMapper.writeValueAsString(raidDto);
+        final var rowsUpdated = raidRepository.updateMetadata(handle, json);
+        if (rowsUpdated == 0) {
+            log.warn("Failed to materialise metadata for handle {}: no matching raid record", handle);
+        }
     }
 }

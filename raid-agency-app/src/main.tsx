@@ -1,6 +1,9 @@
 import "@/index.css";
 import "@fontsource/figtree";
+import React from "react";
 import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import {
   createBrowserRouter,
   Navigate,
@@ -9,13 +12,11 @@ import {
 import { App } from "./App";
 import { otherRoutes, raidPageRoutes, servicePointRoutes } from "./routes";
 import { ErrorAlertComponent } from "./components/error-alert-component";
-import { OrcidSuccess } from "./pages/orcid-success";
-import { AppNavBar } from "./components/app-nav-bar";
-import { ROUTES } from "./constants/routes";
-
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+import {
+  loadAppConfig,
+  AppConfigProvider,
+  buildMuiTheme,
+} from "./config";
 
 const router = createBrowserRouter([
   {
@@ -32,15 +33,24 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: ROUTES.ORCID_SUCCESS,
-    element: (
-      <>
-        <AppNavBar />
-        <OrcidSuccess />
-      </>
-    ),
-  }
 ]);
 
-root.render(<RouterProvider router={router} />);
+async function bootstrap() {
+  const config = await loadAppConfig();
+  const theme = buildMuiTheme(config.theme);
+
+  const root = ReactDOM.createRoot(
+    document.getElementById("root") as HTMLElement
+  );
+
+  root.render(
+    <AppConfigProvider config={config}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AppConfigProvider>
+  );
+}
+
+bootstrap();
