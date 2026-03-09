@@ -179,6 +179,22 @@ tasks.register('generateReferenceData', GenerateReferenceDataTask) {
 }
 ```
 
+Subject project in the extended metadata schema has another case for generating reference data. Field of research and socio-economic objectives vocabulary subject values are not validated at the JSON schema level because they require conditional validation, which is handled in code. The validator code relies on repository classes that can be used to check whether a given URI is part of a given schema. This requires that the allowed valued are stored in the in the RAiD database. There are two extra tasks (`generateFoRSubjectReferenceData` and `generateSEOSubjectReferenceData`) in the data model project that are used to generated just the reference data for the aforementioned vocabularies. They do not include example folder raference (user is directed to the source to look for allowed values) and also have their own enum2table configurations. 
+
+```
+tasks.register('generateFoRSubjectReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'api-svc/datamodel/src/v2/extended-subject-for-ids-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata-subject-for.sql"
+  mappingFile = "buildSrc/extended-subject-for-enum2table.yaml"
+  schemaID = 3
+}
+```
+
+
+
+
+
+
 ## Others
 
 There are tasks in the datamodel project for generating JSON-LD context, OWL ontology and SHACL shapes from the specificiation. The current implementation of the JSON-LD context and SHACL generators does not yet support dynamic enumeration, which causes  `generateJSONLDContextV2` and `generateSHACLV2` tasks to fail. A workaround would be to add a custom task that would add create a version of the linkml specification that would include the materialized enumeration with values queried from the vocabulary service.
