@@ -95,6 +95,20 @@ tasks.register('generateExtendedReferenceDataV2', GenerateReferenceDataTask) {
   schemaID = 3
 }
 
+tasks.register('generateFoRSubjectReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'api-svc/datamodel/src/v2/extended-subject-for-ids-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata-subject-for.sql"
+  mappingFile = "buildSrc/extended-subject-for-enum2table.yaml"
+  schemaID = 3
+}
+
+tasks.register('generateSEOSubjectReferenceData', GenerateReferenceDataTask) {
+  dataModelPath = 'api-svc/datamodel/src/v2/extended-subject-seo-ids-enums.yaml'
+  outputFile = "api-svc/datamodel/generated/v2/referencedata-subject-seo.sql"
+  mappingFile = "buildSrc/extended-subject-seo-enum2table.yaml"
+  schemaID = 3
+}
+
 tasks.register('copyRequirements', Copy) {
   from './src/requirements.txt'
   into './generated/'

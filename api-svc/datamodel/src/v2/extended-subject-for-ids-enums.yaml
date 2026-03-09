@@ -1,0 +1,27 @@
+id: https://datamodel.raid.org/extended/
+version: 2
+name: Extended-ids-enumerations
+imports:
+  - linkml:types
+
+enums:
+  SubjectSchemaURIEnum:
+    reachable_from:
+      source_ontology: https://demo.vocabs.ardc.edu.au/repository/api/sparql/raid_raid-controlled-lists-v2_1-7-0
+      source_nodes:
+        - https://vocabulary.raid.org/subject.schemaUri/scheme
+      relationship_types:
+        - skos:hasTopConcept
+      is_direct: true
+      traverse_up: false
+      include_self: false
+  SubjectFoRIdsEnum:
+    reachable_from:
+      source_ontology: https://vocabs.ardc.edu.au/repository/api/sparql/anzsrc-2020-for
+      source_nodes:
+        - https://linked.data.gov.au/def/anzsrc-for/2020
+      relationship_types:
+        - skos:inScheme
+      is_direct: true
+      traverse_up: true
+      include_self: false

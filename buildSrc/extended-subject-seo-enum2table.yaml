@@ -1,0 +1,7 @@
+- enumID: SubjectSchemaURIEnum
+  table: subject_type_schema
+  source: uri
+  values:
+    enumID: SubjectSEOIdsEnum
+    table: subject_seo_schema
+    source: uri

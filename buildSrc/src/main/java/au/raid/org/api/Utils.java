@@ -92,6 +92,15 @@ public class Utils {
                 + "where { ?uri a skos:Concept . <%s> %s ?uri . ?uri skos:prefLabel ?prefLabel}"
                 .formatted(de.source_nodes().get(0), de.relationship_types().get(0));
 
+        if(de.traverse_up) {
+            query
+                    = "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
+                    + "select ?prefLabel ?uri "
+                    + "where { ?uri a skos:Concept . ?uri  %s <%s> . ?uri skos:prefLabel ?prefLabel}"
+                    .formatted(de.relationship_types().get(0), de.source_nodes().get(0));
+        }
+
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost request = new HttpPost(de.source_ontology());
 

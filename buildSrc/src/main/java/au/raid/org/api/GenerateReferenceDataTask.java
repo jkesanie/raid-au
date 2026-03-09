@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.Charset;
@@ -39,8 +40,9 @@ import org.yaml.snakeyaml.Yaml;
 
     @Input
     abstract Property<Integer> getSchemaID();
-    
+
     @Input
+    @Optional
     abstract Property<String> getExamplesDir();
 
     final private ObjectMapper om = new ObjectMapper();
@@ -55,13 +57,18 @@ import org.yaml.snakeyaml.Yaml;
                 LOG.info("Processing enum " + schemaMapping.enumID());
                 System.out.println("Processing enum " + schemaMapping.enumID());
                 sb.append(handleMapping(schemaMapping, "(id, uri, status)", "(%d, '%s', 'active')", enums));
-                generateExamples(schemaMapping, enums);
+                if(getExamplesDir().isPresent()) {
+                    generateExamples(schemaMapping, enums);
+                }
                 LOG.info("Done");
                 if (schemaMapping.values() != null) {
                     LOG.info("Processing enum " + schemaMapping.values().enumID());
                     System.out.println("Processing enum " + schemaMapping.values().enumID());
                     sb.append(handleMapping(schemaMapping.values(), "(schema_id, uri)", "(%d, '%s')", enums));
-                    generateExamples(schemaMapping.values(), enums);
+                    if(getExamplesDir().isPresent()) {
+                        generateExamples(schemaMapping.values(), enums);
+                    }
+
                     LOG.info("Done");
                 }
                 sb.append("\n\n");
@@ -92,7 +99,7 @@ import org.yaml.snakeyaml.Yaml;
     private String handleMapping(Mapping m, String columns, String valuesTemplate, Map<String, Utils.DynamicEnum> enums) throws Exception {
         StringBuilder sql = new StringBuilder();
         Utils.DynamicEnum de = enums.get(m.enumID());
-        if (de == null) {            
+        if (de == null) {
             throw new Exception("Missing mapped enum " + m.enumID());
         }
         List<String> values = Utils.queryValues(de, m.source(), false);
